@@ -87,7 +87,7 @@ export default function ProjectGrid() {
                   fill
                   className="object-cover transition-transform duration-500 hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent"></div>
                 <div className="absolute top-4 right-4">
                   <span className="px-3 py-1 text-sm font-semibold rounded-full bg-white/90 text-slate-800">
                     {project.category}

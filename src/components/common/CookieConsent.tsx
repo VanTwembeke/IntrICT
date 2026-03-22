@@ -70,14 +70,14 @@ export default function CookieConsent() {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className="fixed bottom-0 left-0 right-0 z-50"
       >
-        <div className="max-w-4xl mx-4 mx-auto mb-20 border-t shadow-lg bg-white/95 backdrop-blur-xl border-slate-200/50 rounded-xl">
+        <div className="max-w-4xl mx-4 mb-20 border-t shadow-lg bg-white/95 backdrop-blur-xl border-slate-200/50 rounded-xl">
           <div className="px-4 py-2">
           {!showSettings ? (
             <div className="flex items-center justify-between">
               {/* Left side - Info */}
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-linear-to-r from-blue-500 to-purple-500">
                     <Cookie className="w-4 h-4 text-white" />
                   </div>
                   <div>
@@ -105,7 +105,7 @@ export default function CookieConsent() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleAcceptAll}
-                    className="bg-gradient-to-r from-slate-800 to-slate-700 text-white px-3 py-1.5 rounded text-xs font-semibold hover:from-slate-700 hover:to-slate-600 transition-all duration-300"
+                    className="bg-linear-to-r from-slate-800 to-slate-700 text-white px-3 py-1.5 rounded text-xs font-semibold hover:from-slate-700 hover:to-slate-600 transition-all duration-300"
                   >
                     Accepteren
                   </motion.button>
@@ -143,7 +143,7 @@ export default function CookieConsent() {
               {/* Settings Header */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-linear-to-r from-blue-500 to-purple-500">
                     <Settings className="w-4 h-4 text-white" />
                   </div>
                   <div>
@@ -241,7 +241,7 @@ export default function CookieConsent() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleAcceptSelected}
-                  className="bg-gradient-to-r from-slate-800 to-slate-700 text-white px-4 py-1.5 rounded text-xs font-semibold hover:from-slate-700 hover:to-slate-600 transition-all duration-300"
+                  className="bg-linear-to-r from-slate-800 to-slate-700 text-white px-4 py-1.5 rounded text-xs font-semibold hover:from-slate-700 hover:to-slate-600 transition-all duration-300"
                 >
                   Opslaan
                 </motion.button>

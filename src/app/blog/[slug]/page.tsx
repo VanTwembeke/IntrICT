@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
-import { getBlogPostBySlug, getRelatedPosts, BlogPost } from '@/lib/blog-api';
+import { getBlogPostBySlug, getRelatedPosts, BlogPost, BlogPostMeta } from '@/lib/blog-api';
 
 // CodeBlock Component
 const CodeBlock = ({ code, language }: { code: string; language: string }) => {
@@ -26,19 +26,19 @@ const CodeBlock = ({ code, language }: { code: string; language: string }) => {
   };
 
   return (
-    <div className="relative bg-slate-900 rounded-lg overflow-hidden shadow-lg">
+    <div className="relative overflow-hidden rounded-lg shadow-lg bg-slate-900">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-slate-800 border-b border-slate-700">
+      <div className="flex items-center justify-between px-4 py-2 border-b bg-slate-800 border-slate-700">
         <div className="flex items-center space-x-2">
           <div className="w-3 h-3 bg-red-500 rounded-full"></div>
           <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
           <div className="w-3 h-3 bg-green-500 rounded-full"></div>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-slate-400 text-sm font-mono">{language}</span>
+          <span className="font-mono text-sm text-slate-400">{language}</span>
           <button
             onClick={copyToClipboard}
-            className="flex items-center space-x-1 px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded text-slate-300 text-sm transition-colors duration-200"
+            className="flex items-center px-3 py-1 space-x-1 text-sm transition-colors duration-200 rounded bg-slate-700 hover:bg-slate-600 text-slate-300"
           >
             {copied ? (
               <>
@@ -58,10 +58,10 @@ const CodeBlock = ({ code, language }: { code: string; language: string }) => {
           </button>
         </div>
       </div>
-      
+
       {/* Code Content */}
       <div className="p-4 overflow-x-auto">
-        <pre className="text-slate-100 font-mono text-sm leading-relaxed">
+        <pre className="font-mono text-sm leading-relaxed text-slate-100">
           <code>{code}</code>
         </pre>
       </div>
@@ -88,9 +88,9 @@ const YouTubeEmbed = ({ videoId }: { videoId: string }) => {
 export default function BlogPostPage() {
   const params = useParams();
   const slug = params.slug as string;
-  
+
   const [blogPost, setBlogPost] = useState<BlogPost | null>(null);
-  const [relatedPosts, setRelatedPosts] = useState<any[]>([]);
+  const [relatedPosts, setRelatedPosts] = useState<BlogPostMeta[]>([]);  // ← Fixed: BlogPostMeta[]
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -111,7 +111,7 @@ export default function BlogPostPage() {
           notFound();
         }
         setBlogPost(post);
-        
+
         // Load related posts
         const related = await getRelatedPosts(slug);
         setRelatedPosts(related);
@@ -145,19 +145,19 @@ export default function BlogPostPage() {
       // Headers
       if (line.startsWith('# ')) {
         elements.push(
-          <h1 key={i} className="text-4xl font-bold text-slate-800 mb-4 mt-8">
+          <h1 key={i} className="mt-8 mb-4 text-4xl font-bold text-slate-800">
             {line.substring(2)}
           </h1>
         );
       } else if (line.startsWith('## ')) {
         elements.push(
-          <h2 key={i} className="text-3xl font-bold text-slate-800 mb-3 mt-6">
+          <h2 key={i} className="mt-6 mb-3 text-3xl font-bold text-slate-800">
             {line.substring(3)}
           </h2>
         );
       } else if (line.startsWith('### ')) {
         elements.push(
-          <h3 key={i} className="text-2xl font-bold text-slate-800 mb-2 mt-4">
+          <h3 key={i} className="mt-4 mb-2 text-2xl font-bold text-slate-800">
             {line.substring(4)}
           </h3>
         );
@@ -166,12 +166,12 @@ export default function BlogPostPage() {
         const language = line.substring(3).trim() || 'text';
         const codeLines: string[] = [];
         i++;
-        
+
         while (i < lines.length && !lines[i].startsWith('```')) {
           codeLines.push(lines[i]);
           i++;
         }
-        
+
         const code = codeLines.join('\n');
         elements.push(
           <div key={i} className="my-4">
@@ -191,7 +191,7 @@ export default function BlogPostPage() {
       } else if (line.startsWith('- ')) {
         // List item
         elements.push(
-          <li key={i} className="text-slate-700 leading-relaxed mb-1 ml-4 list-disc">
+          <li key={i} className="mb-1 ml-4 leading-relaxed list-disc text-slate-700">
             {line.substring(2)}
           </li>
         );
@@ -204,12 +204,12 @@ export default function BlogPostPage() {
       } else if (line.trim()) {
         // Regular paragraph
         elements.push(
-          <p key={i} className="text-slate-700 leading-relaxed mb-3">
+          <p key={i} className="mb-3 leading-relaxed text-slate-700">
             {line}
           </p>
         );
       }
-      
+
       i++;
     }
 
@@ -224,12 +224,12 @@ export default function BlogPostPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
         <Header />
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-            <p className="text-slate-600 mt-4">Blogpost laden...</p>
+            <div className="w-12 h-12 mx-auto border-b-2 border-blue-500 rounded-full animate-spin"></div>
+            <p className="mt-4 text-slate-600">Blogpost laden...</p>
           </div>
         </div>
       </div>
@@ -241,18 +241,18 @@ export default function BlogPostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Header />
-      
+
       <main>
         {/* Hero Section */}
         <section className="relative pt-20 pb-12 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900"></div>
           <div className="absolute inset-0 opacity-40">
             <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')]"></div>
           </div>
-          
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
@@ -262,7 +262,7 @@ export default function BlogPostPage() {
               <div className="mb-6">
                 <Link
                   href="/blog"
-                  className="inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors duration-300"
+                  className="inline-flex items-center text-blue-400 transition-colors duration-300 hover:text-blue-300"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -270,21 +270,21 @@ export default function BlogPostPage() {
                   Terug naar Blog
                 </Link>
               </div>
-              
+
               <div className="mb-6">
-                <span className="bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-medium">
+                <span className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-full">
                   {blogPost.category}
                 </span>
               </div>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight">
+
+              <h1 className="mb-4 text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
                 {blogPost.title}
               </h1>
-              
-              <p className="text-xl text-slate-200 mb-6 leading-relaxed max-w-4xl mx-auto">
+
+              <p className="max-w-4xl mx-auto mb-6 text-xl leading-relaxed text-slate-200">
                 {blogPost.excerpt}
               </p>
-              
+
               <div className="flex flex-wrap items-center justify-center gap-4 text-slate-300">
                 <div className="flex items-center">
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -311,12 +311,12 @@ export default function BlogPostPage() {
 
         {/* Featured Image */}
         <section className="py-6">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl px-4 mx-auto sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
-              className="relative h-64 md:h-96 rounded-2xl overflow-hidden shadow-2xl"
+              className="relative h-64 overflow-hidden shadow-2xl md:h-96 rounded-2xl"
             >
               <Image
                 src={blogPost.image}
@@ -330,27 +330,27 @@ export default function BlogPostPage() {
 
         {/* Content Section */}
         <section className="py-12">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl px-4 mx-auto sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="bg-white rounded-2xl shadow-lg p-6 md:p-8"
+              className="p-6 bg-white shadow-lg rounded-2xl md:p-8"
             >
               <div className="prose prose-lg max-w-none">
                 <div className="space-y-2">
                   {formatContent(blogPost.content)}
                 </div>
               </div>
-              
+
               {/* Tags */}
-              <div className="mt-8 pt-6 border-t border-slate-200">
-                <h4 className="text-lg font-semibold text-slate-800 mb-3">Tags</h4>
+              <div className="pt-6 mt-8 border-t border-slate-200">
+                <h4 className="mb-3 text-lg font-semibold text-slate-800">Tags</h4>
                 <div className="flex flex-wrap gap-2">
                   {blogPost.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-sm font-medium hover:bg-slate-200 transition-colors duration-300"
+                      className="px-3 py-1 text-sm font-medium transition-colors duration-300 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200"
                     >
                       #{tag}
                     </span>
@@ -364,23 +364,23 @@ export default function BlogPostPage() {
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
           <section className="py-20 bg-white">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
               <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
                 viewport={{ once: true }}
-                className="text-center mb-16"
+                className="mb-16 text-center"
               >
-                <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
-                  Gerelateerde <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">Artikelen</span>
+                <h2 className="mb-6 text-4xl font-bold md:text-5xl text-slate-800">
+                  Gerelateerde <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">Artikelen</span>
                 </h2>
-                <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+                <p className="max-w-3xl mx-auto text-xl leading-relaxed text-slate-600">
                   Meer interessante artikelen die je mogelijk interessant vindt
                 </p>
               </motion.div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {relatedPosts.map((post, index) => (
                   <motion.article
                     key={post.id}
@@ -388,34 +388,34 @@ export default function BlogPostPage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: index * 0.1 }}
                     viewport={{ once: true }}
-                    className="bg-slate-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                    className="overflow-hidden transition-all duration-300 shadow-lg bg-slate-50 rounded-2xl hover:shadow-xl group"
                   >
                     <div className="relative h-48 overflow-hidden">
                       <Image
                         src={post.image}
                         alt={post.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                       <div className="absolute top-4 left-4">
-                        <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        <span className="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-full">
                           {post.category}
                         </span>
                       </div>
                     </div>
-                    
+
                     <div className="p-6">
-                      <h3 className="text-xl font-bold text-slate-800 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
+                      <h3 className="mb-3 text-xl font-bold transition-colors duration-300 text-slate-800 line-clamp-2 group-hover:text-blue-600">
                         {post.title}
                       </h3>
-                      
-                      <p className="text-slate-600 leading-relaxed mb-4 line-clamp-3">
+
+                      <p className="mb-4 leading-relaxed text-slate-600 line-clamp-3">
                         {post.excerpt}
                       </p>
-                      
+
                       <Link
                         href={`/blog/${post.slug}`}
-                        className="inline-flex items-center text-blue-600 hover:text-blue-700 font-semibold transition-colors duration-300"
+                        className="inline-flex items-center font-semibold text-blue-600 transition-colors duration-300 hover:text-blue-700"
                       >
                         Lees meer
                         <svg className="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -431,32 +431,32 @@ export default function BlogPostPage() {
         )}
 
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <section className="py-20 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900">
+          <div className="px-4 mx-auto text-center max-w-7xl sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                Vond Je Dit <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Interessant?</span>
+              <h2 className="mb-6 text-4xl font-bold text-white md:text-5xl">
+                Vond Je Dit <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">Interessant?</span>
               </h2>
-              <p className="text-xl text-slate-200 mb-8 max-w-3xl mx-auto leading-relaxed">
+              <p className="max-w-3xl mx-auto mb-8 text-xl leading-relaxed text-slate-200">
                 Laten we samenwerken aan jouw volgende project. Ik help je graag met web development, design en digitale strategie.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col justify-center gap-4 sm:flex-row">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  className="px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
                 >
                   Start Je Project
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300 backdrop-blur-sm"
+                  className="px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10 backdrop-blur-sm"
                 >
                   Bekijk Portfolio
                 </motion.button>

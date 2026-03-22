@@ -1,15 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const isClient = typeof window !== 'undefined';
 
   const footerLinks = {
     company: [
@@ -78,7 +74,7 @@ export default function Footer() {
   ];
 
           return (
-            <footer className="relative border-t bg-gradient-to-b from-slate-50 to-slate-100 border-slate-200">
+            <footer className="relative border-t bg-linear-to-b from-slate-50 to-slate-100 border-slate-200">
               <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Main Footer Content */}
         <div className="py-12 md:py-16">
@@ -96,7 +92,7 @@ export default function Footer() {
                 </div>
                 <p className="max-w-md text-sm leading-relaxed text-slate-600 md:text-base">
                   Moderne web development van concept tot live website. Ik help je met responsive websites, 
-                  logo's, branding en complete digitale strategieën voor je bedrijf.
+                  logo&apos;s, branding en complete digitale strategieën voor je bedrijf.
                 </p>
                 <div className="flex space-x-3 md:space-x-4">
                   {socialLinks.map((social, index) => (
@@ -209,7 +205,7 @@ export default function Footer() {
         </div>
 
         {/* Newsletter Signup */}
-        {isMounted && (
+        {isClient && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

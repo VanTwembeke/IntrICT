@@ -39,12 +39,12 @@ export default function Services() {
 
   return (
     <section id="services" className="py-20">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="px-4 mx-auto max-w-7xl">
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-5xl md:text-6xl font-bold text-slate-800 text-center mb-16"
+          className="mb-16 text-5xl font-bold text-center md:text-6xl text-slate-800"
         >
           Mijn diensten
         </motion.h2>
@@ -56,7 +56,7 @@ export default function Services() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="grid md:grid-cols-2 gap-12 items-center"
+              className="grid items-center gap-12 md:grid-cols-2"
             >
               <div className={`relative h-96 rounded-2xl overflow-hidden ${service.reverse ? 'order-1 md:order-2' : ''}`}>
                 <Image
@@ -65,14 +65,14 @@ export default function Services() {
                   fill
                   className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-slate-900/60 to-transparent"></div>
               </div>
               <div className={`space-y-6 ${service.reverse ? 'order-2 md:order-1' : ''}`}>
                 <h3 className="text-4xl font-bold text-slate-800">{service.title}</h3>
-                <p className="text-lg text-slate-600 leading-relaxed">
+                <p className="text-lg leading-relaxed text-slate-600">
                   {service.description}
                 </p>
-                <button className="bg-slate-800 text-white px-8 py-3 rounded-full font-semibold hover:bg-slate-700 transition-colors duration-300">
+                <button className="px-8 py-3 font-semibold text-white transition-colors duration-300 rounded-full bg-slate-800 hover:bg-slate-700">
                   {service.buttonText}
                 </button>
               </div>

@@ -2,26 +2,14 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
-
-// Extend Window interface for Lenis
-declare global {
-  interface Window {
-    lenis?: {
-      scrollTo: (target: number, options?: { immediate?: boolean }) => void;
-    };
-  }
-}
+import Lenis from '@studio-freight/lenis';
 
 export default function BackToTop() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const toggleVisibility = () => {
-      if (window.pageYOffset > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
+      setIsVisible(window.pageYOffset > 300);
     };
 
     window.addEventListener('scroll', toggleVisibility);
@@ -29,27 +17,14 @@ export default function BackToTop() {
   }, []);
 
   const scrollToTop = () => {
-    // Multiple approaches to ensure it works
-    try {
-      // Try Lenis first
-      if (window.lenis && typeof window.lenis.scrollTo === 'function') {
-        window.lenis.scrollTo(0, { immediate: false });
-        return;
-      }
-    } catch (error) {
-      console.log('Lenis not available, using fallback');
+    // If Lenis is initialized on window, use it
+    if (window.lenis) {
+      // window.lenis has scrollTo
+      (window.lenis as Lenis).scrollTo(0, { immediate: false });
+      return;
     }
 
-    // Try document.documentElement first
-    try {
-      document.documentElement.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    } catch (error) {
-      // Final fallback
-      window.scrollTo(0, 0);
-    }
+    document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -62,7 +37,7 @@ export default function BackToTop() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-[60] bg-slate-800 text-white p-4 rounded-full shadow-2xl hover:bg-slate-700 transition-all duration-300 group"
+          className="fixed p-4 text-white transition-all duration-300 rounded-full shadow-2xl bottom-8 right-8 z-60 bg-slate-800 hover:bg-slate-700 group"
           aria-label="Terug naar boven"
         >
           <motion.svg
@@ -80,7 +55,7 @@ export default function BackToTop() {
               d="M5 10l7-7m0 0l7 7m-7-7v18"
             />
           </motion.svg>
-          <div className="absolute -top-2 -right-2 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+          <div className="absolute w-3 h-3 bg-green-500 rounded-full -top-2 -right-2 animate-pulse"></div>
         </motion.button>
       )}
     </AnimatePresence>

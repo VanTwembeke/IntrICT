@@ -1,0 +1,191 @@
+############################
+# OS & System Files
+############################
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.swp
+*.swo
+*.tmp
+
+############################
+# Logs
+############################
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+############################
+# Environment Variables
+############################
+.env
+.env.*
+!.env.example
+!.env.local.example
+
+############################
+# Dependency Directories
+############################
+node_modules/
+jspm_packages/
+.pnp/
+.pnp.js
+
+############################
+# Build Outputs
+############################
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+coverage/
+.vercel/
+.turbo/
+
+############################
+# TypeScript
+############################
+*.tsbuildinfo
+
+############################
+# Python
+############################
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+venv/
+.venv/
+env/
+
+############################
+# Solidity / Web3
+############################
+artifacts/
+cache/
+typechain/
+typechain-types/
+coverage/
+coverage.json
+
+############################
+# Testing
+############################
+coverage/
+.nyc_output/
+
+############################
+# IDEs & Editors
+############################
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.iml
+
+############################
+# MacOS Spotlight
+############################
+.Spotlight-V100
+.Trashes
+
+############################
+# Docker
+############################
+.dockerignore
+docker-compose.override.yml
+
+############################
+# Misc
+############################
+*.pem
+*.key
+*.crt
+secrets/
+*.local
+
+############################
+# Database
+############################
+*.sqlite
+*.sqlite3
+*.db
+
+############################
+# Temporary Files
+############################
+tmp/
+temp/
+*.cache
+
+############################
+# Lock files (optional)
+############################
+# Uncomment if you want reproducible builds tracked
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+############################
+# Static exports
+############################
+*.tgz
+
+############################
+# Storybook
+############################
+storybook-static/
+
+############################
+# Cypress
+############################
+cypress/videos/
+cypress/screenshots/
+
+############################
+# Hardhat / Foundry
+############################
+broadcast/
+out/
+forge-cache/
+
+############################
+# Next.js specific
+############################
+.next/
+next-env.d.ts
+
+############################
+# Vite
+############################
+vite.svg
+
+############################
+# Expo / React Native
+############################
+.expo/
+.expo-shared/
+android/
+ios/
+
+############################
+# Sentry
+############################
+.sentryclirc
+
+############################
+# Local-only configs
+############################
+*.local.json
+config.local.js

@@ -2,8 +2,11 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function Contact() {
+  const router = useRouter();
+
   return (
     <section id="contact" className="relative py-20">
       <div className="relative h-96 md:h-[500px] overflow-hidden">
@@ -53,6 +56,7 @@ export default function Contact() {
                 transition={{ duration: 0.8, delay: 0.6 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => router.push('/portfolio')}
                 className="flex items-center justify-center gap-3 px-12 py-4 text-lg font-semibold text-white transition-all duration-300 border-2 border-white rounded-full hover:bg-white hover:text-slate-800"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

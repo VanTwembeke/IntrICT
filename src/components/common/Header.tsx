@@ -2,9 +2,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
 export default function Header() {
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -183,6 +185,16 @@ export default function Header() {
                     </svg>
                     <span>Over</span>
                   </motion.a>
+                  <motion.a
+                    href="/contact"
+                    whileHover={{ scale: 1.02, x: 4 }}
+                    className="flex items-center px-4 py-3 transition-all duration-200 text-slate-700 hover:bg-linear-to-r hover:from-slate-50 hover:to-green-50 hover:text-slate-900 group"
+                  >
+                    <svg className="w-4 h-4 mr-3 transition-colors duration-200 text-slate-500 group-hover:text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span>Contact</span>
+                  </motion.a>
                 </div>
               </div>
             </div>
@@ -190,6 +202,7 @@ export default function Header() {
 
           {/* CTA Button */}
           <motion.button
+            onClick={() => router.push('/contact')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className={`px-6 py-2 rounded-full font-semibold text-sm transition-all duration-300 ${
@@ -282,12 +295,15 @@ export default function Header() {
                 <a href="/over" className="block py-2 text-slate-600 hover:text-slate-800">
                   Over
                 </a>
-              </div>
+              <a href="/contact" className="block py-2 text-slate-600 hover:text-slate-800">
+                Contact
+              </a>
             </div>
+          </div>
 
             {/* CTA Button */}
             <div className="pt-4">
-              <button className="w-full px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-slate-800 hover:bg-slate-700">
+              <button onClick={() => router.push('/contact')} className="w-full px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-slate-800 hover:bg-slate-700">
                 Start project
               </button>
             </div>

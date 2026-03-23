@@ -1,0 +1,601 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Lenis from 'lenis';
+import { motion } from 'framer-motion';
+import Header from '@/components/common/Header';
+import Footer from '@/components/common/Footer';
+import BackToTop from '@/components/common/BackToTop';
+
+export default function Contact() {
+  useEffect(() => {
+    const lenis = new Lenis();
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+  }, []);
+
+  const [formData, setFormData] = useState({
+    naam: '',
+    email: '',
+    telefoon: '',
+    onderwerp: '',
+    bericht: '',
+  });
+
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const faqItems = [
+    {
+      vraag: 'Hoe lang duurt het om een website te bouwen?',
+      antwoord:
+        'De doorlooptijd hangt af van de complexiteit van het project. Een eenvoudige website is doorgaans klaar binnen 2 à 3 weken. Een uitgebreider project met maatwerk functionaliteiten kan 4 tot 8 weken in beslag nemen. Tijdens ons eerste gesprek geef ik je een realistische inschatting.',
+    },
+    {
+      vraag: 'Wat kost het laten maken van een website?',
+      antwoord:
+        'Elke opdracht is uniek, dus ik werk altijd op maat. Een eenvoudige landingspagina start vanaf €500, terwijl een volledige webshop of webapp meer kan kosten. Na een kennismakingsgesprek ontvang je een gedetailleerde offerte zonder verborgen kosten.',
+    },
+    {
+      vraag: 'Bied je ook onderhoud en support na oplevering?',
+      antwoord:
+        'Absoluut. Ik bied flexibele onderhoudscontracten aan waarbij ik zorg voor updates, beveiliging en technische ondersteuning. Zo blijft jouw website altijd up-to-date en veilig. Dit wordt apart besproken en afgestemd op jouw behoeften.',
+    },
+    {
+      vraag: 'Kan ik mijn website zelf aanpassen na oplevering?',
+      antwoord:
+        'Ja, ik zorg altijd voor een gebruiksvriendelijk CMS (zoals een headless CMS of een eenvoudig beheerpaneel) zodat je zelf teksten, afbeeldingen en pagina\'s kunt aanpassen. Ik geef ook een korte training zodat je zelfstandig aan de slag kunt.',
+    },
+    {
+      vraag: 'In welke regio werk je?',
+      antwoord:
+        'Ik ben gevestigd in Brugge maar werk voor klanten door heel België en Nederland. De meeste samenwerking verloopt online, maar voor een persoonlijk gesprek ben ik ook beschikbaar in de regio Brugge en omgeving.',
+    },
+    {
+      vraag: 'Hoe verloopt een samenwerking stap voor stap?',
+      antwoord:
+        'We starten met een gratis kennismakingsgesprek. Daarna ontvang je een offerte en planning. Na akkoord start de ontwerp- en ontwikkelfase, met regelmatige updates en feedbackmomenten. Bij oplevering krijg je een werkende, geoptimaliseerde website plus een korte handleiding.',
+    },
+  ];
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    // Simulate async submission
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setLoading(false);
+    setSubmitted(true);
+  };
+
+  const contactInfo = [
+    {
+      icon: '📧',
+      title: 'E-mail',
+      value: 'hallo@jouwdomein.be',
+      href: 'mailto:hallo@jouwdomein.be',
+    },
+    {
+      icon: '📱',
+      title: 'Telefoon',
+      value: '+32 470 00 00 00',
+      href: 'tel:+32470000000',
+    },
+    {
+      icon: '📍',
+      title: 'Locatie',
+      value: 'Brugge, België',
+      href: '#',
+    },
+    {
+      icon: '🕐',
+      title: 'Beschikbaarheid',
+      value: 'Ma – Vr, 9:00 – 18:00',
+      href: '#',
+    },
+  ];
+
+  const onderwerpOpties = [
+    'Nieuwe website',
+    'Redesign bestaande website',
+    'E-commerce',
+    'SEO & Performance',
+    'Onderhoud & Support',
+    'Overige',
+  ];
+
+  return (
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <Header />
+
+      <main>
+        {/* Hero Section */}
+        <section className="relative pt-20 pb-16 overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900"></div>
+          <div className="absolute inset-0 opacity-40">
+            <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')]"></div>
+          </div>
+
+          <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="max-w-3xl mx-auto text-center"
+            >
+              <h1 className="mb-6 text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
+                Neem{' '}
+                <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">
+                  Contact
+                </span>{' '}
+                Op
+              </h1>
+              <p className="max-w-2xl mx-auto mb-8 text-xl leading-relaxed text-slate-200">
+                Heb je een project in gedachten of wil je gewoon kennismaken? Ik hoor het graag.
+                Stuur me een bericht en ik reageer binnen 24 uur.
+              </p>
+
+              {/* Quick stats */}
+              <div className="flex flex-wrap items-center justify-center gap-8 mt-10">
+                {[
+                  { label: 'Reactietijd', value: '< 24u' },
+                  { label: 'Gratis Kennismaking', value: '30 min' },
+                  { label: 'Projecten Opgeleverd', value: '50+' },
+                ].map((stat) => (
+                  <div key={stat.label} className="text-center">
+                    <div className="text-2xl font-bold text-white">{stat.value}</div>
+                    <div className="text-sm text-slate-400">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Contact Info Cards */}
+        <section className="py-16 bg-white">
+          <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {contactInfo.map((item, index) => (
+                <motion.a
+                  key={item.title}
+                  href={item.href}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  whileHover={{ scale: 1.03 }}
+                  className="flex flex-col items-center p-6 text-center transition-all duration-300 border border-blue-100 cursor-pointer bg-linear-to-br from-slate-50 to-blue-50 rounded-2xl hover:shadow-lg hover:border-blue-200"
+                >
+                  <div className="mb-3 text-3xl">{item.icon}</div>
+                  <div className="mb-1 text-sm font-medium text-slate-500">{item.title}</div>
+                  <div className="font-semibold text-slate-800">{item.value}</div>
+                </motion.a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Form + Side Info */}
+        <section className="py-20 bg-linear-to-br from-slate-50 to-blue-50">
+          <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="grid items-start grid-cols-1 gap-12 lg:grid-cols-5">
+              {/* Form */}
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
+                className="lg:col-span-3"
+              >
+                <div className="p-8 bg-white shadow-lg rounded-2xl md:p-10">
+                  <h2 className="mb-2 text-3xl font-bold text-slate-800">
+                    Stuur een{' '}
+                    <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">
+                      Bericht
+                    </span>
+                  </h2>
+                  <p className="mb-8 text-slate-500">
+                    Vul het formulier in en ik neem zo snel mogelijk contact met je op.
+                  </p>
+
+                  {submitted ? (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                      className="flex flex-col items-center justify-center py-16 text-center"
+                    >
+                      <div className="mb-4 text-6xl">🎉</div>
+                      <h3 className="mb-2 text-2xl font-bold text-slate-800">Bericht Verstuurd!</h3>
+                      <p className="max-w-sm text-slate-500">
+                        Bedankt voor je bericht. Ik neem binnen 24 uur contact met je op.
+                      </p>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                          setSubmitted(false);
+                          setFormData({ naam: '', email: '', telefoon: '', onderwerp: '', bericht: '' });
+                        }}
+                        className="px-6 py-3 mt-8 font-semibold text-white transition-all duration-300 shadow-md bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600"
+                      >
+                        Nieuw Bericht
+                      </motion.button>
+                    </motion.div>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      {/* Naam + Email */}
+                      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div>
+                          <label className="block mb-2 text-sm font-semibold text-slate-700">
+                            Naam <span className="text-blue-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            name="naam"
+                            required
+                            value={formData.naam}
+                            onChange={handleChange}
+                            placeholder="Jan Janssen"
+                            className="w-full px-4 py-3 transition-all duration-200 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
+                          />
+                        </div>
+                        <div>
+                          <label className="block mb-2 text-sm font-semibold text-slate-700">
+                            E-mail <span className="text-blue-500">*</span>
+                          </label>
+                          <input
+                            type="email"
+                            name="email"
+                            required
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder="jan@bedrijf.be"
+                            className="w-full px-4 py-3 transition-all duration-200 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Telefoon + Onderwerp */}
+                      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div>
+                          <label className="block mb-2 text-sm font-semibold text-slate-700">
+                            Telefoon
+                          </label>
+                          <input
+                            type="tel"
+                            name="telefoon"
+                            value={formData.telefoon}
+                            onChange={handleChange}
+                            placeholder="+32 470 00 00 00"
+                            className="w-full px-4 py-3 transition-all duration-200 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
+                          />
+                        </div>
+                        <div>
+                          <label className="block mb-2 text-sm font-semibold text-slate-700">
+                            Onderwerp <span className="text-blue-500">*</span>
+                          </label>
+                          <select
+                            name="onderwerp"
+                            required
+                            value={formData.onderwerp}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 transition-all duration-200 bg-white border-2 appearance-none cursor-pointer border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800"
+                          >
+                            <option value="" disabled>
+                              Selecteer een onderwerp
+                            </option>
+                            {onderwerpOpties.map((opt) => (
+                              <option key={opt} value={opt}>
+                                {opt}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Bericht */}
+                      <div>
+                        <label className="block mb-2 text-sm font-semibold text-slate-700">
+                          Bericht <span className="text-blue-500">*</span>
+                        </label>
+                        <textarea
+                          name="bericht"
+                          required
+                          rows={6}
+                          value={formData.bericht}
+                          onChange={handleChange}
+                          placeholder="Vertel me over je project, idee of vraag..."
+                          className="w-full px-4 py-3 transition-all duration-200 border-2 resize-none border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
+                        />
+                      </div>
+
+                      {/* Submit */}
+                      <motion.button
+                        type="submit"
+                        disabled={loading}
+                        whileHover={{ scale: loading ? 1 : 1.02 }}
+                        whileTap={{ scale: loading ? 1 : 0.98 }}
+                        className="w-full py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
+                      >
+                        {loading ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <svg
+                              className="w-5 h-5 animate-spin"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              />
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8v8H4z"
+                              />
+                            </svg>
+                            Versturen...
+                          </span>
+                        ) : (
+                          'Bericht Versturen →'
+                        )}
+                      </motion.button>
+                    </form>
+                  )}
+                </div>
+              </motion.div>
+
+              {/* Side info */}
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="space-y-6 lg:col-span-2"
+              >
+                {/* FAQ / extra info cards */}
+                <div className="p-8 bg-white shadow-lg rounded-2xl">
+                  <h3 className="mb-6 text-xl font-bold text-slate-800">Wat kan ik voor je doen?</h3>
+                  <ul className="space-y-4">
+                    {[
+                      { icon: '🌐', text: 'Professionele websites & webapps' },
+                      { icon: '🛒', text: 'E-commerce oplossingen' },
+                      { icon: '⚡', text: 'Performance & SEO optimalisatie' },
+                      { icon: '🔧', text: 'Onderhoud & technische support' },
+                      { icon: '🎨', text: 'UI/UX Design & Branding' },
+                    ].map((item) => (
+                      <li key={item.text} className="flex items-center gap-3 text-slate-700">
+                        <span className="text-xl">{item.icon}</span>
+                        <span>{item.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="p-8 border border-blue-100 bg-linear-to-br from-blue-50 to-purple-50 rounded-2xl">
+                  <h3 className="mb-4 text-xl font-bold text-slate-800">Gratis Kennismaking</h3>
+                  <p className="mb-6 leading-relaxed text-slate-600">
+                    Elke samenwerking start met een gratis kennismakingsgesprek van 30 minuten. 
+                    Zo leer ik je project kennen en bespreek ik hoe ik je het beste kan helpen.
+                  </p>
+                  <motion.a
+                    href="mailto:hallo@jouwdomein.be"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="inline-block px-6 py-3 font-semibold text-white transition-all duration-300 shadow-md bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-lg"
+                  >
+                    Plan een Gesprek →
+                  </motion.a>
+                </div>
+
+                {/* Social links */}
+                <div className="p-8 bg-white shadow-lg rounded-2xl">
+                  <h3 className="mb-4 text-xl font-bold text-slate-800">Volg Me Online</h3>
+                  <div className="flex gap-4">
+                    {[
+                      { label: 'LinkedIn', href: '#', bg: 'bg-blue-600' },
+                      { label: 'GitHub', href: '#', bg: 'bg-slate-800' },
+                      { label: 'Instagram', href: '#', bg: 'bg-pink-500' },
+                    ].map((social) => (
+                      <motion.a
+                        key={social.label}
+                        href={social.href}
+                        whileHover={{ scale: 1.08 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`px-4 py-2 text-sm font-semibold text-white rounded-lg transition-all duration-200 ${social.bg} hover:opacity-90`}
+                      >
+                        {social.label}
+                      </motion.a>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Map Section */}
+        <section className="py-20 bg-white">
+          <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="mb-12 text-center"
+            >
+              <h2 className="mb-4 text-4xl font-bold md:text-5xl text-slate-800">
+                Waar je me{' '}
+                <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">
+                  Vindt
+                </span>
+              </h2>
+              <p className="max-w-2xl mx-auto text-xl leading-relaxed text-slate-600">
+                Gevestigd in het hart van Brugge, beschikbaar voor heel België en Nederland.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="overflow-hidden shadow-xl rounded-2xl"
+            >
+              {/* Address bar above map */}
+              <div className="flex items-center gap-3 px-6 py-4 bg-linear-to-r from-slate-800 to-slate-900">
+                <span className="text-xl">📍</span>
+                <span className="font-semibold text-white">Brugge, West-Vlaanderen, België</span>
+                <a
+                  href="https://www.google.com/maps/search/Brugge,+Belgium"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-1.5 ml-auto text-sm font-semibold text-white transition-all duration-200 bg-blue-500 rounded-lg hover:bg-blue-600"
+                >
+                  Open in Maps →
+                </a>
+              </div>
+              {/* Embedded Google Map – Brugge */}
+              <iframe
+                title="Locatie Brugge"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80300.03982450544!2d3.1529808!3d51.2093!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c350d0f6c99f59%3A0x1f2c5b9a2c1e7e6a!2sBrugge!5e0!3m2!1snl!2sbe!4v1700000000000"
+                width="100%"
+                height="420"
+                style={{ border: 0, display: 'block' }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </motion.div>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="py-20 bg-linear-to-br from-slate-50 to-blue-50">
+          <div className="max-w-4xl px-4 mx-auto sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="mb-12 text-center"
+            >
+              <h2 className="mb-4 text-4xl font-bold md:text-5xl text-slate-800">
+                Veelgestelde{' '}
+                <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">
+                  Vragen
+                </span>
+              </h2>
+              <p className="max-w-2xl mx-auto text-xl leading-relaxed text-slate-600">
+                Staat jouw vraag er niet bij? Neem gerust contact op.
+              </p>
+            </motion.div>
+
+            <div className="space-y-4">
+              {faqItems.map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.07 }}
+                  viewport={{ once: true }}
+                  className="overflow-hidden bg-white shadow-md rounded-2xl"
+                >
+                  <button
+                    onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                    className="flex items-center justify-between w-full px-8 py-6 text-left transition-colors duration-200 hover:bg-blue-50 focus:outline-none"
+                  >
+                    <span className="pr-4 text-lg font-semibold text-slate-800">{item.vraag}</span>
+                    <motion.span
+                      animate={{ rotate: openFaq === index ? 45 : 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="flex items-center justify-center text-lg font-bold leading-none text-white rounded-full shrink-0 w-7 h-7 bg-linear-to-r from-blue-500 to-purple-500"
+                    >
+                      +
+                    </motion.span>
+                  </button>
+
+                  <motion.div
+                    initial={false}
+                    animate={
+                      openFaq === index
+                        ? { height: 'auto', opacity: 1 }
+                        : { height: 0, opacity: 0 }
+                    }
+                    transition={{ duration: 0.35, ease: 'easeInOut' }}
+                    style={{ overflow: 'hidden' }}
+                  >
+                    <div className="px-8 pb-6 leading-relaxed text-slate-600">
+                      {item.antwoord}
+                    </div>
+                  </motion.div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-20 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900">
+          <div className="px-4 mx-auto text-center max-w-7xl sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="mb-6 text-4xl font-bold text-white md:text-5xl">
+                Klaar om te{' '}
+                <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">
+                  Starten?
+                </span>
+              </h2>
+              <p className="max-w-3xl mx-auto mb-8 text-xl leading-relaxed text-slate-200">
+                Elk groot project begint met een eerste gesprek. Laat je idee niet wachten — 
+                neem vandaag nog contact op en laten we samen iets moois bouwen.
+              </p>
+              <div className="flex flex-col justify-center gap-4 sm:flex-row">
+                <motion.a
+                  href="mailto:hallo@jouwdomein.be"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
+                >
+                  Stuur een E-mail
+                </motion.a>
+                <motion.a
+                  href="tel:+32470000000"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10 backdrop-blur-sm"
+                >
+                  Bel Direct
+                </motion.a>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+      <BackToTop />
+    </div>
+  );
+}

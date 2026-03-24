@@ -2,7 +2,14 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import Lenis from '@studio-freight/lenis';
+
+declare global {
+  interface Window {
+    lenis?: {
+      scrollTo: (target: number, options?: { duration?: number }) => void;
+    };
+  }
+}
 
 export default function BackToTop() {
   const [isVisible, setIsVisible] = useState(false);
@@ -24,7 +31,7 @@ export default function BackToTop() {
     }
 
     // Fallback to native smooth scroll
-    document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (

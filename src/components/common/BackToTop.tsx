@@ -5,40 +5,48 @@ import { useState, useEffect } from 'react';
 
 export default function BackToTop() {
   const [isVisible, setIsVisible] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
 
   useEffect(() => {
     const toggleVisibility = () => {
-      setIsVisible(window.pageYOffset > 300);
+      // Only update if not currently scrolling to avoid flickering
+      if (!isScrolling) {
+        setIsVisible(window.pageYOffset > 300);
+      }
     };
 
     window.addEventListener('scroll', toggleVisibility);
     return () => window.removeEventListener('scroll', toggleVisibility);
-  }, []);
+  }, [isScrolling]);
 
   const scrollToTop = () => {
-    // Try Lenis scroll if available
+    setIsScrolling(true);
+    
     const lenis = (window as any).lenis;
+    
+    // Try Lenis scroll if available
     if (lenis && typeof lenis.scrollTo === 'function') {
       lenis.scrollTo(0, { duration: 1 });
+      // Reset scrolling state after animation
+      setTimeout(() => setIsScrolling(false), 1000);
       return;
     }
 
-    // Try window.scroll with smooth behavior
-    try {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch {
-      // Fallback for older browsers
-      document.documentElement.scrollTop = 0;
-    }
+    // Fallback to native smooth scroll
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Reset scrolling state after animation
+    setTimeout(() => setIsScrolling(false), 1000);
   };
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isVisible && (
         <motion.button
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
+          key="back-to-top"
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: 20 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={scrollToTop}

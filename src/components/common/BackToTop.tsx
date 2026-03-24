@@ -3,15 +3,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
-// Extend Window interface for Lenis
-declare global {
-  interface Window {
-    lenis?: {
-      scrollTo: (target: number, options?: { immediate?: boolean }) => void;
-    };
-  }
-}
-
 export default function BackToTop() {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -32,8 +23,9 @@ export default function BackToTop() {
     // Multiple approaches to ensure it works
     try {
       // Try Lenis first
-      if (window.lenis && typeof window.lenis.scrollTo === 'function') {
-        window.lenis.scrollTo(0, { immediate: false });
+      const lenis = (window as any).lenis;
+      if (lenis && typeof lenis.scrollTo === 'function') {
+        lenis.scrollTo(0, { immediate: false });
         return;
       }
     } catch (error) {

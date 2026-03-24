@@ -83,8 +83,8 @@ export default function Contact() {
     {
       icon: '📧',
       title: 'E-mail',
-      value: 'hallo@jouwdomein.be',
-      href: 'mailto:hallo@jouwdomein.be',
+      value: 'info@intrict.com',
+      href: 'mailto:info@intrict.com',
     },
     {
       icon: '📱',
@@ -95,13 +95,13 @@ export default function Contact() {
     {
       icon: '📍',
       title: 'Locatie',
-      value: 'Brugge, België',
+      value: 'Gent, België',
       href: '#',
     },
     {
       icon: '🕐',
       title: 'Beschikbaarheid',
-      value: 'Ma – Vr, 9:00 – 18:00',
+      value: 'Ma – Zo, 9:00 – 18:00',
       href: '#',
     },
   ];
@@ -151,7 +151,7 @@ export default function Contact() {
                 {[
                   { label: 'Reactietijd', value: '< 24u' },
                   { label: 'Gratis Kennismaking', value: '30 min' },
-                  { label: 'Projecten Opgeleverd', value: '50+' },
+                  { label: 'Projecten Opgeleverd', value: '0' },
                 ].map((stat) => (
                   <div key={stat.label} className="text-center">
                     <div className="text-2xl font-bold text-white">{stat.value}</div>
@@ -396,7 +396,7 @@ export default function Contact() {
                     Zo leer ik je project kennen en bespreek ik hoe ik je het beste kan helpen.
                   </p>
                   <motion.a
-                    href="mailto:hallo@jouwdomein.be"
+                    href="mailto:info@intrict.com"
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     className="inline-block px-6 py-3 font-semibold text-white transition-all duration-300 shadow-md bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-lg"
@@ -410,9 +410,8 @@ export default function Contact() {
                   <h3 className="mb-4 text-xl font-bold text-slate-800">Volg Me Online</h3>
                   <div className="flex gap-4">
                     {[
-                      { label: 'LinkedIn', href: '#', bg: 'bg-blue-600' },
-                      { label: 'GitHub', href: '#', bg: 'bg-slate-800' },
-                      { label: 'Instagram', href: '#', bg: 'bg-pink-500' },
+                      { label: 'LinkedIn', href: 'https://linkedin.com/in/VanTwembeke', bg: 'bg-blue-600' },
+                      { label: 'GitHub', href: 'https://github.com/VanTwembeke', bg: 'bg-slate-800' },
                     ].map((social) => (
                       <motion.a
                         key={social.label}
@@ -448,7 +447,7 @@ export default function Contact() {
                 </span>
               </h2>
               <p className="max-w-2xl mx-auto text-xl leading-relaxed text-slate-600">
-                Gevestigd in het hart van Brugge, beschikbaar voor heel België en Nederland.
+                Gevestigd in het hartje van Gent, beschikbaar voor heel België.
               </p>
             </motion.div>
 
@@ -462,9 +461,9 @@ export default function Contact() {
               {/* Address bar above map */}
               <div className="flex items-center gap-3 px-6 py-4 bg-linear-to-r from-slate-800 to-slate-900">
                 <span className="text-xl">📍</span>
-                <span className="font-semibold text-white">Brugge, West-Vlaanderen, België</span>
+                <span className="font-semibold text-white">Gent, West-Vlaanderen, België</span>
                 <a
-                  href="https://www.google.com/maps/search/Brugge,+Belgium"
+                  href="https://www.google.com/maps/search/Gent,+Belgium"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-1.5 ml-auto text-sm font-semibold text-white transition-all duration-200 bg-blue-500 rounded-lg hover:bg-blue-600"
@@ -472,9 +471,9 @@ export default function Contact() {
                   Open in Maps →
                 </a>
               </div>
-              {/* Embedded Google Map – Brugge */}
+              {/* Embedded Google Map – Gent */}
               <iframe
-                title="Locatie Brugge"
+                title="Locatie Gent"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80300.03982450544!2d3.1529808!3d51.2093!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c350d0f6c99f59%3A0x1f2c5b9a2c1e7e6a!2sBrugge!5e0!3m2!1snl!2sbe!4v1700000000000"
                 width="100%"
                 height="420"
@@ -573,7 +572,7 @@ export default function Contact() {
               </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
                 <motion.a
-                  href="mailto:hallo@jouwdomein.be"
+                  href="mailto:info@intrict.com"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"

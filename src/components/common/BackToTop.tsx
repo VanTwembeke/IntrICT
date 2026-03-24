@@ -17,13 +17,13 @@ export default function BackToTop() {
   }, []);
 
   const scrollToTop = () => {
-    // If Lenis is initialized on window, use it
-    if (window.lenis) {
-      // window.lenis has scrollTo
-      (window.lenis as Lenis).scrollTo(0, { immediate: false });
+    // Check if Lenis instance exists and has scrollTo method
+    if (window.lenis && typeof window.lenis.scrollTo === 'function') {
+      window.lenis.scrollTo(0, { duration: 1 });
       return;
     }
 
+    // Fallback to native smooth scroll
     document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

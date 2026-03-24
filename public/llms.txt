@@ -1,0 +1,51 @@
+# IntrICT
+
+> IntrICT is een Gent-gebaseerd web development studio opgericht door een freelance developer
+> gespecialiseerd in moderne websites, Next.js webapplicaties, UI/UX design, SEO-optimalisatie
+> en digitale strategie voor bedrijven in België en Nederland.
+
+## Over IntrICT
+
+IntrICT bouwt snelle, toegankelijke en visueel verzorgde websites met behulp van moderne
+technologieën zoals Next.js, React, TypeScript en Tailwind CSS. Het studio is gevestigd in
+Gent (Oost-Vlaanderen) en werkt voor klanten door heel België en Nederland.
+
+Kernwaarden: kwaliteit, performance, transparantie en langdurige samenwerking.
+
+## Diensten
+
+- [Website Ontwikkeling](https://www.intrict.com/diensten): Responsive websites en webapplicaties
+  gebouwd met Next.js, React en TypeScript. Van eenvoudige landingspagina tot complexe webapp.
+- [Logo & Branding](https://www.intrict.com/diensten): Unieke visuele identiteit inclusief logo,
+  kleurenpalet en typografie afgestemd op de doelgroep.
+- [Digitale Strategie](https://www.intrict.com/diensten): SEO, analytics, content strategie en
+  gebruikerservaring optimalisatie.
+- [Technische Ondersteuning](https://www.intrict.com/diensten): Hosting, beveiliging, updates
+  en performance monitoring.
+
+## Pagina's
+
+- [Home](https://www.intrict.com): Overzicht van diensten, werkwijze en contactmogelijkheden.
+- [Over](https://www.intrict.com/over): Achtergrond, vaardigheden en werkwijze van IntrICT.
+- [Portfolio](https://www.intrict.com/portfolio): Selectie van gerealiseerde projecten.
+- [Oplossingen](https://www.intrict.com/oplossingen): Gespecialiseerde diensten zoals crypto-advies,
+  mini-apps, GDPR-compliance en API development.
+- [Visie](https://www.intrict.com/visie): Filosofie en langetermijnmissie van IntrICT.
+- [Blog](https://www.intrict.com/blog): Artikelen over web development, SEO en digitale trends.
+- [Contact](https://www.intrict.com/contact): Contactformulier, locatie (Brugge) en beschikbaarheid.
+
+## Technische Stack
+
+Next.js · React · TypeScript · Tailwind CSS · Framer Motion · Lenis · Vercel · Node.js
+
+## Contact & Locatie
+
+- Locatie: Gent, Oost-Vlaanderen, België
+- Beschikbaarheid: maandag t/m vrijdag, 9:00–18:00
+- E-mail: info@intrict.com
+- Website: https://www.intrict.com
+
+## Licentie & Gebruik
+
+Alle content op intrict.com mag geciteerd worden voor informatieve en niet-commerciële doeleinden,
+mits correcte bronvermelding. Neem contact op voor commercieel gebruik of partnerships.

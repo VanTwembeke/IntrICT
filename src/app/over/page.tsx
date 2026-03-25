@@ -109,7 +109,7 @@ export default function Over() {
                   <div className="absolute inset-0 transform bg-linear-to-br from-blue-500 to-purple-500 rounded-3xl rotate-3"></div>
                   <div className="relative w-full h-full overflow-hidden bg-white shadow-2xl rounded-3xl">
                     <Image
-                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                      src="/Profiel.png"
                       alt="Profiel foto"
                       fill
                       className="object-cover"
@@ -179,7 +179,7 @@ export default function Over() {
                       <div className="text-sm text-slate-600">Jaar Ervaring</div>
                     </div>
                     <div className="text-center">
-                      <div className="mb-2 text-3xl font-bold text-purple-600">50+</div>
+                      <div className="mb-2 text-3xl font-bold text-purple-600">1+</div>
                       <div className="text-sm text-slate-600">Projecten</div>
                     </div>
                     <div className="text-center">

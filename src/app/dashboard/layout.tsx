@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import Sidebar from '@/app/dashboard/Sidebar';
 import type { Profile } from '@/lib/types';
 
 export default async function DashboardLayout({
@@ -23,11 +22,6 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-screen bg-slate-50">
-      <Sidebar
-        role={profile.role}
-        email={profile.email}
-        fullName={profile.full_name}
-      />
       <main className="flex-1 overflow-auto">
         {children}
       </main>

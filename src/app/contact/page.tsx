@@ -339,7 +339,7 @@ export default function Contact() {
                             Versturen...
                           </span>
                         ) : (
-                          'Bericht Versturen →'
+                          'Bericht Versturen &#8594'
                         )}
                       </motion.button>
                     </form>
@@ -385,7 +385,7 @@ export default function Contact() {
                     whileTap={{ scale: 0.97 }}
                     className="inline-block px-6 py-3 font-semibold text-white transition-all duration-300 shadow-md bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-lg"
                   >
-                    Plan een Gesprek →
+                    Plan een Gesprek &#8594
                   </motion.a>
                 </div>
 
@@ -459,7 +459,7 @@ export default function Contact() {
                   rel="noopener noreferrer"
                   className="px-4 py-1.5 ml-auto text-sm font-semibold text-white transition-all duration-200 bg-blue-500 rounded-lg hover:bg-blue-600"
                 >
-                  Open in Maps →
+                  Open in Maps &#8594
                 </a>
               </div>
               {/* Embedded Google Map – Gent */}

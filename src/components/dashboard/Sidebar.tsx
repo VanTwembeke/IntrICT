@@ -1,14 +1,14 @@
 'use client';
 
+import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   Mail,
   Users,
   User,
   LogOut,
-  ShoppingBag,
   Settings,
   Menu,
   X,
@@ -43,8 +43,6 @@ const navItems: NavItem[] = [
     icon: <Users size={18} />,
     roles: ['admin'],
   },
-  // Scalable: voeg hier nieuwe items toe
-  // { label: 'Bestellingen', href: '/dashboard/orders', icon: <ShoppingBag size={18} />, roles: ['admin'] },
   {
     label: 'Mijn profiel',
     href: '/dashboard/profile',
@@ -70,10 +68,13 @@ export default function Sidebar({ role, email, fullName }: SidebarProps) {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const filtered = navItems.filter((item) => item.roles.includes(role));
+  const supabase = createClient();
+
+  const filteredNavItems = navItems.filter((item) =>
+    item.roles.includes(role)
+  );
 
   const handleLogout = async () => {
-    const supabase = createClient();
     await supabase.auth.signOut();
     router.push('/login');
     router.refresh();
@@ -84,17 +85,21 @@ export default function Sidebar({ role, email, fullName }: SidebarProps) {
       {/* Logo */}
       <div className="px-6 py-6 border-b border-slate-700">
         <h1 className="text-xl font-bold text-white">IntrICT</h1>
-        <p className="text-xs text-slate-400 mt-1 capitalize">{role} dashboard</p>
+        <p className="text-xs text-slate-400 mt-1 capitalize">
+          {role} dashboard
+        </p>
       </div>
 
       {/* User info */}
       <div className="px-6 py-4 border-b border-slate-700">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold shrink-0">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold shrink-0">
             {(fullName ?? email)[0].toUpperCase()}
           </div>
           <div className="overflow-hidden">
-            <p className="text-sm font-semibold text-white truncate">{fullName ?? 'Gebruiker'}</p>
+            <p className="text-sm font-semibold text-white truncate">
+              {fullName ?? 'Gebruiker'}
+            </p>
             <p className="text-xs text-slate-400 truncate">{email}</p>
           </div>
         </div>
@@ -102,22 +107,25 @@ export default function Sidebar({ role, email, fullName }: SidebarProps) {
 
       {/* Nav items */}
       <nav className="flex-1 px-4 py-4 space-y-1">
-        {filtered.map((item) => {
-          const isActive = pathname === item.href;
+        {filteredNavItems.map((item) => {
+          const isActive =
+            pathname === item.href ||
+            pathname.startsWith(item.href + '/');
+
           return (
-            
+            <Link
               key={item.href}
               href={item.href}
               onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                 isActive
-                  ? 'bg-linear-to-r from-blue-500 to-purple-500 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md'
                   : 'text-slate-300 hover:bg-slate-700 hover:text-white'
               }`}
             >
               {item.icon}
               {item.label}
-            </a>
+            </Link>
           );
         })}
       </nav>
@@ -146,34 +154,47 @@ export default function Sidebar({ role, email, fullName }: SidebarProps) {
       <button
         onClick={() => setMobileOpen(true)}
         className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-slate-900 text-white rounded-xl shadow-lg"
+        aria-label="Open menu"
       >
         <Menu size={20} />
       </button>
 
       {/* Mobile drawer */}
-      {mobileOpen && (
-        <>
-          <div
-            className="lg:hidden fixed inset-0 z-40 bg-black/50"
-            onClick={() => setMobileOpen(false)}
-          />
-          <motion.aside
-            initial={{ x: -280 }}
-            animate={{ x: 0 }}
-            exit={{ x: -280 }}
-            transition={{ duration: 0.25 }}
-            className="lg:hidden fixed top-0 left-0 z-50 w-64 h-full bg-slate-900 flex flex-col"
-          >
-            <button
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            {/* Overlay */}
+            <motion.div
+              key="overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white"
+              className="lg:hidden fixed inset-0 z-40 bg-black/50"
+            />
+
+            {/* Sidebar */}
+            <motion.aside
+              key="sidebar"
+              initial={{ x: -280 }}
+              animate={{ x: 0 }}
+              exit={{ x: -280 }}
+              transition={{ duration: 0.25 }}
+              className="lg:hidden fixed top-0 left-0 z-50 w-64 h-full bg-slate-900 flex flex-col"
             >
-              <X size={20} />
-            </button>
-            <NavContent />
-          </motion.aside>
-        </>
-      )}
+              <button
+                onClick={() => setMobileOpen(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white"
+                aria-label="Close menu"
+              >
+                <X size={20} />
+              </button>
+
+              <NavContent />
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 }

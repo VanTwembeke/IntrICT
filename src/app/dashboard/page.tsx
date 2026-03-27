@@ -5,6 +5,7 @@ import { Mail, Users, User, ArrowRight, Calendar } from 'lucide-react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
+import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import type { Profile } from '@/lib/types';
 
 export default async function DashboardPage() {
@@ -70,6 +71,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Header />
+      <DashboardSidebar profile={profile} />
 
       <main>
         {/* Hero banner */}
@@ -134,7 +136,6 @@ export default async function DashboardPage() {
                   ))}
                 </div>
 
-                {/* Quick info */}
                 <div className="p-6 mt-10 border border-blue-100 bg-linear-to-br from-blue-50 to-purple-50 rounded-2xl md:p-8">
                   <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div>
@@ -162,7 +163,6 @@ export default async function DashboardPage() {
 
                 <div className="max-w-lg">
                   <div className="p-8 bg-white border shadow-sm border-slate-100 rounded-2xl">
-                    {/* Avatar */}
                     <div className="flex items-center gap-4 mb-6">
                       <div className="flex items-center justify-center w-16 h-16 text-2xl font-bold text-white rounded-full bg-linear-to-br from-blue-500 to-purple-500 shrink-0">
                         {(profile.full_name ?? profile.email)[0].toUpperCase()}
@@ -177,7 +177,6 @@ export default async function DashboardPage() {
                         </span>
                       </div>
                     </div>
-
                     <div className="pt-6 border-t border-slate-100">
                       <Link
                         href="/dashboard/profile"
@@ -192,10 +191,7 @@ export default async function DashboardPage() {
                   <div className="p-6 mt-4 border border-blue-100 bg-linear-to-br from-blue-50 to-purple-50 rounded-2xl">
                     <p className="text-sm leading-relaxed text-slate-600">
                       Heb je vragen of hulp nodig? Neem contact op via{' '}
-                      <a
-                        href="mailto:info@intrict.com"
-                        className="font-semibold text-blue-600 hover:underline"
-                      >
+                      <a href="mailto:info@intrict.com" className="font-semibold text-blue-600 hover:underline">
                         info@intrict.com
                       </a>
                     </p>

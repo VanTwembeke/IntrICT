@@ -109,7 +109,7 @@ export default function Over() {
                   <div className="absolute inset-0 transform bg-linear-to-br from-blue-500 to-purple-500 rounded-3xl rotate-3"></div>
                   <div className="relative w-full h-full overflow-hidden bg-white shadow-2xl rounded-3xl">
                     <Image
-                      src="/Profiel.png"
+                      src="/images/Profiel.png"
                       alt="Profiel foto"
                       fill
                       className="object-cover"

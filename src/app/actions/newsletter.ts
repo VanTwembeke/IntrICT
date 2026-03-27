@@ -21,8 +21,9 @@ export async function subscribeNewsletter(
 
   try {
     await resend.contacts.create({
-  email: emailEntry,
-});
+      email: emailEntry,
+      audienceId: process.env.RESEND_AUDIENCE_ID as string,
+    });
 
     return { success: true };
   } catch (error: unknown) {

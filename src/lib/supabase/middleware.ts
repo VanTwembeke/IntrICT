@@ -9,8 +9,12 @@ export async function updateSession(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll: () => request.cookies.getAll(),
-        setAll: (cookiesToSet) => {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          supabaseResponse = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
           );
@@ -19,19 +23,26 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  const { data: { session } } = await supabase.auth.getSession();
-  const user = session?.user;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const isAuthPage = request.nextUrl.pathname.startsWith('/login') ||
-    request.nextUrl.pathname.startsWith('/register');
-  const isDashboard = request.nextUrl.pathname.startsWith('/dashboard');
+  const path = request.nextUrl.pathname;
+  const isAuthPage = path === '/login' || path === '/register';
+  const isDashboard = path.startsWith('/dashboard');
 
+  // Not logged in → trying to access dashboard → redirect to login
   if (isDashboard && !user) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    return NextResponse.redirect(url);
   }
 
+  // Logged in → trying to access login/register → redirect to dashboard
   if (isAuthPage && user) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    const url = request.nextUrl.clone();
+    url.pathname = '/dashboard';
+    return NextResponse.redirect(url);
   }
 
   return supabaseResponse;

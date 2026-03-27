@@ -35,7 +35,7 @@ export async function sendContactForm(
   if (!parsed.success) {
     return {
       success: false,
-      error: parsed.error.errors[0]?.message ?? 'Ongeldige invoer.',
+      error: parsed.error.issues[0]?.message ?? 'Ongeldige invoer.',
     };
   }
 

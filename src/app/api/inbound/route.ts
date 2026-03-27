@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { emailStore } from '@/app/api/inbox/route';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -15,6 +16,19 @@ export async function POST(request: NextRequest) {
 
     const { from, subject, html, text } = event.data;
 
+    // Store in memory for dashboard inbox
+    emailStore.unshift({
+      id: crypto.randomUUID(),
+      from,
+      subject: subject ?? '(geen onderwerp)',
+      html: html ?? `<pre>${text ?? ''}</pre>`,
+      received_at: new Date().toISOString(),
+    });
+
+    // Keep max 50 emails in memory
+    if (emailStore.length > 50) emailStore.pop();
+
+    // Forward to personal email
     await resend.emails.send({
       from: 'IntrICT Doorstuur <noreply@intrict.com>',
       to: FORWARD_TO,

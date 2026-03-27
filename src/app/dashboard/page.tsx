@@ -69,7 +69,7 @@ if (!profile) {
         <h1 className="text-3xl font-bold text-slate-800">
           Welkom terug, {profile.full_name?.split(' ')[0] ?? 'gebruiker'} 👋
         </h1>
-        <p className="text-slate-500 mt-1">
+        <p className="mt-1 text-slate-500">
           {new Date().toLocaleDateString('nl-BE', {
             weekday: 'long',
             year: 'numeric',
@@ -81,19 +81,19 @@ if (!profile) {
 
       {/* Admin View */}
       {isAdmin ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {cards.map((card) => (
             <Link
               key={card.label}
               href={card.href}
-              className={`block bg-gradient-to-br ${card.bg} rounded-2xl p-6 border border-white shadow-sm hover:shadow-md transition-all duration-200 group`}
+              className={`block bg-linear-to-br ${card.bg} rounded-2xl p-6 border border-white shadow-sm hover:shadow-md transition-all duration-200 group`}
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="p-2 bg-white rounded-xl shadow-sm">
+                <div className="p-2 bg-white shadow-sm rounded-xl">
                   {card.icon}
                 </div>
               </div>
-              <p className="text-sm text-slate-500 mb-1">{card.label}</p>
+              <p className="mb-1 text-sm text-slate-500">{card.label}</p>
               <p className="text-2xl font-bold text-slate-800">
                 {card.value}
               </p>
@@ -103,7 +103,7 @@ if (!profile) {
       ) : (
         /* User View */
         <div className="max-w-lg">
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+          <div className="p-6 bg-white border shadow-sm rounded-2xl border-slate-100">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-blue-50 rounded-xl">
                 <User size={22} className="text-blue-500" />
@@ -120,7 +120,7 @@ if (!profile) {
 
             <Link
               href="/dashboard/profile"
-              className="block w-full text-center py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-200"
+              className="block w-full py-3 font-semibold text-center text-white transition-all duration-200 bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600"
             >
               Mijn profiel bewerken
             </Link>

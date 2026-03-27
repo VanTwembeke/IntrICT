@@ -26,21 +26,21 @@ export default function Login() {
       return;
     }
 
-    router.push('/dashboard');
     router.refresh();
+    router.push('/dashboard');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 px-4">
+    <div className="flex items-center justify-center min-h-screen px-4 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="w-full max-w-md"
       >
-        <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-10">
+        <div className="p-8 bg-white shadow-2xl rounded-2xl md:p-10">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-slate-800 mb-2">IntrICT</h1>
+            <h1 className="mb-2 text-3xl font-bold text-slate-800">IntrICT</h1>
             <p className="text-slate-500">Meld aan bij je dashboard</p>
           </div>
 
@@ -48,7 +48,7 @@ export default function Login() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex gap-2 items-start"
+              className="flex items-start gap-2 p-4 mb-6 border border-red-200 bg-red-50 rounded-xl"
             >
               <span className="text-red-500 shrink-0">⚠️</span>
               <p className="text-sm text-red-700">{error}</p>
@@ -67,7 +67,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="jan@bedrijf.be"
-                className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400 transition-all duration-200"
+                className="w-full px-4 py-3 transition-all duration-200 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
               />
             </div>
             <div>
@@ -81,7 +81,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400 transition-all duration-200"
+                className="w-full px-4 py-3 transition-all duration-200 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
               />
             </div>
 
@@ -90,15 +90,15 @@ export default function Login() {
               disabled={loading}
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
-              className="w-full py-3 font-semibold text-white bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 shadow-lg transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full py-3 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {loading ? 'Aanmelden...' : 'Aanmelden'}
             </motion.button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-500">
+          <p className="mt-6 text-sm text-center text-slate-500">
             Geen account?{' '}
-            <a href="/register" className="text-blue-500 font-semibold hover:underline">
+            <a href="/register" className="font-semibold text-blue-500 hover:underline">
               Registreer hier
             </a>
           </p>

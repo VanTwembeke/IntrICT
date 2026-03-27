@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import Sidebar from '@/components/dashboard/Sidebar';
+import Sidebar from '@/app/dashboard/Sidebar';
 import type { Profile } from '@/lib/types';
 
 export default async function DashboardLayout({

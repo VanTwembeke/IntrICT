@@ -202,18 +202,6 @@ export default function Header() {
 
           {/* CTA Button */}
           <motion.button
-            onClick={() => router.push('/contact')}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={`px-6 py-2 rounded-full font-semibold text-sm transition-all duration-300 ${
-              isScrolled 
-                ? 'bg-slate-800 text-white hover:bg-slate-700' 
-                : 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm'
-            }`}
-          >
-            Start project
-          </motion.button>
-          <motion.button
             onClick={() => router.push('/login')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -315,9 +303,6 @@ export default function Header() {
 
             {/* CTA Button */}
             <div className="pt-4">
-              <button onClick={() => router.push('/contact')} className="w-full px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-slate-800 hover:bg-slate-700">
-                Start project
-              </button>
               <button onClick={() => router.push('/login')} className="w-full px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-slate-800 hover:bg-slate-700">
                 Log In
               </button>

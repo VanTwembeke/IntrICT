@@ -3,6 +3,8 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+const FORWARD_TO = 'vantwembeke@icloud.com';
+
 export async function POST(request: NextRequest) {
   try {
     const event = await request.json();
@@ -15,7 +17,7 @@ export async function POST(request: NextRequest) {
 
     await resend.emails.send({
       from: 'IntrICT Doorstuur <noreply@intrict.com>',
-      to: process.env.FORWARD_TO_EMAIL!,
+      to: FORWARD_TO,
       replyTo: from,
       subject: `[IntrICT] ${subject ?? '(geen onderwerp)'}`,
       html: html ?? `<pre>${text ?? ''}</pre>`,

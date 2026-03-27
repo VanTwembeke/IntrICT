@@ -1,11 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useActionState } from 'react';
+import { subscribeNewsletter, type NewsletterState } from '@/app/actions/newsletter';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-
-  const isClient = typeof window !== 'undefined';
 
   const footerLinks = {
     company: [
@@ -33,6 +33,15 @@ export default function Footer() {
       { name: 'GDPR', href: '/gdpr' },
     ],
   };
+
+  const initialState: NewsletterState = {
+  success: false,
+};
+
+  const [state, formAction, pending] = useActionState(
+    subscribeNewsletter,
+    initialState
+  );
 
   const socialLinks = [
     {
@@ -205,51 +214,36 @@ export default function Footer() {
         </div>
 
         {/* Newsletter Signup */}
-        {isClient && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="py-6 border-t md:py-8 border-slate-200"
-          >
-            <div className="max-w-md px-4 mx-auto text-center">
-              <h3 className="mb-3 text-lg font-bold text-slate-800 md:text-xl md:mb-4">
-                Blijf Op de Hoogte
-              </h3>
-              <p className="mb-4 text-sm leading-relaxed text-slate-600 md:text-base md:mb-6">
-                Ontvang tips en updates over web development, design en digitale strategie.
-              </p>
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <input
-                  type="email"
-                  placeholder="Voer uw e-mailadres in"
-                  autoComplete="off"
-                  autoCorrect="off"
-                  autoCapitalize="off"
-                  spellCheck="false"
-                  data-form-type="other"
-                  data-lpignore="true"
-                  data-1p-ignore="true"
-                  data-bwignore="true"
-                  data-dashlane-ignore="true"
-                  className="flex-1 px-3 py-2 text-sm transition-all duration-300 bg-white border rounded-lg md:px-4 md:py-3 border-slate-300 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-400 md:text-base"
-                />
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  type="button"
-                  data-lpignore="true"
-                  data-1p-ignore="true"
-                  data-bwignore="true"
-                  data-dashlane-ignore="true"
-                  className="px-4 py-2 text-sm font-semibold text-white transition-all duration-300 rounded-lg bg-slate-800 md:px-6 md:py-3 hover:bg-slate-700 md:text-base"
-                >
-                  Aanmelden
-                </motion.button>
-              </div>
-            </div>
-          </motion.div>
-        )}
+        <form action={formAction} className="flex flex-col gap-3 sm:flex-row">
+  <input
+    type="email"
+    name="email"
+    required
+    placeholder="Voer uw e-mailadres in"
+    className="flex-1 px-3 py-2 text-sm transition-all duration-300 bg-white border rounded-lg md:px-4 md:py-3 border-slate-300 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-400 md:text-base"
+  />
+
+  <motion.button
+    type="submit"
+    disabled={pending}
+    whileHover={{ scale: pending ? 1 : 1.05 }}
+    whileTap={{ scale: pending ? 1 : 0.95 }}
+    className="px-4 py-2 text-sm font-semibold text-white transition-all duration-300 rounded-lg bg-slate-800 md:px-6 md:py-3 hover:bg-slate-700 md:text-base disabled:opacity-70"
+  >
+    {pending ? 'Bezig...' : 'Aanmelden'}
+  </motion.button>
+</form>
+{state?.success && (
+  <p className="mt-3 text-sm text-green-600">
+    🎉 Je bent succesvol ingeschreven!
+  </p>
+)}
+
+{state?.error && (
+  <p className="mt-3 text-sm text-red-600">
+    {state.error}
+  </p>
+)}
 
         {/* Bottom Bar */}
         <motion.div

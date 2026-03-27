@@ -99,11 +99,10 @@ export default function Contact() {
       <main>
         {/* Hero Section */}
         <section className="relative pt-20 pb-16 overflow-hidden">
-          <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900" />
           <div className="absolute inset-0 opacity-40">
-            <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')]"></div>
+            <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')]" />
           </div>
-
           <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
@@ -122,7 +121,6 @@ export default function Contact() {
                 Heb je een project in gedachten of wil je gewoon kennismaken? Ik hoor het graag.
                 Stuur me een bericht en ik reageer binnen 24 uur.
               </p>
-
               <div className="flex flex-wrap items-center justify-center gap-8 mt-10">
                 {[
                   { label: 'Reactietijd', value: '< 24u' },
@@ -202,7 +200,6 @@ export default function Contact() {
                     </motion.div>
                   ) : (
                     <form action={formAction} className="space-y-6">
-                      {/* Server-side error */}
                       {state.error && (
                         <motion.div
                           initial={{ opacity: 0, y: -10 }}
@@ -214,13 +211,9 @@ export default function Contact() {
                         </motion.div>
                       )}
 
-                      {/* Naam + Email */}
                       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <div>
-                          <label
-                            htmlFor="naam"
-                            className="block mb-2 text-sm font-semibold text-slate-700"
-                          >
+                          <label htmlFor="naam" className="block mb-2 text-sm font-semibold text-slate-700">
                             Naam <span className="text-blue-500">*</span>
                           </label>
                           <input
@@ -233,10 +226,7 @@ export default function Contact() {
                           />
                         </div>
                         <div>
-                          <label
-                            htmlFor="email"
-                            className="block mb-2 text-sm font-semibold text-slate-700"
-                          >
+                          <label htmlFor="email" className="block mb-2 text-sm font-semibold text-slate-700">
                             E-mail <span className="text-blue-500">*</span>
                           </label>
                           <input
@@ -250,13 +240,9 @@ export default function Contact() {
                         </div>
                       </div>
 
-                      {/* Telefoon + Onderwerp */}
                       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <div>
-                          <label
-                            htmlFor="telefoon"
-                            className="block mb-2 text-sm font-semibold text-slate-700"
-                          >
+                          <label htmlFor="telefoon" className="block mb-2 text-sm font-semibold text-slate-700">
                             Telefoon
                           </label>
                           <input
@@ -268,10 +254,7 @@ export default function Contact() {
                           />
                         </div>
                         <div>
-                          <label
-                            htmlFor="onderwerp"
-                            className="block mb-2 text-sm font-semibold text-slate-700"
-                          >
+                          <label htmlFor="onderwerp" className="block mb-2 text-sm font-semibold text-slate-700">
                             Onderwerp <span className="text-blue-500">*</span>
                           </label>
                           <select
@@ -293,12 +276,8 @@ export default function Contact() {
                         </div>
                       </div>
 
-                      {/* Bericht */}
                       <div>
-                        <label
-                          htmlFor="bericht"
-                          className="block mb-2 text-sm font-semibold text-slate-700"
-                        >
+                        <label htmlFor="bericht" className="block mb-2 text-sm font-semibold text-slate-700">
                           Bericht <span className="text-blue-500">*</span>
                         </label>
                         <textarea
@@ -311,7 +290,6 @@ export default function Contact() {
                         />
                       </div>
 
-                      {/* Submit */}
                       <motion.button
                         type="submit"
                         disabled={pending}
@@ -339,7 +317,7 @@ export default function Contact() {
                             Versturen...
                           </span>
                         ) : (
-                          'Bericht Versturen &#8594'
+                          'Bericht Versturen'
                         )}
                       </motion.button>
                     </form>
@@ -385,7 +363,7 @@ export default function Contact() {
                     whileTap={{ scale: 0.97 }}
                     className="inline-block px-6 py-3 font-semibold text-white transition-all duration-300 shadow-md bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-lg"
                   >
-                    Plan een Gesprek &#8594
+                    Plan een Gesprek
                   </motion.a>
                 </div>
 
@@ -393,16 +371,8 @@ export default function Contact() {
                   <h3 className="mb-4 text-xl font-bold text-slate-800">Volg Me Online</h3>
                   <div className="flex gap-4">
                     {[
-                      {
-                        label: 'LinkedIn',
-                        href: 'https://linkedin.com/in/VanTwembeke',
-                        bg: 'bg-blue-600',
-                      },
-                      {
-                        label: 'GitHub',
-                        href: 'https://github.com/VanTwembeke',
-                        bg: 'bg-slate-800',
-                      },
+                      { label: 'LinkedIn', href: 'https://linkedin.com/in/VanTwembeke', bg: 'bg-blue-600' },
+                      { label: 'GitHub', href: 'https://github.com/VanTwembeke', bg: 'bg-slate-800' },
                     ].map((social) => (
                       <motion.a
                         key={social.label}
@@ -449,7 +419,6 @@ export default function Contact() {
               viewport={{ once: true }}
               className="overflow-hidden shadow-xl rounded-2xl"
             >
-              {/* Address bar above map */}
               <div className="flex items-center gap-3 px-6 py-4 bg-linear-to-r from-slate-800 to-slate-900">
                 <span className="text-xl">📍</span>
                 <span className="font-semibold text-white">Gent, Oost-Vlaanderen, België</span>
@@ -459,10 +428,9 @@ export default function Contact() {
                   rel="noopener noreferrer"
                   className="px-4 py-1.5 ml-auto text-sm font-semibold text-white transition-all duration-200 bg-blue-500 rounded-lg hover:bg-blue-600"
                 >
-                  Open in Maps &#8594
+                  Open in Maps
                 </a>
               </div>
-              {/* Embedded Google Map – Gent */}
               <iframe
                 title="Locatie Gent"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80093.76529780734!2d3.6438!3d51.0543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c37161a3c4fcad%3A0x9de2b74cc31a5f4f!2sGent!5e0!3m2!1snl!2sbe!4v1700000000000"
@@ -521,11 +489,12 @@ export default function Contact() {
                       +
                     </motion.span>
                   </button>
-
                   <motion.div
                     initial={false}
                     animate={
-                      openFaq === index ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }
+                      openFaq === index
+                        ? { height: 'auto', opacity: 1 }
+                        : { height: 0, opacity: 0 }
                     }
                     transition={{ duration: 0.35, ease: 'easeInOut' }}
                     style={{ overflow: 'hidden' }}

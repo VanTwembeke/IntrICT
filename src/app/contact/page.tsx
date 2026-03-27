@@ -1,35 +1,27 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useActionState } from 'react';
 import Lenis from 'lenis';
 import { motion } from 'framer-motion';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
+import { sendContactForm, type ContactFormState } from '@/app/actions/contact';
+
+const initialState: ContactFormState = { success: false };
 
 export default function Contact() {
+  const [state, formAction, pending] = useActionState(sendContactForm, initialState);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
   useEffect(() => {
     const lenis = new Lenis();
-
     function raf(time: number) {
       lenis.raf(time);
       requestAnimationFrame(raf);
     }
-
     requestAnimationFrame(raf);
   }, []);
-
-  const [formData, setFormData] = useState({
-    naam: '',
-    email: '',
-    telefoon: '',
-    onderwerp: '',
-    bericht: '',
-  });
-
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const faqItems = [
     {
@@ -50,12 +42,12 @@ export default function Contact() {
     {
       vraag: 'Kan ik mijn website zelf aanpassen na oplevering?',
       antwoord:
-        'Ja, ik zorg altijd voor een gebruiksvriendelijk CMS (zoals een headless CMS of een eenvoudig beheerpaneel) zodat je zelf teksten, afbeeldingen en pagina\'s kunt aanpassen. Ik geef ook een korte training zodat je zelfstandig aan de slag kunt.',
+        "Ja, ik zorg altijd voor een gebruiksvriendelijk CMS (zoals een headless CMS of een eenvoudig beheerpaneel) zodat je zelf teksten, afbeeldingen en pagina's kunt aanpassen. Ik geef ook een korte training zodat je zelfstandig aan de slag kunt.",
     },
     {
       vraag: 'In welke regio werk je?',
       antwoord:
-        'Ik ben gevestigd in Brugge maar werk voor klanten door heel België en Nederland. De meeste samenwerking verloopt online, maar voor een persoonlijk gesprek ben ik ook beschikbaar in de regio Brugge en omgeving.',
+        'Ik ben gevestigd in Gent maar werk voor klanten door heel België en Nederland. De meeste samenwerking verloopt online, maar voor een persoonlijk gesprek ben ik ook beschikbaar in de regio Gent en omgeving.',
     },
     {
       vraag: 'Hoe verloopt een samenwerking stap voor stap?',
@@ -63,21 +55,6 @@ export default function Contact() {
         'We starten met een gratis kennismakingsgesprek. Daarna ontvang je een offerte en planning. Na akkoord start de ontwerp- en ontwikkelfase, met regelmatige updates en feedbackmomenten. Bij oplevering krijg je een werkende, geoptimaliseerde website plus een korte handleiding.',
     },
   ];
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    // Simulate async submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setLoading(false);
-    setSubmitted(true);
-  };
 
   const contactInfo = [
     {
@@ -146,7 +123,6 @@ export default function Contact() {
                 Stuur me een bericht en ik reageer binnen 24 uur.
               </p>
 
-              {/* Quick stats */}
               <div className="flex flex-wrap items-center justify-center gap-8 mt-10">
                 {[
                   { label: 'Reactietijd', value: '< 24u' },
@@ -210,7 +186,7 @@ export default function Contact() {
                     Vul het formulier in en ik neem zo snel mogelijk contact met je op.
                   </p>
 
-                  {submitted ? (
+                  {state.success ? (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -220,48 +196,54 @@ export default function Contact() {
                       <div className="mb-4 text-6xl">🎉</div>
                       <h3 className="mb-2 text-2xl font-bold text-slate-800">Bericht Verstuurd!</h3>
                       <p className="max-w-sm text-slate-500">
-                        Bedankt voor je bericht. Ik neem binnen 24 uur contact met je op.
+                        Bedankt voor je bericht. Je ontvangt een bevestigingsmail en ik neem binnen
+                        24 uur contact met je op.
                       </p>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => {
-                          setSubmitted(false);
-                          setFormData({ naam: '', email: '', telefoon: '', onderwerp: '', bericht: '' });
-                        }}
-                        className="px-6 py-3 mt-8 font-semibold text-white transition-all duration-300 shadow-md bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600"
-                      >
-                        Nieuw Bericht
-                      </motion.button>
                     </motion.div>
                   ) : (
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form action={formAction} className="space-y-6">
+                      {/* Server-side error */}
+                      {state.error && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex items-start gap-3 p-4 border border-red-200 rounded-xl bg-red-50"
+                        >
+                          <span className="text-red-500 shrink-0">⚠️</span>
+                          <p className="text-sm text-red-700">{state.error}</p>
+                        </motion.div>
+                      )}
+
                       {/* Naam + Email */}
                       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <div>
-                          <label className="block mb-2 text-sm font-semibold text-slate-700">
+                          <label
+                            htmlFor="naam"
+                            className="block mb-2 text-sm font-semibold text-slate-700"
+                          >
                             Naam <span className="text-blue-500">*</span>
                           </label>
                           <input
+                            id="naam"
                             type="text"
                             name="naam"
                             required
-                            value={formData.naam}
-                            onChange={handleChange}
                             placeholder="Jan Janssen"
                             className="w-full px-4 py-3 transition-all duration-200 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
                           />
                         </div>
                         <div>
-                          <label className="block mb-2 text-sm font-semibold text-slate-700">
+                          <label
+                            htmlFor="email"
+                            className="block mb-2 text-sm font-semibold text-slate-700"
+                          >
                             E-mail <span className="text-blue-500">*</span>
                           </label>
                           <input
+                            id="email"
                             type="email"
                             name="email"
                             required
-                            value={formData.email}
-                            onChange={handleChange}
                             placeholder="jan@bedrijf.be"
                             className="w-full px-4 py-3 transition-all duration-200 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
                           />
@@ -271,27 +253,32 @@ export default function Contact() {
                       {/* Telefoon + Onderwerp */}
                       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <div>
-                          <label className="block mb-2 text-sm font-semibold text-slate-700">
+                          <label
+                            htmlFor="telefoon"
+                            className="block mb-2 text-sm font-semibold text-slate-700"
+                          >
                             Telefoon
                           </label>
                           <input
+                            id="telefoon"
                             type="tel"
                             name="telefoon"
-                            value={formData.telefoon}
-                            onChange={handleChange}
                             placeholder="+32 470 00 00 00"
                             className="w-full px-4 py-3 transition-all duration-200 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
                           />
                         </div>
                         <div>
-                          <label className="block mb-2 text-sm font-semibold text-slate-700">
+                          <label
+                            htmlFor="onderwerp"
+                            className="block mb-2 text-sm font-semibold text-slate-700"
+                          >
                             Onderwerp <span className="text-blue-500">*</span>
                           </label>
                           <select
+                            id="onderwerp"
                             name="onderwerp"
                             required
-                            value={formData.onderwerp}
-                            onChange={handleChange}
+                            defaultValue=""
                             className="w-full px-4 py-3 transition-all duration-200 bg-white border-2 appearance-none cursor-pointer border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800"
                           >
                             <option value="" disabled>
@@ -308,15 +295,17 @@ export default function Contact() {
 
                       {/* Bericht */}
                       <div>
-                        <label className="block mb-2 text-sm font-semibold text-slate-700">
+                        <label
+                          htmlFor="bericht"
+                          className="block mb-2 text-sm font-semibold text-slate-700"
+                        >
                           Bericht <span className="text-blue-500">*</span>
                         </label>
                         <textarea
+                          id="bericht"
                           name="bericht"
                           required
                           rows={6}
-                          value={formData.bericht}
-                          onChange={handleChange}
                           placeholder="Vertel me over je project, idee of vraag..."
                           className="w-full px-4 py-3 transition-all duration-200 border-2 resize-none border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
                         />
@@ -325,18 +314,14 @@ export default function Contact() {
                       {/* Submit */}
                       <motion.button
                         type="submit"
-                        disabled={loading}
-                        whileHover={{ scale: loading ? 1 : 1.02 }}
-                        whileTap={{ scale: loading ? 1 : 0.98 }}
+                        disabled={pending}
+                        whileHover={{ scale: pending ? 1 : 1.02 }}
+                        whileTap={{ scale: pending ? 1 : 0.98 }}
                         className="w-full py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
                       >
-                        {loading ? (
+                        {pending ? (
                           <span className="flex items-center justify-center gap-2">
-                            <svg
-                              className="w-5 h-5 animate-spin"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
+                            <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                               <circle
                                 className="opacity-25"
                                 cx="12"
@@ -370,7 +355,6 @@ export default function Contact() {
                 viewport={{ once: true }}
                 className="space-y-6 lg:col-span-2"
               >
-                {/* FAQ / extra info cards */}
                 <div className="p-8 bg-white shadow-lg rounded-2xl">
                   <h3 className="mb-6 text-xl font-bold text-slate-800">Wat kan ik voor je doen?</h3>
                   <ul className="space-y-4">
@@ -392,7 +376,7 @@ export default function Contact() {
                 <div className="p-8 border border-blue-100 bg-linear-to-br from-blue-50 to-purple-50 rounded-2xl">
                   <h3 className="mb-4 text-xl font-bold text-slate-800">Gratis Kennismaking</h3>
                   <p className="mb-6 leading-relaxed text-slate-600">
-                    Elke samenwerking start met een gratis kennismakingsgesprek van 30 minuten. 
+                    Elke samenwerking start met een gratis kennismakingsgesprek van 30 minuten.
                     Zo leer ik je project kennen en bespreek ik hoe ik je het beste kan helpen.
                   </p>
                   <motion.a
@@ -405,13 +389,20 @@ export default function Contact() {
                   </motion.a>
                 </div>
 
-                {/* Social links */}
                 <div className="p-8 bg-white shadow-lg rounded-2xl">
                   <h3 className="mb-4 text-xl font-bold text-slate-800">Volg Me Online</h3>
                   <div className="flex gap-4">
                     {[
-                      { label: 'LinkedIn', href: 'https://linkedin.com/in/VanTwembeke', bg: 'bg-blue-600' },
-                      { label: 'GitHub', href: 'https://github.com/VanTwembeke', bg: 'bg-slate-800' },
+                      {
+                        label: 'LinkedIn',
+                        href: 'https://linkedin.com/in/VanTwembeke',
+                        bg: 'bg-blue-600',
+                      },
+                      {
+                        label: 'GitHub',
+                        href: 'https://github.com/VanTwembeke',
+                        bg: 'bg-slate-800',
+                      },
                     ].map((social) => (
                       <motion.a
                         key={social.label}
@@ -461,8 +452,8 @@ export default function Contact() {
               {/* Address bar above map */}
               <div className="flex items-center gap-3 px-6 py-4 bg-linear-to-r from-slate-800 to-slate-900">
                 <span className="text-xl">📍</span>
-                <span className="font-semibold text-white">Gent, West-Vlaanderen, België</span>
-                <a
+                <span className="font-semibold text-white">Gent, Oost-Vlaanderen, België</span>
+                
                   href="https://www.google.com/maps/search/Gent,+Belgium"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -474,7 +465,7 @@ export default function Contact() {
               {/* Embedded Google Map – Gent */}
               <iframe
                 title="Locatie Gent"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80300.03982450544!2d3.1529808!3d51.2093!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c350d0f6c99f59%3A0x1f2c5b9a2c1e7e6a!2sBrugge!5e0!3m2!1snl!2sbe!4v1700000000000"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80093.76529780734!2d3.6438!3d51.0543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c37161a3c4fcad%3A0x9de2b74cc31a5f4f!2sGent!5e0!3m2!1snl!2sbe!4v1700000000000"
                 width="100%"
                 height="420"
                 style={{ border: 0, display: 'block' }}
@@ -534,16 +525,12 @@ export default function Contact() {
                   <motion.div
                     initial={false}
                     animate={
-                      openFaq === index
-                        ? { height: 'auto', opacity: 1 }
-                        : { height: 0, opacity: 0 }
+                      openFaq === index ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }
                     }
                     transition={{ duration: 0.35, ease: 'easeInOut' }}
                     style={{ overflow: 'hidden' }}
                   >
-                    <div className="px-8 pb-6 leading-relaxed text-slate-600">
-                      {item.antwoord}
-                    </div>
+                    <div className="px-8 pb-6 leading-relaxed text-slate-600">{item.antwoord}</div>
                   </motion.div>
                 </motion.div>
               ))}
@@ -567,7 +554,7 @@ export default function Contact() {
                 </span>
               </h2>
               <p className="max-w-3xl mx-auto mb-8 text-xl leading-relaxed text-slate-200">
-                Elk groot project begint met een eerste gesprek. Laat je idee niet wachten — 
+                Elk groot project begint met een eerste gesprek. Laat je idee niet wachten —
                 neem vandaag nog contact op en laten we samen iets moois bouwen.
               </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row">

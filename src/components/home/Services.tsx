@@ -11,7 +11,7 @@ export default function Services() {
       description: "Moderne, responsive websites die perfect werken op alle apparaten. Van eenvoudige landing pages tot complexe webapplicaties met de nieuwste technologieën.",
       image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       alt: "Website ontwikkeling - Moderne web development",
-      href: "/website-ontwikkeling",
+      href: "/blog/website-ontwikkeling",
       buttonText: "Meer over website ontwikkeling"
     },
     {
@@ -19,7 +19,7 @@ export default function Services() {
       description: "Een uniek logo en sterke visuele identiteit die je bedrijf onderscheidt. Van concept tot definitieve ontwerpen die perfect passen bij je merk en doelgroep.",
       image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       alt: "Logo & Branding - Visuele identiteit",
-      href: "/logo-en-branding",
+      href: "/blog/logo-en-branding",
       buttonText: "Meer over logo & branding",
       reverse: true
     },
@@ -28,7 +28,7 @@ export default function Services() {
       description: "Een complete digitale aanpak die je online aanwezigheid optimaliseert. Van SEO en analytics tot content strategie en gebruikerservaring.",
       image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       alt: "Digitale strategie - Data en analytics",
-      href: "/digitale-strategie",
+      href: "/blog/digitale-strategie",
       buttonText: "Meer over digitale strategie"
     },
     {
@@ -36,7 +36,7 @@ export default function Services() {
       description: "Hulp bij het opzetten en onderhouden van je digitale infrastructuur. Van hosting en domeinen tot beveiliging en performance optimalisatie.",
       image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       alt: "Technische ondersteuning - Server en hosting",
-      href: "/technische-ondersteuning",
+      href: "/blog/technische-ondersteuning",
       buttonText: "Meer over technische ondersteuning",
       reverse: true
     }

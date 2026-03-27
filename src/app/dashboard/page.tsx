@@ -13,13 +13,13 @@ export default async function DashboardPage() {
 
   if (!user) redirect('/login');
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .maybeSingle<Profile>();
+const { data: profile, error } = await supabase
+  .from('profiles')
+  .select('*')
+  .eq('id', user.id)
+  .maybeSingle<Profile>();
 
-  if (error) {
+if (error) {
   console.error('PROFILE ERROR:', error);
   redirect('/login');
 }

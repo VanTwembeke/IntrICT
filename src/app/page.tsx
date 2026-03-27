@@ -6,7 +6,6 @@ import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import Hero from '@/components/home/Hero';
 import Services from '@/components/home/Services';
-import Approach from '@/components/home/Approach';
 import Process from '@/components/home/Process';
 // import Pricing from '@/components/home/Pricing'; // Component behouden voor later gebruik
 import Contact from '@/components/home/Contact';
@@ -29,7 +28,6 @@ export default function Home() {
       <Header />
       <Hero />
       <Services />
-      <Approach />
       <Process />
       {/* <Pricing /> */} {/* Component behouden voor later gebruik */}
       <Contact />

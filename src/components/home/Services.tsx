@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Services() {
   const services = [
@@ -10,6 +11,7 @@ export default function Services() {
       description: "Moderne, responsive websites die perfect werken op alle apparaten. Van eenvoudige landing pages tot complexe webapplicaties met de nieuwste technologieën.",
       image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       alt: "Website ontwikkeling - Moderne web development",
+      href: "/website-ontwikkeling",
       buttonText: "Meer over website ontwikkeling"
     },
     {
@@ -17,6 +19,7 @@ export default function Services() {
       description: "Een uniek logo en sterke visuele identiteit die je bedrijf onderscheidt. Van concept tot definitieve ontwerpen die perfect passen bij je merk en doelgroep.",
       image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       alt: "Logo & Branding - Visuele identiteit",
+      href: "/logo-en-branding",
       buttonText: "Meer over logo & branding",
       reverse: true
     },
@@ -25,6 +28,7 @@ export default function Services() {
       description: "Een complete digitale aanpak die je online aanwezigheid optimaliseert. Van SEO en analytics tot content strategie en gebruikerservaring.",
       image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       alt: "Digitale strategie - Data en analytics",
+      href: "/digitale-strategie",
       buttonText: "Meer over digitale strategie"
     },
     {
@@ -32,6 +36,7 @@ export default function Services() {
       description: "Hulp bij het opzetten en onderhouden van je digitale infrastructuur. Van hosting en domeinen tot beveiliging en performance optimalisatie.",
       image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       alt: "Technische ondersteuning - Server en hosting",
+      href: "/technische-ondersteuning",
       buttonText: "Meer over technische ondersteuning",
       reverse: true
     }
@@ -72,9 +77,11 @@ export default function Services() {
                 <p className="text-lg leading-relaxed text-slate-600">
                   {service.description}
                 </p>
-                <button className="px-8 py-3 font-semibold text-white transition-colors duration-300 rounded-full bg-slate-800 hover:bg-slate-700">
-                  {service.buttonText}
-                </button>
+                <Link href={service.href}>
+                  <span className="inline-block px-8 py-3 font-semibold text-white transition-colors duration-300 rounded-full cursor-pointer bg-slate-800 hover:bg-slate-700">
+                   {service.buttonText}
+                  </span>
+                </Link>
               </div>
             </motion.div>
           ))}

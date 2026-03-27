@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import type { Profile } from '@/lib/types';
+import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 
 export default async function DashboardLayout({
   children,
@@ -9,7 +10,10 @@ export default async function DashboardLayout({
 }) {
   const supabase = await createClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   if (!user) redirect('/login');
 
   const { data: profile } = await supabase
@@ -22,7 +26,11 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-screen bg-slate-50">
-      <main className="flex-1 overflow-auto">
+      {/* Sidebar */}
+      <DashboardSidebar profile={profile} />
+
+      {/* Main content (NO overflow-auto!) */}
+      <main className="flex-1">
         {children}
       </main>
     </div>

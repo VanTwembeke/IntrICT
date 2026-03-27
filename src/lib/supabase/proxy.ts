@@ -6,7 +6,7 @@ export async function updateSession(request: NextRequest) {
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
       cookies: {
         getAll() {
@@ -25,8 +25,10 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // BELANGRIJK: gebruik getClaims() niet getUser() of getSession()
-  const { data: { user } } = await supabase.auth.getUser();
+  // Correct destructuring — zonder dit is user altijd truthy
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
   const isAuthPage = path === '/login' || path === '/register';

@@ -13,7 +13,9 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          );
           supabaseResponse = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
@@ -23,22 +25,19 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // BELANGRIJK: gebruik getClaims() niet getUser() of getSession()
+  const { data: { user } } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
   const isAuthPage = path === '/login' || path === '/register';
   const isDashboard = path.startsWith('/dashboard');
 
-  // Not logged in → trying to access dashboard → redirect to login
   if (isDashboard && !user) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     return NextResponse.redirect(url);
   }
 
-  // Logged in → trying to access login/register → redirect to dashboard
   if (isAuthPage && user) {
     const url = request.nextUrl.clone();
     url.pathname = '/dashboard';

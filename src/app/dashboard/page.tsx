@@ -17,9 +17,16 @@ export default async function DashboardPage() {
     .from('profiles')
     .select('*')
     .eq('id', user.id)
-    .single<Profile>();
+    .maybeSingle<Profile>();
 
-  if (!profile) redirect('/login');
+  if (error) {
+  console.error('PROFILE ERROR:', error);
+  redirect('/login');
+}
+
+if (!profile) {
+  redirect('/login');
+}
 
   const isAdmin = profile.role === 'admin';
 

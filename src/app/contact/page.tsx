@@ -57,30 +57,10 @@ export default function Contact() {
   ];
 
   const contactInfo = [
-    {
-      icon: '📧',
-      title: 'E-mail',
-      value: 'info@intrict.com',
-      href: 'mailto:info@intrict.com',
-    },
-    {
-      icon: '📱',
-      title: 'Telefoon',
-      value: '+32 470 00 00 00',
-      href: 'tel:+32470000000',
-    },
-    {
-      icon: '📍',
-      title: 'Locatie',
-      value: 'Gent, België',
-      href: '#',
-    },
-    {
-      icon: '🕐',
-      title: 'Beschikbaarheid',
-      value: 'Ma – Zo, 9:00 – 18:00',
-      href: '#',
-    },
+    { icon: '📧', title: 'E-mail', value: 'info@intrict.com', href: 'mailto:info@intrict.com' },
+    { icon: '📱', title: 'Telefoon', value: '+32 470 00 00 00', href: 'tel:+32470000000' },
+    { icon: '📍', title: 'Locatie', value: 'Gent, België', href: '#' },
+    { icon: '🕐', title: 'Beschikbaarheid', value: 'Ma – Zo, 9:00 – 18:00', href: '#' },
   ];
 
   const onderwerpOpties = [
@@ -165,7 +145,6 @@ export default function Contact() {
         <section className="py-20 bg-linear-to-br from-slate-50 to-blue-50">
           <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div className="grid items-start grid-cols-1 gap-12 lg:grid-cols-5">
-              {/* Form */}
               <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -422,7 +401,7 @@ export default function Contact() {
               <div className="flex items-center gap-3 px-6 py-4 bg-linear-to-r from-slate-800 to-slate-900">
                 <span className="text-xl">📍</span>
                 <span className="font-semibold text-white">Gent, Oost-Vlaanderen, België</span>
-                
+                <a
                   href="https://www.google.com/maps/search/Gent,+Belgium"
                   target="_blank"
                   rel="noopener noreferrer"

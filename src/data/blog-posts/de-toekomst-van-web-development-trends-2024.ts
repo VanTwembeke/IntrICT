@@ -1,7 +1,7 @@
 import { BlogPost } from '@/lib/blog-api';
 
 export const blogPost: BlogPost = {
-  id: '1',
+  id: '4',
   title: 'De Toekomst van Web Development: Trends voor 2026',
   excerpt: 'Ontdek de belangrijkste trends en technologieën die de web development wereld in 2026 zullen vormgeven.',
   content: `# De Toekomst van Web Development: Trends voor 2026

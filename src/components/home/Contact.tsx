@@ -9,7 +9,7 @@ export default function Contact() {
 
   return (
     <section id="contact" className="relative py-20">
-      <div className="relative h-96 md:h-[500px] overflow-hidden">
+      <div className="relative overflow-hidden h-96 md:h-125">
         <Image
           src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
           alt="Contact - Laten we je project bespreken"

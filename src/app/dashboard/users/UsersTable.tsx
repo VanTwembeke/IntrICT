@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, User, Check, X } from 'lucide-react';
+import { Shield, User} from 'lucide-react';
 import type { Profile, UserRole } from '@/lib/types';
 import { createClient } from '@/lib/supabase/client';
 
@@ -24,21 +24,21 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <div className="overflow-hidden bg-white border shadow-sm rounded-2xl border-slate-100">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="bg-slate-50 border-b border-slate-100">
-              <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <tr className="border-b bg-slate-50 border-slate-100">
+              <th className="px-6 py-4 text-xs font-semibold tracking-wider text-left uppercase text-slate-500">
                 Gebruiker
               </th>
-              <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-xs font-semibold tracking-wider text-left uppercase text-slate-500">
                 Rol
               </th>
-              <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-xs font-semibold tracking-wider text-left uppercase text-slate-500">
                 Lid sinds
               </th>
-              <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-xs font-semibold tracking-wider text-left uppercase text-slate-500">
                 Acties
               </th>
             </tr>
@@ -49,11 +49,11 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
                 key={u.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="hover:bg-slate-50 transition-colors"
+                className="transition-colors hover:bg-slate-50"
               >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold shrink-0">
+                    <div className="flex items-center justify-center text-sm font-bold text-white rounded-full w-9 h-9 bg-linear-to-br from-blue-500 to-purple-500 shrink-0">
                       {(u.full_name ?? u.email)[0].toUpperCase()}
                     </div>
                     <div>

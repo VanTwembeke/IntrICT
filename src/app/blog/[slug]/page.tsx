@@ -446,20 +446,25 @@ export default function BlogPostPage() {
                 Laten we samenwerken aan jouw volgende project. Ik help je graag met web development, design en digitale strategie.
               </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
-                >
-                  Start Je Project
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10 backdrop-blur-sm"
-                >
-                  Bekijk Portfolio
-                </motion.button>
+                <Link href="/contact">
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    className="px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
+  >
+    Start Je Project
+  </motion.button>
+</Link>
+
+<Link href="/portfolio">
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    className="px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10 backdrop-blur-sm"
+  >
+    Bekijk Portfolio
+  </motion.button>
+</Link>
               </div>
             </motion.div>
           </div>

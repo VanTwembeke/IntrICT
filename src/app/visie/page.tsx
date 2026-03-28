@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-html-link-for-pages */
 'use client';
 
 import { useEffect } from 'react';
@@ -28,7 +27,7 @@ export default function Visie() {
       
       <main>
         {/* Hero Section */}
-        <section className="relative h-96 md:h-[500px] overflow-hidden">
+        <section className="relative overflow-hidden h-96 md:h-125">
           <Image
             src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
             alt="Visie - Samenwerking en klantresultaat"
@@ -360,7 +359,7 @@ export default function Visie() {
                 Laten we een kop koffie drinken en kijken hoe ik je kan helpen.
               </p>
               <a 
-                href="/#contact" 
+                href="/contact" 
                 className="inline-flex items-center px-8 py-4 space-x-3 text-lg font-medium text-white transition-colors duration-300 bg-slate-800 rounded-xl hover:bg-slate-700"
               >
                 <span>Laten we kennismaken</span>

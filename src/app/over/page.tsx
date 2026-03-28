@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
+import { Link } from 'lucide-react';
 
 export default function Over() {
   useEffect(() => {
@@ -298,6 +299,7 @@ export default function Over() {
                 bespreken hoe ik je kan helpen met jouw digitale ambities.
               </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
+                <Link href="/contact">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -305,6 +307,8 @@ export default function Over() {
                 >
                   Start Je Project
                 </motion.button>
+                </Link>
+                <Link href="/portfolio">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -312,6 +316,7 @@ export default function Over() {
                 >
                   Bekijk Portfolio
                 </motion.button>
+                </Link>
               </div>
             </motion.div>
           </div>

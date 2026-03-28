@@ -345,26 +345,6 @@ export default function Contact() {
                     Plan een Gesprek
                   </motion.a>
                 </div>
-
-                <div className="p-8 bg-white shadow-lg rounded-2xl">
-                  <h3 className="mb-4 text-xl font-bold text-slate-800">Volg Me Online</h3>
-                  <div className="flex gap-4">
-                    {[
-                      { label: 'LinkedIn', href: 'https://linkedin.com/in/VanTwembeke', bg: 'bg-blue-600' },
-                      { label: 'GitHub', href: 'https://github.com/VanTwembeke', bg: 'bg-slate-800' },
-                    ].map((social) => (
-                      <motion.a
-                        key={social.label}
-                        href={social.href}
-                        whileHover={{ scale: 1.08 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={`px-4 py-2 text-sm font-semibold text-white rounded-lg transition-all duration-200 ${social.bg} hover:opacity-90`}
-                      >
-                        {social.label}
-                      </motion.a>
-                    ))}
-                  </div>
-                </div>
               </motion.div>
             </div>
           </div>

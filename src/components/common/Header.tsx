@@ -5,13 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
-
-// ─── Mock notifications – replace with real data fetch ───────────────────────
-const MOCK_NOTIFICATIONS = [
-  { id: 1, title: 'Nieuw bericht ontvangen', time: '2 min geleden', read: false },
-  { id: 2, title: 'Project update beschikbaar', time: '1 uur geleden', read: false },
-  { id: 3, title: 'Factuur goedgekeurd', time: 'Gisteren', read: true },
-];
+import { useNotifications } from '@/hooks/useNotifications';
 
 export default function Header() {
   const router = useRouter();
@@ -21,12 +15,9 @@ export default function Header() {
   const [authLoading, setAuthLoading] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
 
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
-
-  const unreadCount = notifications.filter((n) => !n.read).length;
 
   // ── Auth listener ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -74,10 +65,13 @@ export default function Header() {
     router.refresh();
   };
 
-  // ── Mark all notifications read ────────────────────────────────────────────
-  const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  };
+  const {
+  notifications,
+  unreadCount,
+  markRead,
+  markAllRead,
+  loading,
+} = useNotifications();
 
   // ── Avatar initials ────────────────────────────────────────────────────────
   const avatarLabel = user?.email ? user.email[0].toUpperCase() : '?';
@@ -162,7 +156,7 @@ export default function Header() {
                         animate={{ scale: 1 }}
                         className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full shadow"
                       >
-                        {unreadCount}
+                        {unreadCount > 9 ? '9+' : unreadCount}
                       </motion.span>
                     )}
                   </motion.button>
@@ -185,21 +179,68 @@ export default function Header() {
                             </button>
                           )}
                         </div>
-                        <ul className="divide-y divide-slate-100">
-                          {notifications.map((n) => (
-                            <li
-                              key={n.id}
-                              className={`px-4 py-3 flex items-start gap-3 transition-colors duration-150 hover:bg-slate-50 cursor-pointer ${!n.read ? 'bg-blue-50/50' : ''}`}
-                              onClick={() => setNotifications((prev) => prev.map((x) => x.id === n.id ? { ...x, read: true } : x))}
-                            >
-                              <span className={`mt-1 w-2 h-2 rounded-full shrink-0 ${!n.read ? 'bg-blue-500' : 'bg-transparent border border-slate-300'}`} />
-                              <div>
-                                <p className={`text-sm leading-snug ${!n.read ? 'font-semibold text-slate-800' : 'text-slate-600'}`}>{n.title}</p>
-                                <p className="mt-0.5 text-xs text-slate-400">{n.time}</p>
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
+                        {loading ? (
+  <div className="px-4 py-6 text-sm text-center text-slate-400">
+    Laden...
+  </div>
+) : notifications.length === 0 ? (
+  <div className="px-4 py-6 text-center">
+    <p className="text-sm font-medium text-slate-500">
+      Alles bijgewerkt 🎉
+    </p>
+    <p className="mt-1 text-xs text-slate-400">
+      Je hebt geen nieuwe meldingen
+    </p>
+  </div>
+) : (
+  <ul className="overflow-y-auto divide-y divide-slate-100 max-h-72">
+    {notifications.slice(0, 8).map((n) => (
+      <li
+        key={n.id}
+        className={`px-4 py-3 flex items-start gap-3 transition-colors duration-150 cursor-pointer ${
+          !n.read ? 'bg-blue-50/50 hover:bg-blue-50' : 'hover:bg-slate-50'
+        }`}
+        onClick={async () => {
+          await markRead(n.id);
+          if (n.link) router.push(n.link);
+          setShowNotifications(false);
+        }}
+      >
+        <span
+          className={`mt-1 w-2 h-2 rounded-full shrink-0 ${
+            !n.read
+              ? TYPE_DOT[n.type] ?? 'bg-blue-500'
+              : 'bg-transparent border border-slate-300'
+          }`}
+        />
+        <div className="flex-1 min-w-0">
+          <p
+            className={`text-sm leading-snug truncate ${
+              !n.read
+                ? 'font-semibold text-slate-800'
+                : 'text-slate-600'
+            }`}
+          >
+            {n.title}
+          </p>
+
+          {n.body && (
+            <p className="text-xs text-slate-500 mt-0.5 truncate">
+              {n.body}
+            </p>
+          )}
+
+          <p className="mt-0.5 text-xs text-slate-400">
+            {new Date(n.created_at).toLocaleString('nl-BE', {
+              dateStyle: 'short',
+              timeStyle: 'short',
+            })}
+          </p>
+        </div>
+      </li>
+    ))}
+  </ul>
+)}
                         <div className="px-4 py-3 text-center border-t border-slate-100">
                           <a href="/dashboard/notifications" className="text-xs font-medium text-blue-500 hover:underline">
                             Alle meldingen bekijken
@@ -341,7 +382,7 @@ export default function Header() {
                   {unreadCount > 0 && (
                     <span className="ml-auto flex items-center gap-1.5 text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
                       <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                      {unreadCount} nieuw
+                      {unreadCount > 9 ? '9+' : unreadCount} nieuw
                     </span>
                   )}
                 </div>
@@ -415,6 +456,14 @@ export default function Header() {
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
+
+const TYPE_DOT: Record<string, string> = {
+  invoice: 'bg-green-500',
+  file: 'bg-blue-500',
+  message: 'bg-purple-500',
+  alert: 'bg-red-500',
+  info: 'bg-slate-400',
+};
 
 function DropdownNav({
   label,

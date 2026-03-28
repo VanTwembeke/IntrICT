@@ -23,13 +23,12 @@ export async function POST(req: NextRequest) {
   if (!to || !subject || !message)
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
 
-  // Look up recipient profile id
   const { data: recipient } = await supabase
     .from('profiles').select('id').eq('email', to).single();
   if (!recipient)
     return NextResponse.json({ error: 'Recipient not found' }, { status: 404 });
 
-  // Optional: upload file to Supabase Storage
+  // Upload bijlage
   let file_url: string | null = null;
   let file_name: string | null = null;
   if (file && file.size > 0) {
@@ -37,9 +36,7 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const { data: upload } = await supabase.storage
       .from('attachments')
-      .upload(`${crypto.randomUUID()}-${file_name}`, bytes, {
-        contentType: file.type,
-      });
+      .upload(`${crypto.randomUUID()}-${file_name}`, bytes, { contentType: file.type });
     if (upload) {
       const { data: { publicUrl } } = supabase.storage
         .from('attachments').getPublicUrl(upload.path);
@@ -47,8 +44,8 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Save to messages table
-  await supabase.from('messages').insert({
+  // Sla bericht op
+  const { error: insertError } = await supabase.from('messages').insert({
     from_id: user.id,
     to_id: recipient.id,
     subject,
@@ -56,8 +53,22 @@ export async function POST(req: NextRequest) {
     file_name,
     file_url,
   });
+  if (insertError) {
+    console.error('Insert failed:', insertError);
+    return NextResponse.json({ error: insertError.message }, { status: 500 });
+  }
 
-  // Send actual email via Resend
+  // Maak notificatie aan voor klant
+  await supabase.from('notifications').insert({
+    user_id: recipient.id,
+    title: subject,
+    body: message.slice(0, 100),
+    type: 'message',
+    read: false,
+    link: '/berichten',
+  });
+
+  // Stuur email
   await resend.emails.send({
     from: 'IntrICT <noreply@intrict.com>',
     to,

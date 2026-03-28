@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useActionState } from 'react';
 import { subscribeNewsletter, type NewsletterState } from '@/app/actions/newsletter';
 
@@ -8,23 +8,22 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
-    company: [
-      { name: 'Over Mij', href: '#over-mij' },
-      { name: 'Mijn Werk', href: '#portfolio' },
-      { name: 'Proces', href: '#proces' },
-      { name: 'Ervaring', href: '#ervaring' },
+    navigation: [
+      { name: 'Home', href: '/' },
+      { name: 'Portfolio', href: '/portfolio' },
+      { name: 'Blog', href: '/blog' },
+      { name: 'Oplossingen', href: '/oplossingen' },
+    ],
+    info: [
+      { name: 'Visie', href: '/visie' },
+      { name: 'Over Mij', href: '/over' },
+      { name: 'Contact', href: '/contact' },
     ],
     services: [
-      { name: 'Websites', href: '#website-ontwikkeling' },
-      { name: 'Logo & Branding', href: '#logo-branding' },
-      { name: 'Digitale Strategie', href: '#digitale-strategie' },
-      { name: 'Ondersteuning', href: '#technische-ondersteuning' },
-    ],
-    resources: [
-      { name: 'Portfolio', href: '#portfolio' },
-      { name: 'Blog', href: '#blog' },
-      { name: 'Tips', href: '#tips' },
-      { name: 'Resources', href: '#resources' },
+      { name: 'Website Ontwikkeling', href: '/blog/website-ontwikkeling' },
+      { name: 'Logo & Branding', href: '/blog/logo-en-branding' },
+      { name: 'Digitale Strategie', href: '/blog/digitale-strategie' },
+      { name: 'Technische Ondersteuning', href: '/blog/technische-ondersteuning' },
     ],
     legal: [
       { name: 'Privacybeleid', href: '/privacy' },
@@ -34,31 +33,16 @@ export default function Footer() {
     ],
   };
 
-  const initialState: NewsletterState = {
-  success: false,
-};
-
-  const [state, formAction, pending] = useActionState(
-    subscribeNewsletter,
-    initialState
-  );
+  const initialState: NewsletterState = { success: false };
+  const [state, formAction, pending] = useActionState(subscribeNewsletter, initialState);
 
   const socialLinks = [
-    {
-      name: 'Twitter',
-      href: '#',
-      icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-        </svg>
-      ),
-    },
     {
       name: 'LinkedIn',
       href: '#',
       icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
         </svg>
       ),
     },
@@ -66,8 +50,8 @@ export default function Footer() {
       name: 'GitHub',
       href: '#',
       icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
         </svg>
       ),
     },
@@ -75,201 +59,291 @@ export default function Footer() {
       name: 'Instagram',
       href: '#',
       icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987s11.987-5.367 11.987-11.987C24.014 5.367 18.647.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.297C4.198 14.895 3.708 13.744 3.708 12.447s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323c-.875.807-2.026 1.297-3.323 1.297zm7.718-1.297c-.875.807-2.026 1.297-3.323 1.297s-2.448-.49-3.323-1.297c-.807-.875-1.297-2.026-1.297-3.323s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323z"/>
+        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
         </svg>
       ),
     },
   ];
 
-          return (
-            <footer className="relative border-t bg-linear-to-b from-slate-50 to-slate-100 border-slate-200">
-              <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        {/* Main Footer Content */}
-        <div className="py-12 md:py-16">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5 md:gap-12">
-            {/* Company Info */}
-            <div className="sm:col-span-2 lg:col-span-2">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="space-y-4"
-              >
-                <div className="flex items-center space-x-3">
-                  <span className="text-lg font-bold text-slate-800 md:text-xl">IntrICT</span>
-                </div>
-                <p className="max-w-md text-sm leading-relaxed text-slate-600 md:text-base">
-                  Moderne web development van concept tot live website. Ik help je met responsive websites, 
-                  logo&apos;s, branding en complete digitale strategieën voor je bedrijf.
-                </p>
-                <div className="flex space-x-3 md:space-x-4">
-                  {socialLinks.map((social, index) => (
-                    <motion.a
-                      key={social.name}
-                      href={social.href}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: index * 0.1 }}
-                      whileHover={{ scale: 1.1, y: -2 }}
-                      className="p-2 transition-all duration-300 rounded-lg bg-slate-100 md:p-3 text-slate-600 hover:text-slate-800 hover:bg-slate-200"
-                    >
-                      {social.icon}
-                    </motion.a>
-                  ))}
-                </div>
-              </motion.div>
+  return (
+    <footer className="relative overflow-hidden bg-slate-900">
+      {/* Subtle top gradient accent */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-slate-500 to-transparent" />
+
+      {/* Background texture */}
+      <div className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
+          backgroundSize: '32px 32px',
+        }}
+      />
+
+      <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+
+        {/* === NEWSLETTER SECTION === */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="border-b py-14 md:py-16 border-slate-700/60"
+        >
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+            {/* Copy */}
+            <div className="max-w-md">
+              <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 text-xs font-semibold tracking-widest uppercase border rounded-full bg-slate-800 text-slate-400 border-slate-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Nieuwsbrief
+              </div>
+              <h2 className="mb-2 text-2xl font-bold tracking-tight text-white md:text-3xl">
+                Blijf op de hoogte
+              </h2>
+              <p className="text-sm leading-relaxed text-slate-400">
+                Ontvang tips over webontwikkeling, design en digitale strategie — geen spam, enkel waardevolle inzichten.
+              </p>
             </div>
 
-            {/* Company Links */}
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-              >
-                <h3 className="mb-4 text-sm font-bold tracking-wider uppercase text-slate-800 md:text-base md:mb-6">
-                  Over Mij
-                </h3>
-                <ul className="space-y-2 md:space-y-3">
-                  {footerLinks.company.map((link, index) => (
-                    <motion.li
-                      key={link.name}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.6, delay: 0.1 + index * 0.05 }}
-                    >
-                      <a
-                        href={link.href}
-                        className="block px-2 py-1 text-xs font-medium transition-all duration-300 rounded-lg text-slate-600 hover:text-slate-800 hover:bg-slate-100 md:px-3 md:py-2 md:text-sm"
+            {/* Form */}
+            <div className="w-full max-w-md lg:shrink-0">
+              <AnimatePresence mode="wait">
+                {state?.success ? (
+                  <motion.div
+                    key="success"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex items-center gap-3 px-5 py-4 border rounded-xl bg-emerald-500/10 border-emerald-500/30"
+                  >
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500/20 shrink-0">
+                      <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-emerald-400">Je bent ingeschreven!</p>
+                      <p className="text-xs text-emerald-500/70">Bedankt — je ontvangt binnenkort nieuws.</p>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.form
+                    key="form"
+                    action={formAction}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                      <div className="relative flex-1">
+                        <div className="absolute inset-y-0 flex items-center pointer-events-none left-3">
+                          <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <input
+                          type="email"
+                          name="email"
+                          required
+                          placeholder="jouw@email.be"
+                          className="w-full py-3 pl-10 pr-4 text-sm text-white transition-all duration-300 border placeholder-slate-500 bg-slate-800 rounded-xl border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 hover:border-slate-600"
+                        />
+                      </div>
+                      <motion.button
+                        type="submit"
+                        disabled={pending}
+                        whileHover={{ scale: pending ? 1 : 1.03 }}
+                        whileTap={{ scale: pending ? 1 : 0.97 }}
+                        className="inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-white transition-all duration-300 border rounded-xl bg-white/10 hover:bg-white/20 border-white/10 hover:border-white/20 disabled:opacity-50 shrink-0 backdrop-blur-sm"
                       >
-                        {link.name}
+                        {pending ? (
+                          <>
+                            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                            </svg>
+                            Bezig…
+                          </>
+                        ) : (
+                          <>
+                            Aanmelden
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                          </>
+                        )}
+                      </motion.button>
+                    </div>
+                    {state?.error && (
+                      <motion.p
+                        initial={{ opacity: 0, y: -6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-2.5 flex items-center gap-1.5 text-xs text-red-400"
+                      >
+                        <svg className="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        {state.error}
+                      </motion.p>
+                    )}
+                    <p className="mt-2.5 text-xs text-slate-600">
+                      Geen spam. Uitschrijven kan altijd. Powered by{' '}
+                      <a href="https://resend.com" target="_blank" rel="noopener noreferrer" className="underline transition-colors text-slate-500 hover:text-slate-400 underline-offset-2">
+                        Resend
                       </a>
-                    </motion.li>
-                  ))}
-                </ul>
-              </motion.div>
+                      .
+                    </p>
+                  </motion.form>
+                )}
+              </AnimatePresence>
             </div>
+          </div>
+        </motion.div>
 
-            {/* Services Links */}
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                <h3 className="mb-4 text-sm font-semibold tracking-wider uppercase text-slate-800">
-                  Diensten
-                </h3>
-                <ul className="space-y-2 md:space-y-3">
-                  {footerLinks.services.map((link, index) => (
-                    <motion.li
-                      key={link.name}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.6, delay: 0.2 + index * 0.05 }}
-                    >
-                      <a
-                        href={link.href}
-                        className="block px-2 py-1 text-xs font-medium transition-all duration-300 rounded-lg text-slate-600 hover:text-slate-800 hover:bg-slate-100 md:px-3 md:py-2 md:text-sm"
-                      >
-                        {link.name}
-                      </a>
-                    </motion.li>
-                  ))}
-                </ul>
-              </motion.div>
-            </div>
+        {/* === MAIN LINKS GRID === */}
+        <div className="py-12 md:py-14">
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-2 lg:grid-cols-4">
 
-            {/* Resources Links */}
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                <h3 className="mb-4 text-sm font-semibold tracking-wider uppercase text-slate-800">
-                  Inzichten
-                </h3>
-                <ul className="space-y-2 md:space-y-3">
-                  {footerLinks.resources.map((link, index) => (
-                    <motion.li
-                      key={link.name}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.6, delay: 0.3 + index * 0.05 }}
+            {/* Brand column */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="col-span-2 lg:col-span-1"
+            >
+              <a href="#" className="inline-block mb-4 text-xl font-bold tracking-tight text-white transition-colors hover:text-slate-300">
+                IntrICT
+              </a>
+              <p className="mb-5 text-sm leading-relaxed text-slate-500">
+                Moderne websites die werken — van concept tot live.
+              </p>
+              <div className="flex gap-2">
+                {socialLinks.map((social, i) => (
+                  <motion.a
+                    key={social.name}
+                    href={social.href}
+                    aria-label={social.name}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: i * 0.08 }}
+                    whileHover={{ y: -2 }}
+                    className="flex items-center justify-center w-8 h-8 transition-all duration-200 border rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 border-slate-700/50"
+                  >
+                    {social.icon}
+                  </motion.a>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Navigatie */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <h3 className="mb-4 text-xs font-bold tracking-widest uppercase text-slate-500">
+                Navigatie
+              </h3>
+              <ul className="space-y-2.5">
+                {footerLinks.navigation.map((link) => (
+                  <li key={link.name}>
+                    <a
+                      href={link.href}
+                      className="text-sm text-slate-400 hover:text-white transition-colors duration-200 hover:translate-x-0.5 inline-block"
                     >
-                      <a
-                        href={link.href}
-                        className="block px-2 py-1 text-xs font-medium transition-all duration-300 rounded-lg text-slate-600 hover:text-slate-800 hover:bg-slate-100 md:px-3 md:py-2 md:text-sm"
-                      >
-                        {link.name}
-                      </a>
-                    </motion.li>
-                  ))}
-                </ul>
-              </motion.div>
-            </div>
+                      {link.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Diensten */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <h3 className="mb-4 text-xs font-bold tracking-widest uppercase text-slate-500">
+                Diensten
+              </h3>
+              <ul className="space-y-2.5">
+                {footerLinks.services.map((link) => (
+                  <li key={link.name}>
+                    <a
+                      href={link.href}
+                      className="text-sm text-slate-400 hover:text-white transition-colors duration-200 hover:translate-x-0.5 inline-block"
+                    >
+                      {link.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Info */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <h3 className="mb-4 text-xs font-bold tracking-widest uppercase text-slate-500">
+                Info
+              </h3>
+              <ul className="space-y-2.5">
+                {footerLinks.info.map((link) => (
+                  <li key={link.name}>
+                    <a
+                      href={link.href}
+                      className="text-sm text-slate-400 hover:text-white transition-colors duration-200 hover:translate-x-0.5 inline-block"
+                    >
+                      {link.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+
+              {/* CTA */}
+              <div className="pt-6 mt-6 border-t border-slate-800">
+                <a
+                  href="/contact"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-white hover:text-slate-300 transition-colors group"
+                >
+                  Start je project
+                  <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </a>
+              </div>
+            </motion.div>
           </div>
         </div>
 
-        {/* Newsletter Signup */}
-        <form action={formAction} className="flex flex-col gap-3 sm:flex-row">
-  <input
-    type="email"
-    name="email"
-    required
-    placeholder="Voer uw e-mailadres in"
-    className="flex-1 px-3 py-2 text-sm transition-all duration-300 bg-white border rounded-lg md:px-4 md:py-3 border-slate-300 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-400 md:text-base"
-  />
-
-  <motion.button
-    type="submit"
-    disabled={pending}
-    whileHover={{ scale: pending ? 1 : 1.05 }}
-    whileTap={{ scale: pending ? 1 : 0.95 }}
-    className="px-4 py-2 text-sm font-semibold text-white transition-all duration-300 rounded-lg bg-slate-800 md:px-6 md:py-3 hover:bg-slate-700 md:text-base disabled:opacity-70"
-  >
-    {pending ? 'Bezig...' : 'Aanmelden'}
-  </motion.button>
-</form>
-{state?.success && (
-  <p className="mt-3 text-sm text-green-600">
-    🎉 Je bent succesvol ingeschreven!
-  </p>
-)}
-
-{state?.error && (
-  <p className="mt-3 text-sm text-red-600">
-    {state.error}
-  </p>
-)}
-
-        {/* Bottom Bar */}
+        {/* === BOTTOM BAR === */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="py-6 border-t md:py-8 border-slate-200"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="flex flex-col items-center justify-between gap-3 py-5 border-t border-slate-800 sm:flex-row"
         >
-          <div className="flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0">
-            <div className="text-sm font-medium text-center text-slate-600 md:text-base md:text-left">
-              © {currentYear} IntrICT. Alle rechten voorbehouden.
-            </div>
-            <div className="flex flex-wrap justify-center gap-2 md:justify-end md:gap-4">
-              {footerLinks.legal.map((link, index) => (
-                <motion.a
-                  key={link.name}
-                  href={link.href}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.5 + index * 0.05 }}
-                  className="px-2 py-1 text-xs font-medium transition-all duration-300 rounded-lg text-slate-600 hover:text-slate-800 hover:bg-slate-100 md:px-3 md:py-2 md:text-sm"
-                >
-                  {link.name}
-                </motion.a>
-              ))}
-            </div>
+          <p className="text-xs text-slate-600">
+            © {currentYear} IntrICT — Alle rechten voorbehouden.
+          </p>
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
+            {footerLinks.legal.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                className="text-xs transition-colors duration-200 text-slate-600 hover:text-slate-400"
+              >
+                {link.name}
+              </a>
+            ))}
           </div>
         </motion.div>
       </div>

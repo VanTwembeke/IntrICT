@@ -1,34 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { emailStore } from '@/app/api/inbox/route';
+import { createClient } from '@supabase/supabase-js';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-
 const FORWARD_TO = 'vantwembeke@icloud.com';
+
+// Service role — no logged-in user in a webhook
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function POST(request: NextRequest) {
   try {
     const event = await request.json();
-
-    if (event.type !== 'email.received') {
-      return NextResponse.json({ received: true });
-    }
+    if (event.type !== 'email.received') return NextResponse.json({ received: true });
 
     const { from, subject, html, text } = event.data;
 
-    // Store in memory for dashboard inbox
-    emailStore.unshift({
-      id: crypto.randomUUID(),
+    await supabase.from('inbound_emails').insert({
       from,
       subject: subject ?? '(geen onderwerp)',
       html: html ?? `<pre>${text ?? ''}</pre>`,
-      received_at: new Date().toISOString(),
     });
 
-    // Keep max 50 emails in memory
-    if (emailStore.length > 50) emailStore.pop();
-
-    // Forward to personal email
     await resend.emails.send({
       from: 'IntrICT Doorstuur <noreply@intrict.com>',
       to: FORWARD_TO,

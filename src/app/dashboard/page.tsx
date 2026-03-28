@@ -46,7 +46,7 @@ export default async function DashboardPage() {
       value: 'Berichten',
       description: 'Bekijk ontvangen mails',
       icon: <Mail size={22} className="text-purple-500" />,
-      href: '/dashboard/inbox',
+      href: '/dashboard/berichten',
       bg: 'from-purple-50 to-purple-100',
       border: 'border-purple-100',
     },

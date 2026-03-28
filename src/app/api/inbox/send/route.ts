@@ -32,6 +32,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
+  // ── Find recipient ────────────────────────────────────────────────────────
+  const { data: recipient } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('email', to)
+    .maybeSingle<{ id: string }>();
+
   // ── Build email ───────────────────────────────────────────────────────────
   const attachments: { filename: string; content: Buffer }[] = [];
   if (file && file.size > 0) {
@@ -61,19 +68,25 @@ export async function POST(req: NextRequest) {
       attachments: attachments.length > 0 ? attachments : undefined,
     });
 
-    // ── Find the recipient's profile to create a notification ─────────────
-    const { data: recipient } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('email', to)
-      .maybeSingle<{ id: string }>();
-
     if (recipient) {
       const notifType = file && file.size > 0 ? 'file' : 'message';
+
+      // ── Insert into messages table so the inbox shows it ─────────────────
+      //    Adjust column names here if your schema differs
+      await supabase.from('messages').insert({
+        to_id:      recipient.id,
+        from_email: 'info@intrict.com',
+        subject,
+        body:       message,
+        has_attachment: attachments.length > 0,
+        // read defaults to false in the DB
+      });
+
+      // ── Notification for the bell icon ────────────────────────────────────
       await supabase.from('notifications').insert({
         user_id: recipient.id,
         title:   subject,
-        body:    message.slice(0, 160) + (message.length > 160 ? '…' : ''),
+        body:    message.slice(0, 160) + (message.length > 160 ? '...' : ''),
         type:    notifType,
         link:    '/dashboard/inbox',
       });

@@ -26,6 +26,8 @@ export default function Footer() {
       { name: 'Technische Ondersteuning', href: '/blog/technische-ondersteuning' },
     ],
     legal: [
+      { name: 'Sitemap', href: '/sitemap.xml' },
+      { name: 'Robots', href: '/robots.txt' },
       { name: 'Privacybeleid', href: '/privacy' },
       { name: 'Algemene Voorwaarden', href: '/voorwaarden' },
       { name: 'Cookiebeleid', href: '/cookies' },

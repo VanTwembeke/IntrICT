@@ -1,160 +1,210 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { Mail, Users, User, ArrowUpRight, Calendar, LayoutDashboard, Shield } from 'lucide-react';
+import { Mail, Users, User, ArrowRight, Calendar } from 'lucide-react';
+import Header from '@/components/common/Header';
+import Footer from '@/components/common/Footer';
+import BackToTop from '@/components/common/BackToTop';
+import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import type { Profile } from '@/lib/types';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   if (!user) redirect('/login');
 
   const { data: profile, error } = await supabase
-    .from('profiles').select('*').eq('id', user.id).maybeSingle<Profile>();
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .maybeSingle<Profile>();
+
   if (error || !profile) redirect('/login');
 
   const isAdmin = profile.role === 'admin';
+
   const userCount = isAdmin
     ? (await supabase.from('profiles').select('id', { count: 'exact', head: true })).count ?? 0
     : 0;
 
-  const dateString = new Date().toLocaleDateString('nl-BE', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-  });
-
   const cards = [
     {
-      label: 'Gebruikers',
+      label: 'Geregistreerde gebruikers',
       value: String(userCount),
-      sub: 'Geregistreerde accounts',
-      icon: Users,
+      description: 'Totaal aantal accounts',
+      icon: <Users size={22} className="text-blue-500" />,
       href: '/dashboard/users',
-      accent: 'from-blue-500 to-blue-600',
-      glow: 'shadow-blue-900/40',
-      show: isAdmin,
+      bg: 'from-blue-50 to-blue-100',
+      border: 'border-blue-100',
     },
     {
       label: 'Inbox',
       value: 'Berichten',
-      sub: 'Bekijk ontvangen mail',
-      icon: Mail,
+      description: 'Bekijk ontvangen mails',
+      icon: <Mail size={22} className="text-purple-500" />,
       href: '/dashboard/inbox',
-      accent: 'from-purple-500 to-purple-600',
-      glow: 'shadow-purple-900/40',
-      show: true,
+      bg: 'from-purple-50 to-purple-100',
+      border: 'border-purple-100',
     },
     {
       label: 'Mijn profiel',
-      value: profile.full_name?.split(' ')[0] ?? 'Profiel',
-      sub: 'Beheer je gegevens',
-      icon: User,
+      value: 'Profiel',
+      description: 'Beheer je gegevens',
+      icon: <User size={22} className="text-green-500" />,
       href: '/dashboard/profile',
-      accent: 'from-emerald-500 to-emerald-600',
-      glow: 'shadow-emerald-900/40',
-      show: true,
+      bg: 'from-green-50 to-green-100',
+      border: 'border-green-100',
     },
-  ].filter((c) => c.show);
+  ];
+
+  const dateString = new Date().toLocaleDateString('nl-BE', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <Header />
+      <DashboardSidebar profile={profile} />
 
-      {/* Subtle dot-grid texture */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.035]"
-        style={{ backgroundImage: 'radial-gradient(circle, #e2e8f0 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
-
-      {/* ── Hero ── */}
-      <section className="relative px-4 pt-24 pb-16 mx-auto overflow-hidden sm:px-6 lg:px-8 max-w-7xl">
-        {/* Glow blob */}
-        <div className="absolute rounded-full pointer-events-none -top-40 -left-40 w-96 h-96 bg-blue-600/10 blur-3xl" />
-        <div className="absolute rounded-full pointer-events-none -top-20 right-20 w-72 h-72 bg-purple-600/8 blur-3xl" />
-
-        <div className="relative flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              {isAdmin ? (
-                <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-purple-400 bg-purple-400/10 border border-purple-400/20 px-3 py-1 rounded-full">
-                  <Shield size={10} /> Administrator
-                </span>
-              ) : (
-                <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-blue-400 bg-blue-400/10 border border-blue-400/20 px-3 py-1 rounded-full">
-                  <LayoutDashboard size={10} /> Dashboard
-                </span>
-              )}
-            </div>
-            <h1 className="text-4xl font-bold leading-tight text-white md:text-5xl">
-              Welkom terug,{' '}
-              <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">
-                {profile.full_name?.split(' ')[0] ?? 'gebruiker'}
-              </span>
-            </h1>
-            <p className="mt-2 text-sm text-slate-400">{profile.email}</p>
+      <main>
+        {/* Hero banner */}
+        <section className="relative pt-20 pb-16 overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900" />
+          <div className="absolute inset-0 opacity-40">
+            <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')]" />
           </div>
-          <div className="flex items-center gap-2 text-sm text-slate-500 shrink-0">
-            <Calendar size={14} className="text-slate-600" />
-            <span className="capitalize">{dateString}</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Cards ── */}
-      <section className="relative px-4 pb-16 mx-auto sm:px-6 lg:px-8 max-w-7xl">
-        <div className={`grid grid-cols-1 gap-5 ${cards.length === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2 max-w-xl'}`}>
-          {cards.map((card) => (
-            <Link
-              key={card.label}
-              href={card.href}
-              className={`group relative overflow-hidden rounded-2xl border border-white/8 bg-white/3 p-6 hover:bg-white/6 hover:border-white/15 transition-all duration-300 hover:-translate-y-0.5`}
-            >
-              {/* Card glow on hover */}
-              <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-linear-to-br ${card.accent} blur-2xl`} style={{ opacity: 0 }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.04')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '0')}
-              />
-
-              <div className="flex items-start justify-between mb-6">
-                <div className={`p-2.5 rounded-xl bg-linear-to-br ${card.accent} shadow-lg ${card.glow}`}>
-                  <card.icon size={18} className="text-white" />
-                </div>
-                <ArrowUpRight size={16} className="text-slate-600 group-hover:text-slate-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200" />
+          <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="mb-2 text-sm font-medium tracking-widest text-blue-400 uppercase">
+                  {isAdmin ? 'Administrator' : 'Gebruiker'}
+                </p>
+                <h1 className="text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
+                  Welkom terug,{' '}
+                  <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">
+                    {profile.full_name?.split(' ')[0] ?? 'gebruiker'}
+                  </span>
+                </h1>
               </div>
-
-              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-1">{card.label}</p>
-              <p className="text-2xl font-bold text-white">{card.value}</p>
-              <p className="mt-1 text-xs text-slate-600">{card.sub}</p>
-            </Link>
-          ))}
-        </div>
-
-        {/* ── Admin banner ── */}
-        {isAdmin && (
-          <div className="flex flex-col gap-4 p-6 mt-6 border rounded-2xl border-white/8 bg-linear-to-r from-blue-500/8 to-purple-500/8 md:p-8 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-widest text-blue-400 mb-1">Admin toegang</p>
-              <p className="font-semibold text-white">Je hebt volledige beheerrechten</p>
-              <p className="mt-1 text-sm text-slate-500">Beheer gebruikers, stuur berichten en bekijk alle inbox meldingen.</p>
+              <div className="flex items-center gap-2 text-slate-400">
+                <Calendar size={16} />
+                <span className="text-sm capitalize">{dateString}</span>
+              </div>
             </div>
-            <Link
-              href="/dashboard/users"
-              className="shrink-0 flex items-center gap-2 px-5 py-3 bg-linear-to-r from-blue-500 to-purple-500 text-white font-semibold text-sm rounded-xl shadow-lg shadow-blue-900/30 hover:shadow-blue-900/50 hover:-translate-y-0.5 transition-all duration-200"
-            >
-              <Users size={15} /> Gebruikers beheren
-            </Link>
           </div>
-        )}
+        </section>
 
-        {/* ── Non-admin: contact strip ── */}
-        {!isAdmin && (
-          <div className="flex flex-col gap-4 p-6 mt-6 border rounded-2xl border-white/8 bg-white/2 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-slate-400">
-              Vragen of hulp nodig?
-            </p>
-            <a href="mailto:info@intrict.com"
-              className="text-blue-400 hover:text-blue-300 font-semibold text-sm transition-colors flex items-center gap-1.5">
-              <Mail size={14} /> info@intrict.com
-            </a>
+        {/* Content */}
+        <section className="py-16">
+          <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            {isAdmin ? (
+              <>
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold text-slate-800">Dashboard overzicht</h2>
+                  <p className="mt-1 text-slate-500">Beheer je platform via onderstaande modules</p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {cards.map((card) => (
+                    <Link
+                      key={card.label}
+                      href={card.href}
+                      className={`group block bg-linear-to-br ${card.bg} rounded-2xl p-6 border ${card.border} shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}
+                    >
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="p-3 bg-white shadow-sm rounded-xl">
+                          {card.icon}
+                        </div>
+                        <ArrowRight
+                          size={18}
+                          className="transition-all duration-200 text-slate-300 group-hover:text-slate-500 group-hover:translate-x-1"
+                        />
+                      </div>
+                      <p className="mb-1 text-xs font-medium tracking-wide uppercase text-slate-400">
+                        {card.label}
+                      </p>
+                      <p className="text-2xl font-bold text-slate-800">{card.value}</p>
+                      <p className="mt-1 text-sm text-slate-500">{card.description}</p>
+                    </Link>
+                  ))}
+                </div>
+
+                <div className="p-6 mt-10 border border-blue-100 bg-linear-to-br from-blue-50 to-purple-50 rounded-2xl md:p-8">
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-800">Ingelogd als administrator</h3>
+                      <p className="mt-1 text-sm text-slate-500">
+                        Je hebt volledige toegang tot alle modules en gebruikersbeheer.
+                      </p>
+                    </div>
+                    <Link
+                      href="/dashboard/users"
+                      className="inline-flex items-center gap-2 px-5 py-3 font-semibold text-white transition-all duration-300 shadow-md bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-lg shrink-0"
+                    >
+                      <Users size={16} />
+                      Gebruikers beheren
+                    </Link>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold text-slate-800">Mijn account</h2>
+                  <p className="mt-1 text-slate-500">Bekijk en beheer je persoonlijke gegevens</p>
+                </div>
+
+                <div className="max-w-lg">
+                  <div className="p-8 bg-white border shadow-sm border-slate-100 rounded-2xl">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="flex items-center justify-center w-16 h-16 text-2xl font-bold text-white rounded-full bg-linear-to-br from-blue-500 to-purple-500 shrink-0">
+                        {(profile.full_name ?? profile.email)[0].toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-lg font-bold text-slate-800">
+                          {profile.full_name ?? 'Gebruiker'}
+                        </p>
+                        <p className="text-sm text-slate-500">{profile.email}</p>
+                        <span className="inline-block px-2 py-0.5 mt-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-600">
+                          Gebruiker
+                        </span>
+                      </div>
+                    </div>
+                    <div className="pt-6 border-t border-slate-100">
+                      <Link
+                        href="/dashboard/profile"
+                        className="flex items-center justify-center w-full gap-2 py-3 font-semibold text-white transition-all duration-300 shadow-md bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-lg"
+                      >
+                        <User size={16} />
+                        Mijn profiel bewerken
+                      </Link>
+                    </div>
+                  </div>
+
+                  <div className="p-6 mt-4 border border-blue-100 bg-linear-to-br from-blue-50 to-purple-50 rounded-2xl">
+                    <p className="text-sm leading-relaxed text-slate-600">
+                      Heb je vragen of hulp nodig? Neem contact op via{' '}
+                      <a href="mailto:info@intrict.com" className="font-semibold text-blue-600 hover:underline">
+                        info@intrict.com
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
-        )}
-      </section>
+        </section>
+      </main>
+
+      <Footer />
+      <BackToTop />
     </div>
   );
 }

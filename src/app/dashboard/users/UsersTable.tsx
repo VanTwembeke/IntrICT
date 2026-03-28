@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, User } from 'lucide-react';
+import { Shield, User, Check, X } from 'lucide-react';
 import type { Profile, UserRole } from '@/lib/types';
 import { createClient } from '@/lib/supabase/client';
 
@@ -24,80 +24,93 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
   };
 
   return (
-    <div className="overflow-hidden border rounded-2xl border-white/8 bg-white/2">
-      {/* Table header */}
-      <div className="grid grid-cols-4 px-5 py-3 border-b border-white/8 bg-white/2">
-        {['Gebruiker', 'Rol', 'Lid sinds', 'Acties'].map((h) => (
-          <p key={h} className="text-[11px] font-bold uppercase tracking-widest text-slate-500">{h}</p>
-        ))}
-      </div>
-
-      <div className="divide-y divide-white/5">
-        {users.map((u, i) => (
-          <motion.div
-            key={u.id}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: i * 0.03 }}
-            className="grid items-center grid-cols-4 px-5 py-4 transition-colors hover:bg-white/2"
-          >
-            {/* User */}
-            <div className="flex items-center min-w-0 gap-3">
-              <div className="flex items-center justify-center text-sm font-bold text-white rounded-full w-9 h-9 bg-linear-to-br from-blue-500 to-purple-600 shrink-0">
-                {(u.full_name ?? u.email)[0].toUpperCase()}
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-white truncate">
-                  {u.full_name ?? '—'}
-                  {u.id === currentUserId && <span className="ml-2 text-[11px] text-blue-400 font-normal">(jij)</span>}
-                </p>
-                <p className="text-xs truncate text-slate-500">{u.email}</p>
-              </div>
-            </div>
-
-            {/* Role */}
-            <div>
-              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
-                u.role === 'admin'
-                  ? 'bg-purple-500/10 border-purple-500/20 text-purple-400'
-                  : 'bg-slate-500/10 border-slate-500/20 text-slate-400'
-              }`}>
-                {u.role === 'admin' ? <Shield size={10} /> : <User size={10} />}
-                {u.role === 'admin' ? 'Admin' : 'Gebruiker'}
-              </span>
-            </div>
-
-            {/* Date */}
-            <p className="text-sm text-slate-500">
-              {new Date(u.created_at).toLocaleDateString('nl-BE')}
-            </p>
-
-            {/* Actions */}
-            <div>
-              {u.id !== currentUserId && (
-                u.role !== 'admin' ? (
-                  <button
-                    onClick={() => updateRole(u.id, 'admin')}
-                    disabled={saving === u.id}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-purple-400 bg-purple-500/10 border border-purple-500/20 rounded-lg hover:bg-purple-500/15 transition-colors disabled:opacity-50"
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="bg-slate-50 border-b border-slate-100">
+              <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                Gebruiker
+              </th>
+              <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                Rol
+              </th>
+              <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                Lid sinds
+              </th>
+              <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                Acties
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-50">
+            {users.map((u) => (
+              <motion.tr
+                key={u.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="hover:bg-slate-50 transition-colors"
+              >
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold shrink-0">
+                      {(u.full_name ?? u.email)[0].toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">
+                        {u.full_name ?? '—'}
+                        {u.id === currentUserId && (
+                          <span className="ml-2 text-xs text-blue-500">(jij)</span>
+                        )}
+                      </p>
+                      <p className="text-xs text-slate-400">{u.email}</p>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+                      u.role === 'admin'
+                        ? 'bg-purple-100 text-purple-700'
+                        : 'bg-slate-100 text-slate-600'
+                    }`}
                   >
-                    <Shield size={11} />
-                    {saving === u.id ? 'Opslaan...' : 'Admin maken'}
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => updateRole(u.id, 'user')}
-                    disabled={saving === u.id}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-400 bg-slate-500/10 border border-slate-500/20 rounded-lg hover:bg-slate-500/15 transition-colors disabled:opacity-50"
-                  >
-                    <User size={11} />
-                    {saving === u.id ? 'Opslaan...' : 'Gebruiker maken'}
-                  </button>
-                )
-              )}
-            </div>
-          </motion.div>
-        ))}
+                    {u.role === 'admin' ? <Shield size={11} /> : <User size={11} />}
+                    {u.role === 'admin' ? 'Admin' : 'Gebruiker'}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-sm text-slate-500">
+                  {new Date(u.created_at).toLocaleDateString('nl-BE')}
+                </td>
+                <td className="px-6 py-4">
+                  {u.id !== currentUserId && (
+                    <div className="flex items-center gap-2">
+                      {u.role !== 'admin' ? (
+                        <button
+                          onClick={() => updateRole(u.id, 'admin')}
+                          disabled={saving === u.id}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-purple-700 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors disabled:opacity-60"
+                        >
+                          <Shield size={12} />
+                          {saving === u.id ? 'Opslaan...' : 'Admin maken'}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => updateRole(u.id, 'user')}
+                          disabled={saving === u.id}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors disabled:opacity-60"
+                        >
+                          <User size={12} />
+                          {saving === u.id ? 'Opslaan...' : 'Gebruiker maken'}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </td>
+              </motion.tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

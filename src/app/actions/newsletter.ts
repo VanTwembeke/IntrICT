@@ -9,8 +9,6 @@ export type NewsletterState = {
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Your Resend audience ID — create one in the Resend dashboard
-// and set it as an env variable: RESEND_AUDIENCE_ID
 const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID ?? '';
 
 export async function subscribeNewsletter(
@@ -25,7 +23,6 @@ export async function subscribeNewsletter(
 
   const trimmed = email.trim().toLowerCase();
 
-  // Basic email validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(trimmed)) {
     return { success: false, error: 'Voer een geldig e-mailadres in.' };
@@ -37,7 +34,6 @@ export async function subscribeNewsletter(
   }
 
   try {
-    // Add the contact to your Resend audience
     const { error } = await resend.contacts.create({
       email: trimmed,
       audienceId: AUDIENCE_ID,
@@ -45,15 +41,13 @@ export async function subscribeNewsletter(
     });
 
     if (error) {
-      // Handle "contact already exists" gracefully
       if (error.message?.toLowerCase().includes('already exists')) {
-        return { success: true }; // Silent success — no need to alarm the user
+        return { success: true }; 
       }
       console.error('Resend contacts error:', error);
       return { success: false, error: 'Er is iets misgegaan. Probeer het later opnieuw.' };
     }
 
-    // Optionally send a welcome email
     await resend.emails.send({
       from: 'IntrICT <hello@intrict.com>', // must match a verified Resend sender domain
       to: trimmed,

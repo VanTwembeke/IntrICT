@@ -29,20 +29,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Recipient not found' }, { status: 404 });
 
   // Upload bijlage
-  let file_url: string | null = null;
-  let file_name: string | null = null;
-  if (file && file.size > 0) {
-    file_name = file.name;
-    const bytes = await file.arrayBuffer();
-    const { data: upload } = await supabase.storage
-      .from('attachments')
-      .upload(`${crypto.randomUUID()}-${file_name}`, bytes, { contentType: file.type });
-    if (upload) {
-      const { data: { publicUrl } } = supabase.storage
-        .from('attachments').getPublicUrl(upload.path);
-      file_url = publicUrl;
-    }
+  const attachments: { filename: string; content: Buffer }[] = [];
+let file_url: string | null = null;
+let file_name: string | null = null;
+
+if (file && file.size > 0) {
+  file_name = file.name;
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+
+  // Keep the Supabase upload for the customer portal link
+  const { data: upload } = await supabase.storage
+    .from('attachments')
+    .upload(`${crypto.randomUUID()}-${file_name}`, buffer, { contentType: file.type });
+  if (upload) {
+    const { data: { publicUrl } } = supabase.storage
+      .from('attachments').getPublicUrl(upload.path);
+    file_url = publicUrl;
   }
+
+  // Also queue it for the Resend attachment
+  attachments.push({ filename: file_name, content: buffer });
+}
 
   // Sla bericht op
   const { error: insertError } = await supabase.from('messages').insert({
@@ -77,6 +85,7 @@ export async function POST(req: NextRequest) {
       <p>${message.replace(/\n/g, '<br/>')}</p>
       ${file_url ? `<p><a href="${file_url}">📎 ${file_name}</a></p>` : ''}
     `,
+      attachments, 
   });
 
   return NextResponse.json({ success: true });

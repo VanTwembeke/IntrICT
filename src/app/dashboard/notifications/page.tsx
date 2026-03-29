@@ -61,177 +61,186 @@ export default function NotificationsPage() {
     if (n.link) router.push(n.link);
   };
 
-  const unread  = notifications.filter((n) => !n.read);
-  const read    = notifications.filter((n) =>  n.read);
+  const unread = notifications.filter((n) => !n.read);
+  const read   = notifications.filter((n) =>  n.read);
 
   return (
-    <div className="min-h-screen bg-[#f7f8fc] px-4 py-8 sm:px-8 lg:px-12">
+    <div className="w-full">
 
-      {/* ── Hero header ─────────────────────────────────────────────────── */}
-      <div className="relative mb-10 overflow-hidden rounded-3xl bg-linear-to-brrom-[#0f172a] via-[#1e293b] to-[#0f172a] px-8 py-10 shadow-2xl">
+      {/* ── Hero header — mirrors Contact page ─────────────────────────── */}
+      <section className="relative overflow-hidden">
+        {/* Dark gradient background */}
+        <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900" />
 
-        {/* subtle grid texture */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)',
-            backgroundSize: '32px 32px',
-          }}
-        />
+        {/* Dot texture */}
+        <div className="absolute inset-0 opacity-40">
+          <div
+            className="w-full h-full"
+            style={{
+              backgroundImage: `url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+")`,
+            }}
+          />
+        </div>
 
-        {/* glowing orb */}
-        <div className="absolute rounded-full pointer-events-none -right-20 -top-20 h-72 w-72 bg-blue-600/20 blur-3xl" />
-        <div className="absolute w-48 h-48 rounded-full pointer-events-none -bottom-10 left-1/3 bg-violet-600/20 blur-3xl" />
+        {/* Glow orbs */}
+        <div className="absolute rounded-full pointer-events-none -right-24 -top-24 h-80 w-80 bg-blue-600/20 blur-3xl" />
+        <div className="absolute w-56 h-56 rounded-full pointer-events-none -bottom-16 left-1/3 bg-violet-600/20 blur-3xl" />
 
-        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-5">
-            {/* Bell icon with badge */}
-            <div className="relative shrink-0">
-              <div className="flex items-center justify-center h-14 w-14 rounded-2xl bg-white/10 ring-1 ring-white/20 backdrop-blur">
-                <Bell size={24} className="text-white" />
-              </div>
-              {unreadCount > 0 && (
-                <motion.span
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-[#0f172a] bg-rose-500 text-[10px] font-bold text-white"
-                >
-                  {unreadCount > 9 ? '9+' : unreadCount}
-                </motion.span>
-              )}
-            </div>
-
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <Sparkles size={13} className="text-blue-400" />
-                <span className="text-xs font-semibold tracking-widest text-blue-400 uppercase">
-                  IntrICT Dashboard
-                </span>
-              </div>
-              <h1 className="text-3xl font-bold tracking-tight text-white">
-                Meldingen
-              </h1>
-              <p className="mt-0.5 text-sm text-slate-400">
-                {unreadCount > 0
-                  ? `${unreadCount} ongelezen melding${unreadCount > 1 ? 'en' : ''}`
-                  : 'Alles bijgewerkt — goed bezig 🎉'}
-              </p>
-            </div>
-          </div>
-
-          {/* Mark all read */}
-          {unreadCount > 0 && (
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={markAllRead}
-              className="flex items-center gap-2 self-start rounded-xl border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/20 sm:self-auto"
+        <div className="relative z-10 px-4 pt-10 pb-12 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
             >
-              <CheckCheck size={15} />
-              Alles als gelezen markeren
-            </motion.button>
+              {/* Title row */}
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-5">
+                  {/* Bell with badge */}
+                  <div className="relative shrink-0">
+                    <div className="flex items-center justify-center shadow-lg h-14 w-14 rounded-2xl bg-linear-to-br from-blue-500 to-purple-500 shadow-blue-900/40">
+                      <Bell size={24} className="text-white" />
+                    </div>
+                    {unreadCount > 0 && (
+                      <motion.span
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-slate-800 bg-rose-500 text-[10px] font-bold text-white"
+                      >
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </motion.span>
+                    )}
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <Sparkles size={13} className="text-blue-400" />
+                      <span className="text-xs font-semibold tracking-widest text-blue-400 uppercase">
+                        IntrICT Dashboard
+                      </span>
+                    </div>
+                    <h1 className="text-4xl font-bold tracking-tight text-white md:text-5xl">
+                      Meldingen
+                    </h1>
+                    <p className="mt-1 text-slate-400">
+                      {unreadCount > 0
+                        ? `${unreadCount} ongelezen melding${unreadCount > 1 ? 'en' : ''}`
+                        : 'Alles bijgewerkt — goed bezig 🎉'}
+                    </p>
+                  </div>
+                </div>
+
+                {unreadCount > 0 && (
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={markAllRead}
+                    className="flex items-center gap-2 self-start rounded-xl border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/20 sm:self-auto"
+                  >
+                    <CheckCheck size={15} />
+                    Alles als gelezen markeren
+                  </motion.button>
+                )}
+              </div>
+
+              {/* Stats bar */}
+              <div className="grid grid-cols-3 gap-4 mt-10">
+                {[
+                  { label: 'Totaal',    value: notifications.length,              color: 'text-white'       },
+                  { label: 'Ongelezen', value: unreadCount,                        color: 'text-rose-400'    },
+                  { label: 'Gelezen',   value: notifications.length - unreadCount, color: 'text-emerald-400' },
+                ].map(({ label, value, color }) => (
+                  <div key={label} className="px-5 py-4 rounded-2xl bg-white/5 ring-1 ring-white/10">
+                    <p className={`text-3xl font-bold ${color}`}>{value}</p>
+                    <p className="mt-1 text-xs text-slate-500">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Main content ────────────────────────────────────────────────── */}
+      <section className="py-10 bg-linear-to-br from-slate-50 to-blue-50">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+
+          {/* Loading skeleton */}
+          {loading && (
+            <div className="space-y-3">
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className="flex gap-4 p-5 bg-white border shadow-sm rounded-2xl border-slate-100 animate-pulse"
+                >
+                  <div className="w-10 h-10 shrink-0 rounded-xl bg-slate-100" />
+                  <div className="flex-1 space-y-2.5">
+                    <div className="w-2/3 h-3 rounded bg-slate-100" />
+                    <div className="h-2.5 w-1/2 rounded bg-slate-100" />
+                    <div className="w-1/4 h-2 rounded bg-slate-100" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Empty state */}
+          {!loading && notifications.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col items-center justify-center py-24 text-center bg-white border border-dashed shadow-sm rounded-3xl border-slate-200"
+            >
+              <div className="flex items-center justify-center w-20 h-20 mb-5 rounded-3xl bg-slate-50 ring-1 ring-slate-100">
+                <BellOff size={36} className="text-slate-300" />
+              </div>
+              <p className="text-lg font-semibold text-slate-700">Geen meldingen</p>
+              <p className="mt-1.5 max-w-xs text-sm text-slate-400">
+                Je ontvangt hier meldingen van facturen, bestanden en berichten.
+              </p>
+            </motion.div>
+          )}
+
+          {/* Unread section */}
+          {!loading && unread.length > 0 && (
+            <section className="mb-8">
+              <div className="flex items-center gap-3 mb-5">
+                <span className="flex-1 h-px bg-slate-200" />
+                <span className="text-xs font-bold tracking-widest uppercase text-slate-400">Ongelezen</span>
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-100 px-1.5 text-[11px] font-bold text-rose-600">
+                  {unread.length}
+                </span>
+                <span className="flex-1 h-px bg-slate-200" />
+              </div>
+              <div className="space-y-3">
+                <AnimatePresence initial={false}>
+                  {unread.map((n, i) => (
+                    <NotifCard key={n.id} n={n} i={i} onRead={markRead} onClick={handleClick} />
+                  ))}
+                </AnimatePresence>
+              </div>
+            </section>
+          )}
+
+          {/* Read section */}
+          {!loading && read.length > 0 && (
+            <section>
+              <div className="flex items-center gap-3 mb-5">
+                <span className="flex-1 h-px bg-slate-200" />
+                <span className="text-xs font-bold tracking-widest uppercase text-slate-400">Gelezen</span>
+                <span className="flex-1 h-px bg-slate-200" />
+              </div>
+              <div className="space-y-2">
+                <AnimatePresence initial={false}>
+                  {read.map((n, i) => (
+                    <NotifCard key={n.id} n={n} i={i} onRead={markRead} onClick={handleClick} />
+                  ))}
+                </AnimatePresence>
+              </div>
+            </section>
           )}
         </div>
-
-        {/* Stats bar */}
-        <div className="relative grid grid-cols-3 gap-3 mt-8">
-          {[
-            { label: 'Totaal',     value: notifications.length,         color: 'text-white'       },
-            { label: 'Ongelezen',  value: unreadCount,                  color: 'text-rose-400'    },
-            { label: 'Gelezen',    value: notifications.length - unreadCount, color: 'text-emerald-400' },
-          ].map(({ label, value, color }) => (
-            <div
-              key={label}
-              className="px-4 py-3 rounded-xl bg-white/5 ring-1 ring-white/10"
-            >
-              <p className={`text-2xl font-bold ${color}`}>{value}</p>
-              <p className="text-xs text-slate-500 mt-0.5">{label}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Loading skeleton ─────────────────────────────────────────────── */}
-      {loading && (
-        <div className="space-y-3">
-          {[...Array(5)].map((_, i) => (
-            <div
-              key={i}
-              className="flex gap-4 p-5 bg-white border shadow-sm rounded-2xl border-slate-100 animate-pulse"
-            >
-              <div className="w-10 h-10 shrink-0 rounded-xl bg-slate-100" />
-              <div className="flex-1 space-y-2.5">
-                <div className="w-2/3 h-3 rounded bg-slate-100" />
-                <div className="h-2.5 w-1/2 rounded bg-slate-100" />
-                <div className="w-1/4 h-2 rounded bg-slate-100" />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* ── Empty state ──────────────────────────────────────────────────── */}
-      {!loading && notifications.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center py-20 text-center bg-white border border-dashed shadow-sm rounded-3xl border-slate-200"
-        >
-          <div className="flex items-center justify-center w-20 h-20 mb-5 rounded-3xl bg-slate-50 ring-1 ring-slate-100">
-            <BellOff size={36} className="text-slate-300" />
-          </div>
-          <p className="text-lg font-semibold text-slate-700">Geen meldingen</p>
-          <p className="mt-1.5 max-w-xs text-sm text-slate-400">
-            Je ontvangt hier meldingen van facturen, bestanden en berichten.
-          </p>
-        </motion.div>
-      )}
-
-      {/* ── Unread section ───────────────────────────────────────────────── */}
-      {!loading && unread.length > 0 && (
-        <section className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="flex-1 h-px bg-slate-200" />
-            <span className="text-xs font-bold tracking-widest uppercase text-slate-400">
-              Ongelezen
-            </span>
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-100 px-1.5 text-[11px] font-bold text-rose-600">
-              {unread.length}
-            </span>
-            <span className="flex-1 h-px bg-slate-200" />
-          </div>
-
-          <div className="space-y-2.5">
-            <AnimatePresence initial={false}>
-              {unread.map((n, i) => (
-                <NotifCard key={n.id} n={n} i={i} onRead={markRead} onClick={handleClick} />
-              ))}
-            </AnimatePresence>
-          </div>
-        </section>
-      )}
-
-      {/* ── Read section ─────────────────────────────────────────────────── */}
-      {!loading && read.length > 0 && (
-        <section>
-          <div className="flex items-center gap-3 mb-4">
-            <span className="flex-1 h-px bg-slate-200" />
-            <span className="text-xs font-bold tracking-widest uppercase text-slate-400">
-              Gelezen
-            </span>
-            <span className="flex-1 h-px bg-slate-200" />
-          </div>
-
-          <div className="space-y-2">
-            <AnimatePresence initial={false}>
-              {read.map((n, i) => (
-                <NotifCard key={n.id} n={n} i={i} onRead={markRead} onClick={handleClick} />
-              ))}
-            </AnimatePresence>
-          </div>
-        </section>
-      )}
+      </section>
     </div>
   );
 }
@@ -262,7 +271,7 @@ function NotifCard({
     >
       {/* unread left accent bar */}
       {!n.read && (
-        <span className="absolute left-0 top-3 bottom-3 w-0.75 rounded-full bg-linear-to-b from-blue-500 to-violet-500" />
+        <span className="absolute left-0 w-1 rounded-full top-3 bottom-3 bg-linear-to-b from-blue-500 to-violet-500" />
       )}
 
       {/* icon */}
@@ -279,11 +288,8 @@ function NotifCard({
             {cfg.icon}
             {cfg.label}
           </span>
-          {!n.read && (
-            <span className={`h-2 w-2 rounded-full ${cfg.dot}`} />
-          )}
+          {!n.read && <span className={`h-2 w-2 rounded-full ${cfg.dot}`} />}
         </div>
-
         <p className={`text-sm leading-snug ${!n.read ? 'font-semibold text-slate-800' : 'text-slate-600'}`}>
           {n.title}
         </p>

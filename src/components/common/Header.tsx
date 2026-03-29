@@ -16,6 +16,9 @@ export default function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
+  // ── Messages unread count ──────────────────────────────────────────────────
+  const [unreadMessages, setUnreadMessages] = useState(0);
+
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
@@ -34,6 +37,18 @@ export default function Header() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // ── Fetch unread message count ─────────────────────────────────────────────
+  useEffect(() => {
+    if (!user) return;
+    fetch('/api/inbox/messages')
+      .then((r) => r.json())
+      .then((data) => {
+        const count = (data.messages ?? []).filter((m: { read: boolean }) => !m.read).length;
+        setUnreadMessages(count);
+      })
+      .catch(() => {});
+  }, [user]);
 
   // ── Scroll listener ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -66,12 +81,12 @@ export default function Header() {
   };
 
   const {
-  notifications,
-  unreadCount,
-  markRead,
-  markAllRead,
-  loading,
-} = useNotifications();
+    notifications,
+    unreadCount,
+    markRead,
+    markAllRead,
+    loading,
+  } = useNotifications();
 
   // ── Avatar initials ────────────────────────────────────────────────────────
   const avatarLabel = user?.email ? user.email[0].toUpperCase() : '?';
@@ -103,8 +118,6 @@ export default function Header() {
 
           {/* ── Desktop Nav ── */}
           <nav className="items-center hidden space-x-8 md:flex">
-
-            {/* Home dropdown */}
             <DropdownNav label="Home" scrolled={isScrolled}>
               <DropdownLink href="/#services" icon="building">Diensten</DropdownLink>
               <DropdownLink href="/#workflow" icon="check">Proces</DropdownLink>
@@ -122,7 +135,6 @@ export default function Header() {
               </motion.a>
             ))}
 
-            {/* Info dropdown */}
             <DropdownNav label="Info" scrolled={isScrolled} accentColor="green">
               <DropdownLink href="/visie" icon="eye" accentColor="green">Visie</DropdownLink>
               <DropdownLink href="/over" icon="user" accentColor="green">Over</DropdownLink>
@@ -134,122 +146,124 @@ export default function Header() {
           {!authLoading && (
             <div className="items-center hidden gap-2 md:flex">
 
-              {/* ─ Notification Bell ─ */}
               {user && (
-                <div ref={notifRef} className="relative">
+                <>
+                  {/* ─ Messages icon ─ */}
                   <motion.button
                     whileHover={{ scale: 1.08 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => { setShowNotifications(!showNotifications); setShowUserMenu(false); }}
+                    onClick={() => router.push('/dashboard/berichten')}
                     className={`relative p-2 rounded-full transition-all duration-200 ${
                       isScrolled ? 'hover:bg-slate-100' : 'hover:bg-white/10'
                     }`}
-                    aria-label="Meldingen"
+                    aria-label="Berichten"
                   >
+                    {/* Mail icon */}
                     <svg width="20" height="20" fill="none" stroke={iconStroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                      <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                      <path d="M13.73 21a2 2 0 01-3.46 0" />
+                      <path d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
-                    {unreadCount > 0 && (
+                    {unreadMessages > 0 && (
                       <motion.span
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full shadow"
+                        className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-violet-500 rounded-full shadow"
                       >
-                        {unreadCount > 9 ? '9+' : unreadCount}
+                        {unreadMessages > 9 ? '9+' : unreadMessages}
                       </motion.span>
                     )}
                   </motion.button>
 
-                  {/* Notifications panel */}
-                  <AnimatePresence>
-                    {showNotifications && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8, scale: 0.97 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 8, scale: 0.97 }}
-                        transition={{ duration: 0.18 }}
-                        className="absolute right-0 z-50 mt-3 overflow-hidden border shadow-2xl w-80 bg-white/98 backdrop-blur-md rounded-2xl border-slate-200"
-                      >
-                        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-                          <span className="font-semibold text-slate-800">Meldingen</span>
-                          {unreadCount > 0 && (
-                            <button onClick={markAllRead} className="text-xs font-medium text-blue-500 hover:underline">
-                              Alles gelezen
-                            </button>
+                  {/* ─ Notification Bell ─ */}
+                  <div ref={notifRef} className="relative">
+                    <motion.button
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => { setShowNotifications(!showNotifications); setShowUserMenu(false); }}
+                      className={`relative p-2 rounded-full transition-all duration-200 ${
+                        isScrolled ? 'hover:bg-slate-100' : 'hover:bg-white/10'
+                      }`}
+                      aria-label="Meldingen"
+                    >
+                      <svg width="20" height="20" fill="none" stroke={iconStroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                        <path d="M13.73 21a2 2 0 01-3.46 0" />
+                      </svg>
+                      {unreadCount > 0 && (
+                        <motion.span
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full shadow"
+                        >
+                          {unreadCount > 9 ? '9+' : unreadCount}
+                        </motion.span>
+                      )}
+                    </motion.button>
+
+                    {/* Notifications panel */}
+                    <AnimatePresence>
+                      {showNotifications && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                          transition={{ duration: 0.18 }}
+                          className="absolute right-0 z-50 mt-3 overflow-hidden border shadow-2xl w-80 bg-white/98 backdrop-blur-md rounded-2xl border-slate-200"
+                        >
+                          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                            <span className="font-semibold text-slate-800">Meldingen</span>
+                            {unreadCount > 0 && (
+                              <button onClick={markAllRead} className="text-xs font-medium text-blue-500 hover:underline">
+                                Alles gelezen
+                              </button>
+                            )}
+                          </div>
+                          {loading ? (
+                            <div className="px-4 py-6 text-sm text-center text-slate-400">Laden...</div>
+                          ) : notifications.length === 0 ? (
+                            <div className="px-4 py-6 text-center">
+                              <p className="text-sm font-medium text-slate-500">Alles bijgewerkt 🎉</p>
+                              <p className="mt-1 text-xs text-slate-400">Je hebt geen nieuwe meldingen</p>
+                            </div>
+                          ) : (
+                            <ul className="overflow-y-auto divide-y divide-slate-100 max-h-72">
+                              {notifications.slice(0, 8).map((n) => (
+                                <li
+                                  key={n.id}
+                                  className={`px-4 py-3 flex items-start gap-3 transition-colors duration-150 cursor-pointer ${
+                                    !n.read ? 'bg-blue-50/50 hover:bg-blue-50' : 'hover:bg-slate-50'
+                                  }`}
+                                  onClick={async () => {
+                                    await markRead(n.id);
+                                    if (n.link) router.push(n.link);
+                                    setShowNotifications(false);
+                                  }}
+                                >
+                                  <span className={`mt-1 w-2 h-2 rounded-full shrink-0 ${
+                                    !n.read ? TYPE_DOT[n.type] ?? 'bg-blue-500' : 'bg-transparent border border-slate-300'
+                                  }`} />
+                                  <div className="flex-1 min-w-0">
+                                    <p className={`text-sm leading-snug truncate ${!n.read ? 'font-semibold text-slate-800' : 'text-slate-600'}`}>
+                                      {n.title}
+                                    </p>
+                                    {n.body && <p className="text-xs text-slate-500 mt-0.5 truncate">{n.body}</p>}
+                                    <p className="mt-0.5 text-xs text-slate-400">
+                                      {new Date(n.created_at).toLocaleString('nl-BE', { dateStyle: 'short', timeStyle: 'short' })}
+                                    </p>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
                           )}
-                        </div>
-                        {loading ? (
-  <div className="px-4 py-6 text-sm text-center text-slate-400">
-    Laden...
-  </div>
-) : notifications.length === 0 ? (
-  <div className="px-4 py-6 text-center">
-    <p className="text-sm font-medium text-slate-500">
-      Alles bijgewerkt 🎉
-    </p>
-    <p className="mt-1 text-xs text-slate-400">
-      Je hebt geen nieuwe meldingen
-    </p>
-  </div>
-) : (
-  <ul className="overflow-y-auto divide-y divide-slate-100 max-h-72">
-    {notifications.slice(0, 8).map((n) => (
-      <li
-        key={n.id}
-        className={`px-4 py-3 flex items-start gap-3 transition-colors duration-150 cursor-pointer ${
-          !n.read ? 'bg-blue-50/50 hover:bg-blue-50' : 'hover:bg-slate-50'
-        }`}
-        onClick={async () => {
-          await markRead(n.id);
-          if (n.link) router.push(n.link);
-          setShowNotifications(false);
-        }}
-      >
-        <span
-          className={`mt-1 w-2 h-2 rounded-full shrink-0 ${
-            !n.read
-              ? TYPE_DOT[n.type] ?? 'bg-blue-500'
-              : 'bg-transparent border border-slate-300'
-          }`}
-        />
-        <div className="flex-1 min-w-0">
-          <p
-            className={`text-sm leading-snug truncate ${
-              !n.read
-                ? 'font-semibold text-slate-800'
-                : 'text-slate-600'
-            }`}
-          >
-            {n.title}
-          </p>
-
-          {n.body && (
-            <p className="text-xs text-slate-500 mt-0.5 truncate">
-              {n.body}
-            </p>
-          )}
-
-          <p className="mt-0.5 text-xs text-slate-400">
-            {new Date(n.created_at).toLocaleString('nl-BE', {
-              dateStyle: 'short',
-              timeStyle: 'short',
-            })}
-          </p>
-        </div>
-      </li>
-    ))}
-  </ul>
-)}
-                        <div className="px-4 py-3 text-center border-t border-slate-100">
-                          <a href="/dashboard/notifications" className="text-xs font-medium text-blue-500 hover:underline">
-                            Alle meldingen bekijken
-                          </a>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                          <div className="px-4 py-3 text-center border-t border-slate-100">
+                            <a href="/dashboard/notifications" className="text-xs font-medium text-blue-500 hover:underline">
+                              Alle meldingen bekijken
+                            </a>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </>
               )}
 
               {/* ─ User Menu / Login button ─ */}
@@ -265,7 +279,6 @@ export default function Header() {
                         : 'bg-white/15 text-white hover:bg-white/25 backdrop-blur-sm'
                     }`}
                   >
-                    {/* Avatar circle */}
                     <span className="flex items-center justify-center text-xs font-bold text-white rounded-full shadow w-7 h-7 bg-linear-to-br from-blue-500 to-purple-500">
                       {avatarLabel}
                     </span>
@@ -278,7 +291,6 @@ export default function Header() {
                     </svg>
                   </motion.button>
 
-                  {/* User dropdown */}
                   <AnimatePresence>
                     {showUserMenu && (
                       <motion.div
@@ -288,7 +300,6 @@ export default function Header() {
                         transition={{ duration: 0.18 }}
                         className="absolute right-0 z-50 w-56 mt-3 overflow-hidden border shadow-2xl bg-white/98 backdrop-blur-md rounded-2xl border-slate-200"
                       >
-                        {/* User info header */}
                         <div className="px-4 py-3 border-b border-slate-100 bg-linear-to-br from-slate-50 to-blue-50/30">
                           <div className="flex items-center gap-3">
                             <span className="flex items-center justify-center font-bold text-white rounded-full shadow w-9 h-9 bg-linear-to-br from-blue-500 to-purple-500">
@@ -303,6 +314,16 @@ export default function Header() {
 
                         <div className="py-2">
                           <MenuLink href="/dashboard" icon="grid">Dashboard</MenuLink>
+                          <MenuLink href="/dashboard/berichten" icon="mail">
+                            <span className="flex items-center justify-between w-full">
+                              Berichten
+                              {unreadMessages > 0 && (
+                                <span className="flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-violet-500 rounded-full">
+                                  {unreadMessages > 9 ? '9+' : unreadMessages}
+                                </span>
+                              )}
+                            </span>
+                          </MenuLink>
                           <MenuLink href="/dashboard/profile" icon="user">Profiel</MenuLink>
                           <MenuLink href="/dashboard/settings" icon="settings">Instellingen</MenuLink>
                         </div>
@@ -369,7 +390,6 @@ export default function Header() {
             className="border-b border-gray-200 shadow-lg md:hidden bg-white/95 backdrop-blur-md"
           >
             <div className="px-4 py-6 space-y-4">
-              {/* User info strip (mobile) */}
               {user && (
                 <div className="flex items-center gap-3 p-3 border rounded-xl bg-linear-to-r from-slate-50 to-blue-50 border-slate-100">
                   <span className="flex items-center justify-center font-bold text-white rounded-full shadow w-9 h-9 bg-linear-to-br from-blue-500 to-purple-500">
@@ -379,16 +399,23 @@ export default function Header() {
                     <p className="text-sm font-semibold truncate text-slate-800">{user.email?.split('@')[0]}</p>
                     <p className="text-xs truncate text-slate-400">{user.email}</p>
                   </div>
-                  {unreadCount > 0 && (
-                    <span className="ml-auto flex items-center gap-1.5 text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                      {unreadCount > 9 ? '9+' : unreadCount} nieuw
-                    </span>
-                  )}
+                  <div className="flex items-center gap-1.5 ml-auto">
+                    {unreadMessages > 0 && (
+                      <span className="flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full text-violet-600 bg-violet-100">
+                        <span className="w-1.5 h-1.5 rounded-full bg-violet-500" />
+                        {unreadMessages > 9 ? '9+' : unreadMessages} bericht{unreadMessages !== 1 ? 'en' : ''}
+                      </span>
+                    )}
+                    {unreadCount > 0 && (
+                      <span className="flex items-center gap-1 px-2 py-1 text-xs font-semibold text-blue-600 bg-blue-100 rounded-full">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                        {unreadCount > 9 ? '9+' : unreadCount} nieuw
+                      </span>
+                    )}
+                  </div>
                 </div>
               )}
 
-              {/* Home section */}
               <div>
                 <h3 className="mb-3 text-xs font-semibold tracking-wider uppercase text-slate-400">Home</h3>
                 <div className="ml-2 space-y-1">
@@ -400,7 +427,6 @@ export default function Header() {
                 </div>
               </div>
 
-              {/* Main nav */}
               <div className="space-y-1">
                 {[['Portfolio', '/portfolio'], ['Blog', '/blog'], ['Oplossingen', '/oplossingen']].map(([label, href]) => (
                   <a key={href} href={href} className="block px-3 py-2 font-semibold transition-colors rounded-lg text-slate-800 hover:bg-slate-50">
@@ -409,7 +435,6 @@ export default function Header() {
                 ))}
               </div>
 
-              {/* Info section */}
               <div>
                 <h3 className="mb-3 text-xs font-semibold tracking-wider uppercase text-slate-400">Info</h3>
                 <div className="ml-2 space-y-1">
@@ -421,10 +446,20 @@ export default function Header() {
                 </div>
               </div>
 
-              {/* CTA */}
               <div className="pt-2 space-y-2 border-t border-slate-100">
                 {user ? (
                   <>
+                    <button
+                      onClick={() => router.push('/dashboard/berichten')}
+                      className="flex items-center justify-center w-full gap-2 px-6 py-3 font-semibold transition-all border text-violet-700 border-violet-200 rounded-xl bg-violet-50 hover:bg-violet-100"
+                    >
+                      Berichten
+                      {unreadMessages > 0 && (
+                        <span className="flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-violet-500 rounded-full">
+                          {unreadMessages}
+                        </span>
+                      )}
+                    </button>
                     <button
                       onClick={() => router.push('/dashboard')}
                       className="w-full px-6 py-3 font-semibold text-white transition-all shadow-md rounded-xl bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
@@ -539,7 +574,7 @@ function DropdownLink({
 function MenuLink({ href, icon, children }: { href: string; icon: keyof typeof ICONS; children: React.ReactNode }) {
   return (
     <a href={href} className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors duration-150">
-      <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d={ICONS[icon]} />
       </svg>
       {children}

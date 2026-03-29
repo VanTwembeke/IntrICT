@@ -30,7 +30,7 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Header />
-      <div className="flex pt-16">
+      <div className="flex">
         <DashboardSidebar profile={profile} />
         <main className="flex-1 min-w-0">
           {children}

@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
     body: message.slice(0, 100),
     type: 'message',
     read: false,
-    link: '/berichten',
+    link: '/dashboard/berichten',
   });
 
   // Stuur email

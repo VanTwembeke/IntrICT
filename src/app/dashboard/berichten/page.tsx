@@ -13,7 +13,7 @@ export default async function BerichtenServerPage() {
   if (!profile) redirect('/login');
 
   // Admins horen hier niet
-  if (profile.role === 'admin') redirect('/inbox');
+  if (profile.role === 'admin') redirect('/dashboard/inbox');
 
   return <BerichtenPage />;
 }

@@ -1,8 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Shield, User} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Shield, User, X, Save, Sparkles, Users,
+  Mail, Calendar, Edit2, ChevronRight,
+} from 'lucide-react';
 import type { Profile, UserRole } from '@/lib/types';
 import { createClient } from '@/lib/supabase/client';
 
@@ -12,8 +15,50 @@ interface Props {
 }
 
 export default function UsersTable({ users: initial, currentUserId }: Props) {
-  const [users, setUsers] = useState(initial);
-  const [saving, setSaving] = useState<string | null>(null);
+  const [users, setUsers]       = useState(initial);
+  const [saving, setSaving]     = useState<string | null>(null);
+  const [editUser, setEditUser] = useState<Profile | null>(null);
+
+  // Edit form state
+  const [editName,  setEditName]  = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editRole,  setEditRole]  = useState<UserRole>('user');
+  const [editSaving, setEditSaving] = useState(false);
+  const [editSuccess, setEditSuccess] = useState(false);
+
+  const openEdit = (u: Profile) => {
+    setEditUser(u);
+    setEditName(u.full_name ?? '');
+    setEditEmail(u.email);
+    setEditRole(u.role as UserRole);
+    setEditSuccess(false);
+  };
+
+  const closeEdit = () => {
+    setEditUser(null);
+    setEditSuccess(false);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editUser) return;
+    setEditSaving(true);
+    const supabase = createClient();
+    await supabase.from('profiles').update({
+      full_name: editName || null,
+      role: editRole,
+    }).eq('id', editUser.id);
+
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.id === editUser.id
+          ? { ...u, full_name: editName || null, role: editRole }
+          : u
+      )
+    );
+    setEditSaving(false);
+    setEditSuccess(true);
+    setTimeout(() => closeEdit(), 1500);
+  };
 
   const updateRole = async (userId: string, role: UserRole) => {
     setSaving(userId);
@@ -23,95 +68,319 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
     setSaving(null);
   };
 
+  const adminCount = users.filter((u) => u.role === 'admin').length;
+  const userCount  = users.filter((u) => u.role !== 'admin').length;
+
   return (
-    <div className="overflow-hidden bg-white border shadow-sm rounded-2xl border-slate-100">
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b bg-slate-50 border-slate-100">
-              <th className="px-6 py-4 text-xs font-semibold tracking-wider text-left uppercase text-slate-500">
-                Gebruiker
-              </th>
-              <th className="px-6 py-4 text-xs font-semibold tracking-wider text-left uppercase text-slate-500">
-                Rol
-              </th>
-              <th className="px-6 py-4 text-xs font-semibold tracking-wider text-left uppercase text-slate-500">
-                Lid sinds
-              </th>
-              <th className="px-6 py-4 text-xs font-semibold tracking-wider text-left uppercase text-slate-500">
-                Acties
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-50">
-            {users.map((u) => (
-              <motion.tr
-                key={u.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="transition-colors hover:bg-slate-50"
-              >
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center text-sm font-bold text-white rounded-full w-9 h-9 bg-linear-to-br from-blue-500 to-purple-500 shrink-0">
-                      {(u.full_name ?? u.email)[0].toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-slate-800">
-                        {u.full_name ?? '—'}
-                        {u.id === currentUserId && (
-                          <span className="ml-2 text-xs text-blue-500">(jij)</span>
-                        )}
-                      </p>
-                      <p className="text-xs text-slate-400">{u.email}</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
-                      u.role === 'admin'
-                        ? 'bg-purple-100 text-purple-700'
-                        : 'bg-slate-100 text-slate-600'
-                    }`}
-                  >
-                    {u.role === 'admin' ? <Shield size={11} /> : <User size={11} />}
-                    {u.role === 'admin' ? 'Admin' : 'Gebruiker'}
+    <div className="w-full">
+
+      {/* ── Hero header ─────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900" />
+        <div className="absolute inset-0 opacity-40">
+          <div
+            className="w-full h-full"
+            style={{
+              backgroundImage: `url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+")`,
+            }}
+          />
+        </div>
+        <div className="absolute rounded-full pointer-events-none -right-24 -top-24 h-80 w-80 bg-blue-600/20 blur-3xl" />
+        <div className="absolute w-56 h-56 rounded-full pointer-events-none -bottom-16 left-1/4 bg-purple-600/20 blur-3xl" />
+
+        <div className="relative z-10 px-4 pt-10 pb-12 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+              className="flex items-center gap-5"
+            >
+              <div className="flex items-center justify-center shadow-lg h-14 w-14 rounded-2xl bg-linear-to-br from-blue-500 to-purple-500 shadow-blue-900/40 shrink-0">
+                <Users size={24} className="text-white" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Sparkles size={13} className="text-blue-400" />
+                  <span className="text-xs font-semibold tracking-widest text-blue-400 uppercase">
+                    IntrICT Dashboard
                   </span>
-                </td>
-                <td className="px-6 py-4 text-sm text-slate-500">
-                  {new Date(u.created_at).toLocaleDateString('nl-BE')}
-                </td>
-                <td className="px-6 py-4">
-                  {u.id !== currentUserId && (
-                    <div className="flex items-center gap-2">
-                      {u.role !== 'admin' ? (
-                        <button
-                          onClick={() => updateRole(u.id, 'admin')}
-                          disabled={saving === u.id}
-                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-purple-700 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors disabled:opacity-60"
-                        >
-                          <Shield size={12} />
-                          {saving === u.id ? 'Opslaan...' : 'Admin maken'}
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => updateRole(u.id, 'user')}
-                          disabled={saving === u.id}
-                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors disabled:opacity-60"
-                        >
-                          <User size={12} />
-                          {saving === u.id ? 'Opslaan...' : 'Gebruiker maken'}
-                        </button>
-                      )}
+                </div>
+                <h1 className="text-4xl font-bold tracking-tight text-white md:text-5xl">Gebruikers</h1>
+                <p className="mt-1 text-slate-400">Beheer alle geregistreerde gebruikers</p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Edit modal ──────────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {editUser && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+            onClick={(e) => { if (e.target === e.currentTarget) closeEdit(); }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.2 }}
+              className="w-full max-w-md overflow-hidden bg-white shadow-2xl rounded-3xl"
+            >
+              {/* Modal header */}
+              <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-linear-to-r from-blue-50 to-purple-50">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 font-bold text-white rounded-full bg-linear-to-br from-blue-500 to-purple-500">
+                    {(editUser.full_name ?? editUser.email)[0].toUpperCase()}
+                  </div>
+                  <div>
+                    <h2 className="text-base font-bold text-slate-800">Gebruiker bewerken</h2>
+                    <p className="text-xs text-slate-500">{editUser.email}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={closeEdit}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                {editSuccess ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex flex-col items-center gap-3 py-6 text-center"
+                  >
+                    <div className="flex items-center justify-center rounded-full w-14 h-14 bg-green-50">
+                      <Save size={24} className="text-green-500" />
                     </div>
-                  )}
-                </td>
-              </motion.tr>
+                    <p className="font-semibold text-slate-800">Wijzigingen opgeslagen!</p>
+                  </motion.div>
+                ) : (
+                  <>
+                    {/* Name */}
+                    <div>
+                      <label className="block mb-1.5 text-sm font-semibold text-slate-700">
+                        Volledige naam
+                      </label>
+                      <input
+                        type="text"
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        placeholder="Naam van de gebruiker"
+                        className="w-full px-4 py-3 transition-all border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800"
+                      />
+                    </div>
+
+                    {/* Email (read-only — changing email requires Supabase Auth update) */}
+                    <div>
+                      <label className="block mb-1.5 text-sm font-semibold text-slate-700">
+                        E-mailadres
+                        <span className="ml-1.5 text-xs font-normal text-slate-400">(alleen-lezen)</span>
+                      </label>
+                      <input
+                        type="email"
+                        value={editEmail}
+                        disabled
+                        className="w-full px-4 py-3 border-2 cursor-not-allowed border-slate-100 rounded-xl bg-slate-50 text-slate-400"
+                      />
+                    </div>
+
+                    {/* Role */}
+                    <div>
+                      <label className="block mb-1.5 text-sm font-semibold text-slate-700">Rol</label>
+                      <div className="grid grid-cols-2 gap-3">
+                        {(['user', 'admin'] as UserRole[]).map((r) => (
+                          <button
+                            key={r}
+                            onClick={() => setEditRole(r)}
+                            className={`flex items-center gap-2 px-4 py-3 rounded-xl border-2 text-sm font-semibold transition-all ${
+                              editRole === r
+                                ? r === 'admin'
+                                  ? 'border-purple-400 bg-purple-50 text-purple-700'
+                                  : 'border-blue-400 bg-blue-50 text-blue-700'
+                                : 'border-slate-200 text-slate-500 hover:border-slate-300'
+                            }`}
+                          >
+                            {r === 'admin' ? <Shield size={15} /> : <User size={15} />}
+                            {r === 'admin' ? 'Admin' : 'Gebruiker'}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 pt-2">
+                      <button
+                        onClick={closeEdit}
+                        className="flex-1 py-3 text-sm font-semibold transition-all border-2 text-slate-600 border-slate-200 rounded-xl hover:bg-slate-50"
+                      >
+                        Annuleren
+                      </button>
+                      <motion.button
+                        whileHover={{ scale: editSaving ? 1 : 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleSaveEdit}
+                        disabled={editSaving}
+                        className="flex items-center justify-center flex-1 gap-2 py-3 text-sm font-semibold text-white transition-all shadow-md bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        <Save size={14} />
+                        {editSaving ? 'Opslaan...' : 'Opslaan'}
+                      </motion.button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Main content ────────────────────────────────────────────────── */}
+      <section className="py-10 bg-linear-to-br from-slate-50 to-blue-50">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+
+          {/* Stats strip */}
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            {[
+              { label: 'Totaal', value: users.length, color: 'text-slate-800' },
+              { label: 'Admins', value: adminCount, color: 'text-purple-600' },
+              { label: 'Gebruikers', value: userCount, color: 'text-blue-600' },
+            ].map((s, i) => (
+              <motion.div
+                key={s.label}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.07 }}
+                className="p-5 bg-white border shadow-sm rounded-2xl border-slate-100"
+              >
+                <p className="mb-1 text-xs font-semibold tracking-wider uppercase text-slate-400">{s.label}</p>
+                <p className={`text-3xl font-bold ${s.color}`}>{s.value}</p>
+              </motion.div>
             ))}
-          </tbody>
-        </table>
-      </div>
+          </div>
+
+          {/* Table */}
+          <div className="overflow-hidden bg-white border shadow-sm rounded-2xl border-slate-100">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b bg-slate-50 border-slate-100">
+                    {['Gebruiker', 'Rol', 'Lid sinds', 'Acties'].map((h) => (
+                      <th key={h} className="px-6 py-4 text-xs font-semibold tracking-wider text-left uppercase text-slate-500">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {users.map((u, i) => (
+                    <motion.tr
+                      key={u.id}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.03 }}
+                      className="transition-colors hover:bg-slate-50/70 group"
+                    >
+                      {/* User */}
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center justify-center text-sm font-bold text-white rounded-full w-9 h-9 bg-linear-to-br from-blue-500 to-purple-500 shrink-0">
+                            {(u.full_name ?? u.email)[0].toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-slate-800 flex items-center gap-1.5">
+                              {u.full_name ?? '—'}
+                              {u.id === currentUserId && (
+                                <span className="text-xs font-medium text-blue-400">(jij)</span>
+                              )}
+                            </p>
+                            <p className="flex items-center gap-1 text-xs text-slate-400 mt-0.5">
+                              <Mail size={10} />
+                              {u.email}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Role */}
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+                          u.role === 'admin'
+                            ? 'bg-purple-100 text-purple-700'
+                            : 'bg-slate-100 text-slate-600'
+                        }`}>
+                          {u.role === 'admin' ? <Shield size={11} /> : <User size={11} />}
+                          {u.role === 'admin' ? 'Admin' : 'Gebruiker'}
+                        </span>
+                      </td>
+
+                      {/* Date */}
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-1.5 text-sm text-slate-500">
+                          <Calendar size={12} className="text-slate-300" />
+                          {new Date(u.created_at).toLocaleDateString('nl-BE')}
+                        </div>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          {/* Edit button — always visible */}
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => openEdit(u)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+                          >
+                            <Edit2 size={12} />
+                            Bewerken
+                          </motion.button>
+
+                          {/* Role toggle — only for other users */}
+                          {u.id !== currentUserId && (
+                            u.role !== 'admin' ? (
+                              <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => updateRole(u.id, 'admin')}
+                                disabled={saving === u.id}
+                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-purple-700 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors disabled:opacity-60"
+                              >
+                                <Shield size={12} />
+                                {saving === u.id ? 'Opslaan...' : 'Admin maken'}
+                              </motion.button>
+                            ) : (
+                              <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => updateRole(u.id, 'user')}
+                                disabled={saving === u.id}
+                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors disabled:opacity-60"
+                              >
+                                <User size={12} />
+                                {saving === u.id ? 'Opslaan...' : 'Gebruiker maken'}
+                              </motion.button>
+                            )
+                          )}
+
+                          <ChevronRight size={14} className="ml-auto transition-colors text-slate-200 group-hover:text-slate-400" />
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </section>
     </div>
   );
 }

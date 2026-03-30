@@ -78,6 +78,9 @@ export async function POST(request: NextRequest) {
     console.error('Failed to fetch email content:', err);
     // Continue — store what we have, don't drop the event entirely
   }
+  console.log('EMAIL CONTENT KEYS:', Object.keys(emailContent ?? {}));
+  console.log('EMAIL HEADERS:', JSON.stringify((emailContent as any)?.headers, null, 2));
+  console.log('FULL PAYLOAD:', JSON.stringify(emailContent, null, 2));
 
   // ── 4. Build display body ────────────────────────────────────────────────
   const hasHtml = html && html.trim().length > 0;

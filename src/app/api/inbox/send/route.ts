@@ -38,7 +38,6 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Upload to Supabase Storage for the portal link
     const { data: upload, error: uploadError } = await supabase.storage
       .from('attachments')
       .upload(`${crypto.randomUUID()}-${file_name}`, buffer, { contentType: file.type });
@@ -51,23 +50,35 @@ export async function POST(req: NextRequest) {
       file_url = publicUrl;
     }
 
-    // Also attach to the Resend email
     attachments = [{ filename: file_name, content: buffer }];
   }
 
-  // ── Insert message (always include file fields) ──────────────────────────
+  // ── Insert into messages ─────────────────────────────────────────────────
   const { error: insertError } = await supabase.from('messages').insert({
     from_id:   user.id,
     to_id:     recipient.id,
     subject,
     body:      message,
-    file_name: file_name,   // null if no file — explicit is better than omitting
+    file_name: file_name,
     file_url:  file_url,
   });
 
   if (insertError) {
     console.error('Insert failed:', insertError);
     return NextResponse.json({ error: insertError.message }, { status: 500 });
+  }
+
+  // ── Persist to sent_emails for thread view ───────────────────────────────
+  const { error: sentError } = await supabase.from('sent_emails').insert({
+    sent_by:  user.id,
+    to_email: to,
+    subject,
+    message,
+  });
+
+  if (sentError) {
+    // Non-fatal — message already saved to messages table
+    console.error('Failed to save to sent_emails:', sentError);
   }
 
   // ── Notification for customer ────────────────────────────────────────────
@@ -94,7 +105,7 @@ export async function POST(req: NextRequest) {
 
   if (sendError) {
     console.error('Resend error:', sendError);
-    // Message is already saved — don't fail the whole request
+    // Message already saved — don't fail the whole request
   }
 
   return NextResponse.json({ success: true });

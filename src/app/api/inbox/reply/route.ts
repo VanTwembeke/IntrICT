@@ -27,5 +27,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  // ── Persist to sent_emails ───────────────────────────────────────────────
+  const { error: dbError } = await supabase.from('sent_emails').insert({
+    sent_by: user.id,
+    to_email: to,
+    subject,
+    message,
+  });
+
+  if (dbError) {
+    // Don't fail the request — email was already sent
+    console.error('Failed to save reply to sent_emails:', dbError);
+  }
+
   return NextResponse.json({ success: true });
 }

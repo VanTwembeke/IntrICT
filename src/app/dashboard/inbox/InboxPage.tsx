@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mail, Send, X, Reply, Paperclip, Users,
   ChevronRight, Inbox, AlertCircle, CheckCircle2, Sparkles,
+  CornerDownRight,
 } from 'lucide-react';
 
 interface InboundEmail {
@@ -13,6 +14,14 @@ interface InboundEmail {
   subject: string;
   html: string;
   received_at: string;
+}
+
+interface SentEmail {
+  id: string;
+  to_email: string;
+  subject: string;
+  message: string;
+  sent_at: string;
 }
 
 interface Profile {
@@ -27,41 +36,74 @@ interface Props {
   customers?: Profile[];
 }
 
+/** Match a sent email to an inbound email by subject (Re: ...) and recipient */
+function getRepliesForEmail(email: InboundEmail, sent: SentEmail[]): SentEmail[] {
+  const normalise = (s: string) => s.replace(/^(re:\s*)+/i, '').trim().toLowerCase();
+  return sent
+    .filter(
+      (s) =>
+        s.to_email.toLowerCase() === email.from.toLowerCase() &&
+        normalise(s.subject) === normalise(email.subject),
+    )
+    .sort((a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime());
+}
+
 export default function InboxPage({ profile, customers = [] }: Props) {
   const isAdmin = profile.role === 'admin';
 
-  const [emails, setEmails]           = useState<InboundEmail[]>([]);
-  const [selected, setSelected]       = useState<InboundEmail | null>(null);
-  const [loading, setLoading]         = useState(true);
+  const [emails, setEmails]     = useState<InboundEmail[]>([]);
+  const [sentEmails, setSentEmails] = useState<SentEmail[]>([]);
+  const [selected, setSelected] = useState<InboundEmail | null>(null);
+  const [loading, setLoading]   = useState(true);
 
-  const [replyOpen, setReplyOpen]     = useState(false);
-  const [replyText, setReplyText]     = useState('');
+  const [replyOpen, setReplyOpen]       = useState(false);
+  const [replyText, setReplyText]       = useState('');
   const [replySending, setReplySending] = useState(false);
-  const [replySent, setReplySent]     = useState(false);
+  const [replySent, setReplySent]       = useState(false);
 
-  const [sendOpen, setSendOpen]       = useState(false);
-  const [sendTo, setSendTo]           = useState('');
-  const [sendSubject, setSendSubject] = useState('');
-  const [sendMessage, setSendMessage] = useState('');
-  const [sendFile, setSendFile]       = useState<File | null>(null);
-  const [sendLoading, setSendLoading] = useState(false);
-  const [sendResult, setSendResult]   = useState<'success' | 'error' | null>(null);
+  const [sendOpen, setSendOpen]         = useState(false);
+  const [sendTo, setSendTo]             = useState('');
+  const [sendSubject, setSendSubject]   = useState('');
+  const [sendMessage, setSendMessage]   = useState('');
+  const [sendFile, setSendFile]         = useState<File | null>(null);
+  const [sendLoading, setSendLoading]   = useState(false);
+  const [sendResult, setSendResult]     = useState<'success' | 'error' | null>(null);
 
   useEffect(() => {
-    fetch('/api/inbox')
-      .then((r) => r.json())
-      .then((data) => { setEmails(data.emails ?? []); setLoading(false); })
-      .catch(() => setLoading(false));
+    Promise.all([
+      fetch('/api/inbox').then((r) => r.json()),
+      fetch('/api/inbox/sent').then((r) => r.json()),
+    ])
+      .then(([inbound, outbound]) => {
+        setEmails(inbound.emails ?? []);
+        setSentEmails(outbound.emails ?? []);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const handleReply = async () => {
     if (!selected || !replyText.trim()) return;
     setReplySending(true);
-    await fetch('/api/inbox/reply', {
+    const res = await fetch('/api/inbox/reply', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ to: selected.from, subject: `Re: ${selected.subject}`, message: replyText }),
+      body: JSON.stringify({
+        to: selected.from,
+        subject: `Re: ${selected.subject}`,
+        message: replyText,
+      }),
     });
+    if (res.ok) {
+      // Optimistically add to local sent list
+      const optimistic: SentEmail = {
+        id: crypto.randomUUID(),
+        to_email: selected.from,
+        subject: `Re: ${selected.subject}`,
+        message: replyText,
+        sent_at: new Date().toISOString(),
+      };
+      setSentEmails((prev) => [...prev, optimistic]);
+    }
     setReplySending(false);
     setReplySent(true);
     setReplyText('');
@@ -80,7 +122,9 @@ export default function InboxPage({ profile, customers = [] }: Props) {
       if (sendFile) formData.append('file', sendFile);
       const res = await fetch('/api/inbox/send', { method: 'POST', body: formData });
       setSendResult(res.ok ? 'success' : 'error');
-      if (res.ok) { setSendTo(''); setSendSubject(''); setSendMessage(''); setSendFile(null); }
+      if (res.ok) {
+        setSendTo(''); setSendSubject(''); setSendMessage(''); setSendFile(null);
+      }
     } catch {
       setSendResult('error');
     } finally {
@@ -88,6 +132,8 @@ export default function InboxPage({ profile, customers = [] }: Props) {
       setTimeout(() => setSendResult(null), 4000);
     }
   };
+
+  const threadReplies = selected ? getRepliesForEmail(selected, sentEmails) : [];
 
   return (
     <div className="w-full">
@@ -179,7 +225,6 @@ export default function InboxPage({ profile, customers = [] }: Props) {
               </div>
 
               <div className="p-6 space-y-4">
-                {/* Recipient */}
                 <div>
                   <label className="block mb-1.5 text-sm font-semibold text-slate-700">
                     <Users size={13} className="inline mr-1.5 text-slate-400" />
@@ -209,7 +254,6 @@ export default function InboxPage({ profile, customers = [] }: Props) {
                   )}
                 </div>
 
-                {/* Subject */}
                 <div>
                   <label className="block mb-1.5 text-sm font-semibold text-slate-700">Onderwerp</label>
                   <input
@@ -221,7 +265,6 @@ export default function InboxPage({ profile, customers = [] }: Props) {
                   />
                 </div>
 
-                {/* Message */}
                 <div>
                   <label className="block mb-1.5 text-sm font-semibold text-slate-700">Bericht</label>
                   <textarea
@@ -233,7 +276,6 @@ export default function InboxPage({ profile, customers = [] }: Props) {
                   />
                 </div>
 
-                {/* Attachment */}
                 <div>
                   <label className="block mb-1.5 text-sm font-semibold text-slate-700">
                     <Paperclip size={13} className="inline mr-1.5 text-slate-400" />
@@ -300,7 +342,6 @@ export default function InboxPage({ profile, customers = [] }: Props) {
       <section className="py-10 bg-linear-to-br from-slate-50 to-blue-50">
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
 
-          {/* Loading skeleton */}
           {loading && (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
               <div className="space-y-3 lg:col-span-2">
@@ -318,7 +359,6 @@ export default function InboxPage({ profile, customers = [] }: Props) {
             </div>
           )}
 
-          {/* Content grid */}
           {!loading && (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
 
@@ -335,37 +375,48 @@ export default function InboxPage({ profile, customers = [] }: Props) {
                     </p>
                   </div>
                 ) : (
-                  emails.map((email, i) => (
-                    <motion.button
-                      key={email.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.04 }}
-                      onClick={() => { setSelected(email); setReplyOpen(false); }}
-                      whileHover={{ scale: 1.01 }}
-                      className={`w-full text-left p-4 rounded-2xl border transition-all duration-200 ${
-                        selected?.id === email.id
-                          ? 'bg-linear-to-br from-blue-50 to-purple-50 border-blue-200 shadow-md'
-                          : 'bg-white border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200'
-                      }`}
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-full bg-linear-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5">
-                          {email.from[0].toUpperCase()}
+                  emails.map((email, i) => {
+                    const replyCount = getRepliesForEmail(email, sentEmails).length;
+                    return (
+                      <motion.button
+                        key={email.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.04 }}
+                        onClick={() => { setSelected(email); setReplyOpen(false); }}
+                        whileHover={{ scale: 1.01 }}
+                        className={`w-full text-left p-4 rounded-2xl border transition-all duration-200 ${
+                          selected?.id === email.id
+                            ? 'bg-linear-to-br from-blue-50 to-purple-50 border-blue-200 shadow-md'
+                            : 'bg-white border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200'
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-full bg-linear-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5">
+                            {email.from[0].toUpperCase()}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold truncate text-slate-800">{email.from}</p>
+                            <p className="text-sm text-slate-500 truncate mt-0.5">{email.subject}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <p className="text-xs text-slate-400">
+                                {new Date(email.received_at).toLocaleString('nl-BE')}
+                              </p>
+                              {replyCount > 0 && (
+                                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-500 text-xs font-medium border border-blue-100">
+                                  <CornerDownRight size={10} />
+                                  {replyCount}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          {selected?.id === email.id && (
+                            <ChevronRight size={16} className="mt-2 text-blue-400 shrink-0" />
+                          )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold truncate text-slate-800">{email.from}</p>
-                          <p className="text-sm text-slate-500 truncate mt-0.5">{email.subject}</p>
-                          <p className="mt-1 text-xs text-slate-400">
-                            {new Date(email.received_at).toLocaleString('nl-BE')}
-                          </p>
-                        </div>
-                        {selected?.id === email.id && (
-                          <ChevronRight size={16} className="mt-2 text-blue-400 shrink-0" />
-                        )}
-                      </div>
-                    </motion.button>
-                  ))
+                      </motion.button>
+                    );
+                  })
                 )}
               </div>
 
@@ -417,7 +468,7 @@ export default function InboxPage({ profile, customers = [] }: Props) {
                         </div>
                       </div>
 
-                      {/* Reply box */}
+                      {/* Reply compose box */}
                       <AnimatePresence>
                         {replyOpen && (
                           <motion.div
@@ -470,11 +521,62 @@ export default function InboxPage({ profile, customers = [] }: Props) {
                         )}
                       </AnimatePresence>
 
-                      {/* Email body */}
+                      {/* Original email body */}
                       <div
                         className="p-6 prose-sm prose max-w-none text-slate-700 prose-headings:text-slate-800 prose-a:text-blue-500"
                         dangerouslySetInnerHTML={{ __html: selected.html }}
                       />
+
+                      {/* ── Thread: sent replies ─────────────────────────── */}
+                      <AnimatePresence>
+                        {threadReplies.length > 0 && (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="border-t border-slate-100"
+                          >
+                            <div className="px-6 py-3 bg-slate-50/70 flex items-center gap-2">
+                              <CornerDownRight size={13} className="text-slate-400" />
+                              <span className="text-xs font-semibold tracking-wider uppercase text-slate-400">
+                                Jouw antwoorden ({threadReplies.length})
+                              </span>
+                            </div>
+
+                            <div className="divide-y divide-slate-100">
+                              {threadReplies.map((reply, i) => (
+                                <motion.div
+                                  key={reply.id}
+                                  initial={{ opacity: 0, y: 8 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ delay: i * 0.06 }}
+                                  className="px-6 py-4 bg-linear-to-br from-blue-50/40 to-purple-50/40"
+                                >
+                                  <div className="flex items-start gap-3">
+                                    {/* "You" avatar */}
+                                    <div className="w-7 h-7 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white shrink-0 mt-0.5">
+                                      <Send size={11} />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center justify-between gap-2 mb-1.5">
+                                        <span className="text-xs font-semibold text-blue-600">
+                                          Jij → {reply.to_email}
+                                        </span>
+                                        <span className="text-xs text-slate-400 shrink-0">
+                                          {new Date(reply.sent_at).toLocaleString('nl-BE')}
+                                        </span>
+                                      </div>
+                                      <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
+                                        {reply.message}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
                     </motion.div>
                   ) : (
                     <motion.div

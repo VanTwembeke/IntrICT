@@ -1,3 +1,4 @@
+// /api/inbox/sent/route.ts
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
@@ -8,7 +9,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from('sent_emails')
-    .select('id, to_email, subject, message, sent_at')
+    .select('id, to_email, subject, message, sent_at, inbound_email_id, message_id')
     .order('sent_at', { ascending: true });
 
   if (error) {

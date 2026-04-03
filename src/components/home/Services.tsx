@@ -30,15 +30,6 @@ export default function Services() {
       alt: "Digitale strategie - Data en analytics",
       href: "/blog/digitale-strategie",
       buttonText: "Meer over digitale strategie"
-    },
-    {
-      title: "Technische Ondersteuning",
-      description: "Hulp bij het opzetten en onderhouden van je digitale infrastructuur. Van hosting en domeinen tot beveiliging en performance optimalisatie.",
-      image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      alt: "Technische ondersteuning - Server en hosting",
-      href: "/blog/technische-ondersteuning",
-      buttonText: "Meer over technische ondersteuning",
-      reverse: true
     }
   ];
 

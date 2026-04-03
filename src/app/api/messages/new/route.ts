@@ -34,23 +34,18 @@ export async function POST(req: NextRequest) {
 
   const existingConversationIds = existingParticipants?.map(p => p.conversation_id) || [];
 
-  const { data: existingConversation, error: convCheckError } = await supabase
-    .from('conversation_participants')
-    .select(`
-      conversation_id,
-      conversations!inner(id, subject)
-    `)
-    .eq('profile_id', user.id)
-    .in('conversation_id', existingConversationIds);
-
-  if (convCheckError) {
-    console.error('Error checking existing conversations:', convCheckError);
-  }
-
   let conversationId: string;
 
+  const existingConversation = existingConversationIds.length > 0
+    ? await supabase
+        .from('conversation_participants')
+        .select('conversation_id, conversations!inner(id, subject)')
+        .eq('profile_id', user.id)
+        .in('conversation_id', existingConversationIds)
+        .then(({ data }) => data)
+    : null;
+
   if (existingConversation && existingConversation.length > 0) {
-    // Use existing conversation
     conversationId = existingConversation[0].conversation_id;
   } else {
     // Create new conversation

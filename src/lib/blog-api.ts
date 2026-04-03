@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { blogPosts } from '@/data/blog-posts';
 
 export interface BlogPost {

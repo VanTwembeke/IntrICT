@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
-import { useNotifications } from '@/hooks/useNotifications';
+import { useMessages } from '@/hooks/useMessages';
 
 export default function Header() {
   const router = useRouter();
@@ -14,13 +14,10 @@ export default function Header() {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
-
-  // ── Messages unread count ──────────────────────────────────────────────────
-  const [unreadMessages, setUnreadMessages] = useState(0);
+  const [showMessages, setShowMessages] = useState(false);
 
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const notifRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
 
   // ── Auth listener ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -38,18 +35,6 @@ export default function Header() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // ── Fetch unread message count ─────────────────────────────────────────────
-  useEffect(() => {
-    if (!user) return;
-    fetch('/api/inbox/messages')
-      .then((r) => r.json())
-      .then((data) => {
-        const count = (data.messages ?? []).filter((m: { read: boolean }) => !m.read).length;
-        setUnreadMessages(count);
-      })
-      .catch(() => {});
-  }, [user]);
-
   // ── Scroll listener ────────────────────────────────────────────────────────
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -63,8 +48,8 @@ export default function Header() {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
         setShowUserMenu(false);
       }
-      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
-        setShowNotifications(false);
+      if (messagesRef.current && !messagesRef.current.contains(e.target as Node)) {
+        setShowMessages(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -76,17 +61,12 @@ export default function Header() {
     const supabase = createClient();
     await supabase.auth.signOut();
     setShowUserMenu(false);
+    setShowMessages(false);
     router.push('/');
     router.refresh();
   };
 
-  const {
-    notifications,
-    unreadCount,
-    markRead,
-    markAllRead,
-    loading,
-  } = useNotifications();
+  const { conversations, unreadCount, loading: messagesLoading } = useMessages();
 
   // ── Avatar initials ────────────────────────────────────────────────────────
   const avatarLabel = user?.email ? user.email[0].toUpperCase() : '?';
@@ -148,60 +128,35 @@ export default function Header() {
 
               {user && (
                 <>
-                  {/* ─ Messages icon ─ */}
-                  <motion.button
-                    whileHover={{ scale: 1.08 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => router.push('/dashboard/berichten')}
-                    className={`relative p-2 rounded-full transition-all duration-200 ${
-                      isScrolled ? 'hover:bg-slate-100' : 'hover:bg-white/10'
-                    }`}
-                    aria-label="Berichten"
-                  >
-                    {/* Mail icon */}
-                    <svg width="20" height="20" fill="none" stroke={iconStroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                      <path d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    {unreadMessages > 0 && (
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-violet-500 rounded-full shadow"
-                      >
-                        {unreadMessages > 9 ? '9+' : unreadMessages}
-                      </motion.span>
-                    )}
-                  </motion.button>
-
-                  {/* ─ Notification Bell ─ */}
-                  <div ref={notifRef} className="relative">
+                  {/* ─ Messages button ─ */}
+                  <div ref={messagesRef} className="relative">
                     <motion.button
                       whileHover={{ scale: 1.08 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => { setShowNotifications(!showNotifications); setShowUserMenu(false); }}
+                      onClick={() => { setShowMessages(!showMessages); setShowUserMenu(false); }}
                       className={`relative p-2 rounded-full transition-all duration-200 ${
                         isScrolled ? 'hover:bg-slate-100' : 'hover:bg-white/10'
                       }`}
-                      aria-label="Meldingen"
+                      aria-label="Berichten"
                     >
+                      {/* Mail icon */}
                       <svg width="20" height="20" fill="none" stroke={iconStroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                        <path d="M13.73 21a2 2 0 01-3.46 0" />
+                        <path d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                       {unreadCount > 0 && (
                         <motion.span
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
-                          className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full shadow"
+                          className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-blue-500 rounded-full shadow"
                         >
                           {unreadCount > 9 ? '9+' : unreadCount}
                         </motion.span>
                       )}
                     </motion.button>
 
-                    {/* Notifications panel */}
+                    {/* Messages dropdown */}
                     <AnimatePresence>
-                      {showNotifications && (
+                      {showMessages && (
                         <motion.div
                           initial={{ opacity: 0, y: 8, scale: 0.97 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -210,55 +165,57 @@ export default function Header() {
                           className="absolute right-0 z-50 mt-3 overflow-hidden border shadow-2xl w-80 bg-white/98 backdrop-blur-md rounded-2xl border-slate-200"
                         >
                           <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-                            <span className="font-semibold text-slate-800">Meldingen</span>
-                            {unreadCount > 0 && (
-                              <button onClick={markAllRead} className="text-xs font-medium text-blue-500 hover:underline">
-                                Alles gelezen
-                              </button>
-                            )}
+                            <span className="font-semibold text-slate-800">Berichten</span>
+                            <button
+                              onClick={() => router.push('/dashboard/messages')}
+                              className="text-xs font-medium text-blue-500 hover:underline"
+                            >
+                              Alle berichten
+                            </button>
                           </div>
-                          {loading ? (
+                          {messagesLoading ? (
                             <div className="px-4 py-6 text-sm text-center text-slate-400">Laden...</div>
-                          ) : notifications.length === 0 ? (
+                          ) : conversations.length === 0 ? (
                             <div className="px-4 py-6 text-center">
-                              <p className="text-sm font-medium text-slate-500">Alles bijgewerkt 🎉</p>
-                              <p className="mt-1 text-xs text-slate-400">Je hebt geen nieuwe meldingen</p>
+                              <p className="text-sm font-medium text-slate-500">Geen berichten</p>
+                              <p className="mt-1 text-xs text-slate-400">Start een gesprek om te beginnen</p>
                             </div>
                           ) : (
                             <ul className="overflow-y-auto divide-y divide-slate-100 max-h-72">
-                              {notifications.slice(0, 8).map((n) => (
+                              {conversations.slice(0, 5).map((conversation) => (
                                 <li
-                                  key={n.id}
-                                  className={`px-4 py-3 flex items-start gap-3 transition-colors duration-150 cursor-pointer ${
-                                    !n.read ? 'bg-blue-50/50 hover:bg-blue-50' : 'hover:bg-slate-50'
-                                  }`}
-                                  onClick={async () => {
-                                    await markRead(n.id);
-                                    if (n.link) router.push(n.link);
-                                    setShowNotifications(false);
+                                  key={conversation.id}
+                                  className="px-4 py-3 cursor-pointer hover:bg-slate-50"
+                                  onClick={() => {
+                                    router.push('/dashboard/messages');
+                                    setShowMessages(false);
                                   }}
                                 >
-                                  <span className={`mt-1 w-2 h-2 rounded-full shrink-0 ${
-                                    !n.read ? TYPE_DOT[n.type] ?? 'bg-blue-500' : 'bg-transparent border border-slate-300'
-                                  }`} />
-                                  <div className="flex-1 min-w-0">
-                                    <p className={`text-sm leading-snug truncate ${!n.read ? 'font-semibold text-slate-800' : 'text-slate-600'}`}>
-                                      {n.title}
-                                    </p>
-                                    {n.body && <p className="text-xs text-slate-500 mt-0.5 truncate">{n.body}</p>}
-                                    <p className="mt-0.5 text-xs text-slate-400">
-                                      {new Date(n.created_at).toLocaleString('nl-BE', { dateStyle: 'short', timeStyle: 'short' })}
-                                    </p>
+                                  <div className="flex items-start gap-3">
+                                    <div className="w-2 h-2 mt-2 bg-blue-500 rounded-full shrink-0" />
+                                    <div className="flex-1 min-w-0">
+                                      <p className={`text-sm truncate ${conversation.unread_count > 0 ? 'font-semibold text-slate-800' : 'text-slate-600'}`}>
+                                        {conversation.subject}
+                                      </p>
+                                      {conversation.last_message && (
+                                        <p className="text-xs text-slate-500 mt-0.5 truncate">
+                                          {conversation.last_message.sender.full_name || conversation.last_message.sender.email}: {conversation.last_message.content}
+                                        </p>
+                                      )}
+                                      <p className="mt-0.5 text-xs text-slate-400">
+                                        {new Date(conversation.updated_at).toLocaleDateString('nl-BE', { dateStyle: 'short', timeStyle: 'short' })}
+                                      </p>
+                                    </div>
+                                    {conversation.unread_count > 0 && (
+                                      <span className="inline-flex items-center justify-center h-5 w-5 text-[10px] font-bold text-white bg-blue-500 rounded-full">
+                                        {conversation.unread_count}
+                                      </span>
+                                    )}
                                   </div>
                                 </li>
                               ))}
                             </ul>
                           )}
-                          <div className="px-4 py-3 text-center border-t border-slate-100">
-                            <a href="/dashboard/notifications" className="text-xs font-medium text-blue-500 hover:underline">
-                              Alle meldingen bekijken
-                            </a>
-                          </div>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -272,7 +229,7 @@ export default function Header() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => { setShowUserMenu(!showUserMenu); setShowNotifications(false); }}
+                    onClick={() => { setShowUserMenu(!showUserMenu); setShowMessages(false); }}
                     className={`flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full font-medium text-sm transition-all duration-300 ${
                       isScrolled
                         ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -314,16 +271,6 @@ export default function Header() {
 
                         <div className="py-2">
                           <MenuLink href="/dashboard" icon="grid">Dashboard</MenuLink>
-                          <MenuLink href="/dashboard/berichten" icon="mail">
-                            <span className="flex items-center justify-between w-full">
-                              Berichten
-                              {unreadMessages > 0 && (
-                                <span className="flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-violet-500 rounded-full">
-                                  {unreadMessages > 9 ? '9+' : unreadMessages}
-                                </span>
-                              )}
-                            </span>
-                          </MenuLink>
                           <MenuLink href="/dashboard/profile" icon="user">Profiel</MenuLink>
                           <MenuLink href="/dashboard/settings" icon="settings">Instellingen</MenuLink>
                         </div>
@@ -399,20 +346,6 @@ export default function Header() {
                     <p className="text-sm font-semibold truncate text-slate-800">{user.email?.split('@')[0]}</p>
                     <p className="text-xs truncate text-slate-400">{user.email}</p>
                   </div>
-                  <div className="flex items-center gap-1.5 ml-auto">
-                    {unreadMessages > 0 && (
-                      <span className="flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full text-violet-600 bg-violet-100">
-                        <span className="w-1.5 h-1.5 rounded-full bg-violet-500" />
-                        {unreadMessages > 9 ? '9+' : unreadMessages} bericht{unreadMessages !== 1 ? 'en' : ''}
-                      </span>
-                    )}
-                    {unreadCount > 0 && (
-                      <span className="flex items-center gap-1 px-2 py-1 text-xs font-semibold text-blue-600 bg-blue-100 rounded-full">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                        {unreadCount > 9 ? '9+' : unreadCount} nieuw
-                      </span>
-                    )}
-                  </div>
                 </div>
               )}
 
@@ -450,13 +383,13 @@ export default function Header() {
                 {user ? (
                   <>
                     <button
-                      onClick={() => router.push('/dashboard/berichten')}
-                      className="flex items-center justify-center w-full gap-2 px-6 py-3 font-semibold transition-all border text-violet-700 border-violet-200 rounded-xl bg-violet-50 hover:bg-violet-100"
+                      onClick={() => router.push('/dashboard/messages')}
+                      className="flex items-center justify-center w-full gap-2 px-6 py-3 font-semibold text-blue-700 transition-all border border-blue-200 rounded-xl bg-blue-50 hover:bg-blue-100"
                     >
                       Berichten
-                      {unreadMessages > 0 && (
-                        <span className="flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-violet-500 rounded-full">
-                          {unreadMessages}
+                      {unreadCount > 0 && (
+                        <span className="flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-blue-500 rounded-full">
+                          {unreadCount}
                         </span>
                       )}
                     </button>
@@ -491,14 +424,6 @@ export default function Header() {
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
-
-const TYPE_DOT: Record<string, string> = {
-  invoice: 'bg-green-500',
-  file: 'bg-blue-500',
-  message: 'bg-purple-500',
-  alert: 'bg-red-500',
-  info: 'bg-slate-400',
-};
 
 function DropdownNav({
   label,

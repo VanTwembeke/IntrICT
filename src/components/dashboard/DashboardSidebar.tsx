@@ -33,10 +33,10 @@ const navItems: NavItem[] = [
     roles: ['admin', 'user'],
   },
   {
-    label: 'Inbox',
-    href: '/dashboard/inbox',
+    label: 'Berichten',
+    href: '/dashboard/messages',
     icon: <Mail size={18} />,
-    roles: ['admin'],
+    roles: ['admin', 'user'],
   },
   {
     label: 'Gebruikers',

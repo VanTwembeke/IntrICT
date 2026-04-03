@@ -203,7 +203,7 @@ export default function Header() {
                                         </p>
                                       )}
                                       <p className="mt-0.5 text-xs text-slate-400">
-                                        {new Date(conversation.updated_at).toLocaleDateString('nl-BE', { dateStyle: 'short', timeStyle: 'short' })}
+                                        {new Date(conversation.updated_at).toLocaleString('nl-BE', { dateStyle: 'short', timeStyle: 'short' })}
                                       </p>
                                     </div>
                                     {conversation.unread_count > 0 && (

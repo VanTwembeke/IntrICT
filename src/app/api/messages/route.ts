@@ -25,7 +25,7 @@ export async function GET() {
         created_at,
         read_at,
         sender_id,
-        profiles!messages_sender_id_fkey(full_name, email)
+        profiles!sender_id(full_name, email)
       )
     `)
     .eq('conversation_participants.profile_id', user.id)

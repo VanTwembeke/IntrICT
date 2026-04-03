@@ -23,7 +23,6 @@ export default function Footer() {
       { name: 'Website Ontwikkeling', href: '/blog/website-ontwikkeling' },
       { name: 'Logo & Branding', href: '/blog/logo-en-branding' },
       { name: 'Digitale Strategie', href: '/blog/digitale-strategie' },
-      { name: 'Technische Ondersteuning', href: '/blog/technische-ondersteuning' },
     ],
     legal: [
       { name: 'Sitemap', href: '/sitemap.xml' },

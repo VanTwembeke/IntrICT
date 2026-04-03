@@ -42,7 +42,7 @@ export default function Contact() {
     {
       vraag: 'Kan ik mijn website zelf aanpassen na oplevering?',
       antwoord:
-        "Ja, ik zorg altijd voor een gebruiksvriendelijk CMS (zoals een headless CMS of een eenvoudig beheerpaneel) zodat je zelf teksten, afbeeldingen en pagina's kunt aanpassen. Ik geef ook een korte training zodat je zelfstandig aan de slag kunt.",
+        "Dat is zeker mogelijk, ik kan altijd voor een gebruiksvriendelijk CMS (zoals een headless CMS of een eenvoudig beheerpaneel) zorgen zodat je zelf teksten, afbeeldingen en pagina's kunt aanpassen. Ik geef ook een korte training zodat je zelfstandig aan de slag kunt.",
     },
     {
       vraag: 'In welke regio werk je?',
@@ -319,7 +319,6 @@ export default function Contact() {
                       { icon: '🌐', text: 'Professionele websites & webapps' },
                       { icon: '🛒', text: 'E-commerce oplossingen' },
                       { icon: '⚡', text: 'Performance & SEO optimalisatie' },
-                      { icon: '🔧', text: 'Onderhoud & technische support' },
                       { icon: '🎨', text: 'UI/UX Design & Branding' },
                     ].map((item) => (
                       <li key={item.text} className="flex items-center gap-3 text-slate-700">

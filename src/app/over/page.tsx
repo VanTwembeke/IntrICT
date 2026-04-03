@@ -153,7 +153,7 @@ export default function Over() {
                   <p className="leading-relaxed text-slate-600">
                     Mijn reis begon met een simpele vraag: &quot;Hoe werken websites eigenlijk?&quot; 
                     Die nieuwsgierigheid leidde tot uren van experimenteren met HTML en CSS, 
-                    en uiteindelijk tot een diepe passie voor web development.
+                    en uiteindelijk tot een diepe passie voor code en web development.
                   </p>
                 </div>
                 <div className="p-8 border border-purple-100 bg-linear-to-r from-purple-50 to-pink-50 rounded-2xl">

@@ -74,6 +74,7 @@ interface Props {
     full_name: string | null;
     email: string;
     role: string;
+    company: string | null;
   }>;
 }
 
@@ -88,9 +89,12 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
   const [newRecipient, setNewRecipient] = useState('');
   const [newSubject, setNewSubject] = useState('');
   const [newConversationMessage, setNewConversationMessage] = useState('');
+  const [newConversationFiles, setNewConversationFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
+
+  const isAdmin = profile.role === 'admin';
 
   const fetchConversations = async () => {
     try {
@@ -175,10 +179,21 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
 
       if (response.ok) {
         const data = await response.json();
+
+        // Send files as a follow-up message if any were attached
+        if (newConversationFiles.length > 0) {
+          const formData = new FormData();
+          formData.append('conversation_id', data.conversationId);
+          formData.append('content', '📎 Bijlage(n)');
+          newConversationFiles.forEach((file) => formData.append('files', file));
+          await fetch('/api/messages/send', { method: 'POST', body: formData });
+        }
+
         setShowNewConversation(false);
         setNewRecipient('');
         setNewSubject('');
         setNewConversationMessage('');
+        setNewConversationFiles([]);
         setSelectedConversation(data.conversationId);
         await fetchConversations();
       }
@@ -194,6 +209,10 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
   };
 
   const totalUnread = conversations.reduce((sum, c) => sum + c.unread_count, 0);
+
+  // Group profiles for the dropdown
+  const adminProfiles = allProfiles.filter((p) => p.role === 'admin');
+  const otherProfiles = allProfiles.filter((p) => p.role !== 'admin');
 
   if (loading) {
     return (
@@ -215,12 +234,9 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
 
-      {/* ── Hero Banner (matches contact page exactly) ─────────────────── */}
+      {/* ── Hero Banner ─────────────────────────────────────────────────── */}
       <section className="relative pt-20 pb-16 overflow-hidden">
-        {/* dark background */}
         <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900" />
-
-        {/* dot-grid texture */}
         <div className="absolute inset-0 opacity-40">
           <div
             className="w-full h-full"
@@ -229,13 +245,10 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
             }}
           />
         </div>
-
-        {/* ambient glows */}
         <div className="absolute rounded-full pointer-events-none -right-24 -top-24 h-80 w-80 bg-blue-600/20 blur-3xl" />
         <div className="absolute w-56 h-56 rounded-full pointer-events-none -bottom-16 left-1/4 bg-purple-600/20 blur-3xl" />
 
         <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-          {/* back link */}
           <div className="flex items-center gap-2 mb-6">
             <Link
               href="/dashboard"
@@ -263,7 +276,6 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
               deel bestanden en blijf verbonden met je netwerk.
             </p>
 
-            {/* stats row — mirrors contact page */}
             <div className="flex flex-wrap items-center justify-center gap-8 mt-10">
               {[
                 { label: 'Actieve Gesprekken', value: conversations.length.toString() },
@@ -293,7 +305,6 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
 
               {/* ── Sidebar ─────────────────────────────────────────────── */}
               <div className="flex flex-col border-r w-80 border-slate-200 bg-slate-50">
-                {/* sidebar header */}
                 <div className="p-6 bg-white border-b border-slate-200">
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-bold text-slate-800">Gesprekken</h2>
@@ -306,7 +317,7 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
                           ? 'bg-slate-200 text-slate-600'
                           : 'text-white bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600'
                       }`}
-                      title={showNewConversation ? "Annuleren" : "Nieuw gesprek"}
+                      title={showNewConversation ? 'Annuleren' : 'Nieuw gesprek'}
                     >
                       {showNewConversation ? <X className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                     </motion.button>
@@ -319,11 +330,12 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="border-b border-slate-200 bg-white"
+                    className="bg-white border-b border-slate-200"
                   >
                     <div className="p-6 space-y-4">
                       <h3 className="text-lg font-semibold text-slate-800">Nieuw Gesprek</h3>
 
+                      {/* Recipient */}
                       <div>
                         <label className="block mb-2 text-sm font-medium text-slate-700">
                           Ontvanger
@@ -333,17 +345,57 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
                           onChange={(e) => setNewRecipient(e.target.value)}
                           className="w-full p-3 transition-all duration-200 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800"
                         >
-                          <option value="">Selecteer admin</option>
-                          {allProfiles
-                            .filter(p => p.role === 'admin')
-                            .map((p) => (
-                              <option key={p.id} value={p.id}>
-                                {p.full_name || p.email}
-                              </option>
-                            ))}
+                          <option value="">Selecteer ontvanger</option>
+
+                          {isAdmin ? (
+                            // Admins: grouped list — admins first, then everyone else
+                            <>
+                              {adminProfiles.length > 0 && (
+                                <optgroup label="Admins">
+                                  {adminProfiles.map((p) => (
+                                    <option key={p.id} value={p.id}>
+                                      {p.full_name || p.email}
+                                    </option>
+                                  ))}
+                                </optgroup>
+                              )}
+                              {otherProfiles.length > 0 && (
+                                <optgroup label="Gebruikers">
+                                  {otherProfiles.map((p) => (
+                                    <option key={p.id} value={p.id}>
+                                      {p.full_name || p.email}
+                                    </option>
+                                  ))}
+                                </optgroup>
+                              )}
+                            </>
+                          ) : (
+                            // Regular users: admins + same-company users (already filtered server-side)
+                            <>
+                              {adminProfiles.length > 0 && (
+                                <optgroup label="Admins">
+                                  {adminProfiles.map((p) => (
+                                    <option key={p.id} value={p.id}>
+                                      {p.full_name || p.email}
+                                    </option>
+                                  ))}
+                                </optgroup>
+                              )}
+                              {otherProfiles.length > 0 && (
+                                <optgroup label="Collega's">
+                                  {otherProfiles.map((p) => (
+                                    <option key={p.id} value={p.id}>
+                                      {p.full_name || p.email}
+                                    </option>
+                                  ))}
+                                </optgroup>
+                              )}
+                            </>
+                          )}
                         </select>
                       </div>
 
+                      {/* Subject */}
                       <div>
                         <label className="block mb-2 text-sm font-medium text-slate-700">
                           Onderwerp{' '}
@@ -358,6 +410,7 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
                         />
                       </div>
 
+                      {/* Message */}
                       <div>
                         <label className="block mb-2 text-sm font-medium text-slate-700">
                           Bericht <span className="text-blue-500">*</span>
@@ -371,6 +424,64 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
                         />
                       </div>
 
+                      {/* File attachments for new conversation */}
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-slate-700">
+                          Bijlagen{' '}
+                          <span className="font-normal text-slate-400">(optioneel)</span>
+                        </label>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="file"
+                            multiple
+                            onChange={(e) =>
+                              setNewConversationFiles(Array.from(e.target.files || []))
+                            }
+                            className="hidden"
+                            id="new-conv-file-upload"
+                          />
+                          <label
+                            htmlFor="new-conv-file-upload"
+                            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all duration-200 border cursor-pointer text-slate-600 border-slate-200 rounded-xl hover:bg-slate-50 hover:border-blue-300"
+                          >
+                            <Paperclip className="w-4 h-4" />
+                            Bestand toevoegen
+                          </label>
+                          {newConversationFiles.length > 0 && (
+                            <span className="text-xs text-blue-600">
+                              {newConversationFiles.length} bestand(en) geselecteerd
+                            </span>
+                          )}
+                        </div>
+
+                        {/* File preview */}
+                        {newConversationFiles.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {newConversationFiles.map((file, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100"
+                              >
+                                <Paperclip className="w-3 h-3 text-slate-500" />
+                                <span className="text-xs truncate text-slate-700 max-w-24">
+                                  {file.name}
+                                </span>
+                                <button
+                                  onClick={() =>
+                                    setNewConversationFiles(
+                                      newConversationFiles.filter((_, i) => i !== index)
+                                    )
+                                  }
+                                  className="transition-colors text-slate-400 hover:text-slate-700"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
                       <div className="flex gap-3">
                         <motion.button
                           onClick={() => {
@@ -378,6 +489,7 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
                             setNewRecipient('');
                             setNewSubject('');
                             setNewConversationMessage('');
+                            setNewConversationFiles([]);
                           }}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
@@ -462,9 +574,7 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
                           </h3>
                           <p className="mt-1 text-sm text-slate-500">
                             Met{' '}
-                            {getOtherParticipants(
-                              conversationDetail.conversation_participants
-                            )
+                            {getOtherParticipants(conversationDetail.conversation_participants)
                               .map((p) => p.profiles.full_name || p.profiles.email)
                               .join(', ')}
                           </p>
@@ -484,9 +594,7 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           className={`flex ${
-                            message.sender_id === profile.id
-                              ? 'justify-end'
-                              : 'justify-start'
+                            message.sender_id === profile.id ? 'justify-end' : 'justify-start'
                           }`}
                         >
                           <div className="max-w-md lg:max-w-lg">
@@ -533,7 +641,7 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
                               {message.message_attachments?.length > 0 && (
                                 <div className="mt-3 space-y-2">
                                   {message.message_attachments.map((att) => (
-                                    <a
+                                      <a
                                       key={att.id}
                                       href={att.file_url}
                                       target="_blank"
@@ -555,7 +663,6 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
                               )}
                             </div>
 
-                            {/* reply button */}
                             <button
                               onClick={() => setReplyingTo(message)}
                               className="flex items-center gap-1 mt-1 text-xs transition-colors text-slate-400 hover:text-slate-600"
@@ -633,8 +740,7 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
                           <motion.button
                             onClick={sendMessage}
                             disabled={
-                              sending ||
-                              (!newMessage.trim() && attachments.length === 0)
+                              sending || (!newMessage.trim() && attachments.length === 0)
                             }
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -680,7 +786,6 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
                     </div>
                   </>
                 ) : (
-                  /* empty state */
                   <div className="flex items-center justify-center flex-1">
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9 }}

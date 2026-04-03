@@ -711,7 +711,7 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
                           value={newMessage}
                           onChange={(e) => setNewMessage(e.target.value)}
                           placeholder="Typ je bericht..."
-                          className="flex-1 p-4 transition-all duration-200 border resize-none border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="flex-1 p-4 transition-all duration-200 border resize-none border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
                           rows={3}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {

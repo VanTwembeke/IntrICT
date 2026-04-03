@@ -20,7 +20,7 @@ export default async function MessagesServerPage() {
   // Get all profiles for the recipient selector (excluding current user)
   const { data: allProfiles } = await supabase
     .from('profiles')
-    .select('id, full_name, email')
+    .select('id, full_name, email, role')
     .neq('id', user.id)
     .order('full_name', { ascending: true });
 

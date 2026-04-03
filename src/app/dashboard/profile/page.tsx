@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { ChevronLeft } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import type { Profile } from '@/lib/types';
 
@@ -122,6 +124,10 @@ export default function ProfilePage() {
         <div className="absolute rounded-full pointer-events-none -bottom-20 -right-20 w-80 h-80 bg-purple-600/20 blur-3xl" />
 
         <div className="relative z-10 max-w-5xl px-6 mx-auto lg:px-10">
+          <Link href="/dashboard" className="inline-flex items-center gap-2 mb-6 text-sm font-medium text-slate-300 hover:text-white transition-colors">
+            <ChevronLeft size={18} />
+            Terug
+          </Link>
           <motion.div {...fadeUp(0)} className="flex items-center gap-6">
             {/* Avatar */}
             <div className="relative shrink-0">

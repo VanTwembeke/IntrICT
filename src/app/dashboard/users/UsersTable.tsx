@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Shield, User, X, Save, Sparkles, Users,
-  Mail, Calendar, Edit2, ChevronRight,
+  Mail, Calendar, Edit2, ChevronRight, ChevronLeft,
 } from 'lucide-react';
 import type { Profile, UserRole } from '@/lib/types';
 import { createClient } from '@/lib/supabase/client';
@@ -14,23 +15,51 @@ interface Props {
   currentUserId: string;
 }
 
+interface EditFormState {
+  full_name: string;
+  phone: string;
+  company: string;
+  vat_number: string;
+  address: string;
+  postal_code: string;
+  city: string;
+  country: string;
+  role: UserRole;
+}
+
 export default function UsersTable({ users: initial, currentUserId }: Props) {
   const [users, setUsers]       = useState(initial);
   const [saving, setSaving]     = useState<string | null>(null);
   const [editUser, setEditUser] = useState<Profile | null>(null);
 
   // Edit form state
-  const [editName,  setEditName]  = useState('');
-  const [editEmail, setEditEmail] = useState('');
-  const [editRole,  setEditRole]  = useState<UserRole>('user');
+  const [editForm, setEditForm] = useState<EditFormState>({
+    full_name: '',
+    phone: '',
+    company: '',
+    vat_number: '',
+    address: '',
+    postal_code: '',
+    city: '',
+    country: '',
+    role: 'user',
+  });
   const [editSaving, setEditSaving] = useState(false);
   const [editSuccess, setEditSuccess] = useState(false);
 
   const openEdit = (u: Profile) => {
     setEditUser(u);
-    setEditName(u.full_name ?? '');
-    setEditEmail(u.email);
-    setEditRole(u.role as UserRole);
+    setEditForm({
+      full_name: u.full_name ?? '',
+      phone: u.phone ?? '',
+      company: u.company ?? '',
+      vat_number: u.vat_number ?? '',
+      address: u.address ?? '',
+      postal_code: u.postal_code ?? '',
+      city: u.city ?? '',
+      country: u.country ?? '',
+      role: u.role as UserRole,
+    });
     setEditSuccess(false);
   };
 
@@ -44,14 +73,32 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
     setEditSaving(true);
     const supabase = createClient();
     await supabase.from('profiles').update({
-      full_name: editName || null,
-      role: editRole,
+      full_name: editForm.full_name || null,
+      phone: editForm.phone || null,
+      company: editForm.company || null,
+      vat_number: editForm.vat_number || null,
+      address: editForm.address || null,
+      postal_code: editForm.postal_code || null,
+      city: editForm.city || null,
+      country: editForm.country || null,
+      role: editForm.role,
     }).eq('id', editUser.id);
 
     setUsers((prev) =>
       prev.map((u) =>
         u.id === editUser.id
-          ? { ...u, full_name: editName || null, role: editRole }
+          ? {
+              ...u,
+              full_name: editForm.full_name || null,
+              phone: editForm.phone || null,
+              company: editForm.company || null,
+              vat_number: editForm.vat_number || null,
+              address: editForm.address || null,
+              postal_code: editForm.postal_code || null,
+              city: editForm.city || null,
+              country: editForm.country || null,
+              role: editForm.role,
+            }
           : u
       )
     );
@@ -90,6 +137,13 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
 
         <div className="relative z-10 px-4 pt-10 pb-12 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-2 text-slate-300 hover:text-white transition-colors mb-6"
+            >
+              <ChevronLeft size={20} />
+              <span>Terug</span>
+            </Link>
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -150,7 +204,7 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
                 </button>
               </div>
 
-              <div className="p-6 space-y-4">
+              <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                 {editSuccess ? (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
@@ -164,31 +218,112 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
                   </motion.div>
                 ) : (
                   <>
-                    {/* Name */}
+                    {/* Full Name */}
                     <div>
-                      <label className="block mb-1.5 text-sm font-semibold text-slate-700">
-                        Volledige naam
-                      </label>
+                      <label className="block mb-1.5 text-sm font-semibold text-slate-700">Volledige naam</label>
                       <input
                         type="text"
-                        value={editName}
-                        onChange={(e) => setEditName(e.target.value)}
+                        value={editForm.full_name}
+                        onChange={(e) => setEditForm({...editForm, full_name: e.target.value})}
                         placeholder="Naam van de gebruiker"
                         className="w-full px-4 py-3 transition-all border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800"
                       />
                     </div>
 
-                    {/* Email (read-only — changing email requires Supabase Auth update) */}
+                    {/* Email (read-only) */}
                     <div>
                       <label className="block mb-1.5 text-sm font-semibold text-slate-700">
-                        E-mailadres
-                        <span className="ml-1.5 text-xs font-normal text-slate-400">(alleen-lezen)</span>
+                        E-mailadres <span className="ml-1.5 text-xs font-normal text-slate-400">(alleen-lezen)</span>
                       </label>
                       <input
                         type="email"
-                        value={editEmail}
+                        value={editUser?.email ?? ''}
                         disabled
                         className="w-full px-4 py-3 border-2 cursor-not-allowed border-slate-100 rounded-xl bg-slate-50 text-slate-400"
+                      />
+                    </div>
+
+                    {/* Phone */}
+                    <div>
+                      <label className="block mb-1.5 text-sm font-semibold text-slate-700">Telefoonnummer</label>
+                      <input
+                        type="tel"
+                        value={editForm.phone}
+                        onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
+                        placeholder="+31 6 12345678"
+                        className="w-full px-4 py-3 transition-all border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800"
+                      />
+                    </div>
+
+                    {/* Company */}
+                    <div>
+                      <label className="block mb-1.5 text-sm font-semibold text-slate-700">Bedrijfsnaam</label>
+                      <input
+                        type="text"
+                        value={editForm.company}
+                        onChange={(e) => setEditForm({...editForm, company: e.target.value})}
+                        placeholder="Bedrijfsnaam"
+                        className="w-full px-4 py-3 transition-all border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800"
+                      />
+                    </div>
+
+                    {/* VAT Number */}
+                    <div>
+                      <label className="block mb-1.5 text-sm font-semibold text-slate-700">BTW-nummer</label>
+                      <input
+                        type="text"
+                        value={editForm.vat_number}
+                        onChange={(e) => setEditForm({...editForm, vat_number: e.target.value})}
+                        placeholder="NL123456789B01"
+                        className="w-full px-4 py-3 transition-all border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800"
+                      />
+                    </div>
+
+                    {/* Address */}
+                    <div>
+                      <label className="block mb-1.5 text-sm font-semibold text-slate-700">Adres</label>
+                      <input
+                        type="text"
+                        value={editForm.address}
+                        onChange={(e) => setEditForm({...editForm, address: e.target.value})}
+                        placeholder="Straatnaam 123"
+                        className="w-full px-4 py-3 transition-all border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800"
+                      />
+                    </div>
+
+                    {/* Postal Code */}
+                    <div>
+                      <label className="block mb-1.5 text-sm font-semibold text-slate-700">Postcode</label>
+                      <input
+                        type="text"
+                        value={editForm.postal_code}
+                        onChange={(e) => setEditForm({...editForm, postal_code: e.target.value})}
+                        placeholder="1234 AB"
+                        className="w-full px-4 py-3 transition-all border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800"
+                      />
+                    </div>
+
+                    {/* City */}
+                    <div>
+                      <label className="block mb-1.5 text-sm font-semibold text-slate-700">Plaats</label>
+                      <input
+                        type="text"
+                        value={editForm.city}
+                        onChange={(e) => setEditForm({...editForm, city: e.target.value})}
+                        placeholder="Amsterdam"
+                        className="w-full px-4 py-3 transition-all border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800"
+                      />
+                    </div>
+
+                    {/* Country */}
+                    <div>
+                      <label className="block mb-1.5 text-sm font-semibold text-slate-700">Land</label>
+                      <input
+                        type="text"
+                        value={editForm.country}
+                        onChange={(e) => setEditForm({...editForm, country: e.target.value})}
+                        placeholder="Nederland"
+                        className="w-full px-4 py-3 transition-all border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800"
                       />
                     </div>
 
@@ -199,9 +334,9 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
                         {(['user', 'admin'] as UserRole[]).map((r) => (
                           <button
                             key={r}
-                            onClick={() => setEditRole(r)}
+                            onClick={() => setEditForm({...editForm, role: r})}
                             className={`flex items-center gap-2 px-4 py-3 rounded-xl border-2 text-sm font-semibold transition-all ${
-                              editRole === r
+                              editForm.role === r
                                 ? r === 'admin'
                                   ? 'border-purple-400 bg-purple-50 text-purple-700'
                                   : 'border-blue-400 bg-blue-50 text-blue-700'

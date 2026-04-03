@@ -1,10 +1,10 @@
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { Settings, Bell, Shield, Palette, Package, Clock } from 'lucide-react';
+import { Settings, Bell, Shield, Palette, Package, Clock, ChevronLeft } from 'lucide-react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
-import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import type { Profile } from '@/lib/types';
 
 export default async function SettingsPage() {
@@ -58,7 +58,6 @@ export default async function SettingsPage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Header />
-      <DashboardSidebar profile={profile} />
 
       <main>
         {/* Hero banner */}
@@ -68,6 +67,10 @@ export default async function SettingsPage() {
             <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')]" />
           </div>
           <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <Link href="/dashboard" className="inline-flex items-center gap-2 mb-6 text-sm font-medium text-slate-300 hover:text-white transition-colors">
+              <ChevronLeft size={18} />
+              Terug
+            </Link>
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-white/10 backdrop-blur-sm">
                 <Settings size={22} className="text-blue-400" />

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MessageSquare,
@@ -11,7 +12,8 @@ import {
   Plus,
   ArrowLeft,
   Reply,
-  Download
+  Download,
+  ChevronLeft
 } from 'lucide-react';
 import type { Profile } from '@/lib/types';
 
@@ -215,6 +217,13 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors mb-6"
+        >
+          <ChevronLeft size={20} />
+          <span>Terug</span>
+        </Link>
         <div className="bg-white rounded-lg shadow-sm min-h-150 flex">
           {/* Conversations Sidebar */}
           <div className="w-80 border-r border-gray-200 flex flex-col">

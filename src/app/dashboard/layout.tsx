@@ -4,7 +4,6 @@ import type { Profile } from '@/lib/types';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
-import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 
 export default async function DashboardLayout({
   children,
@@ -30,13 +29,9 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Header />
-      <div className="flex">
-        <DashboardSidebar profile={profile} />
-        <main className="flex-1 min-w-0">
-          {children}
-        </main>
-
-      </div>
+      <main className="flex-1 min-w-0">
+        {children}
+      </main>
       <Footer />
       <BackToTop />
     </div>

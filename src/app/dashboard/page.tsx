@@ -5,7 +5,6 @@ import { Users, User, ArrowRight, Calendar } from 'lucide-react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
-import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import type { Profile } from '@/lib/types';
 
 export default async function DashboardPage() {
@@ -62,7 +61,6 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Header />
-      <DashboardSidebar profile={profile} />
 
       <main>
         {/* Hero banner */}

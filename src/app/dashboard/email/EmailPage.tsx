@@ -48,7 +48,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
   const [contactPhone, setContactPhone] = useState('+32 123 45 67 89');
   const [contactAddress, setContactAddress] = useState('Gent, België');
   const [companyName, setCompanyName] = useState('IntrICT');
-  const [companyTagline, setCompanyTagline] = useState('Professionele IT-oplossingen voor bedrijven');
+  const [companyTagline, setCompanyTagline] = useState('Moderne websites die werken');
   const [websiteUrl, setWebsiteUrl] = useState('https://intrict.com');
   const [websiteDisplay, setWebsiteDisplay] = useState('www.intrict.com');
   const [attachments, setAttachments] = useState<File[]>([]);

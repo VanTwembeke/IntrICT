@@ -10,6 +10,8 @@ import {
   CheckCircle,
   AlertCircle,
   Loader2,
+  Paperclip,
+  X,
 } from 'lucide-react';
 import type { Profile } from '@/lib/types';
 
@@ -36,6 +38,20 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
   const [includeAdditionalContent, setIncludeAdditionalContent] = useState(false);
   const [additionalContent, setAdditionalContent] = useState('');
   const [includeDisclaimer, setIncludeDisclaimer] = useState(true);
+
+  // Template customization fields
+  const [headerSubtitle, setHeaderSubtitle] = useState('Professioneel bericht');
+  const [greeting, setGreeting] = useState('');
+  const [signatureName, setSignatureName] = useState('Jonas');
+  const [signatureTitle, setSignatureTitle] = useState('Oprichter & CEO');
+  const [contactEmail, setContactEmail] = useState('info@intrict.com');
+  const [contactPhone, setContactPhone] = useState('+32 123 45 67 89');
+  const [contactAddress, setContactAddress] = useState('Gent, België');
+  const [companyName, setCompanyName] = useState('IntrICT');
+  const [companyTagline, setCompanyTagline] = useState('Professionele IT-oplossingen voor bedrijven');
+  const [websiteUrl, setWebsiteUrl] = useState('https://intrict.com');
+  const [websiteDisplay, setWebsiteDisplay] = useState('www.intrict.com');
+  const [attachments, setAttachments] = useState<File[]>([]);
   const [sending, setSending] = useState(false);
   const [sendResults, setSendResults] = useState<Array<{
     email: string;
@@ -65,23 +81,38 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
       if (!recipient) continue;
 
       try {
+        const formData = new FormData();
+        formData.append('recipientEmail', recipient.email);
+        formData.append('recipientName', recipient.full_name || recipient.email);
+        formData.append('subject', subject);
+        formData.append('message', message);
+        formData.append('includeCta', includeCta.toString());
+        formData.append('ctaText', ctaText);
+        formData.append('ctaUrl', ctaUrl);
+        formData.append('includeAdditionalContent', includeAdditionalContent.toString());
+        formData.append('additionalContent', additionalContent);
+        formData.append('includeDisclaimer', includeDisclaimer.toString());
+        // Template customization fields
+        formData.append('headerSubtitle', headerSubtitle);
+        formData.append('greeting', greeting);
+        formData.append('signatureName', signatureName);
+        formData.append('signatureTitle', signatureTitle);
+        formData.append('contactEmail', contactEmail);
+        formData.append('contactPhone', contactPhone);
+        formData.append('contactAddress', contactAddress);
+        formData.append('companyName', companyName);
+        formData.append('companyTagline', companyTagline);
+        formData.append('websiteUrl', websiteUrl);
+        formData.append('websiteDisplay', websiteDisplay);
+
+        // Add attachments
+        attachments.forEach((file) => {
+          formData.append('attachments', file);
+        });
+
         const response = await fetch('/api/email/send', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            recipientEmail: recipient.email,
-            recipientName: recipient.full_name || recipient.email,
-            subject,
-            message,
-            senderName,
-            senderCompany,
-            includeCta,
-            ctaText,
-            ctaUrl,
-            includeAdditionalContent,
-            additionalContent,
-            includeDisclaimer,
-          }),
+          body: formData,
         });
 
         const data = await response.json();
@@ -124,6 +155,18 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
       setIncludeAdditionalContent(false);
       setAdditionalContent('');
       setIncludeDisclaimer(true);
+      setHeaderSubtitle('Professioneel bericht');
+      setGreeting('');
+      setSignatureName('Jonas');
+      setSignatureTitle('Oprichter & CEO');
+      setContactEmail('info@intrict.com');
+      setContactPhone('+32 123 45 67 89');
+      setContactAddress('Gent, België');
+      setCompanyName('IntrICT');
+      setCompanyTagline('Professionele IT-oplossingen voor bedrijven');
+      setWebsiteUrl('https://intrict.com');
+      setWebsiteDisplay('www.intrict.com');
+      setAttachments([]); // Reset attachments
     }
   };
 
@@ -141,6 +184,45 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
 
   const clearAllRecipients = () => {
     setSelectedRecipients([]);
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const maxSize = 10 * 1024 * 1024; // 10MB limit
+    const allowedTypes = [
+      'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+      'application/pdf',
+      'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'text/plain', 'text/csv'
+    ];
+
+    const validFiles = files.filter(file => {
+      if (file.size > maxSize) {
+        alert(`Bestand ${file.name} is te groot. Maximum grootte is 10MB.`);
+        return false;
+      }
+      if (!allowedTypes.includes(file.type)) {
+        alert(`Bestandstype ${file.type} wordt niet ondersteund.`);
+        return false;
+      }
+      return true;
+    });
+
+    setAttachments(prev => [...prev, ...validFiles]);
+    e.target.value = ''; // Reset input
+  };
+
+  const removeAttachment = (index: number) => {
+    setAttachments(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   // Group profiles by role
@@ -228,7 +310,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                         onClick={selectAllRecipients}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100"
+                        className="px-3 py-1 text-xs font-medium text-blue-600 rounded-lg bg-blue-50 hover:bg-blue-100"
                       >
                         Alles
                       </motion.button>
@@ -236,7 +318,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                         onClick={clearAllRecipients}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="px-3 py-1 text-xs font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200"
+                        className="px-3 py-1 text-xs font-medium rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200"
                       >
                         Wissen
                       </motion.button>
@@ -252,7 +334,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                   {/* Admins */}
                   {adminProfiles.length > 0 && (
                     <div className="p-4">
-                      <h3 className="mb-3 text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                      <h3 className="mb-3 text-sm font-semibold tracking-wide uppercase text-slate-700">
                         Administrators
                       </h3>
                       <div className="space-y-2">
@@ -281,7 +363,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                                 <p className="font-medium truncate">
                                   {recipient.full_name || recipient.email}
                                 </p>
-                                <p className="text-sm text-slate-500 truncate">
+                                <p className="text-sm truncate text-slate-500">
                                   {recipient.email}
                                 </p>
                               </div>
@@ -295,7 +377,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                   {/* Regular Users */}
                   {userProfiles.length > 0 && (
                     <div className="p-4 border-t border-slate-200">
-                      <h3 className="mb-3 text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                      <h3 className="mb-3 text-sm font-semibold tracking-wide uppercase text-slate-700">
                         Gebruikers
                       </h3>
                       <div className="space-y-2">
@@ -324,11 +406,11 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                                 <p className="font-medium truncate">
                                   {recipient.full_name || recipient.email}
                                 </p>
-                                <p className="text-sm text-slate-500 truncate">
+                                <p className="text-sm truncate text-slate-500">
                                   {recipient.email}
                                 </p>
                                 {recipient.company && (
-                                  <p className="text-xs text-slate-400 truncate">
+                                  <p className="text-xs truncate text-slate-400">
                                     {recipient.company}
                                   </p>
                                 )}
@@ -362,7 +444,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                       value={subject}
                       onChange={(e) => setSubject(e.target.value)}
                       placeholder="Geef het email onderwerp in"
-                      className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400 transition-all"
+                      className="w-full p-3 transition-all border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
                       disabled={sending}
                     />
                   </div>
@@ -376,17 +458,17 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       placeholder="Schrijf je bericht hier... HTML formatting wordt ondersteund."
-                      className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400 transition-all resize-none"
+                      className="w-full p-3 transition-all border resize-none border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
                       rows={8}
                       disabled={sending}
                     />
-                    <p className="text-xs text-slate-500 mt-2">
+                    <p className="mt-2 text-xs text-slate-500">
                       {message.length} tekens • HTML tags worden ondersteund voor opmaak
                     </p>
                   </div>
 
                   {/* Optional Elements */}
-                  <div className="space-y-6 border-t border-slate-200 pt-6">
+                  <div className="pt-6 space-y-6 border-t border-slate-200">
                     <h4 className="text-lg font-semibold text-slate-800">Optionele elementen</h4>
 
                     {/* CTA Button */}
@@ -397,7 +479,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                           id="includeCta"
                           checked={includeCta}
                           onChange={(e) => setIncludeCta(e.target.checked)}
-                          className="w-4 h-4 text-blue-600 bg-slate-100 border-slate-300 rounded focus:ring-blue-500 focus:ring-2"
+                          className="w-4 h-4 text-blue-600 rounded bg-slate-100 border-slate-300 focus:ring-blue-500 focus:ring-2"
                           disabled={sending}
                         />
                         <label htmlFor="includeCta" className="text-sm font-medium text-slate-700">
@@ -406,7 +488,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                       </div>
 
                       {includeCta && (
-                        <div className="ml-7 space-y-3">
+                        <div className="space-y-3 ml-7">
                           <div>
                             <label className="block mb-1 text-xs font-medium text-slate-600">
                               Knop tekst
@@ -416,7 +498,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                               value={ctaText}
                               onChange={(e) => setCtaText(e.target.value)}
                               placeholder="Meer informatie"
-                              className="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              className="w-full p-2 text-sm border rounded-lg border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                               disabled={sending}
                             />
                           </div>
@@ -429,7 +511,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                               value={ctaUrl}
                               onChange={(e) => setCtaUrl(e.target.value)}
                               placeholder="https://intrict.com"
-                              className="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              className="w-full p-2 text-sm border rounded-lg border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                               disabled={sending}
                             />
                           </div>
@@ -445,7 +527,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                           id="includeAdditionalContent"
                           checked={includeAdditionalContent}
                           onChange={(e) => setIncludeAdditionalContent(e.target.checked)}
-                          className="w-4 h-4 text-blue-600 bg-slate-100 border-slate-300 rounded focus:ring-blue-500 focus:ring-2"
+                          className="w-4 h-4 text-blue-600 rounded bg-slate-100 border-slate-300 focus:ring-blue-500 focus:ring-2"
                           disabled={sending}
                         />
                         <label htmlFor="includeAdditionalContent" className="text-sm font-medium text-slate-700">
@@ -459,7 +541,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                             value={additionalContent}
                             onChange={(e) => setAdditionalContent(e.target.value)}
                             placeholder="Voeg extra informatie toe die in een apart vak wordt weergegeven..."
-                            className="w-full p-3 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                            className="w-full p-3 text-sm border rounded-lg resize-none border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             rows={4}
                             disabled={sending}
                           />
@@ -474,12 +556,239 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                         id="includeDisclaimer"
                         checked={includeDisclaimer}
                         onChange={(e) => setIncludeDisclaimer(e.target.checked)}
-                        className="w-4 h-4 text-blue-600 bg-slate-100 border-slate-300 rounded focus:ring-blue-500 focus:ring-2"
+                        className="w-4 h-4 text-blue-600 rounded bg-slate-100 border-slate-300 focus:ring-blue-500 focus:ring-2"
                         disabled={sending}
                       />
                       <label htmlFor="includeDisclaimer" className="text-sm font-medium text-slate-700">
                         Disclaimer toevoegen (aanbevolen)
                       </label>
+                    </div>
+                  </div>
+                    {/* Attachments Section */}
+                    <div className="pt-6 space-y-4 border-t border-slate-200">
+                      <div className="flex items-center justify-between">
+                        <label className="block text-sm font-medium text-slate-700">
+                          Bijlagen
+                        </label>
+                        <input
+                          type="file"
+                          multiple
+                          onChange={handleFileSelect}
+                          className="hidden"
+                          id="file-upload"
+                          accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.xls,.xlsx,.txt,.csv"
+                        />
+                        <label
+                          htmlFor="file-upload"
+                          className="inline-flex items-center px-3 py-2 text-sm font-medium bg-white border rounded-md shadow-sm cursor-pointer border-slate-300 text-slate-700 hover:bg-slate-50"
+                        >
+                          <Paperclip className="w-4 h-4 mr-2" />
+                          Bijlage toevoegen
+                        </label>
+                      </div>
+
+                      {attachments.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-sm text-slate-600">Geselecteerde bijlagen:</p>
+                          <div className="space-y-2">
+                            {attachments.map((file, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center justify-between p-3 rounded-md bg-slate-50"
+                              >
+                                <div className="flex items-center space-x-3">
+                                  <Paperclip className="w-4 h-4 text-slate-400" />
+                                  <div>
+                                    <p className="text-sm font-medium text-slate-900">
+                                      {file.name}
+                                    </p>
+                                    <p className="text-xs text-slate-500">
+                                      {formatFileSize(file.size)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => removeAttachment(index)}
+                                  className="text-red-500 hover:text-red-700"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  {/* Template Customization */}
+                  <div className="pt-6 space-y-6 border-t border-slate-200">
+                    <h4 className="text-lg font-semibold text-slate-800">Template aanpassen</h4>
+
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      {/* Header Subtitle */}
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-slate-700">
+                          Header ondertitel
+                        </label>
+                        <input
+                          type="text"
+                          value={headerSubtitle}
+                          onChange={(e) => setHeaderSubtitle(e.target.value)}
+                          placeholder="Professioneel bericht"
+                          className="w-full p-3 transition-all border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
+                          disabled={sending}
+                        />
+                      </div>
+
+                      {/* Greeting */}
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-slate-700">
+                          Begroeting (optioneel)
+                        </label>
+                        <input
+                          type="text"
+                          value={greeting}
+                          onChange={(e) => setGreeting(e.target.value)}
+                          placeholder="Laat leeg voor standaard begroeting"
+                          className="w-full p-3 transition-all border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
+                          disabled={sending}
+                        />
+                      </div>
+
+                      {/* Signature Name */}
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-slate-700">
+                          Ondertekeningsnaam
+                        </label>
+                        <input
+                          type="text"
+                          value={signatureName}
+                          onChange={(e) => setSignatureName(e.target.value)}
+                          placeholder="Jonas"
+                          className="w-full p-3 transition-all border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
+                          disabled={sending}
+                        />
+                      </div>
+
+                      {/* Signature Title */}
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-slate-700">
+                          Functie/titel
+                        </label>
+                        <input
+                          type="text"
+                          value={signatureTitle}
+                          onChange={(e) => setSignatureTitle(e.target.value)}
+                          placeholder="Oprichter & CEO"
+                          className="w-full p-3 transition-all border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
+                          disabled={sending}
+                        />
+                      </div>
+
+                      {/* Contact Email */}
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-slate-700">
+                          Contact e-mail
+                        </label>
+                        <input
+                          type="email"
+                          value={contactEmail}
+                          onChange={(e) => setContactEmail(e.target.value)}
+                          placeholder="info@intrict.com"
+                          className="w-full p-3 transition-all border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
+                          disabled={sending}
+                        />
+                      </div>
+
+                      {/* Contact Phone */}
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-slate-700">
+                          Telefoonnummer
+                        </label>
+                        <input
+                          type="text"
+                          value={contactPhone}
+                          onChange={(e) => setContactPhone(e.target.value)}
+                          placeholder="+32 123 45 67 89"
+                          className="w-full p-3 transition-all border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
+                          disabled={sending}
+                        />
+                      </div>
+
+                      {/* Contact Address */}
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-slate-700">
+                          Adres
+                        </label>
+                        <input
+                          type="text"
+                          value={contactAddress}
+                          onChange={(e) => setContactAddress(e.target.value)}
+                          placeholder="Gent, België"
+                          className="w-full p-3 transition-all border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
+                          disabled={sending}
+                        />
+                      </div>
+
+                      {/* Company Name */}
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-slate-700">
+                          Bedrijfsnaam
+                        </label>
+                        <input
+                          type="text"
+                          value={companyName}
+                          onChange={(e) => setCompanyName(e.target.value)}
+                          placeholder="IntrICT"
+                          className="w-full p-3 transition-all border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
+                          disabled={sending}
+                        />
+                      </div>
+
+                      {/* Company Tagline */}
+                      <div className="md:col-span-2">
+                        <label className="block mb-2 text-sm font-medium text-slate-700">
+                          Bedrijfs slogan/tagline
+                        </label>
+                        <input
+                          type="text"
+                          value={companyTagline}
+                          onChange={(e) => setCompanyTagline(e.target.value)}
+                          placeholder="Professionele IT-oplossingen voor bedrijven"
+                          className="w-full p-3 transition-all border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
+                          disabled={sending}
+                        />
+                      </div>
+
+                      {/* Website URL */}
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-slate-700">
+                          Website URL
+                        </label>
+                        <input
+                          type="url"
+                          value={websiteUrl}
+                          onChange={(e) => setWebsiteUrl(e.target.value)}
+                          placeholder="https://intrict.com"
+                          className="w-full p-3 transition-all border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
+                          disabled={sending}
+                        />
+                      </div>
+
+                      {/* Website Display */}
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-slate-700">
+                          Website weergave
+                        </label>
+                        <input
+                          type="text"
+                          value={websiteDisplay}
+                          onChange={(e) => setWebsiteDisplay(e.target.value)}
+                          placeholder="www.intrict.com"
+                          className="w-full p-3 transition-all border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
+                          disabled={sending}
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -494,7 +803,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                         value={senderName}
                         onChange={(e) => setSenderName(e.target.value)}
                         placeholder="Jouw volledige naam"
-                        className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400 transition-all"
+                        className="w-full p-3 transition-all border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
                         disabled={sending}
                       />
                     </div>
@@ -508,19 +817,19 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                         value={senderCompany}
                         onChange={(e) => setSenderCompany(e.target.value)}
                         placeholder="Naam van je bedrijf"
-                        className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400 transition-all"
+                        className="w-full p-3 transition-all border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
                         disabled={sending}
                       />
                     </div>
                   </div>
 
                   {/* Preview Info */}
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="p-4 border border-blue-200 rounded-lg bg-blue-50">
                     <div className="flex items-start gap-3">
                       <Mail className="w-5 h-5 text-blue-500 mt-0.5" />
                       <div>
                         <h4 className="font-semibold text-blue-900">Email Template Voorbeeld</h4>
-                        <p className="text-sm text-blue-700 mt-1">
+                        <p className="mt-1 text-sm text-blue-700">
                           De email wordt verstuurd met een professionele template inclusief je naam ({profile.full_name || profile.email})
                           {profile.company && ` van ${profile.company}`}.
                         </p>
@@ -535,7 +844,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                       animate={{ opacity: 1, height: 'auto' }}
                       className="p-4 border rounded-lg bg-slate-50"
                     >
-                      <h4 className="font-semibold text-slate-900 mb-3">Verzendresultaten</h4>
+                      <h4 className="mb-3 font-semibold text-slate-900">Verzendresultaten</h4>
                       <div className="space-y-2">
                         {sendResults.map((result, index) => (
                           <div key={index} className="flex items-center gap-3 text-sm">
@@ -556,13 +865,13 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                 </div>
 
                 {/* Send Button */}
-                <div className="p-6 bg-slate-50 border-t border-slate-200">
+                <div className="p-6 border-t bg-slate-50 border-slate-200">
                   <motion.button
                     onClick={handleSendEmails}
                     disabled={sending || !subject.trim() || !message.trim() || selectedRecipients.length === 0}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full px-6 py-3 font-semibold text-white transition-all shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                    className="flex items-center justify-center w-full gap-3 px-6 py-3 font-semibold text-white transition-all shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {sending ? (
                       <>

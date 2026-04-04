@@ -3,6 +3,21 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { createClient } from '@/lib/supabase/server';
 
+interface EmailAttachment {
+  filename: string;
+  content: Buffer;
+  type?: string;
+}
+
+interface EmailData {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+  replyTo: string;
+  attachments?: EmailAttachment[];
+}
+
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient();
@@ -26,21 +41,46 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
-    const {
-      recipientEmail,
-      recipientName,
-      subject,
-      message,
-      senderName,
-      senderCompany,
-      includeCta,
-      ctaText,
-      ctaUrl,
-      includeAdditionalContent,
-      additionalContent,
-      includeDisclaimer,
-    } = body;
+    // Parse form data for attachments
+    const formData = await req.formData();
+    const recipientEmail = formData.get('recipientEmail') as string;
+    const recipientName = formData.get('recipientName') as string;
+    const subject = formData.get('subject') as string;
+    const message = formData.get('message') as string;
+    const includeCta = formData.get('includeCta') === 'true';
+    const ctaText = formData.get('ctaText') as string;
+    const ctaUrl = formData.get('ctaUrl') as string;
+    const includeAdditionalContent = formData.get('includeAdditionalContent') === 'true';
+    const additionalContent = formData.get('additionalContent') as string;
+    const includeDisclaimer = formData.get('includeDisclaimer') === 'true';
+
+    // Template customization fields
+    const headerSubtitle = formData.get('headerSubtitle') as string;
+    const greeting = formData.get('greeting') as string;
+    const signatureName = formData.get('signatureName') as string;
+    const signatureTitle = formData.get('signatureTitle') as string;
+    const contactEmail = formData.get('contactEmail') as string;
+    const contactPhone = formData.get('contactPhone') as string;
+    const contactAddress = formData.get('contactAddress') as string;
+    const companyName = formData.get('companyName') as string;
+    const companyTagline = formData.get('companyTagline') as string;
+    const websiteUrl = formData.get('websiteUrl') as string;
+    const websiteDisplay = formData.get('websiteDisplay') as string;
+
+    // Process attachments
+    const attachments: EmailAttachment[] = [];
+    const attachmentFiles = formData.getAll('attachments') as File[];
+
+    for (const file of attachmentFiles) {
+      if (file && file.size > 0) {
+        const buffer = Buffer.from(await file.arrayBuffer());
+        attachments.push({
+          filename: file.name,
+          content: buffer,
+          type: file.type || undefined,
+        });
+      }
+    }
 
     if (!recipientEmail || !subject || !message) {
       return NextResponse.json(
@@ -93,23 +133,43 @@ export async function POST(req: NextRequest) {
 
     htmlContent = htmlContent
       .replace(/\{\{SUBJECT\}\}/g, subject)
-      .replace(/\{\{SENDER_NAME\}\}/g, senderName || 'Jonas')
+      .replace(/\{\{HEADER_SUBTITLE\}\}/g, headerSubtitle || 'Professioneel bericht')
+      .replace(/\{\{GREETING\}\}/g, greeting || `Hallo <strong>${recipientName || 'Gebruiker'}</strong>,`)
       .replace(/\{\{RECIPIENT_NAME\}\}/g, recipientName || 'Gebruiker')
       .replace(/\{\{MESSAGE\}\}/g, message.replace(/\n/g, '<br />'))
-      .replace(/\{\{SENDER_COMPANY\}\}/g, senderCompany || 'IntrICT')
-      .replace(/\{\{APP_NAME\}\}/g, 'Communicatie Platform')
+      .replace(/\{\{SIGNATURE_NAME\}\}/g, signatureName || 'Jonas')
+      .replace(/\{\{SIGNATURE_TITLE\}\}/g, signatureTitle || 'Oprichter & CEO')
+      .replace(/\{\{CONTACT_EMAIL\}\}/g, contactEmail || 'info@intrict.com')
+      .replace(/\{\{CONTACT_PHONE\}\}/g, contactPhone || '+32 123 45 67 89')
+      .replace(/\{\{CONTACT_ADDRESS\}\}/g, contactAddress || 'Gent, België')
+      .replace(/\{\{COMPANY_NAME\}\}/g, companyName || 'IntrICT')
+      .replace(/\{\{COMPANY_TAGLINE\}\}/g, companyTagline || 'Professionele IT-oplossingen voor bedrijven')
+      .replace(/\{\{WEBSITE_URL\}\}/g, websiteUrl || 'https://intrict.com')
+      .replace(/\{\{WEBSITE_DISPLAY\}\}/g, websiteDisplay || 'www.intrict.com')
+      .replace(/\{\{CURRENT_YEAR\}\}/g, new Date().getFullYear().toString())
       .replace(/\{\{CTA_SECTION\}\}/g, ctaSection)
       .replace(/\{\{ADDITIONAL_CONTENT\}\}/g, additionalContentSection)
       .replace(/\{\{DISCLAIMER\}\}/g, disclaimerSection);
 
     // Send email via Resend
-    const response = await resend.emails.send({
+    const emailData: EmailData = {
       from: 'info@intrict.com',
       to: recipientEmail,
       subject: subject,
       html: htmlContent,
       replyTo: user.email || 'noreply@intrict.com',
-    });
+    };
+
+    // Add attachments if any
+    if (attachments.length > 0) {
+      emailData.attachments = attachments.map(attachment => ({
+        filename: attachment.filename,
+        content: attachment.content,
+        type: attachment.type,
+      }));
+    }
+
+    const response = await resend.emails.send(emailData);
 
     if (response.error) {
       console.error('Resend error:', response.error);

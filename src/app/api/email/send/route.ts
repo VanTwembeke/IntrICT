@@ -70,11 +70,11 @@ export async function POST(req: NextRequest) {
 
     // Send email via Resend
     const response = await resend.emails.send({
-      from: 'noreply@yourdomain.com', // Replace with your Resend domain
+      from: 'info@intrict.com',
       to: recipientEmail,
       subject: subject,
       html: htmlContent,
-      replyTo: user.email || 'noreply@yourdomain.com',
+      replyTo: user.email || 'noreply@intrict.com',
     });
 
     if (response.error) {

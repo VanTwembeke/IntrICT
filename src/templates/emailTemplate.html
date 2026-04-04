@@ -3,155 +3,192 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Berichten</title>
+  <title>{{SUBJECT}}</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      background-color: #f4f6f8;
-      font-family: Arial, sans-serif;
-      color: #333333;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #1e293b;
+      background-color: #f8fafc;
     }
     .container {
       max-width: 600px;
       margin: 0 auto;
       background-color: #ffffff;
-      padding: 30px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     }
     .header {
-      text-align: left;
-      margin-bottom: 20px;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      color: white;
+      padding: 40px 40px 30px;
+      text-align: center;
+      position: relative;
     }
-    .logo {
-      max-height: 40px;
+    .header h1 {
+      margin: 0 0 8px 0;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
     }
-    h1 {
-      font-size: 20px;
-      margin-bottom: 10px;
+    .header p {
+      margin: 0;
+      font-size: 16px;
+      opacity: 0.9;
+      font-weight: 400;
     }
-    p {
-      line-height: 1.6;
-      margin: 10px 0;
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 2px;
     }
-    .button {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 12px 20px;
-      background-color: #1a73e8;
-      color: #ffffff;
-      text-decoration: none;
-      border-radius: 4px;
+    .content {
+      padding: 50px 40px;
     }
-    .footer {
-      margin-top: 30px;
-      font-size: 12px;
-      color: #777777;
+    .greeting {
+      font-size: 18px;
+      margin-bottom: 30px;
+      color: #1e293b;
     }
-  </style>
-</head>
-<body>
-
-  <div class="container">
-
-    <!-- Header -->
-    <div class="header">
-      <img src="LOGO_URL" alt="Bedrijfslogo" class="logo">
-    </div>
-
-    <!-- Title -->
-    <h1>[Onderwerp / Titel]</h1>
-
-    <!-- Intro -->
-    <p>Beste [Naam],</p>
-
-    <!-- Main message -->
-    <p>
-      Wij hopen dat alles goed met u gaat. Bij [Bedrijfsnaam] streven we ernaar
-      om hoogwaardige oplossingen te bieden die aansluiten op uw specifieke behoeften.
-    </p>
-
-    <p>
-      [Hoofdboodschap – bijvoorbeeld update, aanbod, informatie, etc.]
-    </p>
-
-    <p>
-      Dankzij onze focus op kwaliteit, innovatie en samenwerking blijven wij
-      continu werken aan verbeteringen om u optimaal te ondersteunen.
-    </p>
-
-    <!-- CTA -->
-    <a href="#" class="button">Meer informatie</a>
-
-    <!-- Closing -->
-    <p>
-      Heeft u vragen of wenst u meer informatie? Aarzel dan niet om contact met ons op te nemen.
-    </p>
-
-    <p>
-      Met vriendelijke groet,<br>
-      Jonas<br>
-      Oprichter<br>
-      IntrICT
-    </p>
-
-    <!-- Footer -->
-    <div class="footer">
-      <p>
-        IntrICT – Gent <br>
-        info@intrict.com | www.intrict.com
-      </p>
-    </div>
-
-  </div>
-
-</body>
-</html>
+    .greeting strong {
+      color: #3b82f6;
+      font-weight: 600;
     }
     .message {
-      background: #f8fafc;
-      border-left: 4px solid #3b82f6;
-      padding: 20px;
-      margin: 20px 0;
-      border-radius: 6px;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-left: 5px solid #3b82f6;
+      padding: 30px;
+      margin: 30px 0;
+      border-radius: 8px;
       line-height: 1.8;
+      font-size: 16px;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
     }
-    .signature {
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid #e2e8f0;
-      color: #64748b;
-      font-size: 14px;
-    }
-    .signature strong {
-      color: #1e293b;
-      display: block;
-      margin-bottom: 5px;
-    }
-    .footer {
-      background: #f8fafc;
-      padding: 20px;
+    .cta-section {
       text-align: center;
-      color: #64748b;
-      font-size: 12px;
-      border-top: 1px solid #e2e8f0;
-    }
-    .footer a {
-      color: #3b82f6;
-      text-decoration: none;
+      margin: 40px 0;
     }
     .cta-button {
       display: inline-block;
       background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
       color: white;
-      padding: 12px 30px;
-      border-radius: 6px;
+      padding: 16px 32px;
+      border-radius: 8px;
       text-decoration: none;
-      margin: 20px 0;
       font-weight: 600;
-      transition: transform 0.2s;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
     .cta-button:hover {
       transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    }
+    .additional-content {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 25px;
+      margin: 30px 0;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    .signature {
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 2px solid #e2e8f0;
+      text-align: center;
+    }
+    .signature-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 5px;
+    }
+    .signature-title {
+      font-size: 16px;
+      color: #3b82f6;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .contact-info {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #64748b;
+      font-size: 14px;
+    }
+    .contact-item svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+    .footer {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: #cbd5e1;
+      padding: 30px 40px;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .footer p {
+      margin: 0 0 10px 0;
+    }
+    .footer a {
+      color: #60a5fa;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    .disclaimer {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 25px 0;
+      font-size: 13px;
+      color: #92400e;
+      line-height: 1.5;
+    }
+    @media (max-width: 640px) {
+      .container {
+        margin: 10px;
+        border-radius: 8px;
+      }
+      .header {
+        padding: 30px 20px 25px;
+      }
+      .header h1 {
+        font-size: 24px;
+      }
+      .content {
+        padding: 30px 20px;
+      }
+      .contact-info {
+        flex-direction: column;
+        gap: 15px;
+      }
+      .message {
+        padding: 20px;
+      }
     }
   </style>
 </head>
@@ -159,27 +196,52 @@
   <div class="container">
     <div class="header">
       <h1>{{SUBJECT}}</h1>
-      <p>Bericht van {{SENDER_NAME}}</p>
+      <p>Professioneel bericht van IntrICT</p>
     </div>
-    
+
     <div class="content">
       <div class="greeting">
         Hallo <strong>{{RECIPIENT_NAME}}</strong>,
       </div>
-      
+
       <div class="message">
         {{MESSAGE}}
       </div>
-      
+
+      <!-- Optional CTA Section -->
+      {{CTA_SECTION}}
+
+      <!-- Optional Additional Content -->
+      {{ADDITIONAL_CONTENT}}
+
+      <!-- Optional Disclaimer -->
+      {{DISCLAIMER}}
+
       <div class="signature">
-        <strong>{{SENDER_NAME}}</strong>
-        <span>{{SENDER_COMPANY}}</span>
+        <div class="signature-name">Jonas</div>
+        <div class="signature-title">Oprichter & CEO</div>
+
+        <div class="contact-info">
+          <div class="contact-item">
+            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            info@intrict.com
+          </div>
+          <div class="contact-item">
+            <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+            +32 123 45 67 89
+          </div>
+          <div class="contact-item">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            Gent, België
+          </div>
+        </div>
       </div>
     </div>
-    
+
     <div class="footer">
-      <p>Dit is een automatisch gegenereerd e-mailbericht. Antwoord alstublieft niet direct op deze e-mail.</p>
-      <p>&copy; 2026 {{APP_NAME}}. Alle rechten voorbehouden.</p>
+      <p><strong>IntrICT</strong> - Professionele IT-oplossingen voor bedrijven</p>
+      <p>Website: <a href="https://intrict.com">www.intrict.com</a> | Email: <a href="mailto:info@intrict.com">info@intrict.com</a></p>
+      <p>&copy; 2026 IntrICT. Alle rechten voorbehouden.</p>
     </div>
   </div>
 </body>

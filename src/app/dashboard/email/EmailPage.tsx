@@ -28,8 +28,14 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
   const [selectedRecipients, setSelectedRecipients] = useState<string[]>([]);
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
+  const [senderName, setSenderName] = useState(profile.full_name || 'Jonas');
   const [senderCompany, setSenderCompany] = useState(profile.company || 'Intrict');
-  const [logoUrl, setLogoUrl] = useState('https://intrict.com/logo.png');
+  const [includeCta, setIncludeCta] = useState(false);
+  const [ctaText, setCtaText] = useState('Meer informatie');
+  const [ctaUrl, setCtaUrl] = useState('https://intrict.com');
+  const [includeAdditionalContent, setIncludeAdditionalContent] = useState(false);
+  const [additionalContent, setAdditionalContent] = useState('');
+  const [includeDisclaimer, setIncludeDisclaimer] = useState(true);
   const [sending, setSending] = useState(false);
   const [sendResults, setSendResults] = useState<Array<{
     email: string;
@@ -67,8 +73,14 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
             recipientName: recipient.full_name || recipient.email,
             subject,
             message,
+            senderName,
             senderCompany,
-            logoUrl,
+            includeCta,
+            ctaText,
+            ctaUrl,
+            includeAdditionalContent,
+            additionalContent,
+            includeDisclaimer,
           }),
         });
 
@@ -104,8 +116,14 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
       setSelectedRecipients([]);
       setSubject('');
       setMessage('');
+      setSenderName(profile.full_name || 'Jonas');
       setSenderCompany(profile.company || 'Intrict');
-      setLogoUrl('https://intrict.com/logo.png');
+      setIncludeCta(false);
+      setCtaText('Meer informatie');
+      setCtaUrl('https://intrict.com');
+      setIncludeAdditionalContent(false);
+      setAdditionalContent('');
+      setIncludeDisclaimer(true);
     }
   };
 
@@ -359,7 +377,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                       onChange={(e) => setMessage(e.target.value)}
                       placeholder="Schrijf je bericht hier... HTML formatting wordt ondersteund."
                       className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400 transition-all resize-none"
-                      rows={12}
+                      rows={8}
                       disabled={sending}
                     />
                     <p className="text-xs text-slate-500 mt-2">
@@ -367,8 +385,120 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                     </p>
                   </div>
 
+                  {/* Optional Elements */}
+                  <div className="space-y-6 border-t border-slate-200 pt-6">
+                    <h4 className="text-lg font-semibold text-slate-800">Optionele elementen</h4>
+
+                    {/* CTA Button */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="checkbox"
+                          id="includeCta"
+                          checked={includeCta}
+                          onChange={(e) => setIncludeCta(e.target.checked)}
+                          className="w-4 h-4 text-blue-600 bg-slate-100 border-slate-300 rounded focus:ring-blue-500 focus:ring-2"
+                          disabled={sending}
+                        />
+                        <label htmlFor="includeCta" className="text-sm font-medium text-slate-700">
+                          Call-to-Action knop toevoegen
+                        </label>
+                      </div>
+
+                      {includeCta && (
+                        <div className="ml-7 space-y-3">
+                          <div>
+                            <label className="block mb-1 text-xs font-medium text-slate-600">
+                              Knop tekst
+                            </label>
+                            <input
+                              type="text"
+                              value={ctaText}
+                              onChange={(e) => setCtaText(e.target.value)}
+                              placeholder="Meer informatie"
+                              className="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              disabled={sending}
+                            />
+                          </div>
+                          <div>
+                            <label className="block mb-1 text-xs font-medium text-slate-600">
+                              Knop URL
+                            </label>
+                            <input
+                              type="url"
+                              value={ctaUrl}
+                              onChange={(e) => setCtaUrl(e.target.value)}
+                              placeholder="https://intrict.com"
+                              className="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              disabled={sending}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Additional Content */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="checkbox"
+                          id="includeAdditionalContent"
+                          checked={includeAdditionalContent}
+                          onChange={(e) => setIncludeAdditionalContent(e.target.checked)}
+                          className="w-4 h-4 text-blue-600 bg-slate-100 border-slate-300 rounded focus:ring-blue-500 focus:ring-2"
+                          disabled={sending}
+                        />
+                        <label htmlFor="includeAdditionalContent" className="text-sm font-medium text-slate-700">
+                          Extra inhoud toevoegen
+                        </label>
+                      </div>
+
+                      {includeAdditionalContent && (
+                        <div className="ml-7">
+                          <textarea
+                            value={additionalContent}
+                            onChange={(e) => setAdditionalContent(e.target.value)}
+                            placeholder="Voeg extra informatie toe die in een apart vak wordt weergegeven..."
+                            className="w-full p-3 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                            rows={4}
+                            disabled={sending}
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Disclaimer */}
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        id="includeDisclaimer"
+                        checked={includeDisclaimer}
+                        onChange={(e) => setIncludeDisclaimer(e.target.checked)}
+                        className="w-4 h-4 text-blue-600 bg-slate-100 border-slate-300 rounded focus:ring-blue-500 focus:ring-2"
+                        disabled={sending}
+                      />
+                      <label htmlFor="includeDisclaimer" className="text-sm font-medium text-slate-700">
+                        Disclaimer toevoegen (aanbevolen)
+                      </label>
+                    </div>
+                  </div>
+
                   {/* Sender Information */}
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-slate-700">
+                        Jouw Naam
+                      </label>
+                      <input
+                        type="text"
+                        value={senderName}
+                        onChange={(e) => setSenderName(e.target.value)}
+                        placeholder="Jouw volledige naam"
+                        className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400 transition-all"
+                        disabled={sending}
+                      />
+                    </div>
+
                     <div>
                       <label className="block mb-2 text-sm font-medium text-slate-700">
                         Bedrijfsnaam
@@ -378,20 +508,6 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                         value={senderCompany}
                         onChange={(e) => setSenderCompany(e.target.value)}
                         placeholder="Naam van je bedrijf"
-                        className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400 transition-all"
-                        disabled={sending}
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="block mb-2 text-sm font-medium text-slate-700">
-                        Logo URL
-                      </label>
-                      <input
-                        type="url"
-                        value={logoUrl}
-                        onChange={(e) => setLogoUrl(e.target.value)}
-                        placeholder="https://jouwwebsite.com/logo.png"
                         className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400 transition-all"
                         disabled={sending}
                       />

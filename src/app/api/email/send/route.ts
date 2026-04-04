@@ -32,8 +32,14 @@ export async function POST(req: NextRequest) {
       recipientName,
       subject,
       message,
+      senderName,
       senderCompany,
-      logoUrl,
+      includeCta,
+      ctaText,
+      ctaUrl,
+      includeAdditionalContent,
+      additionalContent,
+      includeDisclaimer,
     } = body;
 
     if (!recipientEmail || !subject || !message) {
@@ -60,12 +66,41 @@ export async function POST(req: NextRequest) {
     let htmlContent = readFileSync(templatePath, 'utf-8');
 
     // Replace template variables
+    let ctaSection = '';
+    if (includeCta && ctaText && ctaUrl) {
+      ctaSection = `
+      <div class="cta-section">
+        <a href="${ctaUrl}" class="cta-button">${ctaText}</a>
+      </div>`;
+    }
+
+    let additionalContentSection = '';
+    if (includeAdditionalContent && additionalContent) {
+      additionalContentSection = `
+      <div class="additional-content">
+        ${additionalContent.replace(/\n/g, '<br />')}
+      </div>`;
+    }
+
+    let disclaimerSection = '';
+    if (includeDisclaimer) {
+      disclaimerSection = `
+      <div class="disclaimer">
+        <strong>Belangrijke informatie:</strong> Dit is een automatisch gegenereerd e-mailbericht.
+        Antwoord alstublieft niet direct op deze e-mail. Voor vragen kunt u contact opnemen via info@intrict.com.
+      </div>`;
+    }
+
     htmlContent = htmlContent
-      .replace('LOGO_URL', logoUrl || 'https://intrict.com/logo.png')
-      .replace('[Onderwerp / Titel]', subject)
-      .replace('[Naam]', recipientName || 'Gebruiker')
-      .replace(/\[Bedrijfsnaam\]/g, senderCompany || 'Intrict')
-      .replace('[Hoofdboodschap – bijvoorbeeld update, aanbod, informatie, etc.]', message.replace(/\n/g, '<br />'));
+      .replace(/\{\{SUBJECT\}\}/g, subject)
+      .replace(/\{\{SENDER_NAME\}\}/g, senderName || 'Jonas')
+      .replace(/\{\{RECIPIENT_NAME\}\}/g, recipientName || 'Gebruiker')
+      .replace(/\{\{MESSAGE\}\}/g, message.replace(/\n/g, '<br />'))
+      .replace(/\{\{SENDER_COMPANY\}\}/g, senderCompany || 'IntrICT')
+      .replace(/\{\{APP_NAME\}\}/g, 'Communicatie Platform')
+      .replace(/\{\{CTA_SECTION\}\}/g, ctaSection)
+      .replace(/\{\{ADDITIONAL_CONTENT\}\}/g, additionalContentSection)
+      .replace(/\{\{DISCLAIMER\}\}/g, disclaimerSection);
 
     // Send email via Resend
     const response = await resend.emails.send({

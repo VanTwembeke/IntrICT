@@ -24,6 +24,9 @@ interface EditFormState {
   postal_code: string;
   city: string;
   country: string;
+  profile_picture_url: string;
+  public_username: string;
+  customer_number: string;
   role: UserRole;
 }
 
@@ -42,6 +45,9 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
     postal_code: '',
     city: '',
     country: '',
+    profile_picture_url: '',
+    public_username: '',
+    customer_number: '',
     role: 'user',
   });
   const [editSaving, setEditSaving] = useState(false);
@@ -58,6 +64,9 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
       postal_code: u.postal_code ?? '',
       city: u.city ?? '',
       country: u.country ?? '',
+      profile_picture_url: u.profile_picture_url ?? '',
+      public_username: u.public_username ?? '',
+      customer_number: u.customer_number?.toString() ?? '',
       role: u.role as UserRole,
     });
     setEditSuccess(false);
@@ -81,6 +90,9 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
       postal_code: editForm.postal_code || null,
       city: editForm.city || null,
       country: editForm.country || null,
+      profile_picture_url: editForm.profile_picture_url || null,
+      public_username: editForm.public_username || null,
+      customer_number: editForm.customer_number ? Number(editForm.customer_number) : null,
       role: editForm.role,
     }).eq('id', editUser.id);
 
@@ -97,6 +109,9 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
               postal_code: editForm.postal_code || null,
               city: editForm.city || null,
               country: editForm.country || null,
+              profile_picture_url: editForm.profile_picture_url || null,
+              public_username: editForm.public_username || null,
+              customer_number: editForm.customer_number ? Number(editForm.customer_number) : null,
               role: editForm.role,
             }
           : u
@@ -139,7 +154,7 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
           <div className="mx-auto max-w-7xl">
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 text-slate-300 hover:text-white transition-colors mb-6"
+              className="inline-flex items-center gap-2 mb-6 transition-colors text-slate-300 hover:text-white"
             >
               <ChevronLeft size={20} />
               <span>Terug</span>
@@ -240,6 +255,43 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
                         value={editUser?.email ?? ''}
                         disabled
                         className="w-full px-4 py-3 border-2 cursor-not-allowed border-slate-100 rounded-xl bg-slate-50 text-slate-400"
+                      />
+                    </div>
+
+                    {/* Profile Picture URL */}
+                    <div>
+                      <label className="block mb-1.5 text-sm font-semibold text-slate-700">Profiel foto URL</label>
+                      <input
+                        type="url"
+                        value={editForm.profile_picture_url}
+                        onChange={(e) => setEditForm({ ...editForm, profile_picture_url: e.target.value })}
+                        placeholder="https://voorbeeld.nl/foto.jpg"
+                        className="w-full px-4 py-3 transition-all border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800"
+                      />
+                    </div>
+
+                    {/* Public Username */}
+                    <div>
+                      <label className="block mb-1.5 text-sm font-semibold text-slate-700">Publieke gebruikersnaam</label>
+                      <input
+                        type="text"
+                        value={editForm.public_username}
+                        onChange={(e) => setEditForm({ ...editForm, public_username: e.target.value })}
+                        placeholder="gebruikersnaam"
+                        className="w-full px-4 py-3 transition-all border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800"
+                      />
+                      <p className="mt-1 text-xs text-slate-400">Openbare URL: intrict.com/user/{editForm.public_username || 'gebruikersnaam'}</p>
+                    </div>
+
+                    {/* Customer Number */}
+                    <div>
+                      <label className="block mb-1.5 text-sm font-semibold text-slate-700">Klantnummer</label>
+                      <input
+                        type="text"
+                        value={editForm.customer_number}
+                        onChange={(e) => setEditForm({ ...editForm, customer_number: e.target.value })}
+                        placeholder="100001"
+                        className="w-full px-4 py-3 transition-all border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800"
                       />
                     </div>
 

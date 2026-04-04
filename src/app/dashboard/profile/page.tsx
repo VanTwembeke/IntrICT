@@ -198,7 +198,7 @@ export default function ProfilePage() {
 
             <div className="flex flex-wrap items-center justify-center gap-8 mt-10">
               {profile.profile_picture_url ? (
-                <div className="relative w-28 h-28 overflow-hidden rounded-full ring-4 ring-white shadow-xl">
+                <div className="relative overflow-hidden rounded-full shadow-xl w-28 h-28 ring-4 ring-white">
                   <img
                     src={profile.profile_picture_url}
                     alt={profile.full_name ?? profile.email}
@@ -206,7 +206,7 @@ export default function ProfilePage() {
                   />
                 </div>
               ) : (
-                <div className="flex items-center justify-center w-28 h-28 rounded-full bg-white/10 ring-4 ring-white shadow-xl text-3xl font-bold text-white">
+                <div className="flex items-center justify-center text-3xl font-bold text-white rounded-full shadow-xl w-28 h-28 bg-white/10 ring-4 ring-white">
                   {initials}
                 </div>
               )}
@@ -285,6 +285,41 @@ export default function ProfilePage() {
                         className={disabledInputClass}
                       />
                       <p className="text-xs text-slate-400 mt-1.5">E-mail kan niet worden gewijzigd</p>
+                    </div>
+
+                    <div>
+                      <label className={labelClass}>Profiel foto URL</label>
+                      <input
+                        type="url"
+                        value={form.profile_picture_url}
+                        onChange={handleChange('profile_picture_url')}
+                        placeholder="https://voorbeeld.nl/foto.jpg"
+                        className={inputClass}
+                      />
+                      <p className="text-xs text-slate-400 mt-1.5">Zichtbaar op jouw openbare gebruikerspagina.</p>
+                    </div>
+
+                    <div>
+                      <label className={labelClass}>Publieke gebruikersnaam</label>
+                      <input
+                        type="text"
+                        value={form.public_username}
+                        onChange={handleChange('public_username')}
+                        placeholder="gebruikersnaam"
+                        className={inputClass}
+                      />
+                      <p className="text-xs text-slate-400 mt-1.5">Kies een unieke gebruikersnaam voor jouw openbare URL: intrict.com/user/gebruikersnaam</p>
+                    </div>
+
+                    <div>
+                      <label className={labelClass}>Klantnummer</label>
+                      <input
+                        type="text"
+                        value={profile.customer_number ? profile.customer_number.toString() : 'Nog niet ingesteld'}
+                        disabled
+                        className={disabledInputClass}
+                      />
+                      <p className="text-xs text-slate-400 mt-1.5">Dit nummer kan alleen door een administrator worden aangepast.</p>
                     </div>
                   </div>
                 </div>

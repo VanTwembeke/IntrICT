@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'user';
+export type UserRole = 'admin' | 'user' | 'klant';
 
 export interface Profile {
   id: string;
@@ -11,6 +11,10 @@ export interface Profile {
   postal_code?: string | null;
   city?: string | null;
   country?: string | null;
+  profile_picture_url?: string | null;
+  public_username?: string | null;
+  customer_number?: number | null;
   role: UserRole;
   created_at: string;
+  updated_at?: string;
 }

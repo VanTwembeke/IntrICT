@@ -22,10 +22,11 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   useEffect(() => {
     const loadProfile = async () => {
       const supabase = createClient();
+      const username = params.username.toLowerCase();
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('public_username', params.username)
+        .ilike('public_username', username)
         .single();
 
       if (error || !data) {

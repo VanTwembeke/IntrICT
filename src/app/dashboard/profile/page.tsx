@@ -104,6 +104,7 @@ export default function ProfilePage() {
       }
     }
 
+    const normalizedUsername = username ? username.toLowerCase() : '';
     const updatePayload: Record<string, unknown> = {
       full_name: form.full_name,
       company: form.company,
@@ -114,7 +115,7 @@ export default function ProfilePage() {
       postal_code: form.postal_code,
       country: form.country,
       profile_picture_url: form.profile_picture_url,
-      public_username: username || null,
+      public_username: normalizedUsername || null,
     };
 
     if (profile.role === 'admin') {
@@ -123,7 +124,29 @@ export default function ProfilePage() {
       updatePayload.customer_number = profile.customer_number ?? null;
     }
 
-    await supabase.from('profiles').update(updatePayload).eq('id', profile.id);
+    const { data: updatedProfile, error } = await supabase
+      .from('profiles')
+      .update(updatePayload)
+      .eq('id', profile.id)
+      .select()
+      .single<ExtendedProfile>();
+
+    if (error) {
+      console.error('Profile update failed', error);
+      window.alert('Er is iets misgegaan bij het opslaan van je profiel. Probeer het opnieuw.');
+      setSaving(false);
+      return;
+    }
+
+    if (updatedProfile) {
+      setProfile(updatedProfile);
+      setForm((prev) => ({
+        ...prev,
+        profile_picture_url: updatedProfile.profile_picture_url ?? '',
+        public_username: updatedProfile.public_username ?? '',
+        customer_number: updatedProfile.customer_number?.toString() ?? '',
+      }));
+    }
 
     setSaving(false);
     setSaved(true);

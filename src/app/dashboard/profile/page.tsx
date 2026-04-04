@@ -1,13 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ChevronLeft } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import type { Profile } from '@/lib/types';
 
-// Extend Profile type locally to include new fields
 interface ExtendedProfile extends Profile {
   company?: string;
   vat_number?: string;
@@ -19,7 +17,14 @@ interface ExtendedProfile extends Profile {
   profile_picture_url?: string;
   public_username?: string;
   customer_number?: number;
-  updated_at?: string;
+  updated_at?: string; 
+  show_public_email?: boolean | null;
+  show_public_company?: boolean | null;
+  show_public_location?: boolean | null;
+  show_public_review?: boolean | null;
+  review_score?: number | null;
+  review_text?: string | null;
+
 }
 
 const inputClass =
@@ -27,6 +32,7 @@ const inputClass =
 const disabledInputClass =
   'w-full px-4 py-3 border-2 border-slate-100 rounded-xl text-slate-400 bg-slate-50 cursor-not-allowed';
 const labelClass = 'block mb-2 text-sm font-semibold text-slate-700';
+const toggleLabel = 'flex items-center gap-3 text-sm font-medium text-slate-700';
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<ExtendedProfile | null>(null);
@@ -42,6 +48,12 @@ export default function ProfilePage() {
     profile_picture_url: '',
     public_username: '',
     customer_number: '',
+    show_public_email: false,
+    show_public_company: false,
+    show_public_location: false,
+    show_public_review: false,
+    review_score: '',
+    review_text: '',
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -58,6 +70,7 @@ export default function ProfilePage() {
         .select('*')
         .eq('id', user.id)
         .single<ExtendedProfile>();
+
       if (data) {
         setProfile(data);
         setForm({
@@ -72,14 +85,22 @@ export default function ProfilePage() {
           profile_picture_url: data.profile_picture_url ?? '',
           public_username: data.public_username ?? '',
           customer_number: data.customer_number?.toString() ?? '',
+          show_public_email: data.show_public_email ?? false,
+          show_public_company: data.show_public_company ?? false,
+          show_public_location: data.show_public_location ?? false,
+          show_public_review: data.show_public_review ?? false,
+          review_score: data.review_score?.toString() ?? '',
+          review_text: data.review_text ?? '',
         });
       }
     };
+
     load();
   }, []);
 
-  const handleChange = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm((prev) => ({ ...prev, [field]: e.target.value }));
+  const handleChange = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
+    setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -88,7 +109,6 @@ export default function ProfilePage() {
     setSaving(true);
 
     const supabase = createClient();
-
     const username = form.public_username.trim();
     if (username) {
       const { data: existing } = await supabase
@@ -116,6 +136,12 @@ export default function ProfilePage() {
       country: form.country,
       profile_picture_url: form.profile_picture_url,
       public_username: normalizedUsername || null,
+      show_public_email: form.show_public_email,
+      show_public_company: form.show_public_company,
+      show_public_location: form.show_public_location,
+      show_public_review: form.show_public_review,
+      review_score: form.review_score ? Number(form.review_score) : null,
+      review_text: form.review_text || null,
     };
 
     if (profile.role === 'admin') {
@@ -145,6 +171,12 @@ export default function ProfilePage() {
         profile_picture_url: updatedProfile.profile_picture_url ?? '',
         public_username: updatedProfile.public_username ?? '',
         customer_number: updatedProfile.customer_number?.toString() ?? '',
+        show_public_email: updatedProfile.show_public_email ?? false,
+        show_public_company: updatedProfile.show_public_company ?? false,
+        show_public_location: updatedProfile.show_public_location ?? false,
+        show_public_review: updatedProfile.show_public_review ?? false,
+        review_score: updatedProfile.review_score?.toString() ?? '',
+        review_text: updatedProfile.review_text ?? '',
       }));
     }
 
@@ -152,16 +184,6 @@ export default function ProfilePage() {
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
-
-  const initials = profile
-    ? (profile.full_name ?? profile.email)[0].toUpperCase()
-    : '?';
-
-  const fadeUp = (delay = 0) => ({
-    initial: { opacity: 0, y: 24 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.5, delay },
-  });
 
   if (!profile) {
     return (
@@ -174,360 +196,236 @@ export default function ProfilePage() {
     );
   }
 
+  const initials = profile.full_name ? profile.full_name[0].toUpperCase() : profile.email[0].toUpperCase();
+
+  const starPreview = Number(form.review_score) || 0;
+
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
-
-      {/* ── Hero Banner ─────────────────────────────────────────────────── */}
-      <section className="relative pt-20 pb-16 overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900" />
-        <div className="absolute inset-0 opacity-40">
-          <div
-            className="w-full h-full"
-            style={{
-              backgroundImage: `url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+")`,
-            }}
-          />
-        </div>
-        <div className="absolute rounded-full pointer-events-none -right-24 -top-24 h-80 w-80 bg-blue-600/20 blur-3xl" />
-        <div className="absolute w-56 h-56 rounded-full pointer-events-none -bottom-16 left-1/4 bg-purple-600/20 blur-3xl" />
-
-        <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 mb-6">
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-2 transition-colors text-slate-300 hover:text-white"
-            >
-              <ChevronLeft size={20} />
-              <span>Terug naar Dashboard</span>
-            </Link>
+      <section className="pt-24 pb-10">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-4 mb-8 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm uppercase tracking-[0.24em] text-blue-600">Dashboard</p>
+              <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900">Profielinstellingen</h1>
+              <p className="max-w-2xl mt-2 text-sm text-slate-500">Beheer je publieke profiel, privacy-instellingen en review over IntrICT.</p>
+            </div>
+            <div className="p-5 bg-white border shadow-sm rounded-3xl border-slate-200">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center justify-center w-16 h-16 overflow-hidden rounded-full bg-slate-100">
+                  {profile.profile_picture_url ? (
+                    <img src={profile.profile_picture_url} alt={profile.full_name ?? profile.email} className="object-cover w-full h-full" />
+                  ) : (
+                    <span className="text-xl font-semibold text-slate-700">{initials}</span>
+                  )}
+                </div>
+                <div>
+                  <p className="text-sm text-slate-500">Publieke URL</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-900">{profile.public_username ? `/user/${profile.public_username}` : 'Nog geen gebruikersnaam'}</p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-3xl mx-auto text-center"
-          >
-            <h1 className="mb-6 text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
-              Jouw{' '}
-              <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">
-                Profiel
-              </span>
-            </h1>
-            <p className="max-w-2xl mx-auto mb-8 text-xl leading-relaxed text-slate-200">
-              Beheer je persoonlijke informatie en bedrijfsinstellingen.
-              Houd je profiel up-to-date voor betere communicatie.
-            </p>
+          <form onSubmit={handleSave} className="grid gap-6 xl:grid-cols-[1.4fr_0.8fr]">
+            <div className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="overflow-hidden bg-white border shadow-sm rounded-3xl border-slate-200"
+              >
+                <div className="py-6 border-b px-7 border-slate-100">
+                  <h2 className="text-lg font-semibold text-slate-900">Persoonlijke gegevens</h2>
+                  <p className="mt-2 text-sm text-slate-500">Deze informatie gebruik je voor je account en openbare profiel.</p>
+                </div>
+                <div className="space-y-6 p-7">
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <div>
+                      <label className={labelClass}>Volledige naam</label>
+                      <input type="text" value={form.full_name} onChange={handleChange('full_name')} placeholder="Jan Janssen" className={inputClass} />
+                    </div>
+                    <div>
+                      <label className={labelClass}>Telefoonnummer</label>
+                      <input type="tel" value={form.phone} onChange={handleChange('phone')} placeholder="+32 470 00 00 00" className={inputClass} />
+                    </div>
+                  </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-8 mt-10">
-              {profile.profile_picture_url ? (
-                <div className="relative overflow-hidden rounded-full shadow-xl w-28 h-28 ring-4 ring-white">
-                  <img
-                    src={profile.profile_picture_url}
-                    alt={profile.full_name ?? profile.email}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-              ) : (
-                <div className="flex items-center justify-center text-3xl font-bold text-white rounded-full shadow-xl w-28 h-28 bg-white/10 ring-4 ring-white">
-                  {initials}
-                </div>
-              )}
+                  <div>
+                    <label className={labelClass}>E-mail</label>
+                    <input type="email" value={profile.email} disabled className={disabledInputClass} />
+                    <p className="text-xs text-slate-400 mt-1.5">E-mail kan niet worden gewijzigd.</p>
+                  </div>
 
-              {[
-                {
-                  label: 'Account Type',
-                  value:
-                    profile.role === 'admin'
-                      ? 'Admin'
-                      : profile.role === 'klant'
-                      ? 'Klant'
-                      : 'Gebruiker',
-                },
-                { label: 'Laatste Update', value: new Date(profile.updated_at ?? profile.created_at).toLocaleDateString('nl-NL') },
-                { label: 'Status', value: 'Actief' },
-              ].map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div className="text-2xl font-bold text-white">{stat.value}</div>
-                  <div className="text-sm text-slate-400">{stat.label}</div>
+                  <div>
+                    <label className={labelClass}>Profiel foto URL</label>
+                    <input type="url" value={form.profile_picture_url} onChange={handleChange('profile_picture_url')} placeholder="https://voorbeeld.nl/foto.jpg" className={inputClass} />
+                    <p className="text-xs text-slate-400 mt-1.5">Zichtbaar op jouw openbare profielpagina wanneer je dit toestaat.</p>
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>Publieke gebruikersnaam</label>
+                    <input type="text" value={form.public_username} onChange={handleChange('public_username')} placeholder="gebruikersnaam" className={inputClass} />
+                    <p className="text-xs text-slate-400 mt-1.5">Kies een unieke gebruikersnaam voor jouw openbare URL: intrict.com/user/gebruikersnaam</p>
+                  </div>
                 </div>
-              ))}
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.08 }}
+                className="overflow-hidden bg-white border shadow-sm rounded-3xl border-slate-200"
+              >
+                <div className="py-6 border-b px-7 border-slate-100">
+                  <h2 className="text-lg font-semibold text-slate-900">Adres & bedrijfsgegevens</h2>
+                  <p className="mt-2 text-sm text-slate-500">Deze gegevens gebruiken wij alleen voor interne communicatie.</p>
+                </div>
+                <div className="space-y-6 p-7">
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <div>
+                      <label className={labelClass}>Bedrijfsnaam</label>
+                      <input type="text" value={form.company} onChange={handleChange('company')} placeholder="Mijn BV" className={inputClass} />
+                    </div>
+                    <div>
+                      <label className={labelClass}>BTW-nummer</label>
+                      <input type="text" value={form.vat_number} onChange={handleChange('vat_number')} placeholder="BE 0123.456.789" className={inputClass} />
+                    </div>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Straat & huisnummer</label>
+                    <input type="text" value={form.address} onChange={handleChange('address')} placeholder="Kerkstraat 1" className={inputClass} />
+                  </div>
+                  <div className="grid gap-5 sm:grid-cols-3">
+                    <div>
+                      <label className={labelClass}>Postcode</label>
+                      <input type="text" value={form.postal_code} onChange={handleChange('postal_code')} placeholder="8000" className={inputClass} />
+                    </div>
+                    <div>
+                      <label className={labelClass}>Gemeente</label>
+                      <input type="text" value={form.city} onChange={handleChange('city')} placeholder="Brugge" className={inputClass} />
+                    </div>
+                    <div>
+                      <label className={labelClass}>Land</label>
+                      <input type="text" value={form.country} onChange={handleChange('country')} placeholder="België" className={inputClass} />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.16 }}
+                className="overflow-hidden bg-white border shadow-sm rounded-3xl border-slate-200"
+              >
+                <div className="py-6 border-b px-7 border-slate-100">
+                  <h2 className="text-lg font-semibold text-slate-900">Accountinformatie</h2>
+                  <p className="mt-2 text-sm text-slate-500">Deze gegevens zijn zichtbaar voor admins of alleen intern.</p>
+                </div>
+                <div className="space-y-6 p-7">
+                  <div>
+                    <label className={labelClass}>Klantnummer</label>
+                    <input type="text" value={profile.customer_number ? profile.customer_number.toString() : 'Nog niet ingesteld'} disabled className={disabledInputClass} />
+                    <p className="text-xs text-slate-400 mt-1.5">Kan alleen door een administrator worden aangepast.</p>
+                  </div>
+                </div>
+              </motion.div>
             </div>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* ── Profile Interface ────────────────────────────────────────────── */}
-      <section className="py-8">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <form onSubmit={handleSave}>
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <aside className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.08 }}
+                className="overflow-hidden bg-white border shadow-sm rounded-3xl border-slate-200"
+              >
+                <div className="py-6 border-b px-7 border-slate-100">
+                  <h2 className="text-lg font-semibold text-slate-900">Privacy & zichtbaarheid</h2>
+                  <p className="mt-2 text-sm text-slate-500">Kies welke onderdelen van je profiel publiek zichtbaar mogen zijn.</p>
+                </div>
+                <div className="space-y-4 p-7">
+                  <label className={toggleLabel}>
+                    <input type="checkbox" checked={form.show_public_email} onChange={handleChange('show_public_email')} className="w-4 h-4 text-blue-600 rounded border-slate-300" />
+                    Email openbaar tonen
+                  </label>
+                  <label className={toggleLabel}>
+                    <input type="checkbox" checked={form.show_public_company} onChange={handleChange('show_public_company')} className="w-4 h-4 text-blue-600 rounded border-slate-300" />
+                    Bedrijfsnaam openbaar tonen
+                  </label>
+                  <label className={toggleLabel}>
+                    <input type="checkbox" checked={form.show_public_location} onChange={handleChange('show_public_location')} className="w-4 h-4 text-blue-600 rounded border-slate-300" />
+                    Locatie openbaar tonen
+                  </label>
+                  <label className={toggleLabel}>
+                    <input type="checkbox" checked={form.show_public_review} onChange={handleChange('show_public_review')} className="w-4 h-4 text-blue-600 rounded border-slate-300" />
+                    Review openbaar tonen
+                  </label>
+                </div>
+              </motion.div>
 
-              {/* ── Persoonlijke gegevens ── */}
-              <motion.div {...fadeUp(0.1)} className="lg:col-span-2">
-                <div className="overflow-hidden bg-white border shadow-sm rounded-2xl border-slate-100">
-                  <div className="flex items-center gap-3 py-5 border-b px-7 border-slate-100">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-linear-to-br from-blue-500 to-blue-600">
-                      <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.16 }}
+                className="overflow-hidden bg-white border shadow-sm rounded-3xl border-slate-200"
+              >
+                <div className="py-6 border-b px-7 border-slate-100">
+                  <h2 className="text-lg font-semibold text-slate-900">Review over IntrICT</h2>
+                  <p className="mt-2 text-sm text-slate-500">Laat een beoordeling achter en update je score met sterren.</p>
+                </div>
+                <div className="space-y-5 p-7">
+                  <div>
+                    <label className={labelClass}>Review score</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={5}
+                      value={form.review_score}
+                      onChange={handleChange('review_score')}
+                      placeholder="1-5"
+                      className={inputClass}
+                    />
+                    <div className="flex items-center gap-1 mt-3">
+                      {Array.from({ length: 5 }).map((_, index) => (
+                        <Star
+                          key={index}
+                          className={`w-5 h-5 ${index < starPreview ? 'text-amber-500' : 'text-slate-300'}`}
+                        />
+                      ))}
                     </div>
-                    <h2 className="font-bold text-slate-800">Persoonlijke gegevens</h2>
                   </div>
-
-                  <div className="py-6 space-y-5 px-7">
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                      <div>
-                        <label className={labelClass}>Volledige naam</label>
-                        <input
-                          type="text"
-                          value={form.full_name}
-                          onChange={handleChange('full_name')}
-                          placeholder="Jan Janssen"
-                          className={inputClass}
-                        />
-                      </div>
-                      <div>
-                        <label className={labelClass}>Telefoonnummer</label>
-                        <input
-                          type="tel"
-                          value={form.phone}
-                          onChange={handleChange('phone')}
-                          placeholder="+32 470 00 00 00"
-                          className={inputClass}
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className={labelClass}>E-mail</label>
-                      <input
-                        type="email"
-                        value={profile.email}
-                        disabled
-                        className={disabledInputClass}
-                      />
-                      <p className="text-xs text-slate-400 mt-1.5">E-mail kan niet worden gewijzigd</p>
-                    </div>
-
-                    <div>
-                      <label className={labelClass}>Profiel foto URL</label>
-                      <input
-                        type="url"
-                        value={form.profile_picture_url}
-                        onChange={handleChange('profile_picture_url')}
-                        placeholder="https://voorbeeld.nl/foto.jpg"
-                        className={inputClass}
-                      />
-                      <p className="text-xs text-slate-400 mt-1.5">Zichtbaar op jouw openbare gebruikerspagina.</p>
-                    </div>
-
-                    <div>
-                      <label className={labelClass}>Publieke gebruikersnaam</label>
-                      <input
-                        type="text"
-                        value={form.public_username}
-                        onChange={handleChange('public_username')}
-                        placeholder="gebruikersnaam"
-                        className={inputClass}
-                      />
-                      <p className="text-xs text-slate-400 mt-1.5">Kies een unieke gebruikersnaam voor jouw openbare URL: intrict.com/user/gebruikersnaam</p>
-                    </div>
-
-                    <div>
-                      <label className={labelClass}>Klantnummer</label>
-                      <input
-                        type="text"
-                        value={profile.customer_number ? profile.customer_number.toString() : 'Nog niet ingesteld'}
-                        disabled
-                        className={disabledInputClass}
-                      />
-                      <p className="text-xs text-slate-400 mt-1.5">Dit nummer kan alleen door een administrator worden aangepast.</p>
-                    </div>
+                  <div>
+                    <label className={labelClass}>Review tekst</label>
+                    <textarea
+                      value={form.review_text}
+                      onChange={handleChange('review_text')}
+                      placeholder="Vertel ons wat je van IntrICT vindt..."
+                      rows={6}
+                      className="w-full px-4 py-3 transition-all duration-200 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
+                    />
                   </div>
                 </div>
               </motion.div>
 
-              {/* ── Snelle info sidebar ── */}
-              <motion.div {...fadeUp(0.15)} className="flex flex-col gap-6">
-                <div className="overflow-hidden bg-white border shadow-sm rounded-2xl border-slate-100">
-                  <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-100">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-linear-to-br from-purple-500 to-purple-600">
-                      <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                      </svg>
-                    </div>
-                    <h2 className="font-bold text-slate-800">Account status</h2>
-                  </div>
-                  <div className="px-6 py-5 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-500">Rol</span>
-                      <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                        profile.role === 'admin'
-                          ? 'bg-purple-100 text-purple-700'
-                          : profile.role === 'klant'
-                          ? 'bg-emerald-100 text-emerald-700'
-                          : 'bg-blue-100 text-blue-700'
-                      }`}>
-                        {profile.role === 'admin'
-                          ? 'Admin'
-                          : profile.role === 'klant'
-                          ? 'Klant'
-                          : 'Gebruiker'}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-500">Lid sinds</span>
-                      <span className="text-sm font-medium text-slate-700">
-                        {new Date(profile.created_at).toLocaleDateString('nl-BE', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
-                        })}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-500">Status</span>
-                      <span className="flex items-center gap-1.5 text-sm font-medium text-emerald-600">
-                        <span className="inline-block w-2 h-2 rounded-full bg-emerald-400" />
-                        Actief
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* ── Bedrijfsgegevens ── */}
-              <motion.div {...fadeUp(0.2)} className="lg:col-span-2">
-                <div className="overflow-hidden bg-white border shadow-sm rounded-2xl border-slate-100">
-                  <div className="flex items-center gap-3 py-5 border-b px-7 border-slate-100">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-linear-to-br from-emerald-500 to-teal-600">
-                      <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                      </svg>
-                    </div>
-                    <h2 className="font-bold text-slate-800">Bedrijfsgegevens</h2>
-                  </div>
-
-                  <div className="py-6 space-y-5 px-7">
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                      <div>
-                        <label className={labelClass}>Bedrijfsnaam</label>
-                        <input
-                          type="text"
-                          value={form.company}
-                          onChange={handleChange('company')}
-                          placeholder="Mijn BV"
-                          className={inputClass}
-                        />
-                      </div>
-                      <div>
-                        <label className={labelClass}>BTW-nummer</label>
-                        <input
-                          type="text"
-                          value={form.vat_number}
-                          onChange={handleChange('vat_number')}
-                          placeholder="BE 0123.456.789"
-                          className={inputClass}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* ── Adresgegevens ── */}
-              <motion.div {...fadeUp(0.25)} className="lg:col-span-3">
-                <div className="overflow-hidden bg-white border shadow-sm rounded-2xl border-slate-100">
-                  <div className="flex items-center gap-3 py-5 border-b px-7 border-slate-100">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-linear-to-br from-orange-500 to-red-500">
-                      <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    </div>
-                    <h2 className="font-bold text-slate-800">Adresgegevens</h2>
-                  </div>
-
-                  <div className="py-6 space-y-5 px-7">
-                    <div>
-                      <label className={labelClass}>Straat & huisnummer</label>
-                      <input
-                        type="text"
-                        value={form.address}
-                        onChange={handleChange('address')}
-                        placeholder="Kerkstraat 1"
-                        className={inputClass}
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-                      <div>
-                        <label className={labelClass}>Postcode</label>
-                        <input
-                          type="text"
-                          value={form.postal_code}
-                          onChange={handleChange('postal_code')}
-                          placeholder="8000"
-                          className={inputClass}
-                        />
-                      </div>
-                      <div>
-                        <label className={labelClass}>Gemeente</label>
-                        <input
-                          type="text"
-                          value={form.city}
-                          onChange={handleChange('city')}
-                          placeholder="Brugge"
-                          className={inputClass}
-                        />
-                      </div>
-                      <div>
-                        <label className={labelClass}>Land</label>
-                        <input
-                          type="text"
-                          value={form.country}
-                          onChange={handleChange('country')}
-                          placeholder="België"
-                          className={inputClass}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* ── Save button ── */}
-              <motion.div {...fadeUp(0.3)} className="flex justify-end lg:col-span-3">
-                <motion.button
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.24 }}
+                className="bg-white border shadow-sm rounded-3xl border-slate-200 p-7"
+              >
+                <button
                   type="submit"
                   disabled={saving}
-                  whileHover={{ scale: saving ? 1 : 1.02 }}
-                  whileTap={{ scale: saving ? 1 : 0.97 }}
-                  className="relative flex items-center justify-center gap-2 px-10 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 shadow-blue-500/25 disabled:opacity-70 min-w-52"
+                  className="inline-flex items-center justify-center w-full gap-2 px-6 py-4 font-semibold text-white transition-all duration-300 bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 disabled:opacity-70"
                 >
-                  {saved ? (
-                    <>
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                      Opgeslagen!
-                    </>
-                  ) : saving ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white rounded-full border-t-transparent animate-spin" />
-                      Opslaan...
-                    </>
-                  ) : (
-                    'Wijzigingen opslaan'
-                  )}
-                </motion.button>
+                  {saved ? 'Opgeslagen!' : saving ? 'Opslaan...' : 'Wijzigingen opslaan'}
+                </button>
               </motion.div>
-
-            </div>
+            </aside>
           </form>
         </div>
       </section>
-
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Star } from 'lucide-react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import { createClient } from '@/lib/supabase/client';
@@ -30,8 +30,6 @@ export default function UserProfilePage() {
         .select('*')
         .ilike('public_username', username)
         .single();
-
-      console.log('Public profile lookup:', { username, data, error });
 
       if (error || !data) {
         setNotFound(true);
@@ -81,75 +79,99 @@ export default function UserProfilePage() {
   }
 
   const initials = (profile.full_name ?? profile.email)[0].toUpperCase();
+  const reviewScore = profile.review_score ?? 0;
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Header />
       <main className="pt-24">
         <div className="px-4 py-12 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
-        >
-          <ChevronLeft size={18} /> Terug naar startpagina
-        </Link>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
+          >
+            <ChevronLeft size={18} /> Terug naar startpagina
+          </Link>
 
-        <div className="mt-10 overflow-hidden bg-white border shadow-sm border-slate-200 rounded-3xl">
-          <div className="relative px-6 py-10 sm:px-10 sm:py-12">
-            <div className="absolute inset-x-0 top-0 h-32 bg-linear-to-r from-blue-500 to-purple-600 opacity-20" />
-            <div className="relative grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-center">
-              <div className="flex items-center justify-center mx-auto overflow-hidden rounded-full shadow-lg w-44 h-44 bg-slate-100 lg:mx-0">
-                {profile.profile_picture_url ? (
-                  <img
-                    src={profile.profile_picture_url}
-                    alt={profile.full_name ?? profile.email}
-                    className="object-cover w-full h-full"
-                  />
-                ) : (
-                  <span className="text-4xl font-semibold text-slate-700">{initials}</span>
+          <div className="mt-10 overflow-hidden bg-white border shadow-sm border-slate-200 rounded-3xl">
+            <div className="relative px-6 py-10 sm:px-10 sm:py-12">
+              <div className="absolute inset-x-0 top-0 h-32 bg-linear-to-r from-blue-500 to-purple-600 opacity-20" />
+              <div className="relative grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-center">
+                <div className="flex items-center justify-center mx-auto overflow-hidden rounded-full shadow-lg w-44 h-44 bg-slate-100 lg:mx-0">
+                  {profile.profile_picture_url ? (
+                    <img
+                      src={profile.profile_picture_url}
+                      alt={profile.full_name ?? profile.email}
+                      className="object-cover w-full h-full"
+                    />
+                  ) : (
+                    <span className="text-4xl font-semibold text-slate-700">{initials}</span>
+                  )}
+                </div>
+
+                <div className="space-y-4 text-center lg:text-left">
+                  <div>
+                    <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">Publiek profiel</p>
+                    <h1 className="mt-3 text-4xl font-bold tracking-tight text-slate-900">
+                      {profile.full_name ?? profile.email}
+                    </h1>
+                    <p className="mt-2 text-sm text-slate-500">{profile.company ?? 'Geen bedrijfsnaam opgegeven'}</p>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="p-4 text-center rounded-3xl bg-slate-50">
+                      <div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Gebruikersnaam</div>
+                      <div className="mt-3 text-base font-semibold text-slate-900">{profile.public_username ?? String(params?.username ?? '')}</div>
+                    </div>
+                    {profile.show_public_email && (
+                      <div className="p-4 text-center rounded-3xl bg-slate-50">
+                        <div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">E-mail</div>
+                        <div className="mt-3 text-base font-semibold text-slate-900">{profile.email}</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-6 mt-10 sm:grid-cols-2">
+                {profile.show_public_company && (
+                  <div className="p-6 rounded-3xl bg-slate-50">
+                    <p className="text-sm font-semibold text-slate-500">Bedrijf</p>
+                    <p className="mt-3 text-base text-slate-900">{profile.company}</p>
+                  </div>
+                )}
+                {profile.show_public_location && (
+                  <div className="p-6 rounded-3xl bg-slate-50">
+                    <p className="text-sm font-semibold text-slate-500">Locatie</p>
+                    <p className="mt-3 text-base text-slate-900">{profile.city ?? 'Niet opgegeven'}</p>
+                  </div>
                 )}
               </div>
 
-              <div className="space-y-4 text-center lg:text-left">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">Publiek profiel</p>
-                  <h1 className="mt-3 text-4xl font-bold tracking-tight text-slate-900">
-                    {profile.full_name ?? profile.email}
-                  </h1>
-                  <p className="mt-2 text-sm text-slate-500">{profile.company ?? 'Geen bedrijfsnaam opgegeven'}</p>
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-3">
-                  <div className="p-4 text-center rounded-3xl bg-slate-50">
-                    <div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Gebruikersnaam</div>
-                    <div className="mt-3 text-base font-semibold text-slate-900">{profile.public_username ?? String(params?.username ?? '')}</div>
-                  </div>
-                  <div className="p-4 text-center rounded-3xl bg-slate-50">
-                    <div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Rol</div>
-                    <div className="mt-3 text-base font-semibold text-slate-900">
-                      {profile.role === 'admin' ? 'Admin' : profile.role === 'klant' ? 'Klant' : 'Gebruiker'}
+              {profile.show_public_review && reviewScore > 0 && (
+                <div className="mt-10 p-6 rounded-3xl bg-slate-50">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Klantreview</p>
+                      <div className="mt-3 flex items-center gap-1">
+                        {Array.from({ length: 5 }).map((_, index) => (
+                          <Star
+                            key={index}
+                            className={`w-5 h-5 ${index < reviewScore ? 'text-amber-500' : 'text-slate-300'}`}
+                          />
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  <div className="p-4 text-center rounded-3xl bg-slate-50">
-                    <div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Klantnummer</div>
-                    <div className="mt-3 text-base font-semibold text-slate-900">{profile.customer_number ?? 'Niet ingesteld'}</div>
-                  </div>
+                  {profile.review_text ? (
+                    <p className="mt-5 text-base leading-7 text-slate-700">{profile.review_text}</p>
+                  ) : (
+                    <p className="mt-5 text-sm text-slate-500">Deze gebruiker heeft nog geen review toegevoegd.</p>
+                  )}
                 </div>
-              </div>
-            </div>
-
-            <div className="grid gap-6 mt-10 sm:grid-cols-2">
-              <div className="p-6 rounded-3xl bg-slate-50">
-                <p className="text-sm font-semibold text-slate-500">E-mail</p>
-                <p className="mt-3 text-base text-slate-900">{profile.email}</p>
-              </div>
-              <div className="p-6 rounded-3xl bg-slate-50">
-                <p className="text-sm font-semibold text-slate-500">Locatie</p>
-                <p className="mt-3 text-base text-slate-900">{profile.city ?? 'Niet opgegeven'}</p>
-              </div>
+              )}
             </div>
           </div>
-        </div>
         </div>
       </main>
       <Footer />

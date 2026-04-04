@@ -197,7 +197,7 @@ export default function Header() {
                                       <p className={`text-sm truncate ${conversation.unread_count > 0 ? 'font-semibold text-slate-800' : 'text-slate-600'}`}>
                                         {conversation.subject}
                                       </p>
-                                      {conversation.last_message && (
+                                      {conversation.last_message && conversation.last_message.sender && (
                                         <p className="text-xs text-slate-500 mt-0.5 truncate">
                                           {conversation.last_message.sender.full_name || conversation.last_message.sender.email}: {conversation.last_message.content}
                                         </p>

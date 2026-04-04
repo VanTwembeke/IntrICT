@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -28,7 +28,7 @@ interface Conversation {
     sender: {
       full_name: string | null;
       email: string;
-    };
+    } | null;
   } | null;
   unread_count: number;
 }
@@ -76,10 +76,26 @@ interface Props {
     role: string;
     company: string | null;
   }>;
+  initialConversations?: Array<{
+    id: string;
+    subject: string;
+    created_at: string;
+    updated_at: string;
+    created_by: string;
+    last_message: {
+      content: string;
+      created_at: string;
+      sender: {
+        full_name: string | null;
+        email: string;
+      } | null;
+    } | null;
+    unread_count: number;
+  }>;
 }
 
-export default function MessagesPage({ profile, allProfiles }: Props) {
-  const [conversations, setConversations] = useState<Conversation[]>([]);
+export default memo(function MessagesPage({ profile, allProfiles, initialConversations = [] }: Props) {
+  const [conversations, setConversations] = useState<Conversation[]>(initialConversations);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [conversationDetail, setConversationDetail] = useState<ConversationDetail | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -90,13 +106,13 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
   const [newSubject, setNewSubject] = useState('');
   const [newConversationMessage, setNewConversationMessage] = useState('');
   const [newConversationFiles, setNewConversationFiles] = useState<File[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(initialConversations.length === 0);
   const [sending, setSending] = useState(false);
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
 
   const isAdmin = profile.role === 'admin';
 
-  const fetchConversations = async () => {
+  const fetchConversations = useCallback(async () => {
     try {
       const response = await fetch('/api/messages');
       const data = await response.json();
@@ -106,9 +122,9 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchConversation = async (conversationId: string) => {
+  const fetchConversation = useCallback(async (conversationId: string) => {
     try {
       const response = await fetch(`/api/messages/conversation/${conversationId}`);
       const data = await response.json();
@@ -117,30 +133,62 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
     } catch (error) {
       console.error('Failed to fetch conversation:', error);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchConversations();
-  }, []);
+    if (initialConversations.length === 0) {
+      fetchConversations();
+    }
+  }, [initialConversations.length, fetchConversations]);
 
   useEffect(() => {
     if (selectedConversation) {
       fetchConversation(selectedConversation);
     }
-  }, [selectedConversation]);
+  }, [selectedConversation, fetchConversation]);
 
   const sendMessage = async () => {
     if (!selectedConversation || (!newMessage.trim() && attachments.length === 0)) return;
 
+    const messageContent = newMessage.trim();
+    const messageAttachments = [...attachments];
+
+    // Optimistic UI update
+    const optimisticMessage: Message = {
+      id: `temp-${Date.now()}`,
+      content: messageContent,
+      created_at: new Date().toISOString(),
+      read_at: null,
+      parent_message_id: replyingTo?.id || null,
+      sender_id: profile.id,
+      profiles: {
+        full_name: profile.full_name,
+        email: profile.email,
+      },
+      message_attachments: messageAttachments.map((file, index) => ({
+        id: `temp-attachment-${Date.now()}-${index}`,
+        file_name: file.name,
+        file_url: '#',
+        file_size: file.size,
+        mime_type: file.type,
+      })),
+    };
+
+    // Add optimistic message to UI immediately
+    setMessages(prev => [...prev, optimisticMessage]);
+    setNewMessage('');
+    setAttachments([]);
+    setReplyingTo(null);
     setSending(true);
+
     try {
       const formData = new FormData();
       formData.append('conversation_id', selectedConversation);
-      formData.append('content', newMessage);
+      formData.append('content', messageContent);
       if (replyingTo) {
         formData.append('parent_message_id', replyingTo.id);
       }
-      attachments.forEach((file) => {
+      messageAttachments.forEach((file) => {
         formData.append('files', file);
       });
 
@@ -150,14 +198,23 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
       });
 
       if (response.ok) {
-        setNewMessage('');
-        setAttachments([]);
-        setReplyingTo(null);
+        // Refresh data in background
         await fetchConversation(selectedConversation);
         await fetchConversations();
+      } else {
+        // Remove optimistic message on error
+        setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
+        setNewMessage(messageContent);
+        setAttachments(messageAttachments);
+        if (replyingTo) setReplyingTo(replyingTo);
       }
     } catch (error) {
       console.error('Failed to send message:', error);
+      // Remove optimistic message on error
+      setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
+      setNewMessage(messageContent);
+      setAttachments(messageAttachments);
+      if (replyingTo) setReplyingTo(replyingTo);
     } finally {
       setSending(false);
     }
@@ -538,7 +595,7 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
                             <p className="mb-1 text-sm font-semibold truncate text-slate-800">
                               {conversation.subject || 'Geen onderwerp'}
                             </p>
-                            {conversation.last_message && (
+                            {conversation.last_message && conversation.last_message.sender && (
                               <p className="mb-2 text-sm truncate text-slate-500">
                                 {conversation.last_message.sender.full_name ||
                                   conversation.last_message.sender.email}
@@ -818,4 +875,4 @@ export default function MessagesPage({ profile, allProfiles }: Props) {
       </section>
     </div>
   );
-}
+});

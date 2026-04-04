@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -9,7 +9,11 @@ export async function GET() {
     return NextResponse.json({ conversations: [] });
   }
 
-  // Get all conversations where the user is a participant
+  const { searchParams } = new URL(request.url);
+  const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100); // Max 100 conversations
+  const offset = parseInt(searchParams.get('offset') || '0');
+
+  // Get conversations where the user is a participant with pagination
   const { data: conversations, error } = await supabase
     .from('conversations')
     .select(`
@@ -19,17 +23,18 @@ export async function GET() {
       updated_at,
       created_by,
       conversation_participants!inner(profile_id),
-      messages!inner(
+      messages(
         id,
         content,
         created_at,
         read_at,
         sender_id,
-        profiles!sender_id(full_name, email)
+        profiles!messages_sender_id_fkey(full_name, email)
       )
     `)
     .eq('conversation_participants.profile_id', user.id)
-    .order('updated_at', { ascending: false });
+    .order('updated_at', { ascending: false })
+    .range(offset, offset + limit - 1);
 
   if (error) {
     console.error('Failed to fetch conversations:', error);

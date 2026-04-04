@@ -15,7 +15,7 @@ export interface Conversation {
     sender: {
       full_name: string | null;
       email: string;
-    };
+    } | null;
   } | null;
   unread_count: number;
 }

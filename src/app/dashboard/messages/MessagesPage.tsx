@@ -51,6 +51,16 @@ interface Message {
     file_size: number;
     mime_type: string;
   }>;
+  parent_message?: {
+    id: string;
+    content: string;
+    sender_id: string;
+    created_at: string;
+    profiles: {
+      full_name: string | null;
+      email: string;
+    };
+  } | null;
 }
 
 interface ConversationDetail {
@@ -129,7 +139,13 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
       const response = await fetch(`/api/messages/conversation/${conversationId}`);
       const data = await response.json();
       setConversationDetail(data.conversation);
-      setMessages(data.messages || []);
+      // Ensure message_attachments is always an array
+      const messagesWithAttachments = (data.messages || []).map((msg: Message) => ({
+        ...msg,
+        message_attachments: msg.message_attachments || [],
+        parent_message: msg.parent_message || null
+      }));
+      setMessages(messagesWithAttachments);
     } catch (error) {
       console.error('Failed to fetch conversation:', error);
     }
@@ -692,6 +708,23 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                                   })}
                                 </span>
                               </div>
+                              
+                              {/* quoted/parent message */}
+                              {message.parent_message && (
+                                <div
+                                  className={`mb-2 p-2 border-l-4 rounded text-xs ${
+                                    message.sender_id === profile.id
+                                      ? 'bg-blue-600/30 border-blue-300 text-blue-50'
+                                      : 'bg-slate-100 border-slate-400 text-slate-700'
+                                  }`}
+                                >
+                                  <p className="mb-1 font-medium">
+                                    {message.parent_message.profiles.full_name || message.parent_message.profiles.email}:
+                                  </p>
+                                  <p className="opacity-90 line-clamp-2">{message.parent_message.content}</p>
+                                </div>
+                              )}
+                              
                               <p className="text-sm leading-relaxed">{message.content}</p>
 
                               {/* attachments */}

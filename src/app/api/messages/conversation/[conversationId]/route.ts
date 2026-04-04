@@ -46,7 +46,7 @@ export async function GET(
     return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
   }
 
-  // Get messages with attachments
+  // Get messages with attachments and parent message info
   const { data: messages, error: msgError } = await supabase
     .from('messages')
     .select(`
@@ -63,6 +63,13 @@ export async function GET(
         file_url,
         file_size,
         mime_type
+      ),
+      messages!parent_message_id(
+        id,
+        content,
+        sender_id,
+        created_at,
+        profiles!messages_sender_id_fkey(full_name, email)
       )
     `)
     .eq('conversation_id', conversationId)

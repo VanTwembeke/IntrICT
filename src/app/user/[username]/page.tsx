@@ -35,6 +35,8 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
         .ilike('public_username', username)
         .single();
 
+      console.log('Public profile lookup:', { username, data, error });
+
       if (error || !data) {
         setNotFound(true);
       } else {

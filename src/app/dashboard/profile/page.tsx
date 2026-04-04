@@ -94,7 +94,7 @@ export default function ProfilePage() {
       const { data: existing } = await supabase
         .from('profiles')
         .select('id')
-        .eq('public_username', username)
+        .ilike('public_username', username)
         .single();
 
       if (existing && existing.id !== profile.id) {

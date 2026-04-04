@@ -15,6 +15,7 @@ export default function Header() {
   const [authLoading, setAuthLoading] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
 
   const userMenuRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
@@ -23,13 +24,34 @@ export default function Header() {
   useEffect(() => {
     const supabase = createClient();
 
+    const loadUserProfile = async (userId: string) => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('profile_picture_url')
+        .eq('id', userId)
+        .single();
+      if (data?.profile_picture_url) {
+        setProfilePicture(data.profile_picture_url);
+      }
+    };
+
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser?.id) {
+        loadUserProfile(currentUser.id);
+      }
       setAuthLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser?.id) {
+        loadUserProfile(currentUser.id);
+      } else {
+        setProfilePicture(null);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -236,9 +258,17 @@ export default function Header() {
                         : 'bg-white/15 text-white hover:bg-white/25 backdrop-blur-sm'
                     }`}
                   >
-                    <span className="flex items-center justify-center text-xs font-bold text-white rounded-full shadow w-7 h-7 bg-linear-to-br from-blue-500 to-purple-500">
-                      {avatarLabel}
-                    </span>
+                    {profilePicture ? (
+                      <img
+                        src={profilePicture}
+                        alt="Profiel foto"
+                        className="object-cover w-7 h-7 rounded-full shadow"
+                      />
+                    ) : (
+                      <span className="flex items-center justify-center text-xs font-bold text-white rounded-full shadow w-7 h-7 bg-linear-to-br from-blue-500 to-purple-500">
+                        {avatarLabel}
+                      </span>
+                    )}
                     <span className="truncate max-w-30">{user.email?.split('@')[0]}</span>
                     <svg
                       className={`w-3.5 h-3.5 transition-transform duration-300 ${showUserMenu ? 'rotate-180' : ''}`}

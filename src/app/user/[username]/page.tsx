@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import Header from '@/components/common/Header';
@@ -8,13 +9,8 @@ import Footer from '@/components/common/Footer';
 import { createClient } from '@/lib/supabase/client';
 import type { Profile } from '@/lib/types';
 
-interface UserProfilePageProps {
-  params: {
-    username: string;
-  };
-}
-
-export default function UserProfilePage({ params }: UserProfilePageProps) {
+export default function UserProfilePage() {
+  const params = useParams();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -28,7 +24,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
       }
 
       const supabase = createClient();
-      const username = params.username.toLowerCase();
+      const username = String(params.username).toLowerCase();
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -47,7 +43,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
     };
 
     loadProfile();
-  }, [params.username]);
+  }, [params?.username]);
 
   if (loading) {
     return (
@@ -126,7 +122,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
                 <div className="grid gap-4 sm:grid-cols-3">
                   <div className="p-4 text-center rounded-3xl bg-slate-50">
                     <div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Gebruikersnaam</div>
-                    <div className="mt-3 text-base font-semibold text-slate-900">{profile.public_username ?? params.username}</div>
+                    <div className="mt-3 text-base font-semibold text-slate-900">{profile.public_username ?? String(params?.username ?? '')}</div>
                   </div>
                   <div className="p-4 text-center rounded-3xl bg-slate-50">
                     <div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Rol</div>

@@ -4,12 +4,11 @@ import { createClient } from '@/lib/supabase/server';
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
 
-  // 🔍 DEBUG: verify auth context
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
-  const { data: { session } } = await supabase.auth.getSession();
-
-  console.log('USER:', user);
-  console.log('SESSION:', session);
+  // 🔍 Auth
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
   if (userError || !user) {
     return NextResponse.json(
@@ -27,7 +26,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // ✅ Check if recipient exists
+  // ✅ Validate recipient
   const { data: recipient, error: recipientError } = await supabase
     .from('profiles')
     .select('id, full_name, email')
@@ -41,30 +40,48 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // ✅ Initialize properly (FIXES TS ERROR)
   let conversationId: string | null = null;
 
-  // ✅ Try to find existing conversation
-  const { data: existingParticipants } = await supabase
+  /**
+   * ✅ Find existing conversation between the two users
+   */
+  const { data: participantRows, error: participantFetchError } = await supabase
     .from('conversation_participants')
     .select('conversation_id')
-    .eq('profile_id', recipientId);
+    .eq('profile_id', user.id);
 
-  const existingConversationIds =
-    existingParticipants?.map((p) => p.conversation_id) || [];
-
-  if (existingConversationIds.length > 0) {
-    const { data: existingConversation } = await supabase
-      .from('conversation_participants')
-      .select('conversation_id')
-      .eq('profile_id', user.id)
-      .in('conversation_id', existingConversationIds);
-
-    conversationId =
-      existingConversation?.[0]?.conversation_id ?? null;
+  if (participantFetchError) {
+    console.error('Participant fetch error:', participantFetchError);
+    return NextResponse.json(
+      { error: participantFetchError.message },
+      { status: 500 }
+    );
   }
 
-  // ✅ Create new conversation if none exists
+  const userConversationIds =
+    participantRows?.map((p) => p.conversation_id) || [];
+
+  if (userConversationIds.length > 0) {
+    const { data: match, error: matchError } = await supabase
+      .from('conversation_participants')
+      .select('conversation_id')
+      .eq('profile_id', recipientId)
+      .in('conversation_id', userConversationIds);
+
+    if (matchError) {
+      console.error('Match error:', matchError);
+      return NextResponse.json(
+        { error: matchError.message },
+        { status: 500 }
+      );
+    }
+
+    conversationId = match?.[0]?.conversation_id ?? null;
+  }
+
+  /**
+   * ✅ Create conversation if none exists
+   */
   if (!conversationId) {
     const { data: newConversation, error: convError } = await supabase
       .from('conversations')
@@ -72,7 +89,7 @@ export async function POST(req: NextRequest) {
         subject:
           subject ||
           `Conversation with ${recipient.full_name || recipient.email}`,
-        created_by: user.id, // 🔥 must match auth.uid()
+        created_by: user.id, // MUST match RLS policy
       })
       .select()
       .single();
@@ -80,23 +97,31 @@ export async function POST(req: NextRequest) {
     if (convError || !newConversation) {
       console.error('Failed to create conversation:', convError);
       return NextResponse.json(
-        { error: convError?.message || 'Insert failed' },
+        { error: convError?.message || 'Conversation insert failed' },
         { status: 500 }
       );
     }
 
     conversationId = newConversation.id;
 
-    // ✅ Insert participants (RLS-safe)
+    /**
+     * ✅ Insert participants
+     */
     const { error: participantsError } = await supabase
       .from('conversation_participants')
       .insert([
-        { conversation_id: conversationId, profile_id: user.id },
-        { conversation_id: conversationId, profile_id: recipientId },
+        {
+          conversation_id: conversationId,
+          profile_id: user.id,
+        },
+        {
+          conversation_id: conversationId,
+          profile_id: recipientId,
+        },
       ]);
 
     if (participantsError) {
-      console.error('Participants error:', participantsError);
+      console.error('Participants insert error:', participantsError);
       return NextResponse.json(
         { error: participantsError.message },
         { status: 500 }
@@ -104,7 +129,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // 🛑 Extra safety (should never happen now)
+  // 🛑 Safety check
   if (!conversationId) {
     return NextResponse.json(
       { error: 'Failed to resolve conversation' },
@@ -112,17 +137,21 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // ✅ Send message
-  const { error: msgError } = await supabase
+  /**
+   * ✅ Insert message
+   */
+  const { data: messageRow, error: msgError } = await supabase
     .from('messages')
     .insert({
       conversation_id: conversationId,
       sender_id: user.id,
       content: message,
-    });
+    })
+    .select()
+    .single();
 
   if (msgError) {
-    console.error('Message error:', msgError);
+    console.error('Message insert error:', msgError);
     return NextResponse.json(
       { error: msgError.message },
       { status: 500 }
@@ -131,6 +160,6 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({
     conversationId,
-    message: 'Conversation created and message sent successfully',
+    message: messageRow,
   });
 }

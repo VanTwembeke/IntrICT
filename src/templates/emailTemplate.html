@@ -3,51 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Email Template</title>
+  <title>Berichten</title>
   <style>
-    * {
+    body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      line-height: 1.6;
-      color: #1e293b;
-      background: linear-gradient(135deg, #f1f5f9 0%, #e0e7ff 100%);
+      background-color: #f4f6f8;
+      font-family: Arial, sans-serif;
+      color: #333333;
     }
     .container {
       max-width: 600px;
-      margin: 20px auto;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 30px;
     }
     .header {
-      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-      color: white;
-      padding: 40px 20px;
-      text-align: center;
+      text-align: left;
+      margin-bottom: 20px;
     }
-    .header h1 {
-      font-size: 28px;
+    .logo {
+      max-height: 40px;
+    }
+    h1 {
+      font-size: 20px;
       margin-bottom: 10px;
     }
-    .header p {
-      font-size: 14px;
-      opacity: 0.9;
+    p {
+      line-height: 1.6;
+      margin: 10px 0;
     }
-    .content {
-      padding: 40px;
+    .button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 20px;
+      background-color: #1a73e8;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 4px;
     }
-    .greeting {
-      margin-bottom: 20px;
-      font-size: 16px;
-      color: #1e293b;
+    .footer {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #777777;
     }
-    .greeting strong {
-      color: #3b82f6;
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <img src="LOGO_URL" alt="Bedrijfslogo" class="logo">
+    </div>
+
+    <!-- Title -->
+    <h1>[Onderwerp / Titel]</h1>
+
+    <!-- Intro -->
+    <p>Beste [Naam],</p>
+
+    <!-- Main message -->
+    <p>
+      Wij hopen dat alles goed met u gaat. Bij [Bedrijfsnaam] streven we ernaar
+      om hoogwaardige oplossingen te bieden die aansluiten op uw specifieke behoeften.
+    </p>
+
+    <p>
+      [Hoofdboodschap – bijvoorbeeld update, aanbod, informatie, etc.]
+    </p>
+
+    <p>
+      Dankzij onze focus op kwaliteit, innovatie en samenwerking blijven wij
+      continu werken aan verbeteringen om u optimaal te ondersteunen.
+    </p>
+
+    <!-- CTA -->
+    <a href="#" class="button">Meer informatie</a>
+
+    <!-- Closing -->
+    <p>
+      Heeft u vragen of wenst u meer informatie? Aarzel dan niet om contact met ons op te nemen.
+    </p>
+
+    <p>
+      Met vriendelijke groet,<br>
+      Jonas<br>
+      Oprichter<br>
+      IntrICT
+    </p>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>
+        IntrICT – Gent <br>
+        info@intrict.com | www.intrict.com
+      </p>
+    </div>
+
+  </div>
+
+</body>
+</html>
     }
     .message {
       background: #f8fafc;

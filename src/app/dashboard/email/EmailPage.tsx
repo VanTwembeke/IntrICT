@@ -28,6 +28,8 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
   const [selectedRecipients, setSelectedRecipients] = useState<string[]>([]);
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
+  const [senderCompany, setSenderCompany] = useState(profile.company || 'Intrict');
+  const [logoUrl, setLogoUrl] = useState('https://intrict.com/logo.png');
   const [sending, setSending] = useState(false);
   const [sendResults, setSendResults] = useState<Array<{
     email: string;
@@ -65,8 +67,8 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
             recipientName: recipient.full_name || recipient.email,
             subject,
             message,
-            senderName: profile.full_name || profile.email,
-            senderCompany: profile.company,
+            senderCompany,
+            logoUrl,
           }),
         });
 
@@ -102,6 +104,8 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
       setSelectedRecipients([]);
       setSubject('');
       setMessage('');
+      setSenderCompany(profile.company || 'Intrict');
+      setLogoUrl('https://intrict.com/logo.png');
     }
   };
 
@@ -361,6 +365,37 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
                     <p className="text-xs text-slate-500 mt-2">
                       {message.length} tekens • HTML tags worden ondersteund voor opmaak
                     </p>
+                  </div>
+
+                  {/* Sender Information */}
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-slate-700">
+                        Bedrijfsnaam
+                      </label>
+                      <input
+                        type="text"
+                        value={senderCompany}
+                        onChange={(e) => setSenderCompany(e.target.value)}
+                        placeholder="Naam van je bedrijf"
+                        className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400 transition-all"
+                        disabled={sending}
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block mb-2 text-sm font-medium text-slate-700">
+                        Logo URL
+                      </label>
+                      <input
+                        type="url"
+                        value={logoUrl}
+                        onChange={(e) => setLogoUrl(e.target.value)}
+                        placeholder="https://jouwwebsite.com/logo.png"
+                        className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400 transition-all"
+                        disabled={sending}
+                      />
+                    </div>
                   </div>
 
                   {/* Preview Info */}

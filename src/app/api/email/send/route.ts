@@ -32,8 +32,8 @@ export async function POST(req: NextRequest) {
       recipientName,
       subject,
       message,
-      senderName,
       senderCompany,
+      logoUrl,
     } = body;
 
     if (!recipientEmail || !subject || !message) {
@@ -61,12 +61,11 @@ export async function POST(req: NextRequest) {
 
     // Replace template variables
     htmlContent = htmlContent
-      .replace('{{SUBJECT}}', subject)
-      .replace('{{SENDER_NAME}}', senderName || 'Administrator')
-      .replace('{{RECIPIENT_NAME}}', recipientName || 'Gebruiker')
-      .replace('{{MESSAGE}}', message.replace(/\n/g, '<br />'))
-      .replace('{{SENDER_COMPANY}}', senderCompany || 'N/A')
-      .replace('{{APP_NAME}}', 'Communicatie Platform');
+      .replace('LOGO_URL', logoUrl || 'https://intrict.com/logo.png')
+      .replace('[Onderwerp / Titel]', subject)
+      .replace('[Naam]', recipientName || 'Gebruiker')
+      .replace(/\[Bedrijfsnaam\]/g, senderCompany || 'Intrict')
+      .replace('[Hoofdboodschap – bijvoorbeeld update, aanbod, informatie, etc.]', message.replace(/\n/g, '<br />'));
 
     // Send email via Resend
     const response = await resend.emails.send({

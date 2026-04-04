@@ -21,6 +21,12 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
 
   useEffect(() => {
     const loadProfile = async () => {
+      if (!params?.username) {
+        setNotFound(true);
+        setLoading(false);
+        return;
+      }
+
       const supabase = createClient();
       const username = params.username.toLowerCase();
       const { data, error } = await supabase

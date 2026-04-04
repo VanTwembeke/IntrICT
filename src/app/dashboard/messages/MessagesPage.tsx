@@ -210,6 +210,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
 
       const response = await fetch('/api/messages/send', {
         method: 'POST',
+        credentials: 'include',
         body: formData,
       });
 
@@ -242,6 +243,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
     try {
       const response = await fetch('/api/messages/new', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           recipientId: newRecipient,
@@ -259,7 +261,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
           formData.append('conversation_id', data.conversationId);
           formData.append('content', '📎 Bijlage(n)');
           newConversationFiles.forEach((file) => formData.append('files', file));
-          await fetch('/api/messages/send', { method: 'POST', body: formData });
+          await fetch('/api/messages/send', { method: 'POST', credentials: 'include', body: formData });
         }
 
         setShowNewConversation(false);

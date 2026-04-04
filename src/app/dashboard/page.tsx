@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { Users, User, ArrowRight, Calendar } from 'lucide-react';
+import { Users, User, ArrowRight, Calendar, Mail } from 'lucide-react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
@@ -39,6 +39,15 @@ export default async function DashboardPage() {
       href: '/dashboard/users',
       bg: 'from-blue-50 to-blue-100',
       border: 'border-blue-100',
+    },
+    {
+      label: 'E-mail verzenden',
+      value: 'E-mail',
+      description: 'Stuur berichten naar gebruikers',
+      icon: <Mail size={22} className="text-purple-500" />,
+      href: '/dashboard/email',
+      bg: 'from-purple-50 to-purple-100',
+      border: 'border-purple-100',
     },
     {
       label: 'Mijn profiel',

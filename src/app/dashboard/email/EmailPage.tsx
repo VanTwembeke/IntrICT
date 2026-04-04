@@ -1,0 +1,436 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import {
+  Mail,
+  Send,
+  ArrowLeft,
+  CheckCircle,
+  AlertCircle,
+  Loader2,
+} from 'lucide-react';
+import type { Profile } from '@/lib/types';
+
+interface EmailPageProps {
+  profile: Profile;
+  allProfiles: Array<{
+    id: string;
+    full_name: string | null;
+    email: string;
+    role: string;
+    company: string | null;
+  }>;
+}
+
+export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
+  const [selectedRecipients, setSelectedRecipients] = useState<string[]>([]);
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [sending, setSending] = useState(false);
+  const [sendResults, setSendResults] = useState<Array<{
+    email: string;
+    success: boolean;
+    error?: string;
+  }>>([]);
+  const [showResults, setShowResults] = useState(false);
+
+  const handleSendEmails = async () => {
+    if (!subject.trim() || !message.trim() || selectedRecipients.length === 0) {
+      return;
+    }
+
+    setSending(true);
+    setSendResults([]);
+    setShowResults(false);
+
+    const results: Array<{
+      email: string;
+      success: boolean;
+      error?: string;
+    }> = [];
+
+    // Send emails one by one to track individual results
+    for (const recipientId of selectedRecipients) {
+      const recipient = allProfiles.find(p => p.id === recipientId);
+      if (!recipient) continue;
+
+      try {
+        const response = await fetch('/api/email/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            recipientEmail: recipient.email,
+            recipientName: recipient.full_name || recipient.email,
+            subject,
+            message,
+            senderName: profile.full_name || profile.email,
+            senderCompany: profile.company,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          results.push({
+            email: recipient.email,
+            success: true,
+          });
+        } else {
+          results.push({
+            email: recipient.email,
+            success: false,
+            error: data.error || 'Onbekende fout',
+          });
+        }
+      } catch (error) {
+        results.push({
+          email: recipient.email,
+          success: false,
+          error: error instanceof Error ? error.message : 'Netwerkfout',
+        });
+      }
+    }
+
+    setSendResults(results);
+    setShowResults(true);
+    setSending(false);
+
+    // Reset form if all emails were successful
+    if (results.every(r => r.success)) {
+      setSelectedRecipients([]);
+      setSubject('');
+      setMessage('');
+    }
+  };
+
+  const toggleRecipient = (recipientId: string) => {
+    setSelectedRecipients(prev =>
+      prev.includes(recipientId)
+        ? prev.filter(id => id !== recipientId)
+        : [...prev, recipientId]
+    );
+  };
+
+  const selectAllRecipients = () => {
+    setSelectedRecipients(allProfiles.map(p => p.id));
+  };
+
+  const clearAllRecipients = () => {
+    setSelectedRecipients([]);
+  };
+
+  // Group profiles by role
+  const adminProfiles = allProfiles.filter(p => p.role === 'admin');
+  const userProfiles = allProfiles.filter(p => p.role !== 'admin');
+
+  return (
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
+      {/* ── Hero Banner ─────────────────────────────────────────────────── */}
+      <section className="relative pt-20 pb-16 overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900" />
+        <div className="absolute inset-0 opacity-40">
+          <div
+            className="w-full h-full"
+            style={{
+              backgroundImage: `url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+")`,
+            }}
+          />
+        </div>
+        <div className="absolute rounded-full pointer-events-none -right-24 -top-24 h-80 w-80 bg-blue-600/20 blur-3xl" />
+        <div className="absolute w-56 h-56 rounded-full pointer-events-none -bottom-16 left-1/4 bg-purple-600/20 blur-3xl" />
+
+        <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2 mb-6">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-2 transition-colors text-slate-300 hover:text-white"
+            >
+              <ArrowLeft size={20} />
+              <span>Terug naar Dashboard</span>
+            </Link>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="max-w-3xl mx-auto text-center"
+          >
+            <h1 className="mb-6 text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
+              Email{' '}
+              <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">
+                Versturen
+              </span>
+            </h1>
+            <p className="max-w-2xl mx-auto mb-8 text-xl leading-relaxed text-slate-200">
+              Verstuur professionele emails naar gebruikers met een mooie template
+              en volledige controle over de inhoud.
+            </p>
+
+            <div className="flex flex-wrap items-center justify-center gap-8 mt-10">
+              {[
+                { label: 'Beschikbare Ontvangers', value: allProfiles.length.toString() },
+                { label: 'Geselecteerd', value: selectedRecipients.length.toString() },
+                { label: 'Email Template', value: 'Professioneel' },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <div className="text-2xl font-bold text-white">{stat.value}</div>
+                  <div className="text-sm text-slate-400">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Email Interface ────────────────────────────────────────────── */}
+      <section className="py-8">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="overflow-hidden bg-white shadow-xl rounded-2xl"
+          >
+            <div className="flex" style={{ minHeight: '700px' }}>
+
+              {/* ── Recipients Sidebar ───────────────────────────────────── */}
+              <div className="flex flex-col border-r w-80 border-slate-200 bg-slate-50">
+                <div className="p-6 bg-white border-b border-slate-200">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-bold text-slate-800">Ontvangers</h2>
+                    <div className="flex gap-2">
+                      <motion.button
+                        onClick={selectAllRecipients}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100"
+                      >
+                        Alles
+                      </motion.button>
+                      <motion.button
+                        onClick={clearAllRecipients}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="px-3 py-1 text-xs font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200"
+                      >
+                        Wissen
+                      </motion.button>
+                    </div>
+                  </div>
+                  <p className="mt-2 text-sm text-slate-500">
+                    {selectedRecipients.length} van {allProfiles.length} geselecteerd
+                  </p>
+                </div>
+
+                {/* Recipients list */}
+                <div className="flex-1 overflow-y-auto">
+                  {/* Admins */}
+                  {adminProfiles.length > 0 && (
+                    <div className="p-4">
+                      <h3 className="mb-3 text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                        Administrators
+                      </h3>
+                      <div className="space-y-2">
+                        {adminProfiles.map((recipient) => (
+                          <motion.button
+                            key={recipient.id}
+                            onClick={() => toggleRecipient(recipient.id)}
+                            whileHover={{ backgroundColor: 'rgba(59,130,246,0.05)' }}
+                            className={`w-full p-3 text-left border rounded-lg transition-all ${
+                              selectedRecipients.includes(recipient.id)
+                                ? 'bg-blue-50 border-blue-300 text-blue-900'
+                                : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                                selectedRecipients.includes(recipient.id)
+                                  ? 'bg-blue-500 border-blue-500'
+                                  : 'border-slate-300'
+                              }`}>
+                                {selectedRecipients.includes(recipient.id) && (
+                                  <CheckCircle className="w-3 h-3 text-white" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium truncate">
+                                  {recipient.full_name || recipient.email}
+                                </p>
+                                <p className="text-sm text-slate-500 truncate">
+                                  {recipient.email}
+                                </p>
+                              </div>
+                            </div>
+                          </motion.button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Regular Users */}
+                  {userProfiles.length > 0 && (
+                    <div className="p-4 border-t border-slate-200">
+                      <h3 className="mb-3 text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                        Gebruikers
+                      </h3>
+                      <div className="space-y-2">
+                        {userProfiles.map((recipient) => (
+                          <motion.button
+                            key={recipient.id}
+                            onClick={() => toggleRecipient(recipient.id)}
+                            whileHover={{ backgroundColor: 'rgba(59,130,246,0.05)' }}
+                            className={`w-full p-3 text-left border rounded-lg transition-all ${
+                              selectedRecipients.includes(recipient.id)
+                                ? 'bg-blue-50 border-blue-300 text-blue-900'
+                                : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                                selectedRecipients.includes(recipient.id)
+                                  ? 'bg-blue-500 border-blue-500'
+                                  : 'border-slate-300'
+                              }`}>
+                                {selectedRecipients.includes(recipient.id) && (
+                                  <CheckCircle className="w-3 h-3 text-white" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium truncate">
+                                  {recipient.full_name || recipient.email}
+                                </p>
+                                <p className="text-sm text-slate-500 truncate">
+                                  {recipient.email}
+                                </p>
+                                {recipient.company && (
+                                  <p className="text-xs text-slate-400 truncate">
+                                    {recipient.company}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </motion.button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* ── Email Composer ──────────────────────────────────────── */}
+              <div className="flex flex-col flex-1">
+                <div className="p-6 bg-white border-b border-slate-200">
+                  <h3 className="text-xl font-bold text-slate-800">Email Opstellen</h3>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Verstuur een professionele email naar de geselecteerde ontvangers
+                  </p>
+                </div>
+
+                <div className="flex-1 p-6 space-y-6">
+                  {/* Subject */}
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-slate-700">
+                      Onderwerp <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={subject}
+                      onChange={(e) => setSubject(e.target.value)}
+                      placeholder="Geef het email onderwerp in"
+                      className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400 transition-all"
+                      disabled={sending}
+                    />
+                  </div>
+
+                  {/* Message */}
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-slate-700">
+                      Bericht <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Schrijf je bericht hier... HTML formatting wordt ondersteund."
+                      className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400 transition-all resize-none"
+                      rows={12}
+                      disabled={sending}
+                    />
+                    <p className="text-xs text-slate-500 mt-2">
+                      {message.length} tekens • HTML tags worden ondersteund voor opmaak
+                    </p>
+                  </div>
+
+                  {/* Preview Info */}
+                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <Mail className="w-5 h-5 text-blue-500 mt-0.5" />
+                      <div>
+                        <h4 className="font-semibold text-blue-900">Email Template Voorbeeld</h4>
+                        <p className="text-sm text-blue-700 mt-1">
+                          De email wordt verstuurd met een professionele template inclusief je naam ({profile.full_name || profile.email})
+                          {profile.company && ` van ${profile.company}`}.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Send Results */}
+                  {showResults && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="p-4 border rounded-lg bg-slate-50"
+                    >
+                      <h4 className="font-semibold text-slate-900 mb-3">Verzendresultaten</h4>
+                      <div className="space-y-2">
+                        {sendResults.map((result, index) => (
+                          <div key={index} className="flex items-center gap-3 text-sm">
+                            {result.success ? (
+                              <CheckCircle className="w-4 h-4 text-green-500" />
+                            ) : (
+                              <AlertCircle className="w-4 h-4 text-red-500" />
+                            )}
+                            <span className="font-medium">{result.email}</span>
+                            <span className={result.success ? 'text-green-600' : 'text-red-600'}>
+                              {result.success ? 'Verstuurd' : `Fout: ${result.error}`}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+
+                {/* Send Button */}
+                <div className="p-6 bg-slate-50 border-t border-slate-200">
+                  <motion.button
+                    onClick={handleSendEmails}
+                    disabled={sending || !subject.trim() || !message.trim() || selectedRecipients.length === 0}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full px-6 py-3 font-semibold text-white transition-all shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                  >
+                    {sending ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Emails versturen...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        Verstuur naar {selectedRecipients.length} ontvanger{selectedRecipients.length !== 1 ? 's' : ''}
+                      </>
+                    )}
+                  </motion.button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    </div>
+  );
+}

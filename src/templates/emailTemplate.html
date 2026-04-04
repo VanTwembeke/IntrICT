@@ -1,248 +1,279 @@
-<!DOCTYPE html>
-<html lang="nl">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>{{SUBJECT}}</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      line-height: 1.6;
-      color: #1e293b;
-      background-color: #f8fafc;
+  <style type="text/css">
+    /* Reset and base styles for email clients */
+    body, table, td, p, a, li, blockquote {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
     }
-    .container {
+
+    img {
+      -ms-interpolation-mode: bicubic;
+    }
+
+    /* Base styles */
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+      background-color: #f6f6f6;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.4;
+      color: #333333;
+    }
+
+    /* Container */
+    .email-container {
+      width: 100%;
       max-width: 600px;
       margin: 0 auto;
       background-color: #ffffff;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     }
+
+    /* Header */
     .header {
-      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-      color: white;
-      padding: 40px 40px 30px;
-      text-align: center;
-      position: relative;
-    }
-    .header h1 {
-      margin: 0 0 8px 0;
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.025em;
-    }
-    .header p {
-      margin: 0;
-      font-size: 16px;
-      opacity: 0.9;
-      font-weight: 400;
-    }
-    .header::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 2px;
-    }
-    .content {
-      padding: 50px 40px;
-    }
-    .greeting {
-      font-size: 18px;
-      margin-bottom: 30px;
-      color: #1e293b;
-    }
-    .greeting strong {
-      color: #3b82f6;
-      font-weight: 600;
-    }
-    .message {
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-      border-left: 5px solid #3b82f6;
-      padding: 30px;
-      margin: 30px 0;
-      border-radius: 8px;
-      line-height: 1.8;
-      font-size: 16px;
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-    .cta-section {
-      text-align: center;
-      margin: 40px 0;
-    }
-    .cta-button {
-      display: inline-block;
-      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-      color: white;
-      padding: 16px 32px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 16px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    }
-    .cta-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
-    }
-    .additional-content {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 25px;
-      margin: 30px 0;
-      font-size: 15px;
-      line-height: 1.7;
-    }
-    .signature {
-      margin-top: 50px;
-      padding-top: 30px;
-      border-top: 2px solid #e2e8f0;
-      text-align: center;
-    }
-    .signature-name {
-      font-size: 20px;
-      font-weight: 700;
-      color: #1e293b;
-      margin-bottom: 5px;
-    }
-    .signature-title {
-      font-size: 16px;
-      color: #3b82f6;
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
-    .contact-info {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-    .contact-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #64748b;
-      font-size: 14px;
-    }
-    .contact-item svg {
-      width: 16px;
-      height: 16px;
-      fill: currentColor;
-    }
-    .footer {
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      color: #cbd5e1;
+      background-color: #ffffff;
+      border-bottom: 3px solid #e0e0e0;
       padding: 30px 40px;
       text-align: center;
-      font-size: 13px;
-      line-height: 1.6;
     }
-    .footer p {
+
+    .header h1 {
       margin: 0 0 10px 0;
+      font-size: 24px;
+      font-weight: bold;
+      color: #333333;
+      line-height: 1.2;
     }
-    .footer a {
-      color: #60a5fa;
+
+    .header-subtitle {
+      font-size: 14px;
+      color: #666666;
+      margin: 0;
+      font-weight: normal;
+    }
+
+    /* Content */
+    .content {
+      padding: 40px;
+    }
+
+    .greeting {
+      font-size: 16px;
+      margin-bottom: 25px;
+      color: #333333;
+    }
+
+    .greeting strong {
+      font-weight: bold;
+    }
+
+    .message {
+      background-color: #f9f9f9;
+      border-left: 4px solid #cccccc;
+      padding: 25px;
+      margin: 25px 0;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #333333;
+    }
+
+    /* CTA Button */
+    .cta-section {
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background-color: #333333;
+      color: #ffffff !important;
+      padding: 12px 30px;
       text-decoration: none;
-      font-weight: 500;
+      font-weight: bold;
+      font-size: 14px;
+      border-radius: 0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
-    .footer a:hover {
-      text-decoration: underline;
+
+    /* Additional content */
+    .additional-content {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      padding: 20px;
+      margin: 25px 0;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #333333;
     }
+
+    /* Disclaimer */
     .disclaimer {
-      background: #fef3c7;
-      border: 1px solid #f59e0b;
-      border-radius: 6px;
+      background-color: #fff8e1;
+      border: 1px solid #ffcc02;
       padding: 15px;
       margin: 25px 0;
       font-size: 13px;
-      color: #92400e;
-      line-height: 1.5;
+      color: #666666;
+      line-height: 1.4;
     }
-    @media (max-width: 640px) {
-      .container {
-        margin: 10px;
-        border-radius: 8px;
+
+    /* Signature */
+    .signature {
+      margin-top: 40px;
+      padding-top: 25px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .signature-name {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333333;
+      margin-bottom: 5px;
+    }
+
+    .signature-title {
+      font-size: 14px;
+      color: #666666;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    .contact-info {
+      margin-bottom: 20px;
+    }
+
+    .contact-item {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #666666;
+    }
+
+    /* Footer */
+    .footer {
+      background-color: #f6f6f6;
+      border-top: 1px solid #e0e0e0;
+      padding: 25px 40px;
+      text-align: center;
+      font-size: 12px;
+      color: #666666;
+      line-height: 1.4;
+    }
+
+    .footer a {
+      color: #333333;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .company-name {
+      font-weight: bold;
+      color: #333333;
+      margin-bottom: 5px;
+    }
+
+    .company-tagline {
+      font-size: 13px;
+      color: #666666;
+      margin-bottom: 10px;
+    }
+
+    /* Responsive */
+    @media only screen and (max-width: 600px) {
+      .email-container {
+        width: 100% !important;
       }
-      .header {
-        padding: 30px 20px 25px;
+      .header, .content, .footer {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
       }
       .header h1 {
-        font-size: 24px;
+        font-size: 20px !important;
       }
-      .content {
-        padding: 30px 20px;
-      }
-      .contact-info {
-        flex-direction: column;
-        gap: 15px;
-      }
-      .message {
-        padding: 20px;
+      .message, .additional-content {
+        padding: 15px !important;
       }
     }
   </style>
+
+  <!-- Outlook-specific styles -->
+  <!--[if mso]>
+  <style type="text/css">
+    table, td {
+      mso-table-lspace: 0pt !important;
+      mso-table-rspace: 0pt !important;
+    }
+  </style>
+  <![endif]-->
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>{{SUBJECT}}</h1>
-      <p>{{HEADER_SUBTITLE}}</p>
-    </div>
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#f6f6f6">
+    <tr>
+      <td align="center" valign="top">
+        <table class="email-container" width="600" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+          <!-- Header -->
+          <tr>
+            <td class="header">
+              <h1>{{SUBJECT}}</h1>
+              <p class="header-subtitle">{{HEADER_SUBTITLE}}</p>
+            </td>
+          </tr>
 
-    <div class="content">
-      <div class="greeting">
-        {{GREETING}}
-      </div>
+          <!-- Content -->
+          <tr>
+            <td class="content">
+              <div class="greeting">
+                {{GREETING}}
+              </div>
 
-      <div class="message">
-        {{MESSAGE}}
-      </div>
+              <div class="message">
+                {{MESSAGE}}
+              </div>
 
-      <!-- Optional CTA Section -->
-      {{CTA_SECTION}}
+              {{CTA_SECTION}}
 
-      <!-- Optional Additional Content -->
-      {{ADDITIONAL_CONTENT}}
+              {{ADDITIONAL_CONTENT}}
 
-      <!-- Optional Disclaimer -->
-      {{DISCLAIMER}}
+              {{DISCLAIMER}}
 
-      <div class="signature">
-        <div class="signature-name">{{SIGNATURE_NAME}}</div>
-        <div class="signature-title">{{SIGNATURE_TITLE}}</div>
+              <!-- Signature -->
+              <div class="signature">
+                <div class="signature-name">{{SIGNATURE_NAME}}</div>
+                <div class="signature-title">{{SIGNATURE_TITLE}}</div>
 
-        <div class="contact-info">
-          <div class="contact-item">
-            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-            {{CONTACT_EMAIL}}
-          </div>
-          <div class="contact-item">
-            <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-            {{CONTACT_PHONE}}
-          </div>
-          <div class="contact-item">
-            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-            {{CONTACT_ADDRESS}}
-          </div>
-        </div>
-      </div>
-    </div>
+                <div class="contact-info">
+                  <div class="contact-item">📧 {{CONTACT_EMAIL}}</div>
+                  <div class="contact-item">📞 {{CONTACT_PHONE}}</div>
+                  <div class="contact-item">📍 {{CONTACT_ADDRESS}}</div>
+                </div>
+              </div>
+            </td>
+          </tr>
 
-    <div class="footer">
-      <p><strong>{{COMPANY_NAME}}</strong> - {{COMPANY_TAGLINE}}</p>
-      <p>Website: <a href="{{WEBSITE_URL}}">{{WEBSITE_DISPLAY}}</a> | Email: <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a></p>
-      <p>&copy; {{CURRENT_YEAR}} {{COMPANY_NAME}}. Alle rechten voorbehouden.</p>
-    </div>
-  </div>
+          <!-- Footer -->
+          <tr>
+            <td class="footer">
+              <div class="company-name">{{COMPANY_NAME}}</div>
+              <div class="company-tagline">{{COMPANY_TAGLINE}}</div>
+              <div>
+                Website: <a href="{{WEBSITE_URL}}">{{WEBSITE_DISPLAY}}</a> |
+                Email: <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a>
+              </div>
+              <div>&copy; {{CURRENT_YEAR}} {{COMPANY_NAME}}. Alle rechten voorbehouden.</div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>

@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
       disclaimerSection = `
       <div class="disclaimer">
         <strong>Belangrijke informatie:</strong> Dit is een automatisch gegenereerd e-mailbericht.
-        Antwoord alstublieft niet direct op deze e-mail. Voor vragen kunt u contact opnemen via info@intrict.com.
+        Antwoord alstublieft niet direct op deze e-mail. Voor vragen kunt u contact opnemen via ${contactEmail}.
       </div>`;
     }
 
@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
       .replace(/\{\{CONTACT_PHONE\}\}/g, contactPhone || '+32 123 45 67 89')
       .replace(/\{\{CONTACT_ADDRESS\}\}/g, contactAddress || 'Gent, België')
       .replace(/\{\{COMPANY_NAME\}\}/g, companyName || 'IntrICT')
-      .replace(/\{\{COMPANY_TAGLINE\}\}/g, companyTagline || 'Professionele IT-oplossingen voor bedrijven')
+      .replace(/\{\{COMPANY_TAGLINE\}\}/g, companyTagline || 'Moderne websites die werken')
       .replace(/\{\{WEBSITE_URL\}\}/g, websiteUrl || 'https://intrict.com')
       .replace(/\{\{WEBSITE_DISPLAY\}\}/g, websiteDisplay || 'www.intrict.com')
       .replace(/\{\{CURRENT_YEAR\}\}/g, new Date().getFullYear().toString())

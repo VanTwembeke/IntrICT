@@ -13,10 +13,8 @@ import {
   Reply,
   Download,
   ChevronLeft,
-  Mail,
 } from 'lucide-react';
 import type { Profile } from '@/lib/types';
-import EmailComposer from '@/components/dashboard/EmailComposer';
 
 interface Conversation {
   id: string;
@@ -121,27 +119,8 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
   const [loading, setLoading] = useState(initialConversations.length === 0);
   const [sending, setSending] = useState(false);
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
-  const [communicationMode, setCommunicationMode] = useState<'message' | 'email'>('message');
-  const [showEmailComposer, setShowEmailComposer] = useState(false);
-  const [selectedEmailRecipient, setSelectedEmailRecipient] = useState<{
-    id: string;
-    full_name: string | null;
-    email: string;
-  } | null>(null);
 
   const isAdmin = profile.role === 'admin';
-
-  const handleSelectForEmail = (recipientId: string) => {
-    const recipient = allProfiles.find((p) => p.id === recipientId);
-    if (recipient) {
-      setSelectedEmailRecipient({
-        id: recipient.id,
-        full_name: recipient.full_name,
-        email: recipient.email,
-      });
-      setShowEmailComposer(true);
-    }
-  };
 
   const fetchConversations = useCallback(async () => {
     try {
@@ -427,56 +406,19 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                     className="bg-white border-b border-slate-200"
                   >
                     <div className="p-6 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-slate-800">Communicatie</h3>
-                        {isAdmin && (
-                          <div className="flex gap-2 p-1 rounded-lg bg-slate-100">
-                            <button
-                              onClick={() => setCommunicationMode('message')}
-                              className={`flex items-center gap-2 px-3 py-1 rounded transition-all text-sm font-medium ${
-                                communicationMode === 'message'
-                                  ? 'bg-white text-blue-600 shadow-sm'
-                                  : 'text-slate-600 hover:text-slate-800'
-                              }`}
-                            >
-                              <MessageSquare className="w-4 h-4" />
-                              Bericht
-                            </button>
-                            <button
-                              onClick={() => setCommunicationMode('email')}
-                              className={`flex items-center gap-2 px-3 py-1 rounded transition-all text-sm font-medium ${
-                                communicationMode === 'email'
-                                  ? 'bg-white text-blue-600 shadow-sm'
-                                  : 'text-slate-600 hover:text-slate-800'
-                              }`}
-                            >
-                              <Mail className="w-4 h-4" />
-                              Email
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                      <h3 className="text-lg font-semibold text-slate-800">Nieuw Gesprek</h3>
 
                       {/* Recipient */}
                       <div>
                         <label className="block mb-2 text-sm font-medium text-slate-700">
-                          {communicationMode === 'email' ? 'Email Ontvanger' : 'Ontvanger'}
+                          Ontvanger
                         </label>
                         <select
                           value={newRecipient}
-                          onChange={(e) => {
-                            setNewRecipient(e.target.value);
-                            if (communicationMode === 'email') {
-                              handleSelectForEmail(e.target.value);
-                            }
-                          }}
+                          onChange={(e) => setNewRecipient(e.target.value)}
                           className="w-full p-3 transition-all duration-200 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800"
                         >
-                          <option value="">
-                            {communicationMode === 'email'
-                              ? 'Selecteer email ontvanger'
-                              : 'Selecteer ontvanger'}
-                          </option>
+                          <option value="">Selecteer ontvanger</option>
 
                           {isAdmin ? (
                             // Admins: grouped list — admins first, then everyone else
@@ -527,104 +469,91 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                       </div>
 
                       {/* Subject */}
-                      {communicationMode === 'message' && (
-                        <div>
-                          <label className="block mb-2 text-sm font-medium text-slate-700">
-                            Onderwerp{' '}
-                            <span className="font-normal text-slate-400">(optioneel)</span>
-                          </label>
-                          <input
-                            type="text"
-                            value={newSubject}
-                            onChange={(e) => setNewSubject(e.target.value)}
-                            placeholder="Gespreksonderwerp"
-                            className="w-full p-3 transition-all duration-200 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
-                          />
-                        </div>
-                      )}
-
-                      {/* Message/Email Content */}
                       <div>
                         <label className="block mb-2 text-sm font-medium text-slate-700">
-                          {communicationMode === 'email' ? 'Email Bericht' : 'Bericht'}{' '}
-                          <span className="text-blue-500">*</span>
+                          Onderwerp{' '}
+                          <span className="font-normal text-slate-400">(optioneel)</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={newSubject}
+                          onChange={(e) => setNewSubject(e.target.value)}
+                          placeholder="Gespreksonderwerp"
+                          className="w-full p-3 transition-all duration-200 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
+                        />
+                      </div>
+
+                      {/* Message */}
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-slate-700">
+                          Bericht <span className="text-blue-500">*</span>
                         </label>
                         <textarea
-                          value={
-                            communicationMode === 'email'
-                              ? newConversationMessage
-                              : newConversationMessage
-                          }
+                          value={newConversationMessage}
                           onChange={(e) => setNewConversationMessage(e.target.value)}
-                          placeholder={
-                            communicationMode === 'email'
-                              ? 'Schrijf je email bericht hier...'
-                              : 'Typ je eerste bericht...'
-                          }
+                          placeholder="Typ je eerste bericht..."
                           className="w-full p-3 transition-all duration-200 border resize-none border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
                           rows={3}
                         />
                       </div>
 
-                      {/* File attachments for new conversation - only for messages */}
-                      {communicationMode === 'message' && (
-                        <div>
-                          <label className="block mb-2 text-sm font-medium text-slate-700">
-                            Bijlagen{' '}
-                            <span className="font-normal text-slate-400">(optioneel)</span>
+                      {/* File attachments for new conversation */}
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-slate-700">
+                          Bijlagen{' '}
+                          <span className="font-normal text-slate-400">(optioneel)</span>
+                        </label>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="file"
+                            multiple
+                            onChange={(e) =>
+                              setNewConversationFiles(Array.from(e.target.files || []))
+                            }
+                            className="hidden"
+                            id="new-conv-file-upload"
+                          />
+                          <label
+                            htmlFor="new-conv-file-upload"
+                            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all duration-200 border cursor-pointer text-slate-600 border-slate-200 rounded-xl hover:bg-slate-50 hover:border-blue-300"
+                          >
+                            <Paperclip className="w-4 h-4" />
+                            Bestand toevoegen
                           </label>
-                          <div className="flex items-center gap-3">
-                            <input
-                              type="file"
-                              multiple
-                              onChange={(e) =>
-                                setNewConversationFiles(Array.from(e.target.files || []))
-                              }
-                              className="hidden"
-                              id="new-conv-file-upload"
-                            />
-                            <label
-                              htmlFor="new-conv-file-upload"
-                              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all duration-200 border cursor-pointer text-slate-600 border-slate-200 rounded-xl hover:bg-slate-50 hover:border-blue-300"
-                            >
-                              <Paperclip className="w-4 h-4" />
-                              Bestand toevoegen
-                            </label>
-                            {newConversationFiles.length > 0 && (
-                              <span className="text-xs text-blue-600">
-                                {newConversationFiles.length} bestand(en) geselecteerd
-                              </span>
-                            )}
-                          </div>
-
-                          {/* File preview */}
                           {newConversationFiles.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mt-2">
-                              {newConversationFiles.map((file, index) => (
-                                <div
-                                  key={index}
-                                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100"
-                                >
-                                  <Paperclip className="w-3 h-3 text-slate-500" />
-                                  <span className="text-xs truncate text-slate-700 max-w-24">
-                                    {file.name}
-                                  </span>
-                                  <button
-                                    onClick={() =>
-                                      setNewConversationFiles(
-                                        newConversationFiles.filter((_, i) => i !== index)
-                                      )
-                                    }
-                                    className="transition-colors text-slate-400 hover:text-slate-700"
-                                  >
-                                    <X className="w-3 h-3" />
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
+                            <span className="text-xs text-blue-600">
+                              {newConversationFiles.length} bestand(en) geselecteerd
+                            </span>
                           )}
                         </div>
-                      )}
+
+                        {/* File preview */}
+                        {newConversationFiles.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {newConversationFiles.map((file, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100"
+                              >
+                                <Paperclip className="w-3 h-3 text-slate-500" />
+                                <span className="text-xs truncate text-slate-700 max-w-24">
+                                  {file.name}
+                                </span>
+                                <button
+                                  onClick={() =>
+                                    setNewConversationFiles(
+                                      newConversationFiles.filter((_, i) => i !== index)
+                                    )
+                                  }
+                                  className="transition-colors text-slate-400 hover:text-slate-700"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
 
                       <div className="flex gap-3">
                         <motion.button
@@ -634,7 +563,6 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                             setNewSubject('');
                             setNewConversationMessage('');
                             setNewConversationFiles([]);
-                            setCommunicationMode('message');
                           }}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
@@ -642,32 +570,15 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                         >
                           Annuleren
                         </motion.button>
-                        {communicationMode === 'email' ? (
-                          <motion.button
-                            onClick={() => {
-                              if (newRecipient && newConversationMessage.trim()) {
-                                handleSelectForEmail(newRecipient);
-                              }
-                            }}
-                            disabled={!newRecipient || !newConversationMessage.trim()}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="flex items-center justify-center flex-1 gap-2 px-4 py-2 font-semibold text-white transition-all duration-200 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <Mail className="w-4 h-4" />
-                            Email Versturen
-                          </motion.button>
-                        ) : (
-                          <motion.button
-                            onClick={startNewConversation}
-                            disabled={!newRecipient || !newConversationMessage.trim()}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="flex-1 px-4 py-2 font-semibold text-white transition-all duration-200 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            Start Gesprek
-                          </motion.button>
-                        )}
+                        <motion.button
+                          onClick={startNewConversation}
+                          disabled={!newRecipient || !newConversationMessage.trim()}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="flex-1 px-4 py-2 font-semibold text-white transition-all duration-200 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Start Gesprek
+                        </motion.button>
                       </div>
                     </div>
                   </motion.div>
@@ -995,25 +906,6 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
           </motion.div>
         </div>
       </section>
-
-      {/* Email Composer Modal */}
-      {showEmailComposer && selectedEmailRecipient && (
-        <EmailComposer
-          profile={profile}
-          recipient={selectedEmailRecipient}
-          onClose={() => {
-            setShowEmailComposer(false);
-            setShowNewConversation(false);
-            setNewRecipient('');
-            setNewConversationMessage('');
-            setCommunicationMode('message');
-          }}
-          onSwitchToMessages={() => {
-            setShowEmailComposer(false);
-            setCommunicationMode('message');
-          }}
-        />
-      )}
     </div>
   );
 });

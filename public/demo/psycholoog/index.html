@@ -567,6 +567,7 @@ section{padding:6rem 0}
 .ts-li{display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:var(--slate-s)}
 .ts-dot{width:7px;height:7px;border-radius:50%}
 .ts-dot.a{background:var(--sage)}.ts-dot.t{background:var(--border)}
+.cal-d.full{color:var(--warm)!important;background:rgba(196,133,106,.07)!important;cursor:not-allowed!important;text-decoration:line-through}
 .ts-section{margin-top:1.5rem;display:none}
 
 /* Confirmation / summary */
@@ -708,6 +709,112 @@ footer{background:#1a2420}
   letter-spacing:-.02em;overflow:hidden;white-space:nowrap;
 }
 
+/* ── ADMIN PANEL ── */
+#adminBtn{
+  position:fixed;bottom:1.5rem;right:1.5rem;z-index:500;
+  width:42px;height:42px;border-radius:50%;
+  background:var(--slate);color:var(--white);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(44,58,53,.35);transition:all var(--tr);
+  font-size:1rem;
+}
+#adminBtn:hover{background:var(--sage-d);transform:translateY(-2px)}
+#adminOverlay{
+  position:fixed;inset:0;z-index:600;background:rgba(44,58,53,.55);
+  backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;
+  padding:1rem;
+}
+#adminOverlay.open{display:flex}
+#adminPanel{
+  background:var(--white);border-radius:var(--radius-xl);
+  width:100%;max-width:760px;max-height:90vh;overflow-y:auto;
+  box-shadow:var(--sh-lg);
+}
+.adm-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.5rem 2rem;border-bottom:1px solid var(--border);position:sticky;top:0;
+  background:var(--white);z-index:1;border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+}
+.adm-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:400;color:var(--slate)}
+.adm-close{background:none;border:1px solid var(--border);border-radius:var(--radius);
+  width:32px;height:32px;cursor:pointer;font-size:1rem;color:var(--slate-s);
+  display:flex;align-items:center;justify-content:center;transition:all var(--tr)}
+.adm-close:hover{background:var(--off);color:var(--slate)}
+.adm-body{padding:2rem}
+.adm-section{margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid var(--border)}
+.adm-section:last-child{border-bottom:none;margin-bottom:0}
+.adm-section-title{font-size:.72rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--sage);margin-bottom:1.25rem}
+.adm-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.4rem;margin-bottom:.75rem}
+.day-toggle{
+  padding:.5rem .25rem;border:1px solid var(--border);border-radius:var(--radius);
+  text-align:center;font-size:.72rem;cursor:pointer;transition:all var(--tr);
+  background:var(--white);color:var(--slate-m);font-family:'Jost',sans-serif;
+}
+.day-toggle.on{background:var(--sage);border-color:var(--sage);color:var(--white)}
+.adm-hint{font-size:.75rem;color:var(--slate-s);margin-top:.35rem}
+.slots-grid{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.5rem}
+.slot-toggle{
+  padding:.35rem .75rem;border:1px solid var(--border);border-radius:100px;
+  font-size:.75rem;cursor:pointer;transition:all var(--tr);
+  background:var(--white);color:var(--slate-m);font-family:'Jost',sans-serif;
+}
+.slot-toggle.on{background:var(--sage);border-color:var(--sage);color:var(--white)}
+.adm-row{display:grid;grid-template-columns:1fr auto;gap:.75rem;align-items:center;margin-bottom:.5rem}
+.adm-input{
+  width:100%;padding:.6rem .85rem;border:1px solid var(--border);border-radius:var(--radius);
+  font-size:.85rem;font-family:'Jost',sans-serif;color:var(--slate);background:var(--white);
+  transition:border-color var(--tr);
+}
+.adm-input:focus{outline:none;border-color:var(--sage)}
+.adm-add-btn{
+  padding:.6rem 1rem;background:var(--sage-lll);border:1px solid var(--sage-l);
+  border-radius:var(--radius);font-size:.8rem;cursor:pointer;color:var(--sage-d);
+  white-space:nowrap;font-family:'Jost',sans-serif;transition:all var(--tr);
+}
+.adm-add-btn:hover{background:var(--sage-l)}
+.adm-tag{
+  display:inline-flex;align-items:center;gap:.4rem;
+  background:var(--off);border:1px solid var(--border);border-radius:100px;
+  padding:.25rem .7rem;font-size:.75rem;color:var(--slate-m);margin:.2rem;
+}
+.adm-tag-rm{
+  background:none;border:none;cursor:pointer;color:var(--slate-s);
+  font-size:.85rem;line-height:1;padding:0 0 0 2px;transition:color var(--tr);
+}
+.adm-tag-rm:hover{color:#c0392b}
+.adm-tags{flex-wrap:wrap;display:flex}
+.adm-save{
+  width:100%;padding:.85rem;background:var(--sage);color:var(--white);border:none;
+  border-radius:var(--radius-lg);font-size:.9rem;font-weight:500;cursor:pointer;
+  font-family:'Jost',sans-serif;transition:background var(--tr);margin-top:.5rem;
+}
+.adm-save:hover{background:var(--sage-d)}
+.adm-saved-msg{text-align:center;font-size:.8rem;color:var(--sage-d);margin-top:.75rem;
+  opacity:0;transition:opacity .4s}
+.adm-saved-msg.show{opacity:1}
+#adminLogin{padding:2.5rem 2rem;text-align:center}
+.adm-pw-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--slate);margin-bottom:1.25rem}
+.adm-pw-row{display:flex;gap:.5rem;max-width:320px;margin:0 auto}
+.adm-pw-err{font-size:.78rem;color:#c0392b;margin-top:.5rem;display:none}
+/* admin tabs */
+.adm-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 2rem;gap:0}
+.adm-tab-btn{
+  padding:.75rem 1.25rem;font-size:.78rem;font-weight:500;cursor:pointer;
+  background:none;border:none;border-bottom:2px solid transparent;
+  color:var(--slate-s);transition:all var(--tr);font-family:'Jost',sans-serif;
+  margin-bottom:-1px;
+}
+.adm-tab-btn:hover{color:var(--sage-d)}
+.adm-tab-btn.active{border-bottom-color:var(--sage);color:var(--sage-d)}
+.adm-tab-panel{display:none}
+.adm-tab-panel.active-panel{display:block}
+.adm-log-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem}
+.adm-export-box{
+  width:100%;font-size:.72rem;font-family:monospace;
+  border:1px solid var(--border);border-radius:var(--radius);padding:.6rem;
+  background:var(--off);color:var(--slate);resize:vertical;min-height:80px;
+}
 /* ── RESPONSIVE ── */
 @media(max-width:960px){
   #hero{grid-template-columns:1fr;min-height:auto;padding-top:100px}
@@ -1348,7 +1455,7 @@ footer{background:#1a2420}
         <address style="font-style:normal;display:flex;flex-direction:column;gap:1.5rem">
           <div class="ci"><div class="ci-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><div class="ci-lbl" data-nl="Adres" data-en="Address">Adres</div><div class="ci-val">Deinsesteenweg 42<br>9850 Nevele, Oost-Vlaanderen</div></div></div>
           <div class="ci"><div class="ci-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91A16 16 0 0 0 15 16.87l.27-.36a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div><div class="ci-lbl" data-nl="Telefoon" data-en="Phone">Telefoon</div><div class="ci-val"><a href="tel:+3293720000">+32 9 372 00 00</a></div></div></div>
-          <div class="ci"><div class="ci-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="ci-lbl" data-nl="E-mail" data-en="Email">E-mail</div><div class="ci-val"><a href="mailto:info@sophievandenberg.be">info@sophievandenberg.be</a></div></div></div>
+          <div class="ci"><div class="ci-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="ci-lbl" data-nl="E-mail" data-en="Email">E-mail</div><div class="ci-val"><a href="/cdn-cgi/l/email-protection#3851565e57784b574850515d4e59565c5d565a5d4a5f165a5d"><span class="__cf_email__" data-cfemail="c7aea9a1a887b4a8b7afaea2b1a6a9a3a2a9a5a2b5a0e9a5a2">[email&#160;protected]</span></a></div></div></div>
           <div class="ci"><div class="ci-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M2 11h20M8 3v4M16 3v4"/></svg></div><div><div class="ci-lbl" data-nl="Openingstijden" data-en="Hours">Openingstijden</div><div class="ci-val" data-nl="Maandag – vrijdag: 9:00 – 17:30<br>Weekend: Gesloten" data-en="Monday – Friday: 9:00 – 17:30<br>Weekend: Closed">Maandag – vrijdag: 9:00 – 17:30<br>Weekend: Gesloten</div></div></div>
           <div class="ci"><div class="ci-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><div class="ci-lbl" data-nl="Erkenning" data-en="Registration">Erkenning</div><div class="ci-val" data-nl="Visum 81BE345 · Orde der Psychologen België" data-en="Visa 81BE345 · Order of Psychologists Belgium">Visum 81BE345 · Orde der Psychologen België</div></div></div>
         </address>
@@ -1393,7 +1500,7 @@ footer{background:#1a2420}
         <div class="footer-col">
           <div class="footer-col-title" data-nl="Contact" data-en="Contact">Contact</div>
           <a href="tel:+3293720000">+32 9 372 00 00</a>
-          <a href="mailto:info@sophievandenberg.be">info@sophievandenberg.be</a>
+          <a href="/cdn-cgi/l/email-protection#31585f575e71425e4159585447505f55545f535443561f5354"><span class="__cf_email__" data-cfemail="8ee7e0e8e1cefde1fee6e7ebf8efe0eaebe0ecebfce9a0eceb">[email&#160;protected]</span></a>
           <a href="#contact">Deinsesteenweg 42<br>9850 Nevele</a>
           <a href="#appointment" data-nl="Afspraak maken →" data-en="Book now →">Afspraak maken →</a>
         </div>
@@ -1415,7 +1522,7 @@ footer{background:#1a2420}
   <div class="footer-big-name" aria-hidden="true">van den Berg</div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ── LANGUAGE ──────────────────────────────────────────────────────────────
 let lang='nl';
 function setLang(l){
@@ -1472,79 +1579,207 @@ document.querySelectorAll('.faq-q').forEach(q=>{
   q.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleFaq(q);}});
 });
 
-// ── CALENDAR ──────────────────────────────────────────────────────────────
-let calY,calM,selDate=null,selTime=null;
-const taken={};
-(function(){
-  const t=new Date();
-  for(let i=0;i<15;i++){
-    const d=new Date(t);d.setDate(t.getDate()+Math.floor(Math.random()*28));
-    if(d.getDay()!==0&&d.getDay()!==6){
-      const k=d.toISOString().slice(0,10);
-      if(!taken[k])taken[k]=[];
-      const hrs=['09:00','10:00','11:00','13:00','14:00','15:00','16:00'];
-      taken[k]=hrs.sort(()=>Math.random()-.5).slice(0,Math.floor(Math.random()*3)+1);
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// OWNER-CONFIGURABLE SCHEDULE  (edit SCHEDULE below to set up availability)
+// No database needed — all data is stored here and in the owner control panel.
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// DEFAULT SCHEDULE — owner can override via the Admin Panel (⚙ button)
+// workDays: 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
+// slots: time strings shown on available work days
+// blocked: specific dates fully blocked (e.g. holidays)  "YYYY-MM-DD"
+// bookedSlots: specific date+time already taken          "YYYY-MM-DD": ["09:00","11:00"]
+const DEFAULT_SCHEDULE = {
+  workDays: [1, 2, 3, 4, 5],          // Mon–Fri
+  slots: [
+    "09:00","09:30","10:00","10:30",
+    "11:00","11:30",
+    "13:00","13:30","14:00","14:30",
+    "15:00","15:30","16:00","16:30"
+  ],
+  blocked: [
+    // "2025-12-25", "2026-01-01"      // add holiday dates here
+  ],
+  bookedSlots: {
+    // "2026-04-15": ["09:00","10:30"],
+    // "2026-04-17": ["14:00"]
+  },
+  lookAheadDays: 60                    // how many days ahead to show
+};
+
+// Load schedule: merge defaults with any owner edits saved in localStorage
+function loadSchedule() {
+  try {
+    const saved = localStorage.getItem('svdb_schedule');
+    if (saved) return JSON.parse(saved);
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_SCHEDULE));
+}
+function saveSchedule(s) {
+  try { localStorage.setItem('svdb_schedule', JSON.stringify(s)); } catch(e) {}
+}
+
+let SCHEDULE = loadSchedule();
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function dateStr(d){ return d.toISOString().slice(0,10); }
+
+function isWorkDay(d){
+  return SCHEDULE.workDays.includes(d.getDay());
+}
+function isBlocked(ds){
+  return SCHEDULE.blocked.includes(ds);
+}
+function bookedOn(ds){
+  return SCHEDULE.bookedSlots[ds] || [];
+}
+function availableSlotsOn(ds){
+  const booked = bookedOn(ds);
+  return SCHEDULE.slots.filter(t => !booked.includes(t));
+}
+function isDayAvailable(ds){
+  const d = new Date(ds+'T12:00:00');
+  if(!isWorkDay(d)) return false;
+  if(isBlocked(ds)) return false;
+  return availableSlotsOn(ds).length > 0;
+}
+
+// ── Find next open slot from today ─────────────────────────────────────────
+function findNextOpenSlot(){
+  const today = new Date(); today.setHours(0,0,0,0);
+  for(let i=0; i<SCHEDULE.lookAheadDays; i++){
+    const d = new Date(today); d.setDate(today.getDate()+i);
+    const ds = dateStr(d);
+    if(isDayAvailable(ds)){
+      const slots = availableSlotsOn(ds);
+      // Skip times already past today
+      const filtered = i===0
+        ? slots.filter(t => {
+            const [h,m]=t.split(':').map(Number);
+            const now=new Date();
+            return h>now.getHours()||(h===now.getHours()&&m>now.getMinutes());
+          })
+        : slots;
+      if(filtered.length>0) return {date:d, ds, time:filtered[0]};
     }
   }
-})();
+  return null;
+}
+
+// ── Update hero "next available" card ──────────────────────────────────────
+function updateNextSlotDisplay(){
+  const next = findNextOpenSlot();
+  const valEl = document.querySelector('.float-card-1 .fc-val');
+  const availEl = document.querySelector('.float-card-1 .fc-avail');
+  if(!valEl||!availEl) return;
+  if(!next){ valEl.textContent='—'; availEl.textContent = lang==='nl'?'Geen beschikbare slots':'No slots available'; return; }
+  const loc = lang==='nl'?'nl-BE':'en-GB';
+  const days_nl=['Zondag','Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag'];
+  const days_en=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const dayName = lang==='nl'? days_nl[next.date.getDay()] : days_en[next.date.getDay()];
+  const dateFmt = next.date.toLocaleDateString(loc,{day:'numeric',month:'long'});
+  valEl.textContent = dayName+', '+dateFmt;
+  availEl.innerHTML = `<span style="color:var(--sage-d);font-weight:500">✓</span> ${next.time} &mdash; ${lang==='nl'?'Beschikbaar':'Available'}`;
+}
+
+// ── CALENDAR ───────────────────────────────────────────────────────────────
+let calY, calM, selDate=null, selTime=null;
 
 function initCal(){
-  const n=new Date();calY=n.getFullYear();calM=n.getMonth();renderCal();
+  const n=new Date(); calY=n.getFullYear(); calM=n.getMonth();
+  renderCal();
+  updateNextSlotDisplay();
 }
+
 const MONTHS_NL=['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
 const MONTHS_EN=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 function renderCal(){
-  const months=lang==='nl'?MONTHS_NL:MONTHS_EN;
-  const lbl=document.getElementById('cml');
-  if(lbl) lbl.textContent=months[calM]+' '+calY;
-  const grid=document.getElementById('cg');
+  const months = lang==='nl'?MONTHS_NL:MONTHS_EN;
+  const lbl = document.getElementById('cml');
+  if(lbl) lbl.textContent = months[calM]+' '+calY;
+  const grid = document.getElementById('cg');
   if(!grid) return;
   grid.innerHTML='';
-  const first=new Date(calY,calM,1);
-  const last=new Date(calY,calM+1,0);
-  const today=new Date();today.setHours(0,0,0,0);
-  let dow=first.getDay();dow=dow===0?6:dow-1;
-  const prevLast=new Date(calY,calM,0).getDate();
+
+  const first = new Date(calY,calM,1);
+  const last  = new Date(calY,calM+1,0);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const maxDate = new Date(today); maxDate.setDate(today.getDate()+SCHEDULE.lookAheadDays);
+
+  let dow = first.getDay(); dow = dow===0?6:dow-1;
+  const prevLast = new Date(calY,calM,0).getDate();
+
   for(let i=dow-1;i>=0;i--){
-    const d=document.createElement('div');d.className='cal-d om';d.textContent=prevLast-i;grid.appendChild(d);
+    const d=document.createElement('div'); d.className='cal-d om'; d.textContent=prevLast-i; grid.appendChild(d);
   }
+
   for(let day=1;day<=last.getDate();day++){
-    const date=new Date(calY,calM,day);
-    const we=date.getDay()===0||date.getDay()===6;
-    const past=date<today;
-    const ds=date.toISOString().slice(0,10);
-    const sel=selDate===ds;
-    const tod=date.getTime()===today.getTime();
-    const d=document.createElement('div');
-    d.className='cal-d'+(we?' we':'')+(past?' dis':'')+(sel?' sel':'')+(tod?' today':'');
-    d.textContent=day;
-    if(!we&&!past){d.onclick=()=>pickDate(ds);}
+    const date = new Date(calY,calM,day);
+    const ds   = dateStr(date);
+    const isPast    = date < today;
+    const isFuture  = date > maxDate;
+    const isWE      = !SCHEDULE.workDays.includes(date.getDay());
+    const isBlock   = isBlocked(ds);
+    const hasSlots  = !isPast && !isFuture && !isWE && !isBlock && availableSlotsOn(ds).length>0;
+    const isToday   = date.getTime()===today.getTime();
+    const isSel     = selDate===ds;
+
+    const d = document.createElement('div');
+    let cls = 'cal-d';
+    if(isSel)           cls += ' sel';
+    else if(isToday)    cls += ' today';
+    if(isPast||isFuture||isWE||isBlock||!hasSlots) cls += ' dis';
+    if(isWE && !isPast) cls += ' we';
+    // Fully-booked indicator
+    if(!isPast&&!isFuture&&!isWE&&!isBlock&&availableSlotsOn(ds).length===0) cls += ' full';
+    d.className = cls;
+    d.textContent = day;
+    if(hasSlots && !isSel){ d.onclick=()=>pickDate(ds); }
+    else if(isSel){ d.onclick=()=>pickDate(ds); }
     grid.appendChild(d);
   }
-  const total=dow+last.getDate();
-  const rem=7-(total%7===0?7:total%7);
-  for(let i=1;i<=rem&&rem<7;i++){const d=document.createElement('div');d.className='cal-d om';d.textContent=i;grid.appendChild(d);}
+
+  const total = dow+last.getDate();
+  const rem   = 7-(total%7===0?7:total%7);
+  for(let i=1;i<=rem&&rem<7;i++){
+    const d=document.createElement('div'); d.className='cal-d om'; d.textContent=i; grid.appendChild(d);
+  }
 }
-function prevM(){calM--;if(calM<0){calM=11;calY--;}renderCal();}
-function nextM(){calM++;if(calM>11){calM=0;calY++;}renderCal();}
+
+function prevM(){ calM--; if(calM<0){calM=11;calY--;} renderCal(); }
+function nextM(){ calM++; if(calM>11){calM=0;calY++;} renderCal(); }
+
 function pickDate(ds){
-  selDate=ds;selTime=null;
+  selDate=ds; selTime=null;
   document.getElementById('btnNext2').disabled=true;
-  renderCal();renderSlots(ds);
+  renderCal(); renderSlots(ds);
 }
+
 function renderSlots(ds){
-  const sec=document.getElementById('tss');sec.style.display='block';
-  const all=['09:00','09:30','10:00','10:30','11:00','11:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30'];
-  const tk=taken[ds]||[];
-  const g=document.getElementById('tsGrid');g.innerHTML='';
+  const sec=document.getElementById('tss'); sec.style.display='block';
+  const avail = availableSlotsOn(ds);
+  const booked = bookedOn(ds);
+  const all = SCHEDULE.slots;
+  const g=document.getElementById('tsGrid'); g.innerHTML='';
+
+  // If today, filter past times
+  const todayStr = dateStr(new Date());
+  const nowH = new Date().getHours(), nowM = new Date().getMinutes();
+
   all.forEach(t=>{
-    const isTk=tk.includes(t);
-    const isSel=selTime===t;
+    const isBk = booked.includes(t);
+    // past-time on today
+    const [th,tm] = t.split(':').map(Number);
+    const isPastTime = ds===todayStr && (th<nowH||(th===nowH&&tm<=nowM));
+    const isDisabled = isBk || isPastTime;
+    const isSel = selTime===t;
     const el=document.createElement('div');
-    el.className='ts'+(isTk?' tak':'')+(isSel?' sel':'');
+    el.className='ts'+(isDisabled?' tak':'')+(isSel?' sel':'');
     el.textContent=t;
-    if(!isTk){el.onclick=()=>{selTime=t;document.getElementById('btnNext2').disabled=false;renderSlots(ds);};}
+    if(!isDisabled){
+      el.onclick=()=>{selTime=t; document.getElementById('btnNext2').disabled=false; renderSlots(ds);};
+    }
     g.appendChild(el);
   });
 }
@@ -1570,6 +1805,23 @@ function gotoStep(s){
   }
   document.getElementById('cl1').classList.toggle('done',s>1);
   document.getElementById('cl2').classList.toggle('done',s>2);
+
+  // When entering step 2 for the first time: jump calendar to next open slot
+  if(s===2 && !selDate){
+    const next = findNextOpenSlot();
+    if(next){
+      // Navigate calendar to the correct month
+      calY = next.date.getFullYear();
+      calM = next.date.getMonth();
+      renderCal();
+      // Pre-select that date and time
+      pickDate(next.ds);
+      // Auto-select the first available time so the user just has to confirm
+      selTime = next.time;
+      document.getElementById('btnNext2').disabled = false;
+      renderSlots(next.ds);
+    }
+  }
 }
 function validateS1(){
   let ok=true;
@@ -1604,9 +1856,35 @@ function submitBooking(){
   }
   const btn=document.getElementById('btnSubmitFinal');
   btn.disabled=true;btn.textContent=lang==='nl'?'Bezig...':'Processing...';
+
+  // Save booking to log
+  const stEl=document.getElementById('st');
+  const fmtEl=document.getElementById('fmt');
+  const entry = {
+    firstName: document.getElementById('fn').value,
+    lastName:  document.getElementById('ln').value,
+    email:     document.getElementById('em').value,
+    phone:     document.getElementById('ph').value,
+    sessionType: stEl.options[stEl.selectedIndex]?.text||'',
+    format:    fmtEl.options[fmtEl.selectedIndex]?.text||'',
+    date:      selDate,
+    time:      selTime,
+    concern:   document.getElementById('concern').value
+  };
+  saveBookingToLog(entry);
+
+  // Auto-mark the slot as booked in the schedule so calendar updates immediately
+  if(!SCHEDULE.bookedSlots[selDate]) SCHEDULE.bookedSlots[selDate]=[];
+  if(!SCHEDULE.bookedSlots[selDate].includes(selTime)){
+    SCHEDULE.bookedSlots[selDate].push(selTime);
+    SCHEDULE.bookedSlots[selDate].sort();
+    saveSchedule(SCHEDULE);
+  }
+
   setTimeout(()=>{
     document.querySelectorAll('.fp').forEach(p=>p.classList.remove('active'));
     document.getElementById('fpOK').classList.add('active');
+    updateNextSlotDisplay(); // refresh the hero card
   },1200);
 }
 function resetForm(){
@@ -1631,6 +1909,416 @@ function resetForm(){
 initCal();
 const p=new URLSearchParams(window.location.search);
 if(p.get('lang')==='en') setLang('en');
+
+// ── BOOKING LOG (localStorage, no server) ─────────────────────────────────
+// Each submission is saved so the owner can review in admin panel
+function saveBookingToLog(entry){
+  try {
+    const log = JSON.parse(localStorage.getItem('svdb_bookings')||'[]');
+    entry.id = Date.now();
+    entry.submittedAt = new Date().toISOString();
+    entry.status = 'nieuw';
+    log.unshift(entry); // newest first
+    if(log.length>200) log.splice(200); // cap at 200 entries
+    localStorage.setItem('svdb_bookings', JSON.stringify(log));
+  } catch(e){}
+}
+function loadBookingLog(){
+  try { return JSON.parse(localStorage.getItem('svdb_bookings')||'[]'); } catch(e){ return []; }
+}
+function updateBookingStatus(id, status){
+  try {
+    const log = loadBookingLog();
+    const item = log.find(b=>b.id===id);
+    if(item){ item.status=status; localStorage.setItem('svdb_bookings', JSON.stringify(log)); }
+  } catch(e){}
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ADMIN PANEL
+// Change this password in the HTML source (search ADMIN_PASSWORD)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const ADMIN_PASSWORD = 'admin1234'; // ← change this
+
+let adminUnlocked = false;
+
+function openAdmin(){
+  document.getElementById('adminOverlay').classList.add('open');
+  document.getElementById('adminPwInput').value='';
+  document.getElementById('adminPwErr').style.display='none';
+  if(adminUnlocked) showAdminPanel();
+  else { document.getElementById('adminLogin').style.display='block'; document.getElementById('adminPanelBody').style.display='none'; }
+}
+function closeAdmin(){ document.getElementById('adminOverlay').classList.remove('open'); }
+document.getElementById('adminOverlay').addEventListener('click',function(e){ if(e.target===this) closeAdmin(); });
+
+function checkAdminPw(){
+  const val = document.getElementById('adminPwInput').value;
+  if(val===ADMIN_PASSWORD){ adminUnlocked=true; showAdminPanel(); }
+  else { document.getElementById('adminPwErr').style.display='block'; }
+}
+function logoutAdmin(){ adminUnlocked=false; closeAdmin(); }
+
+function showAdminPanel(){
+  document.getElementById('adminLogin').style.display='none';
+  document.getElementById('adminPanelBody').style.display='block';
+  renderAdminPanel();
+  // Show booking count badge
+  const count = loadBookingLog().filter(b=>b.status==='nieuw').length;
+  const badge = document.getElementById('admLogCount');
+  if(badge) badge.textContent = count>0 ? count+' nieuw' : '';
+}
+
+// ── Render admin UI from current SCHEDULE ──────────────────────────────────
+const DAY_LABELS = ['Zo','Ma','Di','Wo','Do','Vr','Za'];
+const ALL_POSSIBLE_SLOTS = [
+  '08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30',
+  '12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30',
+  '16:00','16:30','17:00','17:30'
+];
+
+function renderAdminPanel(){
+  // Work days
+  const daysEl = document.getElementById('admDays');
+  daysEl.innerHTML = '';
+  DAY_LABELS.forEach((lbl,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'day-toggle' + (SCHEDULE.workDays.includes(i)?' on':'');
+    btn.textContent = lbl;
+    btn.onclick = ()=>{
+      const idx = SCHEDULE.workDays.indexOf(i);
+      if(idx>-1) SCHEDULE.workDays.splice(idx,1); else SCHEDULE.workDays.push(i);
+      SCHEDULE.workDays.sort();
+      renderAdminPanel();
+    };
+    daysEl.appendChild(btn);
+  });
+
+  // Slots
+  const slotsEl = document.getElementById('admSlots');
+  slotsEl.innerHTML = '';
+  ALL_POSSIBLE_SLOTS.forEach(t=>{
+    const btn = document.createElement('button');
+    btn.className = 'slot-toggle' + (SCHEDULE.slots.includes(t)?' on':'');
+    btn.textContent = t;
+    btn.onclick = ()=>{
+      const idx = SCHEDULE.slots.indexOf(t);
+      if(idx>-1) SCHEDULE.slots.splice(idx,1); else { SCHEDULE.slots.push(t); SCHEDULE.slots.sort(); }
+      renderAdminPanel();
+    };
+    slotsEl.appendChild(btn);
+  });
+
+  // Blocked dates
+  const blockedEl = document.getElementById('admBlocked');
+  blockedEl.innerHTML = '';
+  if(SCHEDULE.blocked.length===0){
+    blockedEl.innerHTML = '<span style="font-size:.78rem;color:var(--slate-s)">Geen geblokkeerde data</span>';
+  } else {
+    SCHEDULE.blocked.slice().sort().forEach(ds=>{
+      const tag = document.createElement('span');
+      tag.className = 'adm-tag';
+      tag.innerHTML = ds + '<button class="adm-tag-rm" onclick="removeBlocked(\''+ds+'\')">✕</button>';
+      blockedEl.appendChild(tag);
+    });
+  }
+
+  // Booked slots
+  const bookedEl = document.getElementById('admBooked');
+  bookedEl.innerHTML = '';
+  const bookedDates = Object.keys(SCHEDULE.bookedSlots).sort();
+  if(bookedDates.length===0){
+    bookedEl.innerHTML = '<span style="font-size:.78rem;color:var(--slate-s)">Geen geboekte afspraken</span>';
+  } else {
+    bookedDates.forEach(ds=>{
+      const row = document.createElement('div');
+      row.style.cssText = 'margin-bottom:.5rem';
+      const times = SCHEDULE.bookedSlots[ds];
+      row.innerHTML = '<span style="font-size:.8rem;font-weight:500;color:var(--slate)">' + ds + '</span> — ';
+      times.forEach(t=>{
+        const tag = document.createElement('span');
+        tag.className = 'adm-tag';
+        tag.innerHTML = t + '<button class="adm-tag-rm" onclick="removeBooked(\''+ds+'\',\''+t+'\')">✕</button>';
+        row.appendChild(tag);
+      });
+      bookedEl.appendChild(row);
+    });
+  }
+
+  // Look-ahead
+  document.getElementById('admLookAhead').value = SCHEDULE.lookAheadDays;
+}
+
+function addSlot(){
+  const v = document.getElementById('newSlotInput').value;
+  if(!v) return;
+  if(!SCHEDULE.slots.includes(v)){ SCHEDULE.slots.push(v); SCHEDULE.slots.sort(); }
+  renderAdminPanel();
+}
+function addBlocked(){
+  const v = document.getElementById('newBlockedInput').value;
+  if(!v) return;
+  if(!SCHEDULE.blocked.includes(v)){ SCHEDULE.blocked.push(v); }
+  renderAdminPanel();
+}
+function removeBlocked(ds){
+  SCHEDULE.blocked = SCHEDULE.blocked.filter(x=>x!==ds);
+  renderAdminPanel();
+}
+function addBooked(){
+  const ds = document.getElementById('newBookedDate').value;
+  const t  = document.getElementById('newBookedTime').value;
+  if(!ds||!t) return;
+  if(!SCHEDULE.bookedSlots[ds]) SCHEDULE.bookedSlots[ds]=[];
+  if(!SCHEDULE.bookedSlots[ds].includes(t)){ SCHEDULE.bookedSlots[ds].push(t); SCHEDULE.bookedSlots[ds].sort(); }
+  renderAdminPanel();
+}
+function removeBooked(ds,t){
+  if(!SCHEDULE.bookedSlots[ds]) return;
+  SCHEDULE.bookedSlots[ds] = SCHEDULE.bookedSlots[ds].filter(x=>x!==t);
+  if(SCHEDULE.bookedSlots[ds].length===0) delete SCHEDULE.bookedSlots[ds];
+  renderAdminPanel();
+}
+
+function saveAdminSchedule(){
+  SCHEDULE.lookAheadDays = parseInt(document.getElementById('admLookAhead').value)||60;
+  saveSchedule(SCHEDULE);
+  if(selDate && !isDayAvailable(selDate)){ selDate=null; selTime=null; document.getElementById('tss').style.display='none'; }
+  renderCal();
+  updateNextSlotDisplay();
+  const msg = document.getElementById('admSavedMsg');
+  msg.classList.add('show');
+  setTimeout(()=>msg.classList.remove('show'), 2500);
+}
+function resetAdminSchedule(){
+  if(!confirm('Alle instellingen terugzetten naar standaard?')) return;
+  localStorage.removeItem('svdb_schedule');
+  SCHEDULE = JSON.parse(JSON.stringify(DEFAULT_SCHEDULE));
+  renderAdminPanel(); renderCal(); updateNextSlotDisplay();
+}
+
+// ── Export schedule to clipboard ───────────────────────────────────────────
+function exportSchedule(){
+  const txt = JSON.stringify(SCHEDULE, null, 2);
+  const box = document.getElementById('admExportBox');
+  box.value = txt;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(txt).then(()=>{
+      const btn = document.getElementById('admExportBtn');
+      btn.textContent='✓ Gekopieerd!'; setTimeout(()=>{btn.textContent='📋 Kopieer schema';},2000);
+    });
+  } else { box.select(); document.execCommand('copy'); }
+}
+
+// ── Import schedule from pasted JSON ──────────────────────────────────────
+function importSchedule(){
+  const txt = document.getElementById('admImportBox').value.trim();
+  if(!txt){ alert('Plak eerst een schema-JSON.'); return; }
+  try {
+    const parsed = JSON.parse(txt);
+    if(!Array.isArray(parsed.workDays)||!Array.isArray(parsed.slots)) throw new Error('Verwacht: workDays[] en slots[]');
+    SCHEDULE = parsed;
+    saveSchedule(SCHEDULE);
+    renderAdminPanel(); renderCal(); updateNextSlotDisplay();
+    document.getElementById('admImportBox').value='';
+    alert('✓ Schema geïmporteerd en opgeslagen!');
+  } catch(e){ alert('Ongeldige JSON: '+e.message); }
+}
+
+// ── Booking log ────────────────────────────────────────────────────────────
+function renderBookingLog(){
+  const log = loadBookingLog();
+  const el = document.getElementById('admBookingLog');
+  const totalEl = document.getElementById('admLogCount');
+  if(totalEl) totalEl.textContent = log.length ? log.length+' aanvra'+(log.length===1?'ag':'gen') : '';
+  if(!log.length){
+    el.innerHTML='<div style="text-align:center;padding:2rem 1rem;color:var(--slate-s);font-size:.85rem">Nog geen afspraakverzoeken ontvangen.</div>';
+    return;
+  }
+  el.innerHTML='';
+  const statusMeta = {
+    nieuw:       {label:'Nieuw',      bg:'var(--warm)',    color:'#fff'},
+    bevestigd:   {label:'Bevestigd',  bg:'var(--sage)',    color:'#fff'},
+    geannuleerd: {label:'Geannuleerd',bg:'#bbb',           color:'#fff'}
+  };
+  log.forEach(b=>{
+    const sm = statusMeta[b.status]||statusMeta.nieuw;
+    const d = new Date(b.date+'T12:00:00');
+    const dateLabel = d.toLocaleDateString('nl-BE',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+    const card = document.createElement('div');
+    card.style.cssText='border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem;margin-bottom:.65rem;';
+    card.innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.75rem;flex-wrap:wrap">
+        <div>
+          <div style="font-size:.875rem;font-weight:500;color:var(--slate)">${b.firstName} ${b.lastName}</div>
+          <div style="font-size:.75rem;color:var(--slate-s);margin-top:.1rem">${b.email}${b.phone?' &nbsp;·&nbsp; '+b.phone:''}</div>
+        </div>
+        <span style="font-size:.68rem;font-weight:500;padding:.2rem .7rem;border-radius:100px;background:${sm.bg};color:${sm.color};flex-shrink:0;white-space:nowrap">${sm.label}</span>
+      </div>
+      <div style="margin-top:.55rem;font-size:.78rem;color:var(--slate-m);display:flex;flex-wrap:wrap;gap:.5rem .75rem">
+        <span>📅 <strong>${dateLabel}</strong></span>
+        <span>🕐 <strong>${b.time}</strong></span>
+        <span>📋 ${b.sessionType}</span>
+        <span>📍 ${b.format}</span>
+      </div>
+      ${b.concern?`<div style="margin-top:.45rem;font-size:.75rem;color:var(--slate-s);font-style:italic;border-left:2px solid var(--border);padding-left:.6rem">"${b.concern.slice(0,140)}${b.concern.length>140?'…':''}"</div>`:''}
+      <div style="display:flex;gap:.4rem;margin-top:.7rem;flex-wrap:wrap">
+        <button onclick="adminUpdateStatus(${b.id},'bevestigd')" style="font-size:.71rem;padding:.22rem .65rem;border:1px solid var(--sage-l);border-radius:100px;background:var(--sage-lll);color:var(--sage-d);cursor:pointer;font-family:Jost,sans-serif">✓ Bevestigen</button>
+        <button onclick="adminUpdateStatus(${b.id},'geannuleerd')" style="font-size:.71rem;padding:.22rem .65rem;border:1px solid var(--border);border-radius:100px;background:var(--off);color:var(--slate-s);cursor:pointer;font-family:Jost,sans-serif">✕ Annuleren</button>
+        <button onclick="adminDeleteBooking(${b.id})" style="font-size:.71rem;padding:.22rem .65rem;border:1px solid #f5c6c6;border-radius:100px;background:#fef5f5;color:#c0392b;cursor:pointer;font-family:Jost,sans-serif">🗑 Verwijderen</button>
+      </div>
+      <div style="font-size:.65rem;color:var(--slate-s);margin-top:.35rem;opacity:.55">Ingediend: ${new Date(b.submittedAt).toLocaleString('nl-BE')}</div>
+    `;
+    el.appendChild(card);
+  });
+}
+function adminUpdateStatus(id, status){
+  updateBookingStatus(id, status);
+  renderBookingLog();
+}
+function adminDeleteBooking(id){
+  if(!confirm('Boeking definitief verwijderen?')) return;
+  try {
+    let log = loadBookingLog().filter(b=>b.id!==id);
+    localStorage.setItem('svdb_bookings', JSON.stringify(log));
+    renderBookingLog();
+  } catch(e){}
+}
+function clearAllBookings(){
+  if(!confirm('Alle boekingsaanvragen verwijderen? Dit is onomkeerbaar.')) return;
+  localStorage.removeItem('svdb_bookings');
+  renderBookingLog();
+}
+
+// ── Admin tab switching ────────────────────────────────────────────────────
+function admTab(name){
+  document.querySelectorAll('.adm-tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.adm-tab-panel').forEach(p=>p.style.display='none');
+  document.getElementById('admTab_'+name).classList.add('active');
+  document.getElementById('admPanel_'+name).style.display='block';
+  if(name==='bookings') renderBookingLog();
+}
 </script>
+
+<!-- ── ADMIN BUTTON ── -->
+<button id="adminBtn" onclick="openAdmin()" title="Beheerpaneel" aria-label="Beheerpaneel openen">⚙</button>
+
+<!-- ── ADMIN OVERLAY ── -->
+<div id="adminOverlay" role="dialog" aria-modal="true" aria-label="Beheerpaneel">
+  <div id="adminPanel">
+
+    <!-- Login -->
+    <div id="adminLogin">
+      <div class="adm-pw-title">🔒 Beheerpaneel</div>
+      <div class="adm-pw-row">
+        <input class="adm-input" type="password" id="adminPwInput" placeholder="Wachtwoord…" onkeydown="if(event.key==='Enter')checkAdminPw()"/>
+        <button class="adm-add-btn" onclick="checkAdminPw()">Inloggen</button>
+      </div>
+      <div class="adm-pw-err" id="adminPwErr">Fout wachtwoord</div>
+      <p style="font-size:.72rem;color:var(--slate-s);margin-top:1.5rem">Standaard wachtwoord: <code style="background:var(--off);padding:2px 6px;border-radius:3px">admin1234</code><br>Wijzig dit in de HTML onder <code>ADMIN_PASSWORD</code></p>
+    </div>
+
+    <!-- Main panel -->
+    <div id="adminPanelBody" style="display:none">
+      <div class="adm-header">
+        <span class="adm-title">⚙ Beheerpaneel</span>
+        <button class="adm-close" onclick="closeAdmin()" aria-label="Sluiten">✕</button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="adm-tabs">
+        <button class="adm-tab-btn active" id="admTab_schedule" onclick="admTab('schedule')">📅 Beschikbaarheid</button>
+        <button class="adm-tab-btn" id="admTab_bookings" onclick="admTab('bookings')">📬 Aanvragen <span id="admLogCount" style="font-size:.65rem;color:var(--warm);margin-left:.25rem"></span></button>
+        <button class="adm-tab-btn" id="admTab_export" onclick="admTab('export')">💾 Export / Import</button>
+      </div>
+
+      <!-- Tab: Schedule -->
+      <div class="adm-tab-panel" id="admPanel_schedule" style="display:block">
+        <div class="adm-body">
+          <div class="adm-section">
+            <div class="adm-section-title">Werkdagen</div>
+            <div class="adm-grid" id="admDays"></div>
+            <div class="adm-hint">Klik om een dag aan/uit te zetten. Groen = werkdag.</div>
+          </div>
+          <div class="adm-section">
+            <div class="adm-section-title">Beschikbare tijdsloten</div>
+            <div class="slots-grid" id="admSlots"></div>
+            <div style="display:flex;gap:.5rem;margin-top:.75rem;align-items:center">
+              <input class="adm-input" type="time" id="newSlotInput" style="max-width:140px" value="09:00"/>
+              <button class="adm-add-btn" onclick="addSlot()">+ Toevoegen</button>
+            </div>
+            <div class="adm-hint">Groen = actief. Klik om aan/uit te zetten of voeg een aangepast tijdstip toe.</div>
+          </div>
+          <div class="adm-section">
+            <div class="adm-section-title">Geblokkeerde data</div>
+            <div class="adm-hint" style="margin-bottom:.75rem">Vakantie, feestdagen, afwezigheid — volledig onbeschikbaar in de kalender.</div>
+            <div class="adm-tags" id="admBlocked"></div>
+            <div class="adm-row" style="margin-top:.75rem">
+              <input class="adm-input" type="date" id="newBlockedInput"/>
+              <button class="adm-add-btn" onclick="addBlocked()">+ Blokkeren</button>
+            </div>
+          </div>
+          <div class="adm-section">
+            <div class="adm-section-title">Handmatig geboekte slots</div>
+            <div class="adm-hint" style="margin-bottom:.75rem">Stel bezette tijden in die al via telefoon, e-mail of andere weg geboekt zijn.</div>
+            <div id="admBooked"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:.5rem;margin-top:.75rem;align-items:center">
+              <input class="adm-input" type="date" id="newBookedDate"/>
+              <input class="adm-input" type="time" id="newBookedTime" value="09:00"/>
+              <button class="adm-add-btn" onclick="addBooked()">+ Bezet</button>
+            </div>
+          </div>
+          <div class="adm-section">
+            <div class="adm-section-title">Planningshorizon</div>
+            <div style="display:flex;align-items:center;gap:.75rem">
+              <input class="adm-input" type="number" id="admLookAhead" min="7" max="365" style="max-width:100px"/>
+              <span style="font-size:.78rem;color:var(--slate-s)">dagen vooruit boekbaar</span>
+            </div>
+          </div>
+          <div class="adm-section" style="border-bottom:none">
+            <button class="adm-save" onclick="saveAdminSchedule()">💾 Opslaan &amp; toepassen</button>
+            <div class="adm-saved-msg" id="admSavedMsg">✓ Instellingen opgeslagen en kalender bijgewerkt!</div>
+            <div style="margin-top:1.5rem;text-align:center">
+              <button onclick="resetAdminSchedule()" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:var(--slate-s);text-decoration:underline">Terugzetten naar standaard</button>
+              &nbsp;·&nbsp;
+              <button onclick="logoutAdmin()" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:var(--slate-s);text-decoration:underline">Afmelden</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Bookings log -->
+      <div class="adm-tab-panel" id="admPanel_bookings" style="display:none">
+        <div class="adm-body">
+          <div class="adm-log-toolbar">
+            <div style="font-size:.78rem;color:var(--slate-s)">Alle binnengekomen afspraakverzoeken via de website.</div>
+            <button onclick="clearAllBookings()" style="font-size:.72rem;padding:.3rem .75rem;border:1px solid #f5c6c6;border-radius:100px;background:#fef5f5;color:#c0392b;cursor:pointer;font-family:Jost,sans-serif">🗑 Alles wissen</button>
+          </div>
+          <div id="admBookingLog"></div>
+        </div>
+      </div>
+
+      <!-- Tab: Export / Import -->
+      <div class="adm-tab-panel" id="admPanel_export" style="display:none">
+        <div class="adm-body">
+          <div class="adm-section">
+            <div class="adm-section-title">Schema exporteren</div>
+            <p style="font-size:.8rem;color:var(--slate-m);margin-bottom:1rem;line-height:1.6">Kopieer uw instellingen als JSON. U kunt dit opslaan als back-up of in de HTML-broncode plakken zodat het beschikbaar blijft zonder localStorage.</p>
+            <textarea class="adm-export-box" id="admExportBox" readonly placeholder="Klik op 'Kopieer schema' om te genereren…" rows="6"></textarea>
+            <button id="admExportBtn" class="adm-add-btn" onclick="exportSchedule()" style="margin-top:.6rem">📋 Kopieer schema</button>
+            <div class="adm-hint" style="margin-top:.5rem">Tip: plak dit ook in de <code>DEFAULT_SCHEDULE</code> in de HTML-broncode — dan is het permanent, ook zonder localStorage.</div>
+          </div>
+          <div class="adm-section" style="border-bottom:none">
+            <div class="adm-section-title">Schema importeren</div>
+            <p style="font-size:.8rem;color:var(--slate-m);margin-bottom:1rem;line-height:1.6">Plak een eerder geëxporteerd schema hieronder om uw instellingen te herstellen op een ander apparaat of na het wissen van cookies.</p>
+            <textarea class="adm-export-box" id="admImportBox" placeholder="Plak hier uw JSON-schema…" rows="6"></textarea>
+            <button class="adm-add-btn" onclick="importSchedule()" style="margin-top:.6rem">📥 Importeren &amp; toepassen</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /adminPanelBody -->
+  </div><!-- /adminPanel -->
+</div><!-- /adminOverlay -->
 </body>
 </html>

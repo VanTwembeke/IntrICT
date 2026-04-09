@@ -1926,8 +1926,20 @@ function resetForm(){
   document.getElementById('cl2').classList.remove('done');
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────
-initCal();
+// ── DEMO BANNER OFFSET ───────────────────────────────────────────────────
+// When displayed inside the Next.js demo frame, shift fixed navbar down
+// so it doesn't overlap with the demo banner above the iframe.
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'DEMO_BANNER_HEIGHT') {
+    var h = e.data.height;
+    var nav = document.getElementById('navbar');
+    if (nav) nav.style.top = h + 'px';
+    // Also adjust scroll-margin so anchor links land correctly
+    document.querySelectorAll('[id]').forEach(function(el) {
+      el.style.scrollMarginTop = (h + 78) + 'px';
+    });
+  }
+});
 const p=new URLSearchParams(window.location.search);
 if(p.get('lang')==='en') setLang('en');
 

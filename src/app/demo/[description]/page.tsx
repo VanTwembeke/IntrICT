@@ -32,7 +32,7 @@ export default function DemoPage({ params }: Props) {
 
   const label = slugToLabel(description)
   // The iframe src points directly to the static file Next.js serves from /public
-  const src = `/demo/${description}/index.html`
+  const src = `/demo/${description}/demo.html`
 
   return (
     <>

@@ -1,0 +1,8 @@
+.frame {
+  display: block;
+  width: 100%;
+  /* Fill the full viewport height minus the 42px banner */
+  height: calc(100vh - 42px);
+  border: none;
+  background: #fff;
+}

@@ -1,9 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import type { Profile } from '@/lib/types';
-import Header from '@/components/common/Header';
-import Footer from '@/components/common/Footer';
-import BackToTop from '@/components/common/BackToTop';
+import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 
 export default async function DashboardLayout({
   children,
@@ -27,13 +25,11 @@ export default async function DashboardLayout({
   if (!profile) redirect('/login');
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <Header />
-      <main className="flex-1 min-w-0">
+    <div className="min-h-screen bg-slate-50">
+      <DashboardSidebar profile={profile} />
+      <main className="lg:pl-64">
         {children}
       </main>
-      <Footer />
-      <BackToTop />
     </div>
   );
 }

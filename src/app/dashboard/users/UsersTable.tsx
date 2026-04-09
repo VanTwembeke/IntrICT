@@ -1,11 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Shield, User, X, Save, Sparkles, Users,
-  Mail, Calendar, Edit2, ChevronRight, ChevronLeft,
+  Shield, User, X, Save, Users,
+  Mail, Calendar, Edit2, ChevronRight,
 } from 'lucide-react';
 import type { Profile, UserRole } from '@/lib/types';
 import { createClient } from '@/lib/supabase/client';
@@ -134,54 +133,18 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
   const userCount  = users.filter((u) => u.role !== 'admin').length;
 
   return (
-    <div className="w-full">
+    <div className="p-6 lg:p-8">
 
-      {/* ── Hero header ─────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900" />
-        <div className="absolute inset-0 opacity-40">
-          <div
-            className="w-full h-full"
-            style={{
-              backgroundImage: `url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+")`,
-            }}
-          />
-        </div>
-        <div className="absolute rounded-full pointer-events-none -right-24 -top-24 h-80 w-80 bg-blue-600/20 blur-3xl" />
-        <div className="absolute w-56 h-56 rounded-full pointer-events-none -bottom-16 left-1/4 bg-purple-600/20 blur-3xl" />
-
-        <div className="relative z-10 px-4 pt-10 pb-12 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-2 mb-6 transition-colors text-slate-300 hover:text-white"
-            >
-              <ChevronLeft size={20} />
-              <span>Terug</span>
-            </Link>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              className="flex items-center gap-5"
-            >
-              <div className="flex items-center justify-center shadow-lg h-14 w-14 rounded-2xl bg-linear-to-br from-blue-500 to-purple-500 shadow-blue-900/40 shrink-0">
-                <Users size={24} className="text-white" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <Sparkles size={13} className="text-blue-400" />
-                  <span className="text-xs font-semibold tracking-widest text-blue-400 uppercase">
-                    IntrICT Dashboard
-                  </span>
-                </div>
-                <h1 className="text-4xl font-bold tracking-tight text-white md:text-5xl">Gebruikers</h1>
-                <p className="mt-1 text-slate-400">Beheer alle geregistreerde gebruikers</p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      {/* Page header */}
+      <div className="mb-8">
+        <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">
+          Administrator
+        </p>
+        <h1 className="text-3xl font-bold text-slate-900">Gebruikers</h1>
+        <p className="text-sm text-slate-500 mt-1">
+          {adminCount} admin{adminCount !== 1 ? 's' : ''} · {userCount} gebruiker{userCount !== 1 ? 's' : ''}
+        </p>
+      </div>
 
       {/* ── Edit modal ──────────────────────────────────────────────────── */}
       <AnimatePresence>
@@ -429,8 +392,8 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
       </AnimatePresence>
 
       {/* ── Main content ────────────────────────────────────────────────── */}
-      <section className="py-10 bg-linear-to-br from-slate-50 to-blue-50">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div>
+        <div>
 
           {/* Stats strip */}
           <div className="grid grid-cols-3 gap-4 mb-8">
@@ -567,7 +530,7 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
           </div>
 
         </div>
-      </section>
+      </div>
     </div>
   );
 }

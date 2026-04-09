@@ -1,12 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
   Mail,
   Send,
-  ArrowLeft,
   CheckCircle,
   AlertCircle,
   Loader2,
@@ -230,68 +228,18 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
   const userProfiles = allProfiles.filter(p => p.role !== 'admin');
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {/* ── Hero Banner ─────────────────────────────────────────────────── */}
-      <section className="relative pt-20 pb-16 overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900" />
-        <div className="absolute inset-0 opacity-40">
-          <div
-            className="w-full h-full"
-            style={{
-              backgroundImage: `url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+")`,
-            }}
-          />
-        </div>
-        <div className="absolute rounded-full pointer-events-none -right-24 -top-24 h-80 w-80 bg-blue-600/20 blur-3xl" />
-        <div className="absolute w-56 h-56 rounded-full pointer-events-none -bottom-16 left-1/4 bg-purple-600/20 blur-3xl" />
+    <div className="p-6 lg:p-8">
 
-        <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 mb-6">
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-2 transition-colors text-slate-300 hover:text-white"
-            >
-              <ArrowLeft size={20} />
-              <span>Terug naar Dashboard</span>
-            </Link>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-3xl mx-auto text-center"
-          >
-            <h1 className="mb-6 text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
-              Email{' '}
-              <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">
-                Versturen
-              </span>
-            </h1>
-            <p className="max-w-2xl mx-auto mb-8 text-xl leading-relaxed text-slate-200">
-              Verstuur professionele emails naar gebruikers met een mooie template
-              en volledige controle over de inhoud.
-            </p>
-
-            <div className="flex flex-wrap items-center justify-center gap-8 mt-10">
-              {[
-                { label: 'Beschikbare Ontvangers', value: allProfiles.length.toString() },
-                { label: 'Geselecteerd', value: selectedRecipients.length.toString() },
-                { label: 'Email Template', value: 'Professioneel' },
-              ].map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div className="text-2xl font-bold text-white">{stat.value}</div>
-                  <div className="text-sm text-slate-400">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      {/* Page header */}
+      <div className="mb-6">
+        <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">
+          Dashboard
+        </p>
+        <h1 className="text-3xl font-bold text-slate-900">E-mail verzenden</h1>
+      </div>
 
       {/* ── Email Interface ────────────────────────────────────────────── */}
-      <section className="py-8">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -889,8 +837,7 @@ export default function EmailPage({ profile, allProfiles }: EmailPageProps) {
               </div>
             </div>
           </motion.div>
-        </div>
-      </section>
+      </div>
     </div>
   );
 }

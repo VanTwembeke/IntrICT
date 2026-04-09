@@ -201,9 +201,9 @@ export default function ProfilePage() {
   const starPreview = Number(form.review_score) || 0;
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <section className="pt-24 pb-10">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+    <div className="p-6 lg:p-8">
+      <section className="pb-10">
+        <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-4 mb-8 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-blue-600">Dashboard</p>

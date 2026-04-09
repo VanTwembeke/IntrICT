@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO Primary -->
+  <title>Dr. Sophie van den Berg – Psycholoog | Psychotherapie & Begeleiding Amsterdam</title>
+  <meta name="description" content="Psycholoog en psychotherapeut in Amsterdam. Specialisatie in angst, burn-out, depressie en relatieproblemen. Persoonlijke begeleiding, online en op locatie. Plan vandaag een kennismakingsgesprek." />
+  <meta name="keywords" content="psycholoog Amsterdam, psychotherapeut, angst behandeling, burn-out begeleiding, depressie therapie, cognitieve gedragstherapie, EMDR, relatietherapie, psycholoog online" />
+  <meta name="author" content="Dr. Sophie van den Berg" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.sophievandenberg.nl/" />
+
+  <!-- Hreflang -->
+  <link rel="alternate" hreflang="nl" href="https://www.sophievandenberg.nl/" />
+  <link rel="alternate" hreflang="en" href="https://www.sophievandenberg.nl/?lang=en" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.sophievandenberg.nl/" />
+  <meta property="og:title" content="Dr. Sophie van den Berg – Psycholoog Amsterdam" />
+  <meta property="og:description" content="Persoonlijke psychologische begeleiding in Amsterdam. Specialisaties: angst, burn-out, depressie, relatieproblemen. Maak een afspraak." />
+  <meta property="og:image" content="https://www.sophievandenberg.nl/og-image.jpg" />
+  <meta property="og:locale" content="nl_NL" />
+  <meta property="og:locale:alternate" content="en_GB" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Dr. Sophie van den Berg – Psycholoog Amsterdam" />
+  <meta name="twitter:description" content="Persoonlijke psychologische begeleiding. Angst, burn-out, depressie, relatietherapie." />
+
+  <!-- Schema.org Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MedicalBusiness",
+    "name": "Dr. Sophie van den Berg – Psycholoog",
+    "description": "Psycholoog en psychotherapeut gespecialiseerd in angst, burn-out, depressie en relatieproblemen.",
+    "url": "https://www.sophievandenberg.nl",
+    "telephone": "+31-20-123-4567",
+    "email": "info@sophievandenberg.nl",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Herengracht 182",
+      "addressLocality": "Amsterdam",
+      "postalCode": "1016 BS",
+      "addressCountry": "NL"
+    },
+    "openingHours": ["Mo-Fr 09:00-17:00"],
+    "priceRange": "€€",
+    "medicalSpecialty": "Psychiatry",
+    "sameAs": ["https://www.linkedin.com/in/sophievandenberg"]
+  }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sage: #7a9e87;
+      --sage-light: #b3cebe;
+      --sage-pale: #e8f0ea;
+      --sage-dark: #4a6b55;
+      --warm: #c4956a;
+      --warm-light: #e8d5c0;
+      --warm-pale: #faf4ee;
+      --ink: #1e2620;
+      --ink-soft: #3d4a40;
+      --muted: #7a8a7e;
+      --border: #d4ddd6;
+      --white: #ffffff;
+      --surface: #f5f7f5;
+      --error: #c0392b;
+      --success: #27ae60;
+      --radius: 2px;
+      --radius-lg: 6px;
+      --shadow: 0 1px 3px rgba(30,38,32,0.08), 0 4px 12px rgba(30,38,32,0.05);
+      --shadow-lg: 0 8px 32px rgba(30,38,32,0.12);
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--ink);
+      background: var(--white);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── Util ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    .serif { font-family: 'Cormorant Garamond', Georgia, serif; }
+    .hidden { display: none !important; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+      transition: box-shadow var(--transition);
+    }
+    nav.scrolled { box-shadow: var(--shadow); }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1100px; margin: 0 auto; padding: 0 2rem;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem; font-weight: 400;
+      color: var(--ink); text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .nav-logo span { color: var(--sage); }
+    .nav-links { display: flex; align-items: center; gap: 2rem; }
+    .nav-links a {
+      font-size: 0.875rem; font-weight: 400; letter-spacing: 0.04em;
+      color: var(--ink-soft); text-decoration: none;
+      transition: color var(--transition);
+    }
+    .nav-links a:hover { color: var(--sage-dark); }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .lang-toggle {
+      display: flex; gap: 0; border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .lang-btn {
+      padding: 0.3rem 0.65rem; font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.06em; cursor: pointer; border: none;
+      background: transparent; color: var(--muted);
+      transition: all var(--transition);
+    }
+    .lang-btn.active { background: var(--sage); color: var(--white); }
+    .btn-nav {
+      padding: 0.5rem 1.25rem; background: var(--sage);
+      color: var(--white); border: none; border-radius: var(--radius);
+      font-size: 0.875rem; font-weight: 500; cursor: pointer;
+      transition: background var(--transition);
+      white-space: nowrap;
+    }
+    .btn-nav:hover { background: var(--sage-dark); }
+    .nav-menu-btn {
+      display: none; background: none; border: none; cursor: pointer;
+      flex-direction: column; gap: 5px; padding: 4px;
+    }
+    .nav-menu-btn span {
+      display: block; width: 22px; height: 1.5px;
+      background: var(--ink); transition: all var(--transition);
+    }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; padding-top: 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: linear-gradient(135deg, var(--sage-pale) 0%, var(--warm-pale) 100%);
+    }
+    .hero-pattern {
+      position: absolute; right: -100px; top: 50%; transform: translateY(-50%);
+      width: 600px; height: 600px; z-index: 1; opacity: 0.06;
+      background: radial-gradient(circle, var(--sage-dark) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      padding: 4rem 2rem 4rem 4rem;
+      max-width: 580px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 100px; padding: 0.3rem 0.9rem;
+      font-size: 0.78rem; color: var(--sage-dark); font-weight: 500;
+      margin-bottom: 1.75rem;
+      letter-spacing: 0.03em;
+    }
+    .hero-badge::before {
+      content: ''; display: block; width: 6px; height: 6px;
+      border-radius: 50%; background: var(--sage);
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 5vw, 4.2rem);
+      font-weight: 300; line-height: 1.12;
+      color: var(--ink); margin-bottom: 1.5rem;
+      letter-spacing: -0.01em;
+    }
+    .hero-title em { font-style: italic; color: var(--sage-dark); }
+    .hero-sub {
+      font-size: 1rem; color: var(--ink-soft); line-height: 1.8;
+      margin-bottom: 2.5rem; font-weight: 300;
+    }
+    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      padding: 0.85rem 2rem; background: var(--sage);
+      color: var(--white); border: none; border-radius: var(--radius);
+      font-size: 0.9rem; font-weight: 500; cursor: pointer;
+      transition: all var(--transition); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+    .btn-primary:hover { background: var(--sage-dark); transform: translateY(-1px); }
+    .btn-outline {
+      padding: 0.85rem 2rem;
+      border: 1px solid var(--ink); border-radius: var(--radius);
+      font-size: 0.9rem; font-weight: 400; cursor: pointer;
+      color: var(--ink); background: transparent;
+      transition: all var(--transition); text-decoration: none;
+    }
+    .btn-outline:hover { background: var(--ink); color: var(--white); }
+    .hero-stats {
+      display: flex; gap: 2.5rem; margin-top: 3rem;
+      padding-top: 2rem; border-top: 1px solid var(--border);
+    }
+    .hero-stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 300; color: var(--ink);
+      display: block; line-height: 1;
+    }
+    .hero-stat-lbl {
+      font-size: 0.78rem; color: var(--muted); margin-top: 0.25rem;
+      display: block; font-weight: 400; letter-spacing: 0.03em;
+    }
+    .hero-image {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+      padding: 3rem 4rem 3rem 2rem;
+    }
+    .hero-portrait-wrap {
+      position: relative; width: 380px; height: 480px;
+    }
+    .hero-portrait {
+      width: 100%; height: 100%;
+      background: var(--sage-light);
+      border-radius: 200px 200px 6px 6px;
+      overflow: hidden;
+      display: flex; align-items: flex-end; justify-content: center;
+    }
+    .portrait-placeholder {
+      width: 260px; height: 380px;
+      background: linear-gradient(180deg, var(--sage) 0%, var(--sage-dark) 100%);
+      border-radius: 130px 130px 0 0;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 0;
+    }
+    .portrait-icon {
+      width: 100px; height: 160px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50px 50px 0 0;
+      position: relative;
+    }
+    .portrait-icon::before {
+      content: ''; position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 60px; border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+    }
+    .hero-card-float {
+      position: absolute; bottom: 40px; left: -40px;
+      background: var(--white); border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem; box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      min-width: 180px;
+    }
+    .hero-card-float .label {
+      font-size: 0.72rem; color: var(--muted); letter-spacing: 0.05em;
+      text-transform: uppercase; margin-bottom: 0.4rem;
+    }
+    .hero-card-float .value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 300; color: var(--ink);
+    }
+    .hero-card-float .value span {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem; color: var(--success); font-weight: 500;
+      margin-left: 0.4rem;
+    }
+    .hero-card-float2 {
+      position: absolute; top: 60px; right: -30px;
+      background: var(--sage); border-radius: var(--radius-lg);
+      padding: 0.85rem 1.1rem; box-shadow: var(--shadow-lg);
+    }
+    .hero-card-float2 .c2-icon { font-size: 1.2rem; margin-bottom: 0.25rem; }
+    .hero-card-float2 .c2-text {
+      font-size: 0.75rem; color: rgba(255,255,255,0.9); line-height: 1.4;
+      max-width: 120px;
+    }
+    .hero-card-float2 .c2-text strong { color: var(--white); display: block; font-size: 0.85rem; }
+
+    /* ── Section shared ── */
+    section { padding: 6rem 0; }
+    .section-label {
+      font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--sage); margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 300; line-height: 1.2; color: var(--ink);
+      margin-bottom: 1.25rem;
+    }
+    .section-intro {
+      font-size: 1rem; color: var(--ink-soft); max-width: 560px;
+      line-height: 1.85; font-weight: 300;
+    }
+
+    /* ── About ── */
+    #about { background: var(--surface); }
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5rem; align-items: center;
+    }
+    .about-credentials { margin-top: 2.5rem; }
+    .credential-item {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: 1rem 0; border-bottom: 1px solid var(--border);
+    }
+    .credential-item:last-child { border-bottom: none; }
+    .cred-icon {
+      width: 36px; height: 36px; background: var(--sage-pale);
+      border-radius: var(--radius); display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0; margin-top: 0.1rem;
+    }
+    .cred-icon svg { width: 16px; height: 16px; stroke: var(--sage-dark); }
+    .cred-title { font-size: 0.9rem; font-weight: 500; color: var(--ink); }
+    .cred-sub { font-size: 0.82rem; color: var(--muted); margin-top: 0.15rem; }
+    .about-photo {
+      width: 100%; aspect-ratio: 3/4; background: var(--sage-light);
+      border-radius: var(--radius-lg); position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .about-photo-inner {
+      width: 65%; height: 80%;
+      background: linear-gradient(160deg, var(--sage) 30%, var(--sage-dark) 100%);
+      border-radius: 100px 100px 6px 6px;
+      position: relative;
+    }
+    .about-photo-inner::before {
+      content: ''; position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+    }
+    .about-quote {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      background: var(--white); border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem; box-shadow: var(--shadow);
+      border-left: 3px solid var(--warm); max-width: 240px;
+      width: calc(100% - 3rem);
+    }
+    .about-quote p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem; font-style: italic; color: var(--ink-soft);
+      line-height: 1.5;
+    }
+    .about-quote cite {
+      font-size: 0.72rem; color: var(--muted); margin-top: 0.4rem;
+      display: block; font-style: normal;
+    }
+
+    /* ── Specializations ── */
+    #specializations { background: var(--white); }
+    .spec-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 3rem; gap: 2rem; flex-wrap: wrap;
+    }
+    .spec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+    .spec-card {
+      padding: 2rem; border: 1px solid var(--border);
+      border-radius: var(--radius-lg); background: var(--white);
+      transition: all var(--transition); cursor: default;
+      position: relative; overflow: hidden;
+    }
+    .spec-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 100%; height: 3px; background: var(--sage-light);
+      transition: background var(--transition);
+    }
+    .spec-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); border-color: var(--sage-light); }
+    .spec-card:hover::before { background: var(--sage); }
+    .spec-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem; font-weight: 300; color: var(--border);
+      position: absolute; top: 1rem; right: 1.5rem; line-height: 1;
+    }
+    .spec-icon {
+      width: 44px; height: 44px; border-radius: var(--radius);
+      background: var(--sage-pale); display: flex; align-items: center;
+      justify-content: center; margin-bottom: 1.25rem;
+    }
+    .spec-icon svg { width: 20px; height: 20px; stroke: var(--sage-dark); }
+    .spec-title {
+      font-size: 1rem; font-weight: 500; color: var(--ink); margin-bottom: 0.6rem;
+    }
+    .spec-text { font-size: 0.875rem; color: var(--muted); line-height: 1.7; }
+    .spec-tag {
+      display: inline-block; margin-top: 1rem;
+      font-size: 0.72rem; font-weight: 500;
+      color: var(--sage-dark); background: var(--sage-pale);
+      padding: 0.25rem 0.65rem; border-radius: 100px;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── Approach ── */
+    #approach { background: var(--ink); color: var(--white); }
+    #approach .section-title { color: var(--white); }
+    #approach .section-label { color: var(--sage-light); }
+    #approach .section-intro { color: rgba(255,255,255,0.65); max-width: 600px; }
+    .approach-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 3rem; align-items: start; margin-top: 4rem;
+    }
+    .approach-steps { display: flex; flex-direction: column; gap: 0; }
+    .approach-step {
+      display: flex; gap: 1.5rem; padding: 2rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .approach-step:first-child { padding-top: 0; }
+    .approach-step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem; font-weight: 300;
+      color: rgba(255,255,255,0.12); line-height: 1;
+      flex-shrink: 0; width: 50px;
+    }
+    .step-content {}
+    .step-title { font-size: 1rem; font-weight: 500; color: var(--white); margin-bottom: 0.5rem; }
+    .step-text { font-size: 0.875rem; color: rgba(255,255,255,0.55); line-height: 1.75; }
+    .approach-methods {}
+    .methods-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.75rem; font-weight: 300; color: var(--white);
+      margin-bottom: 1.5rem;
+    }
+    .method-pills { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2.5rem; }
+    .method-pill {
+      padding: 0.45rem 1rem; border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 100px; font-size: 0.8rem; color: rgba(255,255,255,0.7);
+      transition: all var(--transition);
+    }
+    .method-pill:hover { border-color: var(--sage-light); color: var(--sage-light); }
+    .approach-cta {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-lg); padding: 2rem;
+    }
+    .approach-cta p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; font-weight: 300; font-style: italic;
+      color: var(--white); line-height: 1.5; margin-bottom: 1.5rem;
+    }
+    .btn-light {
+      padding: 0.75rem 1.75rem; background: var(--white);
+      color: var(--ink); border: none; border-radius: var(--radius);
+      font-size: 0.875rem; font-weight: 500; cursor: pointer;
+      transition: all var(--transition);
+    }
+    .btn-light:hover { background: var(--sage-pale); }
+
+    /* ── Testimonials ── */
+    #testimonials { background: var(--sage-pale); }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 3rem; }
+    .testimonial-card {
+      background: var(--white); border-radius: var(--radius-lg);
+      padding: 2rem; border: 1px solid var(--border);
+      position: relative;
+    }
+    .testimonial-stars {
+      display: flex; gap: 3px; margin-bottom: 1rem;
+    }
+    .star { width: 14px; height: 14px; fill: var(--warm); }
+    .testimonial-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-weight: 300; font-style: italic;
+      color: var(--ink-soft); line-height: 1.65; margin-bottom: 1.5rem;
+    }
+    .testimonial-author {
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .author-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--sage-light); display: flex; align-items: center;
+      justify-content: center; font-size: 0.75rem; font-weight: 500;
+      color: var(--sage-dark); flex-shrink: 0;
+    }
+    .author-name { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+    .author-detail { font-size: 0.75rem; color: var(--muted); }
+
+    /* ── Appointment / Booking ── */
+    #appointment { background: var(--white); }
+    .booking-wrapper {
+      display: grid; grid-template-columns: 1fr 1.6fr;
+      gap: 4rem; align-items: start; margin-top: 3.5rem;
+    }
+    .booking-info {}
+    .booking-info-item {
+      display: flex; align-items: flex-start; gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+    .bi-icon {
+      width: 40px; height: 40px; background: var(--sage-pale);
+      border-radius: var(--radius); display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0;
+    }
+    .bi-icon svg { width: 18px; height: 18px; stroke: var(--sage-dark); }
+    .bi-title { font-size: 0.9rem; font-weight: 500; color: var(--ink); margin-bottom: 0.2rem; }
+    .bi-text { font-size: 0.825rem; color: var(--muted); line-height: 1.6; }
+    .insurance-logos {
+      margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--border);
+    }
+    .insurance-label {
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 0.85rem;
+    }
+    .insurance-list {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .insurance-pill {
+      padding: 0.3rem 0.75rem; border: 1px solid var(--border);
+      border-radius: 100px; font-size: 0.75rem; color: var(--ink-soft);
+    }
+
+    /* Booking Form */
+    .booking-form {
+      background: var(--surface); border-radius: var(--radius-lg);
+      padding: 2.5rem; border: 1px solid var(--border);
+    }
+    .form-steps {
+      display: flex; gap: 0; margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border); padding-bottom: 1.5rem;
+    }
+    .form-step-item {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 0.8rem; color: var(--muted); font-weight: 400;
+      position: relative; flex: 1;
+    }
+    .form-step-item.active { color: var(--sage-dark); }
+    .form-step-item.done { color: var(--success); }
+    .step-dot {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 1.5px solid var(--border); background: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 500; color: var(--muted);
+      flex-shrink: 0; transition: all var(--transition);
+    }
+    .form-step-item.active .step-dot { border-color: var(--sage); color: var(--sage-dark); background: var(--sage-pale); }
+    .form-step-item.done .step-dot { border-color: var(--success); background: var(--success); color: var(--white); }
+    .step-connector {
+      flex: 1; height: 1px; background: var(--border); margin: 0 0.5rem;
+    }
+    .step-connector.done { background: var(--success); }
+
+    .form-panel { display: none; }
+    .form-panel.active { display: block; }
+
+    .form-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 300; color: var(--ink); margin-bottom: 1.5rem;
+    }
+    .form-row { margin-bottom: 1.25rem; }
+    .form-label {
+      display: block; font-size: 0.8rem; font-weight: 500;
+      color: var(--ink-soft); margin-bottom: 0.4rem; letter-spacing: 0.01em;
+    }
+    .form-label .req { color: var(--warm); margin-left: 2px; }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; padding: 0.7rem 0.9rem;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--white); font-size: 0.875rem;
+      color: var(--ink); font-family: 'DM Sans', sans-serif;
+      transition: border-color var(--transition);
+      -webkit-appearance: none;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none; border-color: var(--sage);
+      box-shadow: 0 0 0 3px rgba(122,158,135,0.12);
+    }
+    .form-input.error { border-color: var(--error); }
+    .form-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a8a7e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.9rem center; padding-right: 2.5rem; cursor: pointer; }
+    .form-textarea { resize: vertical; min-height: 90px; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-hint { font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; }
+    .form-error-msg { font-size: 0.75rem; color: var(--error); margin-top: 0.3rem; display: none; }
+
+    /* Date picker */
+    .date-grid-label {
+      font-size: 0.875rem; font-weight: 500; color: var(--ink);
+      text-align: center; margin-bottom: 1rem;
+    }
+    .cal-nav {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;
+    }
+    .cal-nav-btn {
+      background: none; border: 1px solid var(--border); border-radius: var(--radius);
+      width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; transition: all var(--transition);
+    }
+    .cal-nav-btn:hover { background: var(--sage-pale); border-color: var(--sage-light); }
+    .cal-nav-btn svg { width: 14px; height: 14px; stroke: var(--ink-soft); }
+    .cal-month { font-size: 0.875rem; font-weight: 500; color: var(--ink); }
+    .cal-weekdays {
+      display: grid; grid-template-columns: repeat(7, 1fr);
+      gap: 2px; margin-bottom: 4px;
+    }
+    .cal-weekday { font-size: 0.7rem; color: var(--muted); text-align: center; padding: 4px 0; font-weight: 500; }
+    .cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+    .cal-day {
+      aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; border-radius: var(--radius);
+      cursor: pointer; transition: all var(--transition);
+      color: var(--ink); border: 1px solid transparent;
+    }
+    .cal-day:hover:not(.disabled):not(.other-month) { background: var(--sage-pale); border-color: var(--sage-light); }
+    .cal-day.selected { background: var(--sage); color: var(--white); border-color: var(--sage); }
+    .cal-day.today { border-color: var(--sage-light); font-weight: 500; }
+    .cal-day.disabled { color: var(--border); cursor: not-allowed; }
+    .cal-day.other-month { color: var(--border); cursor: default; }
+    .cal-day.weekend:not(.other-month) { color: var(--muted); background: var(--surface); }
+
+    .time-slots {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem; margin-top: 1.25rem;
+    }
+    .time-slot {
+      padding: 0.5rem; border: 1px solid var(--border); border-radius: var(--radius);
+      text-align: center; font-size: 0.78rem; cursor: pointer;
+      transition: all var(--transition); background: var(--white);
+      color: var(--ink-soft);
+    }
+    .time-slot:hover:not(.taken) { border-color: var(--sage); color: var(--sage-dark); background: var(--sage-pale); }
+    .time-slot.selected { background: var(--sage); color: var(--white); border-color: var(--sage); }
+    .time-slot.taken { color: var(--border); cursor: not-allowed; text-decoration: line-through; }
+
+    .slot-legend {
+      display: flex; gap: 1rem; margin-top: 0.75rem; flex-wrap: wrap;
+    }
+    .slot-legend-item {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.72rem; color: var(--muted);
+    }
+    .slot-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+    .slot-dot.available { background: var(--sage); }
+    .slot-dot.taken { background: var(--border); }
+
+    .checkbox-group { display: flex; align-items: flex-start; gap: 0.75rem; }
+    .form-checkbox { width: 16px; height: 16px; margin-top: 2px; accent-color: var(--sage); cursor: pointer; flex-shrink: 0; }
+    .checkbox-label { font-size: 0.82rem; color: var(--ink-soft); line-height: 1.5; }
+    .checkbox-label a { color: var(--sage-dark); }
+
+    .form-actions {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 2rem; gap: 1rem;
+    }
+    .btn-back {
+      background: none; border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 0.7rem 1.5rem; font-size: 0.875rem; cursor: pointer;
+      color: var(--muted); transition: all var(--transition);
+    }
+    .btn-back:hover { border-color: var(--ink); color: var(--ink); }
+    .btn-submit {
+      padding: 0.8rem 2rem; background: var(--sage); color: var(--white);
+      border: none; border-radius: var(--radius); font-size: 0.9rem;
+      font-weight: 500; cursor: pointer; transition: all var(--transition);
+    }
+    .btn-submit:hover { background: var(--sage-dark); }
+    .btn-submit:disabled { background: var(--sage-light); cursor: not-allowed; }
+
+    /* Success state */
+    .booking-success {
+      text-align: center; padding: 3rem 1rem;
+    }
+    .success-circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: rgba(39,174,96,0.1); display: flex; align-items: center;
+      justify-content: center; margin: 0 auto 1.5rem;
+    }
+    .success-circle svg { width: 32px; height: 32px; stroke: var(--success); }
+    .success-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; font-weight: 300; color: var(--ink); margin-bottom: 0.75rem;
+    }
+    .success-text { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
+
+    /* ── FAQ ── */
+    #faq { background: var(--surface); }
+    .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 3rem; }
+    .faq-item {
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      overflow: hidden; background: var(--white);
+    }
+    .faq-question {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.25rem 1.5rem; cursor: pointer; gap: 1rem;
+      transition: background var(--transition);
+    }
+    .faq-question:hover { background: var(--sage-pale); }
+    .faq-question-text { font-size: 0.9rem; font-weight: 500; color: var(--ink); }
+    .faq-icon {
+      width: 20px; height: 20px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform var(--transition);
+    }
+    .faq-icon svg { width: 14px; height: 14px; stroke: var(--sage-dark); }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-answer {
+      max-height: 0; overflow: hidden; transition: max-height 0.35s ease;
+    }
+    .faq-answer-inner {
+      padding: 0 1.5rem 1.25rem;
+      font-size: 0.875rem; color: var(--muted); line-height: 1.75;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Contact ── */
+    #contact { background: var(--white); }
+    .contact-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; margin-top: 3rem;
+    }
+    .contact-map {
+      background: var(--sage-pale); border-radius: var(--radius-lg);
+      min-height: 320px; display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border); position: relative; overflow: hidden;
+    }
+    .map-placeholder {
+      text-align: center;
+    }
+    .map-placeholder svg { width: 36px; height: 36px; stroke: var(--sage); margin-bottom: 0.75rem; }
+    .map-placeholder p { font-size: 0.875rem; color: var(--muted); }
+    .map-grid-lines {
+      position: absolute; inset: 0; opacity: 0.3;
+      background-image: linear-gradient(var(--sage-light) 1px, transparent 1px),
+        linear-gradient(90deg, var(--sage-light) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .map-dot {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 16px; height: 16px; border-radius: 50%; background: var(--sage);
+      box-shadow: 0 0 0 8px rgba(122,158,135,0.2);
+    }
+    .contact-details { display: flex; flex-direction: column; gap: 1.5rem; }
+    .contact-item {
+      display: flex; align-items: flex-start; gap: 1rem;
+    }
+    .contact-icon {
+      width: 40px; height: 40px; background: var(--sage-pale);
+      border-radius: var(--radius); display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0;
+    }
+    .contact-icon svg { width: 18px; height: 18px; stroke: var(--sage-dark); }
+    .contact-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.2rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+    .contact-value { font-size: 0.925rem; color: var(--ink); }
+    .contact-value a { color: var(--sage-dark); text-decoration: none; }
+    .contact-value a:hover { text-decoration: underline; }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--ink); color: rgba(255,255,255,0.5);
+      padding: 3rem 0;
+    }
+    .footer-inner {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1.5rem;
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; color: rgba(255,255,255,0.7); font-weight: 300;
+    }
+    .footer-links {
+      display: flex; gap: 2rem;
+    }
+    .footer-links a {
+      font-size: 0.78rem; color: rgba(255,255,255,0.4);
+      text-decoration: none; transition: color var(--transition);
+    }
+    .footer-links a:hover { color: rgba(255,255,255,0.7); }
+    .footer-copy { font-size: 0.75rem; }
+    .big-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(4rem, 8vw, 9rem);
+      font-weight: 300; color: rgba(255,255,255,0.04);
+      text-align: center; line-height: 1; margin-top: 2rem;
+      letter-spacing: -0.02em; white-space: nowrap; overflow: hidden;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      #hero { grid-template-columns: 1fr; min-height: auto; padding-top: 100px; }
+      .hero-image { display: none; }
+      .hero-content { padding: 3rem 2rem; max-width: 100%; }
+      .about-grid, .approach-grid, .booking-wrapper, .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .spec-grid, .testimonials-grid, .faq-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.5rem; }
+      .nav-links { display: none; }
+      .nav-menu-btn { display: flex; }
+      .form-row-2 { grid-template-columns: 1fr; }
+      .time-slots { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* ── Mobile nav drawer ── */
+    .mobile-nav {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 200; background: var(--white);
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 2rem;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 300; color: var(--ink);
+      text-decoration: none; letter-spacing: 0.02em;
+    }
+    .mobile-close {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      background: none; border: none; cursor: pointer; font-size: 1.5rem; color: var(--ink);
+    }
+
+    /* Smooth scroll section anchor offset */
+    [id] { scroll-margin-top: 80px; }
+
+    /* Fade in on load */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.6s ease forwards; }
+    .fade-up-delay-1 { animation-delay: 0.1s; opacity: 0; }
+    .fade-up-delay-2 { animation-delay: 0.2s; opacity: 0; }
+    .fade-up-delay-3 { animation-delay: 0.35s; opacity: 0; }
+  </style>
+</head>
+<body>
+
+<!-- ───────────────── MOBILE NAV ───────────────── -->
+<nav class="mobile-nav" id="mobileNav" role="navigation" aria-label="Mobiel menu">
+  <button class="mobile-close" onclick="closeMobileNav()" aria-label="Sluit menu">✕</button>
+  <a href="#about" onclick="closeMobileNav()" data-nl="Over mij" data-en="About me">Over mij</a>
+  <a href="#specializations" onclick="closeMobileNav()" data-nl="Specialisaties" data-en="Specialties">Specialisaties</a>
+  <a href="#approach" onclick="closeMobileNav()" data-nl="Aanpak" data-en="Approach">Aanpak</a>
+  <a href="#appointment" onclick="closeMobileNav()" data-nl="Afspraak" data-en="Book">Afspraak</a>
+  <a href="#contact" onclick="closeMobileNav()" data-nl="Contact" data-en="Contact">Contact</a>
+</nav>
+
+<!-- ───────────────── NAVIGATION ───────────────── -->
+<nav id="navbar" role="navigation" aria-label="Hoofdnavigatie">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">Dr. Sophie <span>van den Berg</span></a>
+    <div class="nav-links">
+      <a href="#about" data-nl="Over mij" data-en="About me">Over mij</a>
+      <a href="#specializations" data-nl="Specialisaties" data-en="Specialties">Specialisaties</a>
+      <a href="#approach" data-nl="Aanpak" data-en="Approach">Aanpak</a>
+      <a href="#faq" data-nl="Veelgesteld" data-en="FAQ">Veelgesteld</a>
+      <a href="#contact" data-nl="Contact" data-en="Contact">Contact</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle" role="group" aria-label="Taal selectie">
+        <button class="lang-btn active" onclick="setLang('nl')" id="btnNl" aria-label="Nederlands">NL</button>
+        <button class="lang-btn" onclick="setLang('en')" id="btnEn" aria-label="English">EN</button>
+      </div>
+      <button class="btn-nav" onclick="scrollToBooking()"
+        data-nl="Afspraak maken" data-en="Book appointment">Afspraak maken</button>
+      <button class="nav-menu-btn" onclick="openMobileNav()" aria-label="Menu openen" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ───────────────── HERO ───────────────── -->
+<section id="hero" aria-labelledby="hero-heading">
+  <div class="hero-bg"></div>
+  <div class="hero-pattern"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge fade-up">
+      <span data-nl="Geregistreerd BIG Psycholoog · Amsterdam" data-en="Registered BIG Psychologist · Amsterdam">Geregistreerd BIG Psycholoog · Amsterdam</span>
+    </div>
+    <h1 class="hero-title fade-up fade-up-delay-1" id="hero-heading">
+      <span data-nl="Ruimte voor <em>herstel</em><br>en groei" data-en="Space for <em>recovery</em><br>and growth">Ruimte voor <em>herstel</em><br>en groei</span>
+    </h1>
+    <p class="hero-sub fade-up fade-up-delay-2"
+      data-nl="Welkom. Ik ben Sophie van den Berg, psycholoog en psychotherapeut. In mijn praktijk bied ik een veilige en vertrouwelijke omgeving waar u aan uzelf kunt werken – op uw eigen tempo."
+      data-en="Welcome. I'm Sophie van den Berg, psychologist and psychotherapist. My practice offers a safe, confidential space to work on yourself — at your own pace.">
+      Welkom. Ik ben Sophie van den Berg, psycholoog en psychotherapeut. In mijn praktijk bied ik een veilige en vertrouwelijke omgeving waar u aan uzelf kunt werken – op uw eigen tempo.
+    </p>
+    <div class="hero-ctas fade-up fade-up-delay-3">
+      <button class="btn-primary" onclick="scrollToBooking()"
+        data-nl="Afspraak inplannen" data-en="Book a session">Afspraak inplannen →</button>
+      <a href="#about" class="btn-outline"
+        data-nl="Meer over mij" data-en="Learn more">Meer over mij</a>
+    </div>
+    <div class="hero-stats fade-up fade-up-delay-3">
+      <div>
+        <span class="hero-stat-num">12+</span>
+        <span class="hero-stat-lbl" data-nl="Jaar ervaring" data-en="Years experience">Jaar ervaring</span>
+      </div>
+      <div>
+        <span class="hero-stat-num">650+</span>
+        <span class="hero-stat-lbl" data-nl="Geholpen cliënten" data-en="Clients helped">Geholpen cliënten</span>
+      </div>
+      <div>
+        <span class="hero-stat-num">4.9</span>
+        <span class="hero-stat-lbl" data-nl="Gemiddelde beoordeling" data-en="Average rating">Gemiddelde beoordeling</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-image" aria-hidden="true">
+    <div class="hero-portrait-wrap">
+      <div class="hero-portrait">
+        <div class="portrait-placeholder">
+          <div class="portrait-icon"></div>
+        </div>
+      </div>
+      <div class="hero-card-float">
+        <div class="label" data-nl="Eerstvolgende beschikbaar" data-en="Next available">Eerstvolgende beschikbaar</div>
+        <div class="value">Woensdag <span data-nl="✓ Beschikbaar" data-en="✓ Available">✓ Beschikbaar</span></div>
+      </div>
+      <div class="hero-card-float2">
+        <div class="c2-icon">🔒</div>
+        <div class="c2-text">
+          <strong data-nl="100% Vertrouwelijk" data-en="100% Confidential">100% Vertrouwelijk</strong>
+          <span data-nl="Veilige omgeving, beschermd door beroepsgeheim" data-en="Safe space, protected by professional confidentiality">Veilige omgeving, beschermd door beroepsgeheim</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── ABOUT ───────────────── -->
+<section id="about" aria-labelledby="about-heading">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <div class="section-label" data-nl="Over mij" data-en="About me">Over mij</div>
+        <h2 class="section-title" id="about-heading"
+          data-nl="Verbinding als fundament van verandering"
+          data-en="Connection as the foundation of change">
+          Verbinding als fundament van verandering
+        </h2>
+        <p class="section-intro"
+          data-nl="Na mijn opleiding klinische psychologie aan de Universiteit van Amsterdam heb ik ruim twaalf jaar ervaring opgebouwd in diverse settings, van de GGZ tot privépraktijk. Mijn kracht ligt in het creëren van echte verbinding — zodat u zich gezien en gehoord voelt."
+          data-en="After studying clinical psychology at the University of Amsterdam, I built over twelve years of experience across diverse settings, from mental healthcare to private practice. My strength lies in creating genuine connection — so you feel truly seen and heard.">
+          Na mijn opleiding klinische psychologie aan de Universiteit van Amsterdam heb ik ruim twaalf jaar ervaring opgebouwd in diverse settings, van de GGZ tot privépraktijk. Mijn kracht ligt in het creëren van echte verbinding — zodat u zich gezien en gehoord voelt.
+        </p>
+
+        <div class="about-credentials">
+          <div class="credential-item">
+            <div class="cred-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.42A12.08 12.08 0 0 1 12 21a12.08 12.08 0 0 1-6.16-10.42L12 14z"/></svg>
+            </div>
+            <div>
+              <div class="cred-title" data-nl="Universitair gediplomeerd" data-en="University qualified">Universitair gediplomeerd</div>
+              <div class="cred-sub" data-nl="MSc Klinische Psychologie, Universiteit van Amsterdam" data-en="MSc Clinical Psychology, University of Amsterdam">MSc Klinische Psychologie, Universiteit van Amsterdam</div>
+            </div>
+          </div>
+          <div class="credential-item">
+            <div class="cred-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+            </div>
+            <div>
+              <div class="cred-title" data-nl="BIG-geregistreerd psycholoog" data-en="BIG-registered psychologist">BIG-geregistreerd psycholoog</div>
+              <div class="cred-sub" data-nl="Register nr. 29065412601 · NVP lid" data-en="Register no. 29065412601 · NVP member">Register nr. 29065412601 · NVP lid</div>
+            </div>
+          </div>
+          <div class="credential-item">
+            <div class="cred-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C6.48 22 2 17.52 2 12S6.48 2 12 2s10 4.48 10 10-4.48 10-10 10z"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div>
+              <div class="cred-title" data-nl="12+ jaar klinische ervaring" data-en="12+ years clinical experience">12+ jaar klinische ervaring</div>
+              <div class="cred-sub" data-nl="GGZ, AMC, en privépraktijk Amsterdam" data-en="GGZ, AMC, and private practice Amsterdam">GGZ, AMC, en privépraktijk Amsterdam</div>
+            </div>
+          </div>
+          <div class="credential-item">
+            <div class="cred-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <div>
+              <div class="cred-title" data-nl="Gecertificeerde EMDR-therapeut" data-en="Certified EMDR therapist">Gecertificeerde EMDR-therapeut</div>
+              <div class="cred-sub" data-nl="VEN gecertificeerd · Trauma specialisatie" data-en="VEN certified · Trauma specialization">VEN gecertificeerd · Trauma specialisatie</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="position: relative;">
+        <div class="about-photo" aria-hidden="true">
+          <div class="about-photo-inner"></div>
+          <div class="about-quote">
+            <p data-nl='"Iedere mens draagt het vermogen in zich om te groeien."' data-en='"Every person carries within them the capacity to grow."'>"Iedere mens draagt het vermogen in zich om te groeien."</p>
+            <cite>— Dr. Sophie van den Berg</cite>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── SPECIALIZATIONS ───────────────── -->
+<section id="specializations" aria-labelledby="spec-heading">
+  <div class="container">
+    <div class="spec-header">
+      <div>
+        <div class="section-label" data-nl="Specialisaties" data-en="Specialties">Specialisaties</div>
+        <h2 class="section-title" id="spec-heading"
+          data-nl="Waar ik u in kan begeleiden"
+          data-en="Areas where I can support you">
+          Waar ik u in kan begeleiden
+        </h2>
+      </div>
+      <p class="section-intro" style="font-size: 0.875rem;"
+        data-nl="Elke klacht is uniek. Ik werk evidence-based en op maat — uw situatie bepaalt de aanpak."
+        data-en="Every concern is unique. I work evidence-based and tailored — your situation determines the approach.">
+        Elke klacht is uniek. Ik werk evidence-based en op maat — uw situatie bepaalt de aanpak.
+      </p>
+    </div>
+
+    <div class="spec-grid" role="list">
+      <article class="spec-card" role="listitem">
+        <div class="spec-number">01</div>
+        <div class="spec-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+        </div>
+        <h3 class="spec-title" data-nl="Angst & Paniekaanvallen" data-en="Anxiety & Panic Attacks">Angst & Paniekaanvallen</h3>
+        <p class="spec-text" data-nl="Gegeneraliseerde angst, sociale fobie, fobieën, en paniekaanvallen behandeld met bewezen technieken." data-en="Generalized anxiety, social phobia, specific phobias, and panic attacks treated with proven techniques.">Gegeneraliseerde angst, sociale fobie, fobieën, en paniekaanvallen behandeld met bewezen technieken.</p>
+        <span class="spec-tag" data-nl="CGT · Exposure · Mindfulness" data-en="CBT · Exposure · Mindfulness">CGT · Exposure · Mindfulness</span>
+      </article>
+
+      <article class="spec-card" role="listitem">
+        <div class="spec-number">02</div>
+        <div class="spec-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <h3 class="spec-title" data-nl="Burn-out & Overspanning" data-en="Burnout & Exhaustion">Burn-out & Overspanning</h3>
+        <p class="spec-text" data-nl="Herstel van energieverlies, herstel van grenzen en terugkeer naar duurzame balans in werk en privé." data-en="Recovery from energy depletion, rebuilding boundaries, and returning to sustainable work-life balance.">Herstel van energieverlies, herstel van grenzen en terugkeer naar duurzame balans in werk en privé.</p>
+        <span class="spec-tag" data-nl="ACT · Schema · Gedragsactivatie" data-en="ACT · Schema · Behavioral activation">ACT · Schema · Gedragsactivatie</span>
+      </article>
+
+      <article class="spec-card" role="listitem">
+        <div class="spec-number">03</div>
+        <div class="spec-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <h3 class="spec-title" data-nl="Depressie & Somberheid" data-en="Depression & Low Mood">Depressie & Somberheid</h3>
+        <p class="spec-text" data-nl="Van lichte somberheid tot klinische depressie — gepersonaliseerde begeleiding voor duurzaam herstel." data-en="From mild sadness to clinical depression — personalised support for lasting recovery.">Van lichte somberheid tot klinische depressie — gepersonaliseerde begeleiding voor duurzaam herstel.</p>
+        <span class="spec-tag" data-nl="CGT · IPT · Zelfcompassie" data-en="CBT · IPT · Self-compassion">CGT · IPT · Zelfcompassie</span>
+      </article>
+
+      <article class="spec-card" role="listitem">
+        <div class="spec-number">04</div>
+        <div class="spec-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3 class="spec-title" data-nl="Relatie- & Gezinsproblemen" data-en="Relationship & Family Issues">Relatie- & Gezinsproblemen</h3>
+        <p class="spec-text" data-nl="Communicatieproblemen, conflicten, verlies, rouw en gezinstherapie voor koppels en individuen." data-en="Communication issues, conflicts, loss, grief, and family therapy for couples and individuals.">Communicatieproblemen, conflicten, verlies, rouw en gezinstherapie voor koppels en individuen.</p>
+        <span class="spec-tag" data-nl="EFT · Systeemtherapie" data-en="EFT · Systemic therapy">EFT · Systeemtherapie</span>
+      </article>
+
+      <article class="spec-card" role="listitem">
+        <div class="spec-number">05</div>
+        <div class="spec-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 class="spec-title" data-nl="Trauma & PTSS" data-en="Trauma & PTSD">Trauma & PTSS</h3>
+        <p class="spec-text" data-nl="Verwerking van traumatische ervaringen met EMDR en traumagerichte CGT in een veilige omgeving." data-en="Processing traumatic experiences with EMDR and trauma-focused CBT in a safe environment.">Verwerking van traumatische ervaringen met EMDR en traumagerichte CGT in een veilige omgeving.</p>
+        <span class="spec-tag" data-nl="EMDR · TF-CGT · Stabilisatie" data-en="EMDR · TF-CBT · Stabilisation">EMDR · TF-CGT · Stabilisatie</span>
+      </article>
+
+      <article class="spec-card" role="listitem">
+        <div class="spec-number">06</div>
+        <div class="spec-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        </div>
+        <h3 class="spec-title" data-nl="Zelfvertrouwen & Identiteit" data-en="Self-esteem & Identity">Zelfvertrouwen & Identiteit</h3>
+        <p class="spec-text" data-nl="Werken aan een gezonder zelfbeeld, grenzen stellen, en een sterker gevoel van identiteit ontwikkelen." data-en="Building a healthier self-image, setting boundaries, and developing a stronger sense of identity.">Werken aan een gezonder zelfbeeld, grenzen stellen, en een sterker gevoel van identiteit ontwikkelen.</p>
+        <span class="spec-tag" data-nl="Schematherapie · ACT" data-en="Schema therapy · ACT">Schematherapie · ACT</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── APPROACH ───────────────── -->
+<section id="approach" aria-labelledby="approach-heading">
+  <div class="container">
+    <div class="section-label" data-nl="Mijn aanpak" data-en="My approach">Mijn aanpak</div>
+    <h2 class="section-title" id="approach-heading"
+      data-nl="Hoe ik werk"
+      data-en="How I work">
+      Hoe ik werk
+    </h2>
+    <p class="section-intro"
+      data-nl="Iedere behandeling begint bij u. Er is geen standaard protocol — we bouwen samen een aanpak die bij uw situatie en persoonlijkheid past."
+      data-en="Every treatment starts with you. There is no standard protocol — together we build an approach that fits your situation and personality.">
+      Iedere behandeling begint bij u. Er is geen standaard protocol — we bouwen samen een aanpak die bij uw situatie en persoonlijkheid past.
+    </p>
+
+    <div class="approach-grid">
+      <div class="approach-steps">
+        <div class="approach-step">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <div class="step-title" data-nl="Kennismakingsgesprek" data-en="Introductory session">Kennismakingsgesprek</div>
+            <p class="step-text" data-nl="Een vrijblijvend gesprek van 20 minuten om te zien of er een klik is en of ik de juiste hulp kan bieden voor uw situatie." data-en="A no-obligation 20-minute conversation to see if we connect and whether I can offer the right help for your situation.">Een vrijblijvend gesprek van 20 minuten om te zien of er een klik is en of ik de juiste hulp kan bieden voor uw situatie.</p>
+          </div>
+        </div>
+        <div class="approach-step">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <div class="step-title" data-nl="Intakegesprek & diagnostiek" data-en="Intake & assessment">Intakegesprek & diagnostiek</div>
+            <p class="step-text" data-nl="Uitgebreide intake (2–3 sessies) waarbij we uw klachten, geschiedenis en doelen helder in kaart brengen." data-en="Comprehensive intake (2–3 sessions) to clearly map your concerns, history, and goals.">Uitgebreide intake (2–3 sessies) waarbij we uw klachten, geschiedenis en doelen helder in kaart brengen.</p>
+          </div>
+        </div>
+        <div class="approach-step">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <div class="step-title" data-nl="Persoonlijk behandelplan" data-en="Personalised treatment plan">Persoonlijk behandelplan</div>
+            <p class="step-text" data-nl="Op basis van de intake stel ik samen met u een behandelplan op met haalbare doelen en passende methoden." data-en="Based on the intake, we draw up a treatment plan together with achievable goals and appropriate methods.">Op basis van de intake stel ik samen met u een behandelplan op met haalbare doelen en passende methoden.</p>
+          </div>
+        </div>
+        <div class="approach-step">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <div class="step-title" data-nl="Therapie & evaluatie" data-en="Therapy & evaluation">Therapie & evaluatie</div>
+            <p class="step-text" data-nl="We werken samen aan uw doelen. Elke zes sessies evalueren we de voortgang en stellen bij waar nodig." data-en="We work on your goals together. Every six sessions we evaluate progress and adjust where needed.">We werken samen aan uw doelen. Elke zes sessies evalueren we de voortgang en stellen bij waar nodig.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="approach-methods">
+        <div class="methods-title" data-nl="Toegepaste methoden" data-en="Applied methods">Toegepaste methoden</div>
+        <div class="method-pills" role="list">
+          <span class="method-pill" role="listitem">Cognitieve Gedragstherapie</span>
+          <span class="method-pill" role="listitem">EMDR</span>
+          <span class="method-pill" role="listitem">Acceptance & Commitment (ACT)</span>
+          <span class="method-pill" role="listitem">Schematherapie</span>
+          <span class="method-pill" role="listitem">Mindfulness-Based</span>
+          <span class="method-pill" role="listitem">Emotionally Focused Therapy</span>
+          <span class="method-pill" role="listitem">Interpersoonlijke Therapie</span>
+          <span class="method-pill" role="listitem">Psycho-educatie</span>
+        </div>
+
+        <div class="approach-cta">
+          <p data-nl='"De therapeutische relatie is het krachtigste instrument in therapie."' data-en='"The therapeutic relationship is the most powerful instrument in therapy."'>"De therapeutische relatie is het krachtigste instrument in therapie."</p>
+          <button class="btn-light" onclick="scrollToBooking()"
+            data-nl="Gratis kennismaking →" data-en="Free introductory call →">Gratis kennismaking →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── TESTIMONIALS ───────────────── -->
+<section id="testimonials" aria-labelledby="testimonials-heading">
+  <div class="container">
+    <div class="section-label" data-nl="Ervaringen" data-en="Testimonials">Ervaringen</div>
+    <h2 class="section-title" id="testimonials-heading"
+      data-nl="Wat cliënten zeggen"
+      data-en="What clients say">
+      Wat cliënten zeggen
+    </h2>
+
+    <div class="testimonials-grid" role="list">
+      <blockquote class="testimonial-card" role="listitem">
+        <div class="testimonial-stars" aria-label="5 sterren">
+          <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+          <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+          <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+          <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+          <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+        </div>
+        <p class="testimonial-text" data-nl='"Sophie heeft mij geholpen mijn burn-out te begrijpen en stap voor stap te herstellen. Haar aanpak is warm maar ook heel doelgericht. Ik voel me een ander mens."' data-en='"Sophie helped me understand my burnout and recover step by step. Her approach is warm yet very goal-directed. I feel like a different person."'>"Sophie heeft mij geholpen mijn burn-out te begrijpen en stap voor stap te herstellen. Haar aanpak is warm maar ook heel doelgericht. Ik voel me een ander mens."</p>
+        <footer class="testimonial-author">
+          <div class="author-avatar" aria-hidden="true">MK</div>
+          <div>
+            <div class="author-name">M. K.</div>
+            <div class="author-detail" data-nl="Cliënt, 2023 · Burn-out" data-en="Client, 2023 · Burnout">Cliënt, 2023 · Burn-out</div>
+          </div>
+        </footer>
+      </blockquote>
+
+      <blockquote class="testimonial-card" role="listitem">
+        <div class="testimonial-stars" aria-label="5 sterren">
+          <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+          <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+          <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+          <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+          <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+        </div>
+        <p class="testimonial-text" data-nl='"Na jaren met angst te hebben geleefd durfde ik eindelijk om hulp te vragen. De EMDR-sessies waren een doorbraak. Ik kan het iedereen aanraden."' data-en='"After years of living with anxiety, I finally dared to ask for help. The EMDR sessions were a breakthrough. I can recommend it to anyone."'>"Na jaren met angst te hebben geleefd durfde ik eindelijk om hulp te vragen. De EMDR-sessies waren een doorbraak. Ik kan het iedereen aanraden."</p>
+        <footer class="testimonial-author">
+          <div class="author-avatar" aria-hidden="true">TN</div>
+          <div>
+            <div class="author-name">T. N.</div>
+            <div class="author-detail" data-nl="Cliënt, 2024 · Angst & PTSS" data-en="Client, 2024 · Anxiety & PTSD">Cliënt, 2024 · Angst & PTSS</div>
+          </div>
+        </footer>
+      </blockquote>
+
+      <blockquote class="testimonial-card" role="listitem">
+        <div class="testimonial-stars" aria-label="5 sterren">
+          <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+          <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+          <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+          <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+          <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+        </div>
+        <p class="testimonial-text" data-nl='"Ik heb met Sophie gewerkt aan mijn relatieproblemen. Ze creëert een sfeer van veiligheid waardoor je echt open kunt zijn. De resultaten spreken voor zich."' data-en='"I worked with Sophie on my relationship issues. She creates an atmosphere of safety that allows you to be truly open. The results speak for themselves."'>"Ik heb met Sophie gewerkt aan mijn relatieproblemen. Ze creëert een sfeer van veiligheid waardoor je echt open kunt zijn. De resultaten spreken voor zich."</p>
+        <footer class="testimonial-author">
+          <div class="author-avatar" aria-hidden="true">RL</div>
+          <div>
+            <div class="author-name">R. L.</div>
+            <div class="author-detail" data-nl="Cliënt, 2024 · Relatietherapie" data-en="Client, 2024 · Relationship therapy">Cliënt, 2024 · Relatietherapie</div>
+          </div>
+        </footer>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── APPOINTMENT ───────────────── -->
+<section id="appointment" aria-labelledby="appointment-heading">
+  <div class="container">
+    <div class="section-label" data-nl="Afspraak maken" data-en="Book an appointment">Afspraak maken</div>
+    <h2 class="section-title" id="appointment-heading"
+      data-nl="Plan uw eerste gesprek"
+      data-en="Schedule your first session">
+      Plan uw eerste gesprek
+    </h2>
+
+    <div class="booking-wrapper">
+      <!-- Left info panel -->
+      <div class="booking-info">
+        <p style="font-size: 0.9rem; color: var(--muted); margin-bottom: 2rem; line-height: 1.8;"
+          data-nl="Het eerste kennismakingsgesprek duurt 20 minuten en is gratis. Zo kunnen we samen bepalen of ik de juiste therapeut voor u ben."
+          data-en="The first introductory session lasts 20 minutes and is free. Together we can determine whether I'm the right therapist for you.">
+          Het eerste kennismakingsgesprek duurt 20 minuten en is gratis. Zo kunnen we samen bepalen of ik de juiste therapeut voor u ben.
+        </p>
+
+        <div class="booking-info-item">
+          <div class="bi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div>
+            <div class="bi-title" data-nl="Sessieduur" data-en="Session duration">Sessieduur</div>
+            <div class="bi-text" data-nl="Kennismakingsgesprek: 20 min (gratis)<br>Reguliere sessies: 50 minuten" data-en="Introductory: 20 min (free)<br>Regular sessions: 50 minutes">Kennismakingsgesprek: 20 min (gratis)<br>Reguliere sessies: 50 minuten</div>
+          </div>
+        </div>
+
+        <div class="booking-info-item">
+          <div class="bi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M16 3v4M8 3v4M2 11h20"/></svg>
+          </div>
+          <div>
+            <div class="bi-title" data-nl="Beschikbaarheid" data-en="Availability">Beschikbaarheid</div>
+            <div class="bi-text" data-nl="Maandag t/m vrijdag 9:00–17:00<br>Online & op locatie (Amsterdam)" data-en="Monday to Friday 9:00–17:00<br>Online & on-site (Amsterdam)">Maandag t/m vrijdag 9:00–17:00<br>Online & op locatie (Amsterdam)</div>
+          </div>
+        </div>
+
+        <div class="booking-info-item">
+          <div class="bi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C6.48 22 2 17.52 2 12S6.48 2 12 2s10 4.48 10 10-4.48 10-10 10z"/><path d="M9 12h6M12 9v6"/></svg>
+          </div>
+          <div>
+            <div class="bi-title" data-nl="Vergoeding" data-en="Reimbursement">Vergoeding</div>
+            <div class="bi-text" data-nl="Vergoed vanuit aanvullende verzekering<br>Zelfinbetalers welkom · Tarieven op aanvraag" data-en="Reimbursed via supplementary insurance<br>Self-pay clients welcome · Rates on request">Vergoed vanuit aanvullende verzekering<br>Zelfinbetalers welkom · Tarieven op aanvraag</div>
+          </div>
+        </div>
+
+        <div class="booking-info-item">
+          <div class="bi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div>
+            <div class="bi-title" data-nl="Taal" data-en="Language">Taal</div>
+            <div class="bi-text" data-nl="Sessies in Nederlands en Engels mogelijk" data-en="Sessions available in Dutch and English">Sessies in Nederlands en Engels mogelijk</div>
+          </div>
+        </div>
+
+        <div class="insurance-logos">
+          <div class="insurance-label" data-nl="Geaccepteerde verzekeraars" data-en="Accepted insurers">Geaccepteerde verzekeraars</div>
+          <div class="insurance-list">
+            <span class="insurance-pill">Zilveren Kruis</span>
+            <span class="insurance-pill">CZ</span>
+            <span class="insurance-pill">VGZ</span>
+            <span class="insurance-pill">Menzis</span>
+            <span class="insurance-pill">DSW</span>
+            <span class="insurance-pill">ONVZ</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Booking Form -->
+      <div class="booking-form" id="bookingForm" role="form" aria-label="Afspraak boeken">
+
+        <!-- Step indicators -->
+        <div class="form-steps" role="tablist" aria-label="Stappen">
+          <div class="form-step-item active" id="stepInd1" role="tab">
+            <div class="step-dot">1</div>
+            <span data-nl="Gegevens" data-en="Details">Gegevens</span>
+          </div>
+          <div class="step-connector" id="conn1"></div>
+          <div class="form-step-item" id="stepInd2" role="tab">
+            <div class="step-dot">2</div>
+            <span data-nl="Datum & tijd" data-en="Date & time">Datum & tijd</span>
+          </div>
+          <div class="step-connector" id="conn2"></div>
+          <div class="form-step-item" id="stepInd3" role="tab">
+            <div class="step-dot">3</div>
+            <span data-nl="Bevestiging" data-en="Confirm">Bevestiging</span>
+          </div>
+        </div>
+
+        <!-- Step 1: Personal details -->
+        <div class="form-panel active" id="panel1">
+          <h3 class="form-title" data-nl="Uw gegevens" data-en="Your details">Uw gegevens</h3>
+          <div class="form-row-2">
+            <div class="form-row">
+              <label class="form-label" for="firstName"><span data-nl="Voornaam" data-en="First name">Voornaam</span> <span class="req">*</span></label>
+              <input class="form-input" type="text" id="firstName" name="firstName" autocomplete="given-name" required />
+              <div class="form-error-msg" id="err-firstName" data-nl="Vul uw voornaam in" data-en="Enter your first name">Vul uw voornaam in</div>
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="lastName"><span data-nl="Achternaam" data-en="Last name">Achternaam</span> <span class="req">*</span></label>
+              <input class="form-input" type="text" id="lastName" name="lastName" autocomplete="family-name" required />
+              <div class="form-error-msg" id="err-lastName" data-nl="Vul uw achternaam in" data-en="Enter your last name">Vul uw achternaam in</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="email"><span data-nl="E-mailadres" data-en="Email address">E-mailadres</span> <span class="req">*</span></label>
+            <input class="form-input" type="email" id="email" name="email" autocomplete="email" required />
+            <div class="form-error-msg" id="err-email" data-nl="Vul een geldig e-mailadres in" data-en="Enter a valid email address">Vul een geldig e-mailadres in</div>
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="phone"><span data-nl="Telefoonnummer" data-en="Phone number">Telefoonnummer</span></label>
+            <input class="form-input" type="tel" id="phone" name="phone" autocomplete="tel" placeholder="+31 6 12 34 56 78" />
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="sessionType"><span data-nl="Type gesprek" data-en="Session type">Type gesprek</span> <span class="req">*</span></label>
+            <select class="form-select" id="sessionType" required>
+              <option value="" data-nl="Kies een optie..." data-en="Choose an option...">Kies een optie...</option>
+              <option value="intro" data-nl="Kennismakingsgesprek (20 min, gratis)" data-en="Introductory session (20 min, free)">Kennismakingsgesprek (20 min, gratis)</option>
+              <option value="individual" data-nl="Individuele therapie (50 min)" data-en="Individual therapy (50 min)">Individuele therapie (50 min)</option>
+              <option value="emdr" data-nl="EMDR-sessie (50 min)" data-en="EMDR session (50 min)">EMDR-sessie (50 min)</option>
+              <option value="couple" data-nl="Relatietherapie (75 min)" data-en="Relationship therapy (75 min)">Relatietherapie (75 min)</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="format"><span data-nl="Sessieformat" data-en="Session format">Sessieformat</span></label>
+            <select class="form-select" id="format">
+              <option value="onsite" data-nl="Op locatie – Amsterdam" data-en="On-site – Amsterdam">Op locatie – Amsterdam</option>
+              <option value="online" data-nl="Online (videobellen)" data-en="Online (video call)">Online (videobellen)</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="concern"><span data-nl="Waarmee kan ik u helpen? (optioneel)" data-en="What can I help you with? (optional)">Waarmee kan ik u helpen? (optioneel)</span></label>
+            <textarea class="form-textarea" id="concern" rows="3" placeholder="…"></textarea>
+            <div class="form-hint" data-nl="Uw informatie is strikt vertrouwelijk." data-en="Your information is strictly confidential.">Uw informatie is strikt vertrouwelijk.</div>
+          </div>
+          <div class="form-actions">
+            <span></span>
+            <button class="btn-submit" onclick="goToStep(2)" data-nl="Volgende stap →" data-en="Next step →">Volgende stap →</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Date & Time -->
+        <div class="form-panel" id="panel2">
+          <h3 class="form-title" data-nl="Kies datum & tijd" data-en="Choose date & time">Kies datum & tijd</h3>
+
+          <div class="cal-nav">
+            <button class="cal-nav-btn" onclick="prevMonth()" aria-label="Vorige maand">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <span class="cal-month" id="calMonthLabel"></span>
+            <button class="cal-nav-btn" onclick="nextMonth()" aria-label="Volgende maand">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+
+          <div class="cal-weekdays" role="row">
+            <div class="cal-weekday" data-nl="Ma" data-en="Mo">Ma</div>
+            <div class="cal-weekday" data-nl="Di" data-en="Tu">Di</div>
+            <div class="cal-weekday" data-nl="Wo" data-en="We">Wo</div>
+            <div class="cal-weekday" data-nl="Do" data-en="Th">Do</div>
+            <div class="cal-weekday" data-nl="Vr" data-en="Fr">Vr</div>
+            <div class="cal-weekday" data-nl="Za" data-en="Sa">Za</div>
+            <div class="cal-weekday" data-nl="Zo" data-en="Su">Zo</div>
+          </div>
+          <div class="cal-days" id="calGrid" role="grid" aria-label="Kalender"></div>
+
+          <div id="timeSection" style="margin-top: 1.5rem; display: none;">
+            <div class="form-label" id="timeSectionLabel" data-nl="Beschikbare tijden" data-en="Available times">Beschikbare tijden</div>
+            <div class="time-slots" id="timeSlots" role="group" aria-label="Tijdsloten"></div>
+            <div class="slot-legend">
+              <div class="slot-legend-item"><div class="slot-dot available"></div><span data-nl="Beschikbaar" data-en="Available">Beschikbaar</span></div>
+              <div class="slot-legend-item"><div class="slot-dot taken"></div><span data-nl="Bezet" data-en="Taken">Bezet</span></div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-back" onclick="goToStep(1)" data-nl="← Terug" data-en="← Back">← Terug</button>
+            <button class="btn-submit" id="btnStep2Next" onclick="goToStep(3)" disabled data-nl="Bevestigen →" data-en="Confirm →">Bevestigen →</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Confirmation -->
+        <div class="form-panel" id="panel3">
+          <h3 class="form-title" data-nl="Bevestig uw afspraak" data-en="Confirm your appointment">Bevestig uw afspraak</h3>
+
+          <div id="summaryBox" style="background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div>
+                <div class="form-label" data-nl="Naam" data-en="Name">Naam</div>
+                <div id="summaryName" style="font-size: 0.9rem; color: var(--ink); font-weight: 500;"></div>
+              </div>
+              <div>
+                <div class="form-label" data-nl="E-mail" data-en="Email">E-mail</div>
+                <div id="summaryEmail" style="font-size: 0.9rem; color: var(--ink);"></div>
+              </div>
+              <div>
+                <div class="form-label" data-nl="Type sessie" data-en="Session type">Type sessie</div>
+                <div id="summaryType" style="font-size: 0.9rem; color: var(--ink);"></div>
+              </div>
+              <div>
+                <div class="form-label" data-nl="Format" data-en="Format">Format</div>
+                <div id="summaryFormat" style="font-size: 0.9rem; color: var(--ink);"></div>
+              </div>
+              <div>
+                <div class="form-label" data-nl="Datum" data-en="Date">Datum</div>
+                <div id="summaryDate" style="font-size: 0.9rem; color: var(--ink); font-weight: 500;"></div>
+              </div>
+              <div>
+                <div class="form-label" data-nl="Tijd" data-en="Time">Tijd</div>
+                <div id="summaryTime" style="font-size: 0.9rem; color: var(--ink); font-weight: 500;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-bottom: 1rem;">
+            <div class="checkbox-group">
+              <input class="form-checkbox" type="checkbox" id="privacyCheck" />
+              <label class="checkbox-label" for="privacyCheck">
+                <span data-nl='Ik ga akkoord met de <a href="#">privacyverklaring</a> en begrijp dat mijn gegevens vertrouwelijk worden behandeld.' data-en='I agree with the <a href="#">privacy policy</a> and understand that my information will be treated confidentially.'>Ik ga akkoord met de <a href="#">privacyverklaring</a> en begrijp dat mijn gegevens vertrouwelijk worden behandeld.</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="checkbox-group">
+              <input class="form-checkbox" type="checkbox" id="cancelCheck" />
+              <label class="checkbox-label" for="cancelCheck">
+                <span data-nl="Ik begrijp dat ik de afspraak minimaal 24 uur van tevoren dien af te zeggen." data-en="I understand I must cancel my appointment at least 24 hours in advance.">Ik begrijp dat ik de afspraak minimaal 24 uur van tevoren dien af te zeggen.</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-back" onclick="goToStep(2)" data-nl="← Wijzigen" data-en="← Edit">← Wijzigen</button>
+            <button class="btn-submit" id="btnFinalSubmit" onclick="submitBooking()"
+              data-nl="Afspraak bevestigen" data-en="Confirm appointment">Afspraak bevestigen</button>
+          </div>
+        </div>
+
+        <!-- Success -->
+        <div class="form-panel" id="panelSuccess">
+          <div class="booking-success">
+            <div class="success-circle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <h3 class="success-title" data-nl="Afspraak aangevraagd!" data-en="Appointment requested!">Afspraak aangevraagd!</h3>
+            <p class="success-text" data-nl="Bedankt! U ontvangt binnen 24 uur een bevestiging per e-mail. Heeft u vragen? Bel ons via +31 20 123 4567." data-en="Thank you! You will receive a confirmation by email within 24 hours. Questions? Call us at +31 20 123 4567.">
+              Bedankt! U ontvangt binnen 24 uur een bevestiging per e-mail. Heeft u vragen? Bel ons via +31 20 123 4567.
+            </p>
+            <button class="btn-primary" style="margin-top: 2rem;" onclick="resetForm()" data-nl="Nog een afspraak" data-en="Book another">Nog een afspraak</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── FAQ ───────────────── -->
+<section id="faq" aria-labelledby="faq-heading">
+  <div class="container">
+    <div class="section-label" data-nl="Veelgestelde vragen" data-en="Frequently asked questions">Veelgestelde vragen</div>
+    <h2 class="section-title" id="faq-heading"
+      data-nl="Alles wat u wilt weten"
+      data-en="Everything you want to know">
+      Alles wat u wilt weten
+    </h2>
+
+    <div class="faq-grid" role="list">
+      <div class="faq-item" role="listitem">
+        <div class="faq-question" onclick="toggleFaq(this)" role="button" tabindex="0" aria-expanded="false">
+          <span class="faq-question-text" data-nl="Heb ik een verwijzing nodig?" data-en="Do I need a referral?">Heb ik een verwijzing nodig?</span>
+          <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
+        <div class="faq-answer" role="region">
+          <div class="faq-answer-inner" data-nl="Voor vergoeding vanuit de basisverzekering is een verwijsbrief van uw huisarts vereist. Zonder verwijzing kunt u ook terecht, maar dan geldt het zelfinbetalerstarief." data-en="For reimbursement from basic insurance, a referral letter from your GP is required. Without a referral you are also welcome, but the self-pay rate applies.">Voor vergoeding vanuit de basisverzekering is een verwijsbrief van uw huisarts vereist. Zonder verwijzing kunt u ook terecht, maar dan geldt het zelfinbetalerstarief.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <div class="faq-question" onclick="toggleFaq(this)" role="button" tabindex="0" aria-expanded="false">
+          <span class="faq-question-text" data-nl="Hoe lang duurt een behandeltraject?" data-en="How long does a treatment course last?">Hoe lang duurt een behandeltraject?</span>
+          <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
+        <div class="faq-answer" role="region">
+          <div class="faq-answer-inner" data-nl="De duur varieert per situatie. Kortdurende trajecten duren 8–12 sessies, langdurige behandelingen kunnen 6–18 maanden in beslag nemen. We evalueren dit regelmatig samen." data-en="Duration varies per situation. Short-term trajectories last 8–12 sessions; longer treatments can take 6–18 months. We evaluate this regularly together.">De duur varieert per situatie. Kortdurende trajecten duren 8–12 sessies, langdurige behandelingen kunnen 6–18 maanden in beslag nemen. We evalueren dit regelmatig samen.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <div class="faq-question" onclick="toggleFaq(this)" role="button" tabindex="0" aria-expanded="false">
+          <span class="faq-question-text" data-nl="Worden sessies vergoed?" data-en="Are sessions reimbursed?">Worden sessies vergoed?</span>
+          <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
+        <div class="faq-answer" role="region">
+          <div class="faq-answer-inner" data-nl="Ja, bij de meeste aanvullende verzekeringen worden sessies (deels) vergoed. Ik werk niet rechtstreeks vanuit de basisverzekering, maar declareren doet u eenvoudig bij uw verzekeraar." data-en="Yes, most supplementary insurance plans cover sessions (partially). I do not work directly through basic insurance, but you can easily claim reimbursement from your insurer.">Ja, bij de meeste aanvullende verzekeringen worden sessies (deels) vergoed. Ik werk niet rechtstreeks vanuit de basisverzekering, maar declareren doet u eenvoudig bij uw verzekeraar.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <div class="faq-question" onclick="toggleFaq(this)" role="button" tabindex="0" aria-expanded="false">
+          <span class="faq-question-text" data-nl="Is het mogelijk om online te therapieren?" data-en="Is online therapy possible?">Is het mogelijk om online te therapieren?</span>
+          <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
+        <div class="faq-answer" role="region">
+          <div class="faq-answer-inner" data-nl="Ja, ik bied zowel online als face-to-face sessies aan. Online therapie via een beveiligde videoverbinding is even effectief als op locatie en biedt meer flexibiliteit." data-en="Yes, I offer both online and face-to-face sessions. Online therapy via a secure video connection is equally effective and offers more flexibility.">Ja, ik bied zowel online als face-to-face sessies aan. Online therapie via een beveiligde videoverbinding is even effectief als op locatie en biedt meer flexibiliteit.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <div class="faq-question" onclick="toggleFaq(this)" role="button" tabindex="0" aria-expanded="false">
+          <span class="faq-question-text" data-nl="Is mijn privacy gewaarborgd?" data-en="Is my privacy guaranteed?">Is mijn privacy gewaarborgd?</span>
+          <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
+        <div class="faq-answer" role="region">
+          <div class="faq-answer-inner" data-nl="Absoluut. Als BIG-geregistreerd psycholoog ben ik gebonden aan het beroepsgeheim. Alles wat u deelt blijft strikt vertrouwelijk, tenzij u expliciet toestemming geeft of er sprake is van een verplichting van de wet." data-en="Absolutely. As a BIG-registered psychologist I am bound by professional confidentiality. Everything you share remains strictly confidential, unless you explicitly give permission or a legal obligation applies.">Absoluut. Als BIG-geregistreerd psycholoog ben ik gebonden aan het beroepsgeheim. Alles wat u deelt blijft strikt vertrouwelijk, tenzij u expliciet toestemming geeft of er sprake is van een verplichting van de wet.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <div class="faq-question" onclick="toggleFaq(this)" role="button" tabindex="0" aria-expanded="false">
+          <span class="faq-question-text" data-nl="Kan ik ook terecht als ik niet weet wat er is?" data-en="Can I come even if I don't know what's wrong?">Kan ik ook terecht als ik niet weet wat er is?</span>
+          <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
+        <div class="faq-answer" role="region">
+          <div class="faq-answer-inner" data-nl="Zeker. U hoeft geen duidelijke diagnose of klacht te hebben. 'Ik voel me niet lekker in mijn vel' is een volkomen geldige reden om hulp te zoeken. We onderzoeken samen wat er speelt." data-en="Absolutely. You don't need a clear diagnosis or complaint. 'I don't feel comfortable in my own skin' is a perfectly valid reason to seek help. We explore together what's going on.">Zeker. U hoeft geen duidelijke diagnose of klacht te hebben. 'Ik voel me niet lekker in mijn vel' is een volkomen geldige reden om hulp te zoeken. We onderzoeken samen wat er speelt.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── CONTACT ───────────────── -->
+<section id="contact" aria-labelledby="contact-heading">
+  <div class="container">
+    <div class="section-label" data-nl="Contact" data-en="Contact">Contact</div>
+    <h2 class="section-title" id="contact-heading"
+      data-nl="Neem gerust contact op"
+      data-en="Feel free to get in touch">
+      Neem gerust contact op
+    </h2>
+
+    <div class="contact-grid">
+      <div class="contact-map" aria-label="Locatiekaart Amsterdam" role="img">
+        <div class="map-grid-lines"></div>
+        <div class="map-dot"></div>
+        <div class="map-placeholder" style="position: relative; z-index: 1;">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <p>Herengracht 182<br>1016 BS Amsterdam</p>
+        </div>
+      </div>
+
+      <div class="contact-details">
+        <address style="font-style: normal;">
+          <div class="contact-item">
+            <div class="contact-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <div class="contact-label" data-nl="Adres" data-en="Address">Adres</div>
+              <div class="contact-value">Herengracht 182<br>1016 BS Amsterdam</div>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91A16 16 0 0 0 15 16.87l.27-.36a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div>
+              <div class="contact-label" data-nl="Telefoon" data-en="Phone">Telefoon</div>
+              <div class="contact-value"><a href="tel:+31201234567">+31 20 123 4567</a></div>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <div class="contact-label" data-nl="E-mail" data-en="Email">E-mail</div>
+              <div class="contact-value"><a href="mailto:info@sophievandenberg.nl">info@sophievandenberg.nl</a></div>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M2 11h20M11 3v18"/></svg>
+            </div>
+            <div>
+              <div class="contact-label" data-nl="Openingstijden" data-en="Opening hours">Openingstijden</div>
+              <div class="contact-value" data-nl="Maandag – vrijdag: 9:00 – 17:00<br>Weekend: Gesloten" data-en="Monday – Friday: 9:00 – 17:00<br>Weekend: Closed">Maandag – vrijdag: 9:00 – 17:00<br>Weekend: Gesloten</div>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+            </div>
+            <div>
+              <div class="contact-label" data-nl="BIG-registratie" data-en="BIG registration">BIG-registratie</div>
+              <div class="contact-value">29065412601</div>
+            </div>
+          </div>
+        </address>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── FOOTER ───────────────── -->
+<footer role="contentinfo">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">Dr. Sophie van den Berg · Psycholoog</div>
+      <nav class="footer-links" aria-label="Footer navigatie">
+        <a href="#" data-nl="Privacybeleid" data-en="Privacy policy">Privacybeleid</a>
+        <a href="#" data-nl="Klachtenregeling" data-en="Complaints">Klachtenregeling</a>
+        <a href="#" data-nl="Algemene voorwaarden" data-en="Terms">Algemene voorwaarden</a>
+        <a href="#" data-nl="Sitemap" data-en="Sitemap">Sitemap</a>
+      </nav>
+      <div class="footer-copy">© 2025 Dr. Sophie van den Berg. <span data-nl="Alle rechten voorbehouden." data-en="All rights reserved.">Alle rechten voorbehouden.</span></div>
+    </div>
+    <div class="big-name" aria-hidden="true">van den Berg</div>
+  </div>
+</footer>
+
+<script>
+// ─── Language System ───────────────────────────────────────────────────────
+let currentLang = 'nl';
+
+function setLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  document.getElementById('btnNl').classList.toggle('active', lang === 'nl');
+  document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+
+  document.querySelectorAll('[data-nl]').forEach(el => {
+    const txt = el.getAttribute('data-' + lang);
+    if (!txt) return;
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+      el.placeholder = txt;
+    } else if (el.tagName === 'OPTION') {
+      el.textContent = txt;
+    } else {
+      el.innerHTML = txt;
+    }
+  });
+
+  // Update calendar weekday labels
+  renderCalendar();
+
+  // Update meta
+  const metaDesc = lang === 'nl'
+    ? 'Psycholoog en psychotherapeut in Amsterdam. Specialisatie in angst, burn-out, depressie. Plan een afspraak.'
+    : 'Psychologist and psychotherapist in Amsterdam. Specialising in anxiety, burnout, depression. Book an appointment.';
+  document.querySelector('meta[name="description"]').content = metaDesc;
+}
+
+// ─── Navbar scroll ─────────────────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// ─── Mobile Nav ────────────────────────────────────────────────────────────
+function openMobileNav() { document.getElementById('mobileNav').classList.add('open'); }
+function closeMobileNav() { document.getElementById('mobileNav').classList.remove('open'); }
+
+// ─── Scroll to booking ─────────────────────────────────────────────────────
+function scrollToBooking() {
+  document.getElementById('appointment').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ─── FAQ ───────────────────────────────────────────────────────────────────
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const answer = item.querySelector('.faq-answer');
+  const isOpen = item.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.faq-item.open').forEach(i => {
+    i.classList.remove('open');
+    i.querySelector('.faq-answer').style.maxHeight = '0';
+    i.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+  });
+  if (!isOpen) {
+    item.classList.add('open');
+    answer.style.maxHeight = answer.scrollHeight + 'px';
+    btn.setAttribute('aria-expanded', 'true');
+  }
+}
+
+// ─── CALENDAR ──────────────────────────────────────────────────────────────
+let calYear, calMonth, selectedDate = null, selectedTime = null;
+
+const takenSlots = {
+  // format: 'YYYY-MM-DD': ['09:00','11:00']
+};
+
+// Generate some taken slots for realism
+(function() {
+  const today = new Date();
+  for (let i = 0; i < 15; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + Math.floor(Math.random() * 30));
+    if (d.getDay() !== 0 && d.getDay() !== 6) {
+      const key = d.toISOString().slice(0, 10);
+      if (!takenSlots[key]) takenSlots[key] = [];
+      const hrs = ['09:00','10:00','11:00','13:00','14:00','15:00','16:00'];
+      const taken = hrs.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 3) + 1);
+      takenSlots[key] = taken;
+    }
+  }
+})();
+
+function initCalendar() {
+  const now = new Date();
+  calYear = now.getFullYear();
+  calMonth = now.getMonth();
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const months_nl = ['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+  const months_en = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const months = currentLang === 'nl' ? months_nl : months_en;
+
+  document.getElementById('calMonthLabel').textContent = months[calMonth] + ' ' + calYear;
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  const firstDay = new Date(calYear, calMonth, 1);
+  const lastDay = new Date(calYear, calMonth + 1, 0);
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // Start from Monday
+  let startDow = firstDay.getDay(); // 0=Sun
+  startDow = startDow === 0 ? 6 : startDow - 1;
+
+  // Previous month filler
+  const prevLastDay = new Date(calYear, calMonth, 0).getDate();
+  for (let i = startDow - 1; i >= 0; i--) {
+    const d = document.createElement('div');
+    d.className = 'cal-day other-month';
+    d.textContent = prevLastDay - i;
+    grid.appendChild(d);
+  }
+
+  // Current month days
+  for (let day = 1; day <= lastDay.getDate(); day++) {
+    const date = new Date(calYear, calMonth, day);
+    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+    const isPast = date < today;
+    const dateStr = date.toISOString().slice(0, 10);
+    const isSelected = selectedDate === dateStr;
+    const isToday = date.getTime() === today.getTime();
+
+    const d = document.createElement('div');
+    d.className = 'cal-day' +
+      (isWeekend ? ' weekend' : '') +
+      (isPast ? ' disabled' : '') +
+      (isSelected ? ' selected' : '') +
+      (isToday ? ' today' : '');
+    d.textContent = day;
+    d.setAttribute('aria-label', dateStr);
+    d.setAttribute('role', 'gridcell');
+
+    if (!isWeekend && !isPast) {
+      d.style.cursor = 'pointer';
+      d.onclick = () => selectDate(dateStr);
+    }
+    grid.appendChild(d);
+  }
+
+  // Next month filler
+  const totalCells = startDow + lastDay.getDate();
+  const remainder = 7 - (totalCells % 7 === 0 ? 7 : totalCells % 7);
+  for (let i = 1; i <= remainder && remainder < 7; i++) {
+    const d = document.createElement('div');
+    d.className = 'cal-day other-month';
+    d.textContent = i;
+    grid.appendChild(d);
+  }
+}
+
+function prevMonth() {
+  calMonth--;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+function nextMonth() {
+  calMonth++;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCalendar();
+}
+
+function selectDate(dateStr) {
+  selectedDate = dateStr;
+  selectedTime = null;
+  document.getElementById('btnStep2Next').disabled = true;
+  renderCalendar();
+  renderTimeSlots(dateStr);
+}
+
+function renderTimeSlots(dateStr) {
+  const section = document.getElementById('timeSection');
+  section.style.display = 'block';
+
+  const allSlots = ['09:00','09:30','10:00','10:30','11:00','11:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30'];
+  const taken = takenSlots[dateStr] || [];
+
+  const container = document.getElementById('timeSlots');
+  container.innerHTML = '';
+
+  allSlots.forEach(t => {
+    const isTaken = taken.includes(t);
+    const isSelected = selectedTime === t;
+    const btn = document.createElement('div');
+    btn.className = 'time-slot' + (isTaken ? ' taken' : '') + (isSelected ? ' selected' : '');
+    btn.textContent = t;
+    btn.setAttribute('role', 'button');
+    btn.setAttribute('aria-label', t + (isTaken ? ' bezet' : ' beschikbaar'));
+    if (!isTaken) {
+      btn.onclick = () => {
+        selectedTime = t;
+        document.getElementById('btnStep2Next').disabled = false;
+        renderTimeSlots(dateStr);
+      };
+    }
+    container.appendChild(btn);
+  });
+}
+
+// ─── BOOKING FORM ──────────────────────────────────────────────────────────
+let currentStep = 1;
+
+function goToStep(step) {
+  if (step === 2 && !validateStep1()) return;
+  if (step === 3) {
+    if (!selectedDate || !selectedTime) {
+      alert(currentLang === 'nl' ? 'Kies een datum en tijdstip.' : 'Please choose a date and time.');
+      return;
+    }
+    fillSummary();
+  }
+
+  // Hide all panels
+  document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel' + step).classList.add('active');
+  currentStep = step;
+
+  // Update step indicators
+  for (let i = 1; i <= 3; i++) {
+    const ind = document.getElementById('stepInd' + i);
+    ind.classList.remove('active', 'done');
+    if (i < step) ind.classList.add('done');
+    else if (i === step) ind.classList.add('active');
+
+    // Update step dot text
+    const dot = ind.querySelector('.step-dot');
+    if (i < step) dot.innerHTML = '✓';
+    else dot.textContent = i;
+  }
+
+  // Connectors
+  for (let i = 1; i <= 2; i++) {
+    const conn = document.getElementById('conn' + i);
+    if (conn) conn.classList.toggle('done', i < step);
+  }
+}
+
+function validateStep1() {
+  let valid = true;
+  const fields = [
+    { id: 'firstName', errId: 'err-firstName' },
+    { id: 'lastName', errId: 'err-lastName' },
+    { id: 'email', errId: 'err-email' },
+  ];
+  fields.forEach(f => {
+    const input = document.getElementById(f.id);
+    const err = document.getElementById(f.errId);
+    const isEmpty = !input.value.trim();
+    const isInvalidEmail = f.id === 'email' && input.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+    if (isEmpty || isInvalidEmail) {
+      input.classList.add('error');
+      err.style.display = 'block';
+      valid = false;
+    } else {
+      input.classList.remove('error');
+      err.style.display = 'none';
+    }
+  });
+  const type = document.getElementById('sessionType');
+  if (!type.value) {
+    type.style.borderColor = 'var(--error)';
+    valid = false;
+  } else {
+    type.style.borderColor = '';
+  }
+  return valid;
+}
+
+function fillSummary() {
+  const firstName = document.getElementById('firstName').value;
+  const lastName = document.getElementById('lastName').value;
+  const email = document.getElementById('email').value;
+  const sessionType = document.getElementById('sessionType');
+  const format = document.getElementById('format');
+  const selOpt = sessionType.options[sessionType.selectedIndex];
+  const selFmt = format.options[format.selectedIndex];
+
+  document.getElementById('summaryName').textContent = firstName + ' ' + lastName;
+  document.getElementById('summaryEmail').textContent = email;
+  document.getElementById('summaryType').textContent = selOpt ? selOpt.text : '';
+  document.getElementById('summaryFormat').textContent = selFmt ? selFmt.text : '';
+
+  // Format date
+  const d = new Date(selectedDate + 'T12:00:00');
+  const dateOpts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+  const locale = currentLang === 'nl' ? 'nl-NL' : 'en-GB';
+  document.getElementById('summaryDate').textContent = d.toLocaleDateString(locale, dateOpts);
+  document.getElementById('summaryTime').textContent = selectedTime + ' uur';
+}
+
+function submitBooking() {
+  const privacy = document.getElementById('privacyCheck').checked;
+  const cancel = document.getElementById('cancelCheck').checked;
+  if (!privacy || !cancel) {
+    alert(currentLang === 'nl' ? 'Bevestig beide verklaringen om verder te gaan.' : 'Please confirm both statements to proceed.');
+    return;
+  }
+  const btn = document.getElementById('btnFinalSubmit');
+  btn.disabled = true;
+  btn.textContent = currentLang === 'nl' ? 'Bezig...' : 'Processing...';
+
+  setTimeout(() => {
+    document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panelSuccess').classList.add('active');
+  }, 1200);
+}
+
+function resetForm() {
+  selectedDate = null;
+  selectedTime = null;
+  document.getElementById('firstName').value = '';
+  document.getElementById('lastName').value = '';
+  document.getElementById('email').value = '';
+  document.getElementById('phone').value = '';
+  document.getElementById('sessionType').value = '';
+  document.getElementById('concern').value = '';
+  document.getElementById('privacyCheck').checked = false;
+  document.getElementById('cancelCheck').checked = false;
+  document.getElementById('btnFinalSubmit').disabled = false;
+  goToStep(1);
+  // Reset step indicators
+  for (let i = 1; i <= 3; i++) {
+    const ind = document.getElementById('stepInd' + i);
+    ind.classList.remove('active', 'done');
+    ind.querySelector('.step-dot').textContent = i;
+    if (i === 1) ind.classList.add('active');
+  }
+  document.getElementById('conn1').classList.remove('done');
+  document.getElementById('conn2').classList.remove('done');
+}
+
+// ─── Keyboard accessibility for FAQ ────────────────────────────────────────
+document.querySelectorAll('.faq-question').forEach(q => {
+  q.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleFaq(q); }
+  });
+});
+
+// ─── Init ──────────────────────────────────────────────────────────────────
+initCalendar();
+// Check URL param for lang
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('lang') === 'en') setLang('en');
+</script>
+</body>
+</html>

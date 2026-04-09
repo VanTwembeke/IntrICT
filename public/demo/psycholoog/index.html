@@ -129,6 +129,11 @@ nav#navbar.scrolled{border-color:var(--border);box-shadow:var(--sh)}
 }
 .hamburger span{display:block;width:22px;height:1.5px;background:var(--slate);transition:all var(--tr)}
 
+@media(max-width:480px){
+  .nav-logo{font-size:.95rem}
+  .lang-toggle{display:none}
+}
+
 /* ── HERO ── */
 #hero{
   min-height:100vh;display:grid;grid-template-columns:1fr 1fr;
@@ -829,9 +834,24 @@ footer{background:#1a2420}
   .jt-spacer{display:none}
   .hamburger{display:flex}
   .nav-links{display:none}
+  .btn-nav{display:none}
   .ts-section .time-slots{grid-template-columns:repeat(3,1fr)}
   .footer-grid{grid-template-columns:1fr 1fr;gap:2rem}
   .fr2{grid-template-columns:1fr}
+  .contact-map{min-height:220px}
+  .adm-grid{grid-template-columns:repeat(4,1fr)}
+  .sum-grid{grid-template-columns:1fr}
+  .adm-tabs{overflow-x:auto;padding:0 1rem}
+  .adm-tab-btn{white-space:nowrap;padding:.65rem .85rem}
+  .adm-body{padding:1.25rem}
+  .booking-layout{grid-template-columns:1fr}
+  .nav-inner{padding:0 1rem}
+  .ci-val{word-break:break-word}
+  .hero-stats{flex-wrap:wrap;gap:1.25rem}
+  section{padding:4rem 0}
+  .container{padding:0 1.25rem}
+  .booking-form{padding:1.5rem}
+  .footer-grid{grid-template-columns:1fr;gap:1.5rem}
 }
 </style>
 </head>
@@ -846,6 +866,7 @@ footer{background:#1a2420}
   <a href="#journey" onclick="closeDrawer()" data-nl="Traject" data-en="Journey">Traject</a>
   <a href="#appointment" onclick="closeDrawer()" data-nl="Afspraak" data-en="Book">Afspraak</a>
   <a href="#contact" onclick="closeDrawer()" data-nl="Contact" data-en="Contact">Contact</a>
+  <button onclick="closeDrawer();document.getElementById('appointment').scrollIntoView({behavior:'smooth'})" style="margin-top:.5rem;padding:.7rem 2rem;background:var(--sage);color:#fff;border:none;border-radius:100px;font-size:1rem;font-family:'Jost',sans-serif;cursor:pointer" data-nl="Afspraak maken →" data-en="Book now →">Afspraak maken →</button>
   <div class="drawer-lang">
     <button onclick="setLang('nl');closeDrawer()" id="dlBtnNl" class="active">NL</button>
     <button onclick="setLang('en');closeDrawer()" id="dlBtnEn">EN</button>

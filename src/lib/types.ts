@@ -1,5 +1,24 @@
 export type UserRole = 'admin' | 'user' | 'klant';
 
+export interface PackageRequest {
+  id: string;
+  user_id: string;
+  package_name: string;
+  package_price: number;
+  status: 'pending' | 'contacted' | 'accepted' | 'rejected';
+  notes: string | null;
+  admin_notes: string | null;
+  created_at: string;
+  updated_at: string;
+  // joined
+  profile?: {
+    full_name: string | null;
+    email: string;
+    company: string | null;
+    phone: string | null;
+  };
+}
+
 export interface Package {
   id: string;
   name: string;

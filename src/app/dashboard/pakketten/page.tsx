@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Check, Settings } from 'lucide-react';
+import PackageRequestButton from './PackageRequestButton';
 import type { Package } from '@/lib/types';
 
 // ─── Fallback packages (shown if DB table not yet created) ───────────────────
@@ -213,12 +214,12 @@ export default async function PakkettenPage() {
               </div>
 
               <div className="p-6 pt-0">
-                <Link
-                  href={`/contact?subject=Pakket: ${pkg.name}`}
-                  className={`flex items-center justify-center gap-2 w-full py-3 px-5 rounded-xl text-sm font-semibold transition-all duration-200 ${c.btn}`}
-                >
-                  Vraag offerte aan
-                </Link>
+                <PackageRequestButton
+                  packageName={pkg.name}
+                  packagePrice={pkg.price}
+                  isHighlight={isHighlight}
+                  className={`flex items-center justify-center gap-2 w-full py-3 px-5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${c.btn}`}
+                />
               </div>
             </div>
           );

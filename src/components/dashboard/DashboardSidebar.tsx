@@ -16,6 +16,7 @@ import {
   Package,
   ChevronRight,
   Send,
+  ExternalLink,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useMessages } from '@/hooks/useMessages';
@@ -99,14 +100,14 @@ function NavLink({
       onClick={onClick}
       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
         isActive
-          ? 'bg-blue-50 text-blue-700'
+          ? 'bg-linear-to-r from-blue-600 to-indigo-600 text-white shadow-sm shadow-blue-200'
           : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
       }`}
     >
       <span
         className={
           isActive
-            ? 'text-blue-600'
+            ? 'text-white'
             : 'text-slate-400 group-hover:text-slate-600 transition-colors'
         }
       >
@@ -114,11 +115,11 @@ function NavLink({
       </span>
       <span className="flex-1">{item.label}</span>
       {item.badge === 'unread' && unread > 0 && (
-        <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold text-white bg-blue-500 rounded-full">
+        <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-blue-500 text-white'}`}>
           {unread > 9 ? '9+' : unread}
         </span>
       )}
-      {isActive && <ChevronRight size={14} className="text-blue-400" />}
+      {isActive && <ChevronRight size={14} className="text-white/60" />}
     </Link>
   );
 }
@@ -149,23 +150,33 @@ function SidebarContent({
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-100 shrink-0">
+      <div className="px-6 py-5 border-b border-slate-100 shrink-0">
+        <div className="flex items-center gap-3 mb-2">
+          <Link
+            href="/dashboard"
+            onClick={onLinkClick}
+            className="text-xl font-bold text-slate-900 hover:text-blue-600 transition-colors"
+          >
+            IntrICT
+          </Link>
+          <span
+            className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+              profile.role === 'admin'
+                ? 'bg-purple-100 text-purple-700'
+                : 'bg-blue-100 text-blue-700'
+            }`}
+          >
+            {profile.role === 'admin' ? 'Admin' : 'Account'}
+          </span>
+        </div>
         <Link
           href="/"
           onClick={onLinkClick}
-          className="text-xl font-bold text-slate-900 hover:text-blue-600 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-500 transition-colors"
         >
-          IntrICT
+          <ExternalLink size={11} />
+          Naar de website
         </Link>
-        <span
-          className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-            profile.role === 'admin'
-              ? 'bg-purple-100 text-purple-700'
-              : 'bg-blue-100 text-blue-700'
-          }`}
-        >
-          {profile.role === 'admin' ? 'Admin' : 'Account'}
-        </span>
       </div>
 
       {/* User card */}

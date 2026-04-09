@@ -1,109 +1,87 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { Check, Package, Zap, Star, ShoppingCart } from 'lucide-react';
+import { Check, Settings } from 'lucide-react';
+import type { Package } from '@/lib/types';
 
-const packages = [
+// ─── Fallback packages (shown if DB table not yet created) ───────────────────
+
+const FALLBACK_PACKAGES: Package[] = [
   {
     id: 'starter',
     name: 'Starter',
-    price: '499',
-    color: 'blue',
-    icon: Package,
+    price: 499,
     description: 'Ideaal voor starters en kleine bedrijven die online willen gaan.',
-    features: [
-      '5-pagina statische website',
-      'Responsief design (mobiel + desktop)',
-      'Contactformulier',
-      'Google Maps integratie',
-      'SSL-certificaat',
-      '1 maand ondersteuning',
-    ],
+    features: ['5-pagina statische website', 'Responsief design (mobiel + desktop)', 'Contactformulier', 'Google Maps integratie', 'SSL-certificaat', '1 maand ondersteuning'],
+    color: 'blue',
+    highlight: false,
+    active: true,
+    sort_order: 0,
+    created_at: '',
+    updated_at: '',
   },
   {
     id: 'business',
     name: 'Business',
-    price: '999',
+    price: 999,
+    description: 'Voor groeiende bedrijven die een krachtige online aanwezigheid nodig hebben.',
+    features: ["Tot 10 pagina's", 'CMS (inhoud zelf beheren)', 'Blog & nieuwssectie', 'SEO-optimalisatie', 'Google Analytics koppeling', 'SSL-certificaat', '3 maanden ondersteuning'],
     color: 'purple',
     highlight: true,
-    icon: Zap,
-    description: 'Voor groeiende bedrijven die een krachtige online aanwezigheid nodig hebben.',
-    features: [
-      'Tot 10 pagina\'s',
-      'CMS (inhoud zelf beheren)',
-      'Blog & nieuwssectie',
-      'SEO-optimalisatie',
-      'Google Analytics koppeling',
-      'SSL-certificaat',
-      '3 maanden ondersteuning',
-    ],
+    active: true,
+    sort_order: 1,
+    created_at: '',
+    updated_at: '',
   },
   {
     id: 'pro',
     name: 'Pro',
-    price: '1.999',
-    color: 'indigo',
-    icon: Star,
+    price: 1999,
     description: 'Volledige maatwerk webapplicatie of geavanceerde bedrijfswebsite.',
-    features: [
-      'Onbeperkt pagina\'s',
-      'Volledig maatwerk design',
-      'Geavanceerde functionaliteit',
-      'API-koppelingen',
-      'Dashboard & gebruikersbeheer',
-      'Performance-optimalisatie',
-      'SSL-certificaat',
-      '6 maanden ondersteuning',
-    ],
+    features: ["Onbeperkt pagina's", 'Volledig maatwerk design', 'Geavanceerde functionaliteit', 'API-koppelingen', 'Dashboard & gebruikersbeheer', 'Performance-optimalisatie', 'SSL-certificaat', '6 maanden ondersteuning'],
+    color: 'indigo',
+    highlight: false,
+    active: true,
+    sort_order: 2,
+    created_at: '',
+    updated_at: '',
   },
   {
     id: 'ecommerce',
     name: 'E-commerce',
-    price: '2.999',
-    color: 'green',
-    icon: ShoppingCart,
+    price: 2999,
     description: 'Complete webshop met alle functionaliteiten om online te verkopen.',
-    features: [
-      'Volledig ingerichte webshop',
-      'Productbeheer & categorieën',
-      'Betaalgateways (Mollie, Stripe)',
-      'Voorraadbeheer',
-      'Orderverwerking & e-mails',
-      'Klantaccounts',
-      'SSL-certificaat',
-      '6 maanden ondersteuning',
-    ],
+    features: ['Volledig ingerichte webshop', 'Productbeheer & categorieën', 'Betaalgateways (Mollie, Stripe)', 'Voorraadbeheer', 'Orderverwerking & e-mails', 'Klantaccounts', 'SSL-certificaat', '6 maanden ondersteuning'],
+    color: 'green',
+    highlight: false,
+    active: true,
+    sort_order: 3,
+    created_at: '',
+    updated_at: '',
   },
-] as const;
+];
 
-type Color = 'blue' | 'purple' | 'indigo' | 'green';
+// ─── Color config ─────────────────────────────────────────────────────────────
 
-const colors: Record<Color, { icon: string; check: string; button: string; buttonText: string }> = {
-  blue: {
-    icon: 'bg-blue-50 text-blue-600',
-    check: 'text-blue-500',
-    button: 'bg-blue-600 hover:bg-blue-700 text-white',
-    buttonText: '',
-  },
-  purple: {
-    icon: 'bg-white/20 text-white',
-    check: 'text-purple-300',
-    button: 'bg-white hover:bg-purple-50 text-purple-700',
-    buttonText: '',
-  },
-  indigo: {
-    icon: 'bg-indigo-50 text-indigo-600',
-    check: 'text-indigo-500',
-    button: 'bg-indigo-600 hover:bg-indigo-700 text-white',
-    buttonText: '',
-  },
-  green: {
-    icon: 'bg-green-50 text-green-600',
-    check: 'text-green-500',
-    button: 'bg-green-600 hover:bg-green-700 text-white',
-    buttonText: '',
-  },
+type ColorKey = 'blue' | 'purple' | 'indigo' | 'green' | 'orange';
+
+const colorConfig: Record<ColorKey, {
+  iconBg: string;
+  check: string;
+  btn: string;
+  isLight: boolean;
+}> = {
+  blue:   { iconBg: 'bg-blue-50 text-blue-600',    check: 'text-blue-500',   btn: 'bg-blue-600 hover:bg-blue-700 text-white',     isLight: true },
+  purple: { iconBg: 'bg-white/20 text-white',       check: 'text-purple-200', btn: 'bg-white hover:bg-purple-50 text-purple-700',  isLight: false },
+  indigo: { iconBg: 'bg-indigo-50 text-indigo-600', check: 'text-indigo-500', btn: 'bg-indigo-600 hover:bg-indigo-700 text-white', isLight: true },
+  green:  { iconBg: 'bg-green-50 text-green-600',   check: 'text-green-500',  btn: 'bg-green-600 hover:bg-green-700 text-white',   isLight: true },
+  orange: { iconBg: 'bg-orange-50 text-orange-600', check: 'text-orange-500', btn: 'bg-orange-600 hover:bg-orange-700 text-white', isLight: true },
 };
+
+const safeColor = (c: string): ColorKey =>
+  (c as ColorKey) in colorConfig ? (c as ColorKey) : 'blue';
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function PakkettenPage() {
   const supabase = await createClient();
@@ -112,26 +90,59 @@ export default async function PakkettenPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  const isAdmin = profile?.role === 'admin';
+
+  // Fetch from Supabase, fall back to hardcoded defaults
+  let packages: Package[] = FALLBACK_PACKAGES;
+  try {
+    const { data, error } = await supabase
+      .from('packages')
+      .select('*')
+      .eq('active', true)
+      .order('sort_order', { ascending: true });
+    if (!error && data && data.length > 0) {
+      packages = data as Package[];
+    }
+  } catch {
+    // table not yet created — fall back to defaults
+  }
+
   return (
     <div className="p-6 lg:p-8">
       {/* Page header */}
-      <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-widest text-blue-500 mb-2">
-          Diensten
-        </p>
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Onze pakketten</h1>
-        <p className="text-slate-500 max-w-xl text-sm">
-          Kies het pakket dat bij jouw project past. Geen verborgen kosten — vaste prijzen,
-          heldere afspraken.
-        </p>
+      <div className="flex items-start justify-between mb-8">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-blue-500 mb-2">
+            Diensten
+          </p>
+          <h1 className="text-3xl font-bold text-slate-900 mb-1">Onze pakketten</h1>
+          <p className="text-slate-500 text-sm max-w-xl">
+            Kies het pakket dat bij jouw project past. Geen verborgen kosten — vaste prijzen,
+            heldere afspraken.
+          </p>
+        </div>
+        {isAdmin && (
+          <Link
+            href="/dashboard/pakketten/beheer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 transition-colors shrink-0"
+          >
+            <Settings size={16} />
+            Pakketten beheren
+          </Link>
+        )}
       </div>
 
       {/* Packages grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
         {packages.map((pkg) => {
-          const c = colors[pkg.color as Color];
-          const isHighlight = 'highlight' in pkg && pkg.highlight;
-          const Icon = pkg.icon;
+          const c = colorConfig[safeColor(pkg.color)];
+          const isHighlight = pkg.highlight;
 
           return (
             <div
@@ -147,8 +158,8 @@ export default async function PakkettenPage() {
               )}
 
               <div className="p-6 flex-1">
-                <div className={`inline-flex p-2.5 rounded-xl mb-4 ${c.icon}`}>
-                  <Icon size={20} />
+                <div className={`inline-flex p-2.5 rounded-xl mb-4 ${c.iconBg}`}>
+                  <Check size={18} />
                 </div>
 
                 {isHighlight && (
@@ -172,12 +183,8 @@ export default async function PakkettenPage() {
                     isHighlight ? 'text-white' : 'text-slate-900'
                   }`}
                 >
-                  <span className="text-3xl font-bold">€{pkg.price}</span>
-                  <span
-                    className={`text-sm ${
-                      isHighlight ? 'text-purple-200' : 'text-slate-400'
-                    }`}
-                  >
+                  <span className="text-3xl font-bold">€{pkg.price.toLocaleString('nl-BE')}</span>
+                  <span className={`text-sm ${isHighlight ? 'text-purple-200' : 'text-slate-400'}`}>
                     eenmalig
                   </span>
                 </div>
@@ -191,9 +198,9 @@ export default async function PakkettenPage() {
                 </p>
 
                 <ul className="space-y-2.5">
-                  {pkg.features.map((f) => (
+                  {pkg.features.map((f, i) => (
                     <li
-                      key={f}
+                      key={i}
                       className={`flex items-start gap-2 text-sm ${
                         isHighlight ? 'text-purple-100' : 'text-slate-600'
                       }`}
@@ -208,7 +215,7 @@ export default async function PakkettenPage() {
               <div className="p-6 pt-0">
                 <Link
                   href={`/contact?subject=Pakket: ${pkg.name}`}
-                  className={`flex items-center justify-center gap-2 w-full py-3 px-5 rounded-xl text-sm font-semibold transition-all duration-200 ${c.button}`}
+                  className={`flex items-center justify-center gap-2 w-full py-3 px-5 rounded-xl text-sm font-semibold transition-all duration-200 ${c.btn}`}
                 >
                   Vraag offerte aan
                 </Link>

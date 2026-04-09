@@ -1,16 +1,18 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 
-export default function ProjectCategories() {
-  const [activeCategory, setActiveCategory] = useState('all');
+interface Props {
+  activeCategory: string;
+  onCategoryChange: (category: string) => void;
+}
 
+export default function ProjectCategories({ activeCategory, onCategoryChange }: Props) {
   const categories = [
-    { id: 'all', name: 'Alle Projecten', count: 12 },
-    { id: 'websites', name: 'Websites', count: 8 },
-    { id: 'webapps', name: 'Web Apps', count: 3 },
-    { id: 'ecommerce', name: 'E-commerce', count: 1 }
+    { id: 'all', name: 'Alle Projecten', count: 7 },
+    { id: 'websites', name: 'Websites', count: 4 },
+    { id: 'webapps', name: 'Web Apps', count: 2 },
+    { id: 'ecommerce', name: 'E-commerce', count: 1 },
   ];
 
   return (
@@ -39,7 +41,7 @@ export default function ProjectCategories() {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setActiveCategory(category.id)}
+              onClick={() => onCategoryChange(category.id)}
               className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
                 activeCategory === category.id
                   ? 'bg-slate-800 text-white shadow-lg'
@@ -55,5 +57,3 @@ export default function ProjectCategories() {
     </section>
   );
 }
-
-

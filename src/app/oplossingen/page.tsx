@@ -39,7 +39,7 @@ export default function Oplossingen() {
       
       <main>
         {/* Banner Section */}
-        <section className="relative h-64 overflow-hidden md:h-80">
+        <section className="relative overflow-hidden min-h-105 md:min-h-130">
           <Image
             src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
             alt="Oplossingen - Gespecialiseerde web development oplossingen"

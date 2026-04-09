@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
-import { Link } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Over() {
   useEffect(() => {
@@ -82,20 +82,24 @@ export default function Over() {
                   Met een achtergrond in zowel techniek als design, help ik bedrijven hun online aanwezigheid naar het volgende niveau te tillen.
                 </p>
                 <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
-                  >
-                    Bekijk Mijn Portfolio
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10 backdrop-blur-sm"
-                  >
-                    Neem Contact Op
-                  </motion.button>
+                  <Link href="/portfolio">
+                    <motion.span
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="inline-block px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
+                    >
+                      Bekijk Mijn Portfolio
+                    </motion.span>
+                  </Link>
+                  <Link href="/contact">
+                    <motion.span
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="inline-block px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10 backdrop-blur-sm"
+                    >
+                      Neem Contact Op
+                    </motion.span>
+                  </Link>
                 </div>
               </motion.div>
 
@@ -299,24 +303,22 @@ export default function Over() {
                 bespreken hoe ik je kan helpen met jouw digitale ambities.
               </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
-                <Link href="/contact">
-                <motion.button
+                <motion.a
+                  href="/contact"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
+                  className="inline-block px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
                 >
                   Start Je Project
-                </motion.button>
-                </Link>
-                <Link href="/portfolio">
-                <motion.button
+                </motion.a>
+                <motion.a
+                  href="/portfolio"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10 backdrop-blur-sm"
+                  className="inline-block px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10 backdrop-blur-sm"
                 >
                   Bekijk Portfolio
-                </motion.button>
-                </Link>
+                </motion.a>
               </div>
             </motion.div>
           </div>

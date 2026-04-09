@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
@@ -11,6 +11,8 @@ import ProjectCategories from '@/components/portfolio/ProjectCategories';
 import CallToAction from '@/components/portfolio/CallToAction';
 
 export default function Portfolio() {
+  const [activeCategory, setActiveCategory] = useState('all');
+
   useEffect(() => {
     const lenis = new Lenis();
 
@@ -26,12 +28,13 @@ export default function Portfolio() {
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Header />
       <PortfolioHero />
-      <ProjectCategories />
-      <ProjectGrid />
+      <ProjectCategories activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
+      <div id="projects">
+        <ProjectGrid activeCategory={activeCategory} />
+      </div>
       <CallToAction />
       <Footer />
       <BackToTop />
     </div>
   );
 }
-

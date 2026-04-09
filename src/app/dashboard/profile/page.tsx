@@ -214,6 +214,7 @@ export default function ProfilePage() {
               <div className="flex items-center gap-4">
                 <div className="flex items-center justify-center w-16 h-16 overflow-hidden rounded-full bg-slate-100">
                   {profile.profile_picture_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img src={profile.profile_picture_url} alt={profile.full_name ?? profile.email} className="object-cover w-full h-full" />
                   ) : (
                     <span className="text-xl font-semibold text-slate-700">{initials}</span>

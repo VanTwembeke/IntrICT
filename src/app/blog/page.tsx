@@ -187,7 +187,7 @@ export default function Blog() {
           </div>
         </section>
 
-        {/* Newsletter Section */}
+        {/* CTA Section */}
         <section className="py-20 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900">
           <div className="px-4 mx-auto text-center max-w-7xl sm:px-6 lg:px-8">
             <motion.div
@@ -197,24 +197,28 @@ export default function Blog() {
               viewport={{ once: true }}
             >
               <h2 className="mb-6 text-4xl font-bold text-white md:text-5xl">
-                Blijf Op De <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">Hoogte</span>
+                Klaar voor je <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">Project?</span>
               </h2>
               <p className="max-w-3xl mx-auto mb-8 text-xl leading-relaxed text-slate-200">
-                Ontvang de nieuwste artikelen en tips over web development direct in je inbox
+                Heb je een project in gedachten? Laten we kennismaken en kijken wat er mogelijk is.
               </p>
-              <div className="flex flex-col justify-center max-w-md gap-4 mx-auto sm:flex-row">
-                <input
-                  type="email"
-                  placeholder="Je e-mailadres"
-                  className="flex-1 px-4 py-3 text-white border rounded-lg bg-white/10 border-white/20 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                />
-                <motion.button
+              <div className="flex flex-col justify-center gap-4 sm:flex-row">
+                <motion.a
+                  href="/contact"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg shadow-lg bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
+                  className="px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
                 >
-                  Aanmelden
-                </motion.button>
+                  Neem contact op
+                </motion.a>
+                <motion.a
+                  href="/portfolio"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10"
+                >
+                  Bekijk portfolio
+                </motion.a>
               </div>
             </motion.div>
           </div>

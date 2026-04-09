@@ -46,20 +46,22 @@ export default function PortfolioHero() {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="flex flex-col justify-center gap-6 sm:flex-row"
           >
-            <motion.button
+            <motion.a
+              href="#projects"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-12 py-4 text-lg font-semibold transition-all duration-300 bg-white rounded-full shadow-2xl text-slate-800 hover:bg-slate-100"
+              className="inline-block px-12 py-4 text-lg font-semibold transition-all duration-300 bg-white rounded-full shadow-2xl text-slate-800 hover:bg-slate-100"
             >
               Bekijk alle projecten
-            </motion.button>
-            <motion.button
+            </motion.a>
+            <motion.a
+              href="/contact"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-12 py-4 text-lg font-semibold text-white transition-all duration-300 border-2 border-white rounded-full hover:bg-white hover:text-slate-800"
+              className="inline-block px-12 py-4 text-lg font-semibold text-white transition-all duration-300 border-2 border-white rounded-full hover:bg-white hover:text-slate-800"
             >
               Start je project
-            </motion.button>
+            </motion.a>
           </motion.div>
         </motion.div>
       </div>

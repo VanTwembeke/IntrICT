@@ -27,7 +27,7 @@ export default function Visie() {
       
       <main>
         {/* Hero Section */}
-        <section className="relative overflow-hidden h-96 md:h-125">
+        <section className="relative overflow-hidden min-h-105 md:min-h-130">
           <Image
             src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
             alt="Visie - Samenwerking en klantresultaat"
@@ -40,7 +40,7 @@ export default function Visie() {
             <div className="max-w-6xl px-4 mx-auto text-center">
               <motion.h1
                 initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
                 className="mb-6 text-5xl font-bold text-white md:text-7xl"
               >
@@ -48,7 +48,7 @@ export default function Visie() {
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="max-w-3xl mx-auto text-xl leading-relaxed md:text-2xl text-slate-200"
               >

@@ -12,10 +12,9 @@ import DemoBanner from '@/components/DemoBanner'
 import styles from './demo.module.css'
 
 interface Props {
-  params: { description: string }
+  params: Promise<{ description: string }>
 }
 
-// Build a human-readable label from the slug  e.g. "psycholoog-nevele" → "Psycholoog Nevele"
 function slugToLabel(slug: string) {
   return slug
     .split('-')
@@ -23,15 +22,13 @@ function slugToLabel(slug: string) {
     .join(' ')
 }
 
-export default function DemoPage({ params }: Props) {
-  const { description } = params
+export default async function DemoPage({ params }: Props) {
+  const { description } = await params
 
-  // Guard: make sure the HTML file actually exists in public/
-  const filePath = path.join(process.cwd(), 'public', 'demo', description, 'index.html')
+  const filePath = path.join(process.cwd(), 'public', 'demo', description, 'demo.html')
   if (!existsSync(filePath)) notFound()
 
   const label = slugToLabel(description)
-  // The iframe src points directly to the static file Next.js serves from /public
   const src = `/demo/${description}/demo.html`
 
   return (
@@ -41,12 +38,10 @@ export default function DemoPage({ params }: Props) {
         src={src}
         className={styles.frame}
         title={`Demo: ${label}`}
-        // Allow the page inside to work fully
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
       />
     </>
   )
 }
 
-// Tell Next.js this page is dynamic (reads filesystem at request time)
 export const dynamic = 'force-dynamic'

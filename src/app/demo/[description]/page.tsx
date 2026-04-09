@@ -35,11 +35,27 @@ export default async function DemoPage({ params }: Props) {
     <>
       <DemoBanner label={label} />
       <iframe
+        id="demoFrame"
         src={src}
         className={styles.frame}
         title={`Demo: ${label}`}
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+        onLoad={undefined}
       />
+      {/* Once the iframe loads, tell it how tall the banner is so it can offset its own fixed navbar */}
+      <script dangerouslySetInnerHTML={{ __html: `
+        (function() {
+          var frame = document.getElementById('demoFrame');
+          function notify() {
+            var bar = document.querySelector('[class*="banner"]');
+            var h = bar ? bar.offsetHeight : 42;
+            try { frame.contentWindow.postMessage({ type: 'DEMO_BANNER_HEIGHT', height: h }, '*'); } catch(e) {}
+          }
+          frame.addEventListener('load', notify);
+          // Re-notify if banner height changes (e.g. font loaded)
+          window.addEventListener('resize', notify);
+        })();
+      `}} />
     </>
   )
 }

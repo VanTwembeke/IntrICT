@@ -14,6 +14,14 @@ export default function DemoBanner({ label }: Props) {
 
   if (dismissed) return null
 
+  const handleBack = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back()
+    } else {
+      router.push('/portfolio')
+    }
+  }
+
   return (
     <div className={styles.banner} role="banner" aria-label="Demo melding">
       <div className={styles.inner}>
@@ -28,10 +36,10 @@ export default function DemoBanner({ label }: Props) {
         <div className={styles.right}>
           <button
             className={styles.homeBtn}
-            onClick={() => router.push('/')}
-            aria-label="Terug naar homepage"
+            onClick={handleBack}
+            aria-label="Terug naar portfolio"
           >
-            ← Terug naar home
+            ← Terug naar portfolio
           </button>
           <button
             className={styles.closeBtn}

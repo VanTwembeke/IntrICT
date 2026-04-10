@@ -20,6 +20,7 @@ import {
   Eye,
   ShieldCheck,
   ClipboardList,
+  CalendarDays,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useMessages } from '@/hooks/useMessages';
@@ -35,15 +36,17 @@ interface NavItem {
   icon: React.ReactNode;
   roles: UserRole[];
   badge?: 'unread' | 'pending';
+  exact?: boolean; // if false, active for all sub-routes too
 }
 
 const mainNavItems: NavItem[] = [
-  { label: 'Dashboard',       href: '/dashboard',           icon: <LayoutDashboard size={18} />, roles: ['admin', 'user'] },
-  { label: 'Berichten',       href: '/dashboard/messages',  icon: <Mail size={18} />,            roles: ['admin', 'user'], badge: 'unread' },
-  { label: 'Pakketten',       href: '/dashboard/pakketten', icon: <Package size={18} />,         roles: ['admin', 'user'] },
-  { label: 'Aanvragen',       href: '/dashboard/aanvragen', icon: <ClipboardList size={18} />,   roles: ['admin'],         badge: 'pending' },
-  { label: 'Gebruikers',      href: '/dashboard/users',     icon: <Users size={18} />,           roles: ['admin'] },
-  { label: 'E-mail verzenden',href: '/dashboard/email',     icon: <Send size={18} />,            roles: ['admin'] },
+  { label: 'Dashboard',       href: '/dashboard',            icon: <LayoutDashboard size={18} />, roles: ['admin', 'user'], exact: true },
+  { label: 'Berichten',       href: '/dashboard/messages',   icon: <Mail size={18} />,            roles: ['admin', 'user'], badge: 'unread' },
+  { label: 'Pakketten',       href: '/dashboard/pakketten',  icon: <Package size={18} />,         roles: ['admin', 'user'] },
+  { label: 'Kalender',        href: '/dashboard/kalender',   icon: <CalendarDays size={18} />,    roles: ['admin', 'user'], exact: false },
+  { label: 'Aanvragen',       href: '/dashboard/aanvragen',  icon: <ClipboardList size={18} />,   roles: ['admin'],         badge: 'pending' },
+  { label: 'Gebruikers',      href: '/dashboard/users',      icon: <Users size={18} />,           roles: ['admin'] },
+  { label: 'E-mail verzenden',href: '/dashboard/email',      icon: <Send size={18} />,            roles: ['admin'] },
 ];
 
 const accountNavItems: NavItem[] = [
@@ -181,7 +184,7 @@ function SidebarContent({
               <NavLink
                 key={item.href}
                 item={item}
-                isActive={pathname === item.href}
+                isActive={item.exact === false ? pathname.startsWith(item.href) : pathname === item.href}
                 unread={unreadCount}
                 pending={pendingCount}
                 onClick={onLinkClick}

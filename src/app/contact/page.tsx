@@ -12,7 +12,42 @@ const initialState: ContactFormState = { success: false };
 
 export default function Contact() {
   const [state, formAction, pending] = useActionState(sendContactForm, initialState);
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [openFaq, setOpenFaq]        = useState<number | null>(null);
+  const [availability, setAvailability] = useState('Ma – Zo, 9:00 – 18:00');
+
+  useEffect(() => {
+    fetch('/api/working-hours')
+      .then((r) => r.json())
+      .then((hours: { day_of_week: number; start_time: string; end_time: string; is_active: boolean }[]) => {
+        const active = hours.filter((h) => h.is_active);
+        if (active.length === 0) { setAvailability('Op afspraak'); return; }
+
+        // Format consecutive day ranges
+        const dayAbbr = ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za'];
+        const groups: string[] = [];
+        let i = 0;
+        while (i < active.length) {
+          let j = i;
+          while (j + 1 < active.length && active[j + 1].day_of_week === active[j].day_of_week + 1) j++;
+          groups.push(
+            i === j
+              ? dayAbbr[active[i].day_of_week]
+              : `${dayAbbr[active[i].day_of_week]} – ${dayAbbr[active[j].day_of_week]}`
+          );
+          i = j + 1;
+        }
+
+        const first = active[0];
+        const allSameTime = active.every(
+          (h) => h.start_time === first.start_time && h.end_time === first.end_time
+        );
+        const fmt = (t: string) => t.slice(0, 5);
+        const timeStr = allSameTime ? `, ${fmt(first.start_time)} – ${fmt(first.end_time)}` : '';
+        const caps = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+        setAvailability(caps(groups.join(', ') + timeStr));
+      })
+      .catch(() => { /* keep fallback */ });
+  }, []);
 
   useEffect(() => {
     const lenis = new Lenis();
@@ -60,7 +95,7 @@ export default function Contact() {
     { icon: '📧', title: 'E-mail', value: 'info@intrict.com', href: 'mailto:info@intrict.com' },
     { icon: '📱', title: 'Telefoon', value: '+32 470 00 00 00', href: 'tel:+32470000000' },
     { icon: '📍', title: 'Locatie', value: 'Gent, België', href: '#' },
-    { icon: '🕐', title: 'Beschikbaarheid', value: 'Ma – Zo, 9:00 – 18:00', href: '#' },
+    { icon: '🕐', title: 'Beschikbaarheid', value: availability, href: '#' },
   ];
 
   const onderwerpOpties = [

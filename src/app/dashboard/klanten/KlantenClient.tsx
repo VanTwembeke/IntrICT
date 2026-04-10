@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Users, Plus, Search, LayoutGrid, List, ArrowRight, Building2, Phone } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Users, Plus, Search, LayoutGrid, List, ArrowRight, Building2, X, Mail, CheckCircle } from 'lucide-react';
 import type { ClientDossier, DossierStatus } from '@/lib/types';
 
 const STAGES: { key: DossierStatus; label: string; color: string; bg: string; dot: string }[] = [
@@ -25,10 +25,159 @@ function initials(name: string | null, email: string) {
   return s.slice(0, 2).toUpperCase();
 }
 
+// ─── Invite modal ─────────────────────────────────────────────────────────────
+
+function InviteClientModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (email: string) => void }) {
+  const [form, setForm] = useState({ email: '', full_name: '', company: '', phone: '', vat_number: '' });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setForm((p) => ({ ...p, [k]: e.target.value }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.email) { setError('E-mailadres is verplicht.'); return; }
+    setError('');
+    setSaving(true);
+    try {
+      const res = await fetch('/api/admin/invite-client', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error ?? 'Er is een fout opgetreden.'); return; }
+      onSuccess(form.email);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, y: 10 }}
+        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 z-10"
+      >
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Nieuwe klant uitnodigen</h2>
+            <p className="text-xs text-slate-400 mt-0.5">Klant ontvangt een uitnodigingslink per e-mail</p>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all">
+            <X size={18} />
+          </button>
+        </div>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">{error}</div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div>
+            <label className="block text-xs font-semibold text-slate-500 mb-1.5">E-mailadres *</label>
+            <input
+              type="email"
+              value={form.email}
+              onChange={set('email')}
+              required
+              placeholder="klant@bedrijf.be"
+              className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 placeholder:text-slate-300"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 mb-1.5">Naam</label>
+              <input type="text" value={form.full_name} onChange={set('full_name')} placeholder="Jan Jansen"
+                className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 placeholder:text-slate-300" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 mb-1.5">Telefoon</label>
+              <input type="tel" value={form.phone} onChange={set('phone')} placeholder="+32 …"
+                className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 placeholder:text-slate-300" />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-500 mb-1.5">Bedrijf</label>
+            <input type="text" value={form.company} onChange={set('company')} placeholder="Bedrijfsnaam"
+              className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 placeholder:text-slate-300" />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-500 mb-1.5">BTW-nummer</label>
+            <input type="text" value={form.vat_number} onChange={set('vat_number')} placeholder="BE 0000.000.000"
+              className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 placeholder:text-slate-300" />
+          </div>
+          <button
+            type="submit"
+            disabled={saving}
+            className="w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors text-sm disabled:opacity-50 mt-2"
+          >
+            <Mail size={15} />
+            {saving ? 'Uitnodiging versturen…' : 'Uitnodiging versturen'}
+          </button>
+        </form>
+      </motion.div>
+    </div>
+  );
+}
+
+function InviteSuccessModal({ email, onClose }: { email: string; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, y: 10 }}
+        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 z-10 text-center"
+      >
+        <div className="flex items-center justify-center w-14 h-14 bg-green-100 rounded-full mx-auto mb-4">
+          <CheckCircle size={28} className="text-green-600" />
+        </div>
+        <h2 className="text-lg font-bold text-slate-900 mb-2">Uitnodiging verstuurd!</h2>
+        <p className="text-sm text-slate-500 mb-1">
+          Een uitnodigingslink is verstuurd naar:
+        </p>
+        <p className="font-semibold text-blue-600 mb-5">{email}</p>
+        <p className="text-xs text-slate-400 mb-6">
+          De klant ontvangt een e-mail met een link om een wachtwoord in te stellen en toegang te krijgen tot het klantportaal.
+          Een dossier wordt automatisch aangemaakt zodra zij zich aanmelden.
+        </p>
+        <button
+          onClick={onClose}
+          className="w-full py-2.5 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-800 transition-colors text-sm"
+        >
+          Sluiten
+        </button>
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
 export default function KlantenClient({ initialDossiers }: { initialDossiers: ClientDossier[] }) {
   const [dossiers, setDossiers] = useState(initialDossiers);
   const [view, setView] = useState<'pipeline' | 'list'>('pipeline');
   const [search, setSearch] = useState('');
+  const [showInvite, setShowInvite] = useState(false);
+  const [invitedEmail, setInvitedEmail] = useState<string | null>(null);
 
   const filtered = dossiers.filter((d) => {
     const q = search.toLowerCase();
@@ -54,6 +203,19 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
 
   return (
     <div className="space-y-6">
+      {/* Modals */}
+      <AnimatePresence>
+        {showInvite && (
+          <InviteClientModal
+            onClose={() => setShowInvite(false)}
+            onSuccess={(email) => { setShowInvite(false); setInvitedEmail(email); }}
+          />
+        )}
+        {invitedEmail && (
+          <InviteSuccessModal email={invitedEmail} onClose={() => setInvitedEmail(null)} />
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -63,6 +225,13 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowInvite(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors text-sm shadow-sm"
+          >
+            <Plus size={15} />
+            Klant uitnodigen
+          </button>
           {/* View toggle */}
           <div className="flex items-center bg-slate-100 rounded-xl p-1">
             {(['pipeline', 'list'] as const).map((v) => (

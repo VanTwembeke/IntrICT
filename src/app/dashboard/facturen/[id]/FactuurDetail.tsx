@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   ArrowLeft, CheckCircle, Clock, AlertTriangle, XCircle, FileText,
-  RefreshCw, Printer, Trash2, ChevronDown,
+  RefreshCw, Download, Trash2, ChevronDown,
 } from 'lucide-react';
 import type { Invoice, InvoiceStatus } from '@/lib/types';
 
@@ -26,11 +26,11 @@ const NEXT_STATUSES: Record<InvoiceStatus, InvoiceStatus[]> = {
 };
 
 function fmt(n: number) {
-  return `€${n.toLocaleString('nl-BE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `€ ${n.toLocaleString('nl-BE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString('nl-BE', { day: 'numeric', month: 'long', year: 'numeric' });
+  return new Date(iso).toLocaleDateString('nl-BE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }) {
@@ -38,6 +38,7 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
   const [invoice, setInvoice] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
 
   const cfg = STATUS_CONFIG[invoice.status];
@@ -61,6 +62,23 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
     }
   };
 
+  const handleDownloadPDF = async () => {
+    setDownloading(true);
+    try {
+      const res = await fetch(`/api/invoices/${invoice.id}/pdf`);
+      if (!res.ok) throw new Error('PDF generatie mislukt');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `factuur-${invoice.invoice_number}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   const handleDelete = async () => {
     if (!confirm('Factuur permanent verwijderen?')) return;
     setDeleting(true);
@@ -71,6 +89,8 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
       setDeleting(false);
     }
   };
+
+  const isOverdue = invoice.status === 'overdue';
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -101,40 +121,45 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
         {/* Status changer */}
         <div className="relative">
           <button
-            onClick={() => setStatusOpen((v) => !v)}
+            onClick={() => nextStatuses.length > 0 && setStatusOpen((v) => !v)}
             disabled={saving || nextStatuses.length === 0}
             className={`inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all ${cfg.badge} ${
               nextStatuses.length > 0 ? 'cursor-pointer hover:opacity-80' : 'cursor-default'
             }`}
           >
             {cfg.icon}{cfg.label}
-            {nextStatuses.length > 0 && <ChevronDown size={14} className={statusOpen ? 'rotate-180' : ''} />}
+            {nextStatuses.length > 0 && <ChevronDown size={14} className={statusOpen ? 'rotate-180 transition-transform' : 'transition-transform'} />}
           </button>
           {statusOpen && nextStatuses.length > 0 && (
-            <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-10 overflow-hidden min-w-[160px]">
-              {nextStatuses.map((s) => {
-                const sc = STATUS_CONFIG[s];
-                return (
-                  <button
-                    key={s}
-                    onClick={() => updateStatus(s)}
-                    className="flex items-center gap-2 w-full px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
-                  >
-                    {sc.icon} Markeer als {sc.label}
-                  </button>
-                );
-              })}
-            </div>
+            <>
+              <div className="fixed inset-0 z-10" onClick={() => setStatusOpen(false)} />
+              <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-20 overflow-hidden min-w-[180px]">
+                {nextStatuses.map((s) => {
+                  const sc = STATUS_CONFIG[s];
+                  return (
+                    <button
+                      key={s}
+                      onClick={() => updateStatus(s)}
+                      className="flex items-center gap-2 w-full px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                    >
+                      {sc.icon} Markeer als {sc.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
           )}
         </div>
 
         <button
-          onClick={() => window.print()}
-          className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all"
-          title="Afdrukken"
+          onClick={handleDownloadPDF}
+          disabled={downloading}
+          className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors text-sm disabled:opacity-60"
         >
-          <Printer size={18} />
+          <Download size={15} />
+          {downloading ? 'Genereren…' : 'Download PDF'}
         </button>
+
         <button
           onClick={handleDelete}
           disabled={deleting}
@@ -145,103 +170,174 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
         </button>
       </div>
 
-      {/* Invoice document */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 print:shadow-none print:border-none print:rounded-none print:p-0">
-        {/* Invoice header */}
-        <div className="flex items-start justify-between mb-10">
-          <div>
-            <h2 className="text-3xl font-bold text-slate-900 mb-1">FACTUUR</h2>
-            <p className="text-slate-500 text-sm">{invoice.invoice_number}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-2xl font-bold text-blue-600">IntrICT</p>
-            <p className="text-sm text-slate-400 mt-1">info@intrict.com</p>
-          </div>
-        </div>
+      {/* Invoice preview card */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        {/* Blue top band */}
+        <div className="h-1.5 bg-linear-to-r from-blue-600 to-indigo-600" />
 
-        {/* Dates + client */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-10">
-          <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Factuurgegevens</p>
-            <div className="space-y-1.5 text-sm">
-              <div className="flex gap-3">
-                <span className="text-slate-400 w-28 shrink-0">Factuurdatum</span>
-                <span className="text-slate-700 font-medium">{fmtDate(invoice.issue_date ?? invoice.created_at)}</span>
+        <div className="p-8 md:p-10">
+          {/* Top: company vs client */}
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-8 pb-8 border-b border-slate-100">
+            {/* IntrICT */}
+            <div>
+              <p className="text-2xl font-black text-blue-600 tracking-wide mb-1">IntrICT</p>
+              <p className="text-xs text-slate-400">IT-diensten &amp; weboplossingen</p>
+              <div className="mt-3 space-y-0.5 text-xs text-slate-500">
+                <p>BTW: BE 0000.000.000</p>
+                <p>info@intrict.be</p>
+              </div>
+            </div>
+
+            {/* Invoice meta */}
+            <div className="text-right">
+              <p className="text-3xl font-black text-slate-900 mb-1">FACTUUR</p>
+              <p className="text-sm font-bold text-blue-600">{invoice.invoice_number}</p>
+              <span className={`inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full text-xs font-bold ${cfg.badge}`}>
+                {cfg.icon}{cfg.label}
+              </span>
+            </div>
+          </div>
+
+          {/* Parties */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {/* Dates */}
+            <div className="space-y-2">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Factuurgegevens</p>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-slate-400 w-28">Factuurdatum</span>
+                <span className="text-sm font-semibold text-slate-700">
+                  {fmtDate(invoice.issue_date ?? invoice.created_at)}
+                </span>
               </div>
               {invoice.due_date && (
-                <div className="flex gap-3">
-                  <span className="text-slate-400 w-28 shrink-0">Vervaldatum</span>
-                  <span className={`font-medium ${invoice.status === 'overdue' ? 'text-red-600' : 'text-slate-700'}`}>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-slate-400 w-28">Vervaldatum</span>
+                  <span className={`text-sm font-semibold ${isOverdue ? 'text-red-600' : 'text-slate-700'}`}>
                     {fmtDate(invoice.due_date)}
                   </span>
                 </div>
               )}
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-slate-400 w-28">Mededeling</span>
+                <span className="text-sm font-semibold text-slate-700">Factuur {invoice.invoice_number}</span>
+              </div>
             </div>
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Klant</p>
-            <div className="text-sm text-slate-700 space-y-0.5">
-              {invoice.profile?.company && <p className="font-semibold">{invoice.profile.company}</p>}
-              <p>{invoice.profile?.full_name}</p>
-              <p className="text-slate-400">{invoice.profile?.email}</p>
-              {invoice.profile?.vat_number && <p className="text-slate-400">BTW: {invoice.profile.vat_number}</p>}
-              {invoice.profile?.address && (
-                <p className="text-slate-400">
-                  {invoice.profile.address}<br />
-                  {invoice.profile.postal_code} {invoice.profile.city}
+
+            {/* Client */}
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Klant</p>
+              <div className="text-sm text-slate-700 space-y-0.5">
+                {invoice.profile?.company && (
+                  <p className="font-bold text-slate-900">{invoice.profile.company}</p>
+                )}
+                <p className={invoice.profile?.company ? '' : 'font-bold text-slate-900'}>
+                  {invoice.profile?.full_name}
                 </p>
-              )}
+                <p className="text-slate-400 text-xs">{invoice.profile?.email}</p>
+                {invoice.profile?.vat_number && (
+                  <p className="text-slate-400 text-xs">BTW: {invoice.profile.vat_number}</p>
+                )}
+                {invoice.profile?.address && (
+                  <p className="text-slate-400 text-xs">
+                    {invoice.profile.address}, {invoice.profile.postal_code} {invoice.profile.city}
+                  </p>
+                )}
+              </div>
             </div>
+          </div>
+
+          {/* Items table */}
+          <div className="mb-6 rounded-xl overflow-hidden border border-slate-100">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-slate-900 text-white">
+                  <th className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wide">Omschrijving</th>
+                  <th className="text-center px-4 py-3 text-xs font-bold uppercase tracking-wide w-16">Aantal</th>
+                  <th className="text-right px-4 py-3 text-xs font-bold uppercase tracking-wide w-28">Prijs (excl.)</th>
+                  <th className="text-right px-4 py-3 text-xs font-bold uppercase tracking-wide w-28">Totaal (excl.)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(invoice.items ?? []).map((item, i) => (
+                  <tr key={item.id} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+                    <td className="px-4 py-3 text-slate-800">{item.description}</td>
+                    <td className="px-4 py-3 text-center text-slate-500">{item.quantity}</td>
+                    <td className="px-4 py-3 text-right text-slate-500">{fmt(item.unit_price)}</td>
+                    <td className="px-4 py-3 text-right font-semibold text-slate-800">
+                      {fmt(item.total ?? item.quantity * item.unit_price)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Totals */}
+          <div className="flex justify-end mb-8">
+            <div className="w-72 space-y-2">
+              <div className="flex justify-between text-sm text-slate-500 py-1 border-b border-slate-100">
+                <span>Subtotaal (excl. BTW)</span>
+                <span className="font-medium text-slate-700">{fmt(invoice.subtotal ?? 0)}</span>
+              </div>
+              <div className="flex justify-between text-sm text-slate-500 py-1 border-b border-slate-100">
+                <span>BTW {invoice.vat_rate ?? 21}%</span>
+                <span className="font-medium text-slate-700">{fmt(invoice.vat_amount ?? 0)}</span>
+              </div>
+              <div className="flex justify-between items-center bg-slate-900 text-white rounded-xl px-4 py-3 mt-2">
+                <span className="font-bold">TOTAAL VERSCHULDIGD</span>
+                <span className="text-xl font-black">{fmt(invoice.total ?? 0)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Payment info */}
+          <div className="bg-blue-50 border border-blue-100 rounded-xl p-5 mb-6">
+            <p className="text-xs font-bold text-blue-700 uppercase tracking-widest mb-3">Betalingsinstructies</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+              <div className="flex gap-2">
+                <span className="text-slate-400 w-24 shrink-0">Begunstigde</span>
+                <span className="font-semibold text-slate-700">IntrICT BV</span>
+              </div>
+              <div className="flex gap-2">
+                <span className="text-slate-400 w-24 shrink-0">IBAN</span>
+                <span className="font-semibold text-slate-700">BE00 0000 0000 0000</span>
+              </div>
+              <div className="flex gap-2">
+                <span className="text-slate-400 w-24 shrink-0">BIC</span>
+                <span className="font-semibold text-slate-700">GEBABEBB</span>
+              </div>
+              <div className="flex gap-2">
+                <span className="text-slate-400 w-24 shrink-0">Mededeling</span>
+                <span className="font-semibold text-slate-700">Factuur {invoice.invoice_number}</span>
+              </div>
+            </div>
+            <p className="text-xs text-slate-400 mt-3">
+              Gelieve te betalen binnen 30 dagen na factuurdatum. Bij laattijdige betaling is van rechtswege en zonder
+              ingebrekestelling een verwijlintrest van 10% per jaar verschuldigd.
+            </p>
+          </div>
+
+          {/* Notes */}
+          {invoice.notes && (
+            <div className="bg-slate-50 rounded-xl p-4 mb-6">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Opmerkingen</p>
+              <p className="text-sm text-slate-600 whitespace-pre-line">{invoice.notes}</p>
+            </div>
+          )}
+
+          {/* Legal footer */}
+          <div className="border-t border-slate-100 pt-4 text-xs text-slate-400 flex flex-col sm:flex-row sm:justify-between gap-1">
+            <span>IntrICT BV · BTW BE 0000.000.000 · KBO 0000.000.000</span>
+            <a
+              href="https://intrict.be/algemene-voorwaarden"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline"
+            >
+              Algemene voorwaarden: intrict.be/algemene-voorwaarden
+            </a>
           </div>
         </div>
-
-        {/* Items table */}
-        <table className="w-full text-sm mb-8">
-          <thead>
-            <tr className="border-b-2 border-slate-200">
-              <th className="text-left py-3 text-xs font-bold text-slate-500 uppercase tracking-wide">Omschrijving</th>
-              <th className="text-right py-3 text-xs font-bold text-slate-500 uppercase tracking-wide w-20">Aantal</th>
-              <th className="text-right py-3 text-xs font-bold text-slate-500 uppercase tracking-wide w-28">Eenheidsprijs</th>
-              <th className="text-right py-3 text-xs font-bold text-slate-500 uppercase tracking-wide w-28">Totaal</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {(invoice.items ?? []).map((item) => (
-              <tr key={item.id}>
-                <td className="py-3.5 text-slate-700">{item.description}</td>
-                <td className="py-3.5 text-right text-slate-600">{item.quantity}</td>
-                <td className="py-3.5 text-right text-slate-600">{fmt(item.unit_price)}</td>
-                <td className="py-3.5 text-right font-semibold text-slate-800">{fmt(item.total ?? item.quantity * item.unit_price)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {/* Totals */}
-        <div className="flex justify-end">
-          <div className="w-64 space-y-2 text-sm">
-            <div className="flex justify-between text-slate-600">
-              <span>Subtotaal</span>
-              <span className="font-medium">{fmt(invoice.subtotal ?? 0)}</span>
-            </div>
-            <div className="flex justify-between text-slate-600">
-              <span>BTW ({invoice.vat_rate ?? 21}%)</span>
-              <span className="font-medium">{fmt(invoice.vat_amount ?? 0)}</span>
-            </div>
-            <div className="flex justify-between font-bold text-slate-900 text-lg pt-3 border-t-2 border-slate-200">
-              <span>TOTAAL</span>
-              <span>{fmt(invoice.total ?? 0)}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Notes */}
-        {invoice.notes && (
-          <div className="mt-8 pt-6 border-t border-slate-100">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Opmerkingen</p>
-            <p className="text-sm text-slate-600 whitespace-pre-line">{invoice.notes}</p>
-          </div>
-        )}
       </div>
 
       {/* Back to dossier */}

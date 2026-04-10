@@ -1,0 +1,8 @@
+{
+  "title": "SEO Audit Checklist",
+  "description": "Interactieve SEO audit tool met 63 checks in 6 categorieën (technisch, on-page, content, off-page, lokaal SEO en UX). Live score-ring, prioriteitslabels, uitklapbare tips en notities per check, light/dark mode, meerdere klanten opslaan, JSON export en PDF-print. Volledig in-browser zonder server.",
+  "category": "tools",
+  "technologies": ["HTML5", "CSS3", "JavaScript"],
+  "accent": "#ff5c00",
+  "client": "Tool"
+}

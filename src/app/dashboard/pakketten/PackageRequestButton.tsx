@@ -17,11 +17,12 @@ export default function PackageRequestButton({
   isHighlight,
   className,
 }: Props) {
-  const [state, setState] = useState<'idle' | 'modal' | 'sending' | 'done'>('idle');
+  const [state, setState] = useState<'idle' | 'modal' | 'done'>('idle');
+  const [sending, setSending] = useState(false);
   const [notes, setNotes] = useState('');
 
   const handleSubmit = async () => {
-    setState('sending');
+    setSending(true);
     try {
       await fetch('/api/package-requests', {
         method: 'POST',
@@ -34,8 +35,9 @@ export default function PackageRequestButton({
       });
       setState('done');
     } catch {
-      setState('modal'); // revert on failure
       alert('Er is iets misgegaan. Probeer opnieuw of neem contact op.');
+    } finally {
+      setSending(false);
     }
   };
 
@@ -111,15 +113,15 @@ export default function PackageRequestButton({
                   </button>
                   <button
                     onClick={handleSubmit}
-                    disabled={state === 'sending'}
+                    disabled={sending}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 disabled:opacity-70 transition-all"
                   >
-                    {state === 'sending' ? (
+                    {sending ? (
                       <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                     ) : (
                       <Send size={15} />
                     )}
-                    {state === 'sending' ? 'Verzenden...' : 'Aanvraag versturen'}
+                    {sending ? 'Verzenden...' : 'Aanvraag versturen'}
                   </button>
                 </div>
 

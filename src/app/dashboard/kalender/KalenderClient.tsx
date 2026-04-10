@@ -9,6 +9,7 @@ import {
 import type { Appointment, AppointmentType, WorkingHour } from '@/lib/types';
 import BookingModal from './BookingModal';
 import AppointmentModal from './AppointmentModal';
+import { useViewMode } from '@/components/dashboard/DashboardShell';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -119,7 +120,7 @@ function AppointmentBlock({
       className={`border-l-4 rounded-lg px-2 py-1 text-left overflow-hidden transition-all hover:brightness-95 active:scale-[0.98] ${styleClass}`}
     >
       <p className="text-[11px] font-bold leading-tight truncate">
-        {isAdmin ? (appt.profile?.full_name ?? appt.profile?.email ?? 'Klant') : appt.type_name}
+        {isAdmin ? (appt.profile?.full_name ?? appt.profile?.email ?? appt.guest_name ?? appt.guest_email ?? 'Gast') : appt.type_name}
       </p>
       <p className="text-[10px] leading-tight opacity-60 truncate">
         {isAdmin ? appt.type_name : timeLabel}
@@ -151,6 +152,9 @@ export default function KalenderClient({
   calendarToken,
   currentUserId,
 }: Props) {
+  const { viewAs } = useViewMode();
+  const effectiveAdmin = isAdmin && viewAs === 'admin';
+
   const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
   const [anchor, setAnchor]             = useState<Date>(() => new Date());
   const [loading, setLoading]           = useState(false);
@@ -236,7 +240,7 @@ export default function KalenderClient({
       <div className="flex flex-col gap-4 mb-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">
-            {isAdmin ? 'Administrator' : 'Gebruiker'}
+            {effectiveAdmin ? 'Administrator' : 'Gebruiker'}
           </p>
           <h1 className="text-3xl font-bold text-slate-900">Kalender</h1>
           <p className="text-sm text-slate-500 mt-1">
@@ -245,7 +249,7 @@ export default function KalenderClient({
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          {isAdmin && (
+          {effectiveAdmin && (
             <>
               <a
                 href="/dashboard/kalender/tijdregistratie"
@@ -459,7 +463,7 @@ export default function KalenderClient({
                       <AppointmentBlock
                         key={appt.id}
                         appt={appt}
-                        isAdmin={isAdmin}
+                        isAdmin={effectiveAdmin}
                         onClick={setSelectedAppt}
                       />
                     );
@@ -503,7 +507,7 @@ export default function KalenderClient({
             date={bookingSlot.date}
             time={bookingSlot.time}
             appointmentTypes={appointmentTypes}
-            isAdmin={isAdmin}
+            isAdmin={effectiveAdmin}
             users={users}
             currentUserId={currentUserId}
             onDone={handleBookingDone}
@@ -516,7 +520,7 @@ export default function KalenderClient({
         {selectedAppt && (
           <AppointmentModal
             appointment={selectedAppt}
-            isAdmin={isAdmin}
+            isAdmin={effectiveAdmin}
             onUpdated={handleApptUpdated}
             onDeleted={handleApptDeleted}
             onClose={() => setSelectedAppt(null)}

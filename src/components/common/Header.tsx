@@ -12,6 +12,7 @@ import {
 import { createClient } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
 import { useMessages } from '@/hooks/useMessages';
+import { blogPosts } from '@/data/blog-posts';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -22,34 +23,38 @@ const NAV: NavGroup[] = [
   {
     label: 'Diensten',
     items: [
-      { href: '/#services',  Icon: Building2,  label: 'Wat we doen',  desc: 'Websites, apps & webshops' },
-      { href: '/portfolio',  Icon: Globe,       label: 'Portfolio',    desc: "Projecten & live demo's" },
-      { href: '/oplossingen',Icon: Zap,         label: 'Oplossingen',  desc: 'Technische oplossingen op maat' },
-      { href: '/#workflow',  Icon: ArrowRight,  label: 'Ons proces',   desc: 'Hoe werken we samen?' },
+      { href: '/#services',   Icon: Building2, label: 'Wat we doen',  desc: 'Websites, apps & webshops' },
+      { href: '/oplossingen', Icon: Zap,        label: 'Oplossingen',  desc: 'Technische oplossingen op maat' },
+      { href: '/#workflow',   Icon: ArrowRight, label: 'Ons proces',   desc: 'Hoe werken we samen?' },
     ],
   },
-  { label: 'Blog', href: '/blog' },
+  { label: 'Portfolio', href: '/portfolio' },
+  { label: 'Blog',      href: '/blog' },
   {
     label: 'Over',
     items: [
-      { href: '/over',    Icon: UserIcon,  label: 'Over IntrICT', desc: 'Het verhaal achter IntrICT' },
-      { href: '/visie',   Icon: Eye,       label: 'Onze visie',   desc: 'Missie & kernwaarden' },
-      { href: '/blog',    Icon: BookOpen,  label: 'Blog',         desc: 'Artikelen & nieuws' },
-      { href: '/contact', Icon: Mail,      label: 'Contact',      desc: 'Direct in contact komen' },
+      { href: '/over',  Icon: UserIcon, label: 'Over IntrICT', desc: 'Het verhaal achter IntrICT' },
+      { href: '/visie', Icon: Eye,      label: 'Onze visie',   desc: 'Missie & kernwaarden' },
     ],
   },
   { label: 'Contact', href: '/contact' },
 ];
 
 const SEARCH_PAGES = [
-  { label: 'Home',        desc: 'Homepagina & diensten',        href: '/',            Icon: Globe,           cat: "Pagina's" },
-  { label: 'Portfolio',   desc: "Projecten & live demo's",      href: '/portfolio',   Icon: Building2,       cat: "Pagina's" },
-  { label: 'Blog',        desc: 'Artikelen & nieuws',           href: '/blog',        Icon: BookOpen,        cat: "Pagina's" },
-  { label: 'Oplossingen', desc: 'Oplossingen op maat',          href: '/oplossingen', Icon: Zap,             cat: "Pagina's" },
-  { label: 'Over ons',    desc: 'Wie is IntrICT?',              href: '/over',        Icon: UserIcon,        cat: "Pagina's" },
-  { label: 'Visie',       desc: 'Missie & waarden',             href: '/visie',       Icon: Eye,             cat: "Pagina's" },
-  { label: 'Contact',     desc: 'Neem contact op',              href: '/contact',     Icon: Mail,            cat: "Pagina's" },
+  { label: 'Home',        desc: 'Homepagina & diensten',        href: '/',            Icon: Globe,     cat: "Pagina's" },
+  { label: 'Portfolio',   desc: "Projecten & live demo's",      href: '/portfolio',   Icon: Building2, cat: "Pagina's" },
+  { label: 'Oplossingen', desc: 'Oplossingen op maat',          href: '/oplossingen', Icon: Zap,       cat: "Pagina's" },
+  { label: 'Over ons',    desc: 'Wie is IntrICT?',              href: '/over',        Icon: UserIcon,  cat: "Pagina's" },
+  { label: 'Visie',       desc: 'Missie & waarden',             href: '/visie',       Icon: Eye,       cat: "Pagina's" },
+  { label: 'Contact',     desc: 'Neem contact op',              href: '/contact',     Icon: Mail,      cat: "Pagina's" },
 ];
+const SEARCH_BLOGS = blogPosts.map((post) => ({
+  label: post.title,
+  desc:  post.excerpt.length > 70 ? post.excerpt.slice(0, 70) + '…' : post.excerpt,
+  href:  `/blog/${post.slug}`,
+  Icon:  BookOpen,
+  cat:   'Blog',
+}));
 const SEARCH_DASHBOARD = [
   { label: 'Dashboard',  desc: 'Jouw persoonlijk dashboard', href: '/dashboard',           Icon: LayoutDashboard, cat: 'Dashboard', auth: true },
   { label: 'Pakketten',  desc: 'Diensten & prijzen',         href: '/dashboard/pakketten', Icon: Package,         cat: 'Dashboard', auth: true },
@@ -77,6 +82,7 @@ function CommandPalette({ isLoggedIn, onClose }: { isLoggedIn: boolean; onClose:
 
   const allItems = [
     ...SEARCH_PAGES,
+    ...SEARCH_BLOGS,
     ...(isLoggedIn ? SEARCH_DASHBOARD : []),
     ...SEARCH_ACTIONS,
   ];
@@ -201,13 +207,16 @@ function CommandPalette({ isLoggedIn, onClose }: { isLoggedIn: boolean; onClose:
 interface PackageReqMini { id: string; package_name: string; status: string }
 
 function NotificationsPanel({
-  conversations, unreadCount, messagesLoading, packageRequests, onClose,
+  conversations, unreadCount, messagesLoading, packageRequests,
+  onClose, onDismissRequest, onClearAllRequests,
 }: {
   conversations: ReturnType<typeof useMessages>['conversations'];
   unreadCount: number;
   messagesLoading: boolean;
   packageRequests: PackageReqMini[];
   onClose: () => void;
+  onDismissRequest: (id: string) => void;
+  onClearAllRequests: () => void;
 }) {
   const router = useRouter();
   const [tab, setTab] = useState<'messages' | 'requests'>('messages');
@@ -294,26 +303,50 @@ function NotificationsPanel({
         <>
           <div className="flex items-center justify-between px-4 py-2.5">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Pakketaanvragen</span>
-            <button onClick={() => go('/dashboard/aanvragen')} className="text-xs font-semibold text-blue-500 hover:text-blue-600">Alles →</button>
+            <div className="flex items-center gap-2">
+              {packageRequests.length > 0 && (
+                <button onClick={onClearAllRequests} className="text-xs font-semibold text-slate-400 hover:text-slate-600">
+                  Wis alles
+                </button>
+              )}
+              <button onClick={() => go('/dashboard/aanvragen')} className="text-xs font-semibold text-blue-500 hover:text-blue-600">Alles →</button>
+            </div>
           </div>
-          <ul className="divide-y divide-slate-100 max-h-64 overflow-y-auto">
-            {packageRequests.map(req => (
-              <li key={req.id} onClick={() => go('/dashboard/aanvragen')}
-                className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-50 transition-colors">
-                <div className={`p-1.5 rounded-lg shrink-0 ${
-                  req.status === 'accepted' ? 'bg-green-50' : req.status === 'rejected' ? 'bg-slate-100' : 'bg-amber-50'
-                }`}>
-                  <Package size={13} className={
-                    req.status === 'accepted' ? 'text-green-500' : req.status === 'rejected' ? 'text-slate-400' : 'text-amber-500'
-                  } />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-slate-800 truncate">{req.package_name}</p>
-                  <p className="text-xs text-slate-400">{STATUS_LABELS[req.status] ?? req.status}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+          {packageRequests.length === 0 ? (
+            <div className="py-10 text-center">
+              <Package size={24} className="text-slate-200 mx-auto mb-2" />
+              <p className="text-sm text-slate-400">Geen aanvragen</p>
+            </div>
+          ) : (
+            <ul className="divide-y divide-slate-100 max-h-64 overflow-y-auto">
+              {packageRequests.map(req => (
+                <li key={req.id}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors">
+                  <div
+                    className={`p-1.5 rounded-lg shrink-0 cursor-pointer ${
+                      req.status === 'accepted' ? 'bg-green-50' : req.status === 'rejected' ? 'bg-slate-100' : 'bg-amber-50'
+                    }`}
+                    onClick={() => go('/dashboard/aanvragen')}
+                  >
+                    <Package size={13} className={
+                      req.status === 'accepted' ? 'text-green-500' : req.status === 'rejected' ? 'text-slate-400' : 'text-amber-500'
+                    } />
+                  </div>
+                  <div className="flex-1 min-w-0 cursor-pointer" onClick={() => go('/dashboard/aanvragen')}>
+                    <p className="text-sm font-semibold text-slate-800 truncate">{req.package_name}</p>
+                    <p className="text-xs text-slate-400">{STATUS_LABELS[req.status] ?? req.status}</p>
+                  </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onDismissRequest(req.id); }}
+                    className="p-1 text-slate-300 hover:text-slate-500 rounded transition-colors shrink-0"
+                    aria-label="Verwijder melding"
+                  >
+                    <X size={13} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </>
       )}
     </motion.div>
@@ -532,7 +565,12 @@ export default function Header() {
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [userRole, setUserRole] = useState('user');
   const [userName, setUserName] = useState<string | null>(null);
-  const [packageRequests, setPackageRequests] = useState<PackageReqMini[]>([]);
+  const [packageRequests, setPackageRequests]   = useState<PackageReqMini[]>([]);
+  const [dismissedReqIds, setDismissedReqIds]   = useState<Set<string>>(() => {
+    if (typeof window === 'undefined') return new Set();
+    try { return new Set(JSON.parse(localStorage.getItem('dismissed_req_notifs') ?? '[]')); }
+    catch { return new Set(); }
+  });
 
   const notifRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -628,9 +666,29 @@ export default function Header() {
     router.refresh();
   };
 
+  const handleDismissRequest = (id: string) => {
+    setDismissedReqIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      try { localStorage.setItem('dismissed_req_notifs', JSON.stringify([...next])); } catch { /* */ }
+      return next;
+    });
+  };
+
+  const handleClearAllRequests = () => {
+    const ids = new Set(packageRequests.map((r) => r.id));
+    setDismissedReqIds((prev) => {
+      const next = new Set([...prev, ...ids]);
+      try { localStorage.setItem('dismissed_req_notifs', JSON.stringify([...next])); } catch { /* */ }
+      return next;
+    });
+  };
+
+  const visibleRequests = packageRequests.filter((r) => !dismissedReqIds.has(r.id));
+
   const avatarLabel = userName?.[0]?.toUpperCase() ?? user?.email?.[0]?.toUpperCase() ?? '?';
   const navText = isScrolled ? 'text-slate-600 hover:text-slate-900' : 'text-slate-200 hover:text-white';
-  const totalNotifs = unreadCount + (packageRequests.length > 0 ? 1 : 0);
+  const totalNotifs = unreadCount + (visibleRequests.length > 0 ? 1 : 0);
 
   return (
     <>
@@ -728,8 +786,10 @@ export default function Header() {
                           conversations={conversations}
                           unreadCount={unreadCount}
                           messagesLoading={messagesLoading}
-                          packageRequests={packageRequests}
+                          packageRequests={visibleRequests}
                           onClose={() => setShowNotifications(false)}
+                          onDismissRequest={handleDismissRequest}
+                          onClearAllRequests={handleClearAllRequests}
                         />
                       )}
                     </AnimatePresence>

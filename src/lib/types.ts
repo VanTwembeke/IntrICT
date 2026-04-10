@@ -23,7 +23,9 @@ export interface WorkingHour {
 
 export interface Appointment {
   id: string;
-  user_id: string;
+  user_id: string | null;       // null for guest bookings from contact page
+  guest_name: string | null;    // populated when user_id is null
+  guest_email: string | null;
   appointment_type_id: string | null;
   type_name: string;
   duration_minutes: number;
@@ -37,11 +39,11 @@ export interface Appointment {
   color: string;
   created_at: string;
   updated_at: string;
-  // joined
+  // joined (only when user has an account)
   profile?: {
     full_name: string | null;
     email: string;
-  };
+  } | null;
 }
 
 export interface TimeLog {

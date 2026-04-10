@@ -3,10 +3,11 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import {
   Users, User, Mail, Package, ArrowRight, Calendar,
-  Sparkles, Send, ClipboardList, Clock, CheckCircle,
-  MessageSquare,
+  Sparkles, ClipboardList, Clock, CheckCircle,
+  MessageSquare, TrendingUp, CalendarCheck,
 } from 'lucide-react';
-import type { Profile, PackageRequest } from '@/lib/types';
+import type { Profile, Appointment } from '@/lib/types';
+import AdminOnly from '@/components/dashboard/AdminOnly';
 
 // ─── Activity feed item ───────────────────────────────────────────────────────
 
@@ -70,6 +71,10 @@ export default async function DashboardPage() {
   let userCount = 0;
   let pendingRequestCount = 0;
   let packageCount = 0;
+  let pendingAppointmentCount = 0;
+  let revenueAccepted = 0;
+  let revenuePending = 0;
+  let upcomingAppointments: Appointment[] = [];
 
   if (isAdmin) {
     userCount = (await supabase.from('profiles').select('id', { count: 'exact', head: true })).count ?? 0;
@@ -79,7 +84,32 @@ export default async function DashboardPage() {
         (await supabase.from('package_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending')).count ?? 0;
       packageCount =
         (await supabase.from('packages').select('id', { count: 'exact', head: true }).eq('active', true)).count ?? 0;
+
+      // Revenue: sum of accepted + pending package requests
+      const { data: revenueRows } = await supabase
+        .from('package_requests')
+        .select('package_price, status')
+        .in('status', ['accepted', 'pending']);
+      if (revenueRows) {
+        revenueAccepted = revenueRows.filter((r) => r.status === 'accepted').reduce((s, r) => s + (r.package_price ?? 0), 0);
+        revenuePending  = revenueRows.filter((r) => r.status === 'pending').reduce((s, r) => s + (r.package_price ?? 0), 0);
+      }
     } catch { /* tables not yet created */ }
+
+    try {
+      pendingAppointmentCount =
+        (await supabase.from('appointments').select('id', { count: 'exact', head: true }).eq('status', 'pending')).count ?? 0;
+
+      const now = new Date().toISOString();
+      const { data: upcoming } = await supabase
+        .from('appointments')
+        .select('*, profile:profiles(full_name, email)')
+        .gte('starts_at', now)
+        .in('status', ['pending', 'confirmed'])
+        .order('starts_at', { ascending: true })
+        .limit(5);
+      upcomingAppointments = (upcoming ?? []) as Appointment[];
+    } catch { /* appointments table not yet created */ }
   }
 
   // ── Activity feed (recent 8 items) ───────────────────────────────────────────
@@ -150,7 +180,8 @@ export default async function DashboardPage() {
 
       {/* Admin stats grid */}
       {isAdmin && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <AdminOnly>
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
           <Link href="/dashboard/users" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
             <div className="flex items-center justify-between mb-3">
               <div className="p-2 bg-blue-50 rounded-xl"><Users size={18} className="text-blue-600" /></div>
@@ -183,6 +214,20 @@ export default async function DashboardPage() {
             <p className="text-xs font-medium text-slate-400 mt-0.5">Actieve pakketten</p>
           </Link>
 
+          <Link href="/dashboard/kalender" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 relative">
+            {pendingAppointmentCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-400 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                {pendingAppointmentCount > 9 ? '9+' : pendingAppointmentCount}
+              </span>
+            )}
+            <div className="flex items-center justify-between mb-3">
+              <div className="p-2 bg-rose-50 rounded-xl"><CalendarCheck size={18} className="text-rose-600" /></div>
+              <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <p className="text-2xl font-bold text-slate-900">{pendingAppointmentCount}</p>
+            <p className="text-xs font-medium text-slate-400 mt-0.5">Openstaande afspraken</p>
+          </Link>
+
           <Link href="/dashboard/messages" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
             <div className="flex items-center justify-between mb-3">
               <div className="p-2 bg-purple-50 rounded-xl"><Mail size={18} className="text-purple-600" /></div>
@@ -192,6 +237,88 @@ export default async function DashboardPage() {
             <p className="text-xs font-medium text-slate-400 mt-0.5">Gesprekken</p>
           </Link>
         </div>
+
+        {/* Revenue snapshot + Upcoming appointments */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+          {/* Revenue snapshot */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-emerald-50 rounded-xl"><TrendingUp size={18} className="text-emerald-600" /></div>
+              <h3 className="font-bold text-slate-900">Omzet overzicht</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-emerald-50 rounded-xl p-4">
+                <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wide mb-1">Geaccepteerd</p>
+                <p className="text-2xl font-bold text-emerald-700">
+                  €{revenueAccepted.toLocaleString('nl-BE')}
+                </p>
+              </div>
+              <div className="bg-amber-50 rounded-xl p-4">
+                <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">In behandeling</p>
+                <p className="text-2xl font-bold text-amber-700">
+                  €{revenuePending.toLocaleString('nl-BE')}
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+              <span className="text-sm text-slate-500">Totaal pipeline</span>
+              <span className="text-sm font-bold text-slate-800">
+                €{(revenueAccepted + revenuePending).toLocaleString('nl-BE')}
+              </span>
+            </div>
+          </div>
+
+          {/* Upcoming appointments */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 rounded-xl"><Calendar size={18} className="text-blue-600" /></div>
+                <h3 className="font-bold text-slate-900">Komende afspraken</h3>
+              </div>
+              <Link href="/dashboard/kalender" className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+                Kalender →
+              </Link>
+            </div>
+            {upcomingAppointments.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-10 text-center px-6">
+                <CalendarCheck size={24} className="text-slate-200 mb-2" />
+                <p className="text-sm text-slate-400">Geen aankomende afspraken</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {upcomingAppointments.map((appt) => {
+                  const d = new Date(appt.starts_at);
+                  const name = appt.profile?.full_name ?? appt.profile?.email ?? appt.guest_name ?? appt.guest_email ?? 'Gast';
+                  const dayLabel = d.toLocaleDateString('nl-BE', { weekday: 'short', day: 'numeric', month: 'short' });
+                  const timeLabel = d.toLocaleTimeString('nl-BE', { hour: '2-digit', minute: '2-digit' });
+                  const isPending = appt.status === 'pending';
+                  return (
+                    <div key={appt.id} className="flex items-center gap-3 px-6 py-3">
+                      <div
+                        className="w-1.5 h-8 rounded-full shrink-0"
+                        style={{ backgroundColor: appt.color ?? '#3b82f6' }}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-slate-800 truncate">{name}</p>
+                        <p className="text-xs text-slate-400">{appt.type_name}</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-xs font-semibold text-slate-600">{timeLabel}</p>
+                        <p className="text-xs text-slate-400">{dayLabel}</p>
+                      </div>
+                      {isPending && (
+                        <span className="shrink-0 px-1.5 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-700 rounded-md">
+                          wacht
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      </AdminOnly>
       )}
 
       {/* Main content: packages CTA + activity feed */}
@@ -241,12 +368,14 @@ export default async function DashboardPage() {
           <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
             <h2 className="font-bold text-slate-900">Recente activiteit</h2>
             {isAdmin && (
-              <Link
-                href="/dashboard/aanvragen"
-                className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
-              >
-                Alle aanvragen →
-              </Link>
+              <AdminOnly>
+                <Link
+                  href="/dashboard/aanvragen"
+                  className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                >
+                  Alle aanvragen →
+                </Link>
+              </AdminOnly>
             )}
           </div>
 

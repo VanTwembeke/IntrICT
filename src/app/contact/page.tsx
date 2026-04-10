@@ -7,6 +7,7 @@ import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
 import { sendContactForm, type ContactFormState } from '@/app/actions/contact';
+import ContactCalendar from './ContactCalendar';
 
 const initialState: ContactFormState = { success: false };
 
@@ -176,8 +177,33 @@ export default function Contact() {
           </div>
         </section>
 
-        {/* Form + Side Info */}
+        {/* Calendar booking */}
         <section className="py-20 bg-linear-to-br from-slate-50 to-blue-50">
+          <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="mb-12 text-center"
+            >
+              <h2 className="mb-4 text-4xl font-bold md:text-5xl text-slate-800">
+                Plan een{' '}
+                <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">
+                  Gesprek
+                </span>{' '}
+                In
+              </h2>
+              <p className="max-w-2xl mx-auto text-xl leading-relaxed text-slate-600">
+                Kies een moment dat je uitkomt. Geen account nodig — gewoon inplannen en we nemen contact op.
+              </p>
+            </motion.div>
+            <ContactCalendar />
+          </div>
+        </section>
+
+        {/* Form + Side Info */}
+        <section className="py-20 bg-white">
           <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div className="grid items-start grid-cols-1 gap-12 lg:grid-cols-5">
               <motion.div

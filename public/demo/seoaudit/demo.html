@@ -9,144 +9,158 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-[data-theme="dark"]{--bg:#0f0f0f;--bg2:#171717;--bg3:#1f1f1f;--bg4:#272727;--tx:#f0f0f0;--tx2:#888;--tx3:#444;--border:#252525;--border2:#333;--card:#181818;--sh:0 1px 3px rgba(0,0,0,.5)}
-[data-theme="light"]{--bg:#f2f1ed;--bg2:#ffffff;--bg3:#f7f6f2;--bg4:#eeede8;--tx:#111;--tx2:#666;--tx3:#aaa;--border:#e4e2da;--border2:#d0cec6;--card:#fff;--sh:0 1px 3px rgba(0,0,0,.07)}
+[data-theme="dark"]{--bg:#0f0f0f;--bg2:#171717;--bg3:#1f1f1f;--bg4:#272727;--tx:#f0f0f0;--tx2:#888;--tx3:#444;--border:#252525;--border2:#333;--card:#181818}
+[data-theme="light"]{--bg:#f2f1ed;--bg2:#fff;--bg3:#f7f6f2;--bg4:#eeede8;--tx:#111;--tx2:#666;--tx3:#aaa;--border:#e4e2da;--border2:#d0cec6;--card:#fff}
 :root{--acc:#ff5c00;--acc-d:#d94f00;--acc-dim:rgba(255,92,0,.09);--green:#16a34a;--gbg:rgba(22,163,74,.1);--red:#dc2626;--rbg:rgba(220,38,38,.1);--amber:#d97706;--abg:rgba(217,119,6,.1);--fs:'Syne',sans-serif;--fm:'IBM Plex Mono',monospace;--tr:.16s ease;--r:5px}
 html,body{height:100%;overflow:hidden;font-family:var(--fm);font-size:13.5px;background:var(--bg);color:var(--tx)}
 .app{display:grid;grid-template-columns:252px 1fr;height:100vh;overflow:hidden}
 
 /* SIDEBAR */
 .sb{display:flex;flex-direction:column;height:100vh;background:var(--bg2);border-right:1px solid var(--border);overflow:hidden}
-.sb-head{padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
-.sb-logo{font-family:var(--fs);font-size:.92rem;font-weight:800;color:var(--tx);letter-spacing:.01em}
+.sb-head{padding:13px 15px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-logo{font-family:var(--fs);font-size:.9rem;font-weight:800;color:var(--tx)}
 .sb-logo em{color:var(--acc);font-style:normal}
-.sb-sub{font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-top:3px}
-
-/* Ring score */
-.sb-ring{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
-.rw{position:relative;width:68px;height:68px;flex-shrink:0}
-.rw svg{width:68px;height:68px;transform:rotate(-90deg)}
+.sb-sub{font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-top:3px}
+.sb-ring{padding:13px 15px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;flex-shrink:0}
+.rw{position:relative;width:66px;height:66px;flex-shrink:0}
+.rw svg{width:66px;height:66px;transform:rotate(-90deg)}
 .r-bg{fill:none;stroke:var(--border2);stroke-width:6}
-.r-fg{fill:none;stroke-width:6;stroke-linecap:round;stroke-dasharray:176;transition:stroke-dashoffset .5s ease,stroke .3s}
+.r-fg{fill:none;stroke-width:6;stroke-linecap:round;stroke-dasharray:170;transition:stroke-dashoffset .5s ease,stroke .3s}
 .r-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.r-pct{font-family:var(--fs);font-size:1.05rem;font-weight:800;color:var(--tx);line-height:1}
-.r-lbl{font-size:.48rem;color:var(--tx3);margin-top:1px}
+.r-pct{font-family:var(--fs);font-size:1rem;font-weight:800;color:var(--tx);line-height:1}
+.r-lbl{font-size:.46rem;color:var(--tx3);margin-top:1px}
 .ring-meta{flex:1;min-width:0}
-.rm-row{display:flex;justify-content:space-between;font-size:.65rem;color:var(--tx2);margin-bottom:4px}
+.rm-row{display:flex;justify-content:space-between;font-size:.63rem;color:var(--tx2);margin-bottom:4px}
 .rm-row b{color:var(--tx);font-weight:500}
-.prog{height:2px;background:var(--border2);border-radius:2px;overflow:hidden;margin-bottom:6px}
+.prog{height:2px;background:var(--border2);border-radius:2px;overflow:hidden;margin-bottom:5px}
 .prog-f{height:100%;background:var(--acc);transition:width .4s ease}
-.pills{display:flex;gap:4px}
-.pill{font-size:.56rem;font-weight:500;padding:1px 6px;border-radius:100px}
-.p-g{background:var(--gbg);color:var(--green)}
-.p-r{background:var(--rbg);color:var(--red)}
-.p-a{background:var(--bg4);color:var(--tx2)}
-
-/* Nav */
-.sb-nav{flex:1;overflow-y:auto;padding:6px 0}
+.pills{display:flex;gap:3px}
+.pill{font-size:.54rem;font-weight:500;padding:1px 5px;border-radius:100px}
+.p-g{background:var(--gbg);color:var(--green)}.p-r{background:var(--rbg);color:var(--red)}.p-a{background:var(--bg4);color:var(--tx2)}
+.sb-nav{flex:1;overflow-y:auto;padding:5px 0}
 .sb-nav::-webkit-scrollbar{width:2px}.sb-nav::-webkit-scrollbar-thumb{background:var(--border2)}
-.ni{display:flex;align-items:center;justify-content:space-between;padding:7px 16px;cursor:pointer;border-left:2px solid transparent;font-size:.7rem;color:var(--tx2);transition:all var(--tr);gap:6px}
+.ni{display:flex;align-items:center;justify-content:space-between;padding:6px 15px;cursor:pointer;border-left:2px solid transparent;font-size:.69rem;color:var(--tx2);transition:all var(--tr);gap:5px}
 .ni:hover{color:var(--tx);background:var(--bg3)}
 .ni.active{color:var(--acc);border-left-color:var(--acc);background:var(--acc-dim)}
 .ni-lbl{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ni-badge{font-size:.56rem;background:var(--bg4);color:var(--tx3);padding:1px 6px;border-radius:100px;flex-shrink:0}
+.ni-badge{font-size:.54rem;background:var(--bg4);color:var(--tx3);padding:1px 5px;border-radius:100px;flex-shrink:0}
 .ni.active .ni-badge{background:var(--acc-dim);color:var(--acc)}
 .ni.all-done .ni-badge{background:var(--gbg);color:var(--green)}
-
-/* Footer */
-.sb-foot{padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:5px}
+.sb-foot{padding:9px 11px;border-top:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:5px}
 .fr{display:flex;gap:5px}
-.btn{font-family:var(--fm);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;font-weight:500;border:none;cursor:pointer;padding:6px 10px;transition:all var(--tr);display:flex;align-items:center;justify-content:center;gap:3px;border-radius:var(--r);white-space:nowrap}
+.btn{font-family:var(--fm);font-size:.57rem;letter-spacing:.1em;text-transform:uppercase;font-weight:500;border:none;cursor:pointer;padding:6px 9px;transition:all var(--tr);display:flex;align-items:center;justify-content:center;gap:3px;border-radius:var(--r);white-space:nowrap}
 .b-acc{background:var(--acc);color:#fff;flex:1}.b-acc:hover{background:var(--acc-d)}
 .b-ghost{background:var(--bg3);color:var(--tx2);border:1px solid var(--border2);flex:1}.b-ghost:hover{color:var(--tx)}
 .b-danger{background:var(--rbg);color:var(--red);border:1px solid rgba(220,38,38,.2)}.b-danger:hover{background:rgba(220,38,38,.16)}
-.b-icon{background:var(--bg3);color:var(--tx2);border:1px solid var(--border2);width:28px;height:28px;padding:0;border-radius:var(--r);font-size:.8rem;flex-shrink:0}.b-icon:hover{color:var(--tx)}
+.b-icon{background:var(--bg3);color:var(--tx2);border:1px solid var(--border2);width:27px;height:27px;padding:0;border-radius:var(--r);font-size:.8rem;flex-shrink:0}.b-icon:hover{color:var(--tx)}
 
 /* MAIN */
 .main{display:flex;flex-direction:column;height:100vh;overflow:hidden}
-.hdr{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;flex-wrap:wrap}
-.hdr-title{font-family:var(--fs);font-size:.88rem;font-weight:700;color:var(--tx)}
+.hdr{display:flex;align-items:center;gap:9px;padding:9px 16px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;flex-wrap:wrap}
+.hdr-title{font-family:var(--fs);font-size:.87rem;font-weight:700;color:var(--tx)}
 .hdr-sep{font-size:.65rem;color:var(--tx3)}
-.hdr-cat{font-size:.65rem;color:var(--tx2)}
+.hdr-cat{font-size:.63rem;color:var(--tx2)}
 .hdr-sp{flex:1}
 .ci-wrap{display:flex;align-items:center;gap:5px}
-.ci-lbl{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3)}
-.ci{background:var(--bg3);border:1px solid var(--border2);color:var(--tx);font-family:var(--fm);font-size:.72rem;padding:4px 9px;border-radius:var(--r);outline:none;width:155px;transition:border-color var(--tr)}
+.ci-lbl{font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3)}
+.ci{background:var(--bg3);border:1px solid var(--border2);color:var(--tx);font-family:var(--fm);font-size:.7rem;padding:4px 8px;border-radius:var(--r);outline:none;width:150px;transition:border-color var(--tr)}
 .ci:focus{border-color:var(--acc)}.ci::placeholder{color:var(--tx3)}
-.hdr-date{font-size:.6rem;color:var(--tx3)}
+.hdr-date{font-size:.58rem;color:var(--tx3)}
 
-/* Filter */
-.fbar{display:flex;align-items:center;gap:5px;padding:6px 18px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;flex-wrap:wrap}
-.f-lbl{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3)}
-.f-btn{font-family:var(--fm);font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--border2);background:transparent;color:var(--tx2);padding:3px 9px;cursor:pointer;border-radius:100px;transition:all var(--tr)}
+/* AI BAR */
+.abar{display:flex;align-items:center;gap:7px;padding:7px 16px;background:var(--acc-dim);border-bottom:2px solid var(--acc);flex-shrink:0;flex-wrap:wrap}
+.abar-lbl{font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-weight:700;white-space:nowrap}
+.url-inp{flex:1;min-width:180px;background:var(--bg2);border:1px solid var(--acc);color:var(--tx);font-family:var(--fm);font-size:.7rem;padding:5px 9px;border-radius:var(--r);outline:none}
+.url-inp::placeholder{color:var(--tx3)}
+.btn-run{background:var(--acc);color:#fff;border:none;font-family:var(--fm);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:6px 13px;border-radius:var(--r);cursor:pointer;transition:background var(--tr);white-space:nowrap}
+.btn-run:hover{background:var(--acc-d)}.btn-run:disabled{opacity:.45;cursor:not-allowed}
+.abar-status{font-size:.58rem;color:var(--tx2);margin-left:auto;white-space:nowrap}
+
+/* FILTER */
+.fbar{display:flex;align-items:center;gap:5px;padding:6px 16px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;flex-wrap:wrap}
+.f-lbl{font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3)}
+.f-btn{font-family:var(--fm);font-size:.57rem;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--border2);background:transparent;color:var(--tx2);padding:3px 8px;cursor:pointer;border-radius:100px;transition:all var(--tr)}
 .f-btn:hover{color:var(--tx)}.f-btn.active{background:var(--acc);border-color:var(--acc);color:#fff}
-.f-sep{width:1px;height:14px;background:var(--border);margin:0 3px}
-.s-inp{background:var(--bg3);border:1px solid var(--border2);color:var(--tx);font-family:var(--fm);font-size:.66rem;padding:3px 9px;border-radius:100px;outline:none;width:150px;transition:border-color var(--tr)}
+.f-sep{width:1px;height:13px;background:var(--border);margin:0 2px}
+.s-inp{background:var(--bg3);border:1px solid var(--border2);color:var(--tx);font-family:var(--fm);font-size:.64rem;padding:3px 8px;border-radius:100px;outline:none;width:140px;transition:border-color var(--tr)}
 .s-inp:focus{border-color:var(--acc)}.s-inp::placeholder{color:var(--tx3)}
-.vis{font-size:.58rem;color:var(--tx3);margin-left:auto}
+.vis{font-size:.57rem;color:var(--tx3);margin-left:auto}
 
-/* List */
-.list{flex:1;overflow-y:auto;padding:14px 18px}
+/* LIST */
+.list{flex:1;overflow-y:auto;padding:12px 16px}
 .list::-webkit-scrollbar{width:3px}.list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-
-.cg{margin-bottom:18px}
-.cg-h{display:flex;align-items:center;gap:7px;margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid var(--border)}
-.cg-title{font-family:var(--fs);font-size:.78rem;font-weight:700;color:var(--tx)}
-.cg-pill{font-size:.55rem;font-weight:500;padding:1px 7px;border-radius:100px}
-.cg-desc{font-size:.62rem;color:var(--tx3);margin-left:auto}
-
-/* Check item */
-.ck{display:grid;grid-template-columns:20px 1fr auto;gap:9px;align-items:start;padding:7px 9px;border:1px solid var(--border);border-radius:var(--r);margin-bottom:3px;cursor:default;transition:background var(--tr),border-color var(--tr);background:var(--card)}
+.cg{margin-bottom:16px}
+.cg-h{display:flex;align-items:center;gap:6px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.cg-title{font-family:var(--fs);font-size:.77rem;font-weight:700;color:var(--tx)}
+.cg-pill{font-size:.54rem;font-weight:500;padding:1px 6px;border-radius:100px}
+.cg-desc{font-size:.6rem;color:var(--tx3);margin-left:auto}
+.ck{display:grid;grid-template-columns:20px 1fr auto;gap:8px;align-items:start;padding:6px 8px;border:1px solid var(--border);border-radius:var(--r);margin-bottom:3px;background:var(--card);transition:background var(--tr),border-color var(--tr)}
 .ck:hover{background:var(--bg3)}
 .ck.done{background:var(--bg3);border-color:rgba(22,163,74,.2)}
 .ck.na{opacity:.4}
-
-.ck-box{width:20px;height:20px;border:1.5px solid var(--border2);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;cursor:pointer;transition:all var(--tr);font-size:.68rem;font-weight:700;color:transparent}
+.ck-box{width:20px;height:20px;border:1.5px solid var(--border2);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;cursor:pointer;transition:all var(--tr);font-size:.66rem;font-weight:700;color:transparent}
 .ck.done .ck-box{background:var(--green);border-color:var(--green);color:#fff}
 .ck.na .ck-box{background:var(--bg4);color:var(--tx2)}
-
 .ck-body{min-width:0}
-.ck-name{font-size:.72rem;color:var(--tx);line-height:1.45;cursor:pointer;user-select:none}
+.ck-name{font-size:.7rem;color:var(--tx);line-height:1.4;cursor:pointer;user-select:none}
 .ck.done .ck-name{text-decoration:line-through;color:var(--tx3)}
-.ck-tip{font-size:.63rem;color:var(--tx2);line-height:1.6;margin-top:5px;padding-top:5px;border-top:1px dashed var(--border2);display:none}
+/* AI result badge inline */
+.ai-badge{font-size:.53rem;font-weight:500;padding:1px 5px;border-radius:3px;margin-left:5px;vertical-align:middle;display:inline-block}
+.ai-ok{background:var(--gbg);color:var(--green)}
+.ai-fail{background:var(--rbg);color:var(--red)}
+.ai-warn{background:var(--abg);color:var(--amber)}
+.ai-na{background:var(--bg4);color:var(--tx3)}
+/* AI finding text */
+.ck-finding{font-size:.63rem;color:var(--tx2);margin-top:4px;line-height:1.5;padding:4px 7px;background:var(--bg4);border-left:2px solid var(--acc);border-radius:2px;display:none}
+.ck.has-finding .ck-finding{display:block}
+.ck-tip{font-size:.62rem;color:var(--tx2);line-height:1.55;margin-top:4px;padding-top:4px;border-top:1px dashed var(--border2);display:none}
 .ck.open .ck-tip{display:block}
-.ck-note{width:100%;margin-top:5px;font-family:var(--fm);font-size:.63rem;background:var(--bg4);border:1px solid var(--border2);color:var(--tx);padding:4px 7px;resize:none;min-height:40px;outline:none;border-radius:3px;display:none;transition:border-color var(--tr)}
+.ck-note{width:100%;margin-top:4px;font-family:var(--fm);font-size:.62rem;background:var(--bg4);border:1px solid var(--border2);color:var(--tx);padding:4px 6px;resize:none;min-height:38px;outline:none;border-radius:3px;display:none;transition:border-color var(--tr)}
 .ck.open .ck-note{display:block}
 .ck-note:focus{border-color:var(--acc)}.ck-note::placeholder{color:var(--tx3)}
-.ck-acts{display:flex;gap:3px;margin-top:4px}
-.ck-act{font-family:var(--fm);font-size:.55rem;padding:2px 6px;background:none;border:1px solid var(--border2);color:var(--tx3);cursor:pointer;border-radius:3px;transition:all var(--tr)}
-.ck-act:hover{color:var(--tx);border-color:var(--border2)}
-.ck-act.on{border-color:rgba(22,163,74,.4);color:var(--green);background:var(--gbg)}
-
-.prio{font-size:.53rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:1px 5px;border-radius:100px;white-space:nowrap;align-self:flex-start;margin-top:2px}
+.ck-acts{display:flex;gap:3px;margin-top:3px}
+.ck-act{font-family:var(--fm);font-size:.54rem;padding:2px 5px;background:none;border:1px solid var(--border2);color:var(--tx3);cursor:pointer;border-radius:3px;transition:all var(--tr)}
+.ck-act:hover{color:var(--tx)}.ck-act.on{border-color:rgba(22,163,74,.4);color:var(--green);background:var(--gbg)}
+.prio{font-size:.52rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:1px 5px;border-radius:100px;white-space:nowrap;align-self:flex-start;margin-top:2px}
 .ph{background:var(--rbg);color:var(--red)}.pm{background:var(--abg);color:var(--amber)}.pl{background:var(--gbg);color:var(--green)}
+.empty{padding:36px;text-align:center;color:var(--tx3);font-size:.7rem}
 
-.empty{padding:40px;text-align:center;color:var(--tx3);font-size:.72rem}
+/* AI OVERLAY */
+.ai-ov{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(5px)}
+.ai-ov.open{display:flex}
+.ai-box{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:26px;width:440px;max-width:92vw;text-align:center}
+.ai-spin{font-size:1.8rem;margin-bottom:9px;display:inline-block;animation:spin 1.5s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ai-tit{font-family:var(--fs);font-size:.9rem;font-weight:700;color:var(--tx);margin-bottom:5px}
+.ai-st{font-size:.67rem;color:var(--tx2);margin-bottom:13px;min-height:18px;line-height:1.4}
+.ai-pt{height:3px;background:var(--border2);border-radius:2px;overflow:hidden;margin-bottom:12px}
+.ai-pf{height:100%;background:var(--acc);transition:width .6s ease}
+.ai-summary{margin-top:12px;padding:10px 12px;background:var(--bg3);border-radius:var(--r);text-align:left;font-size:.67rem;color:var(--tx2);line-height:1.65;max-height:130px;overflow-y:auto;display:none;border-left:2px solid var(--acc)}
+.ai-foot{display:flex;gap:7px;margin-top:14px}
 
 /* MODAL */
-.mo{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:150;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
 .mo.open{display:flex}
-.mo-box{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:22px;width:380px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,.35)}
-.mo-title{font-family:var(--fs);font-size:.9rem;font-weight:700;color:var(--tx);margin-bottom:3px}
-.mo-sub{font-size:.64rem;color:var(--tx2);margin-bottom:14px}
-.mo-list{max-height:220px;overflow-y:auto;margin-bottom:14px;display:flex;flex-direction:column;gap:5px}
-.mo-item{display:flex;align-items:center;justify-content:space-between;padding:7px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all var(--tr)}
+.mo-box{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:20px;width:370px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.mo-title{font-family:var(--fs);font-size:.88rem;font-weight:700;color:var(--tx);margin-bottom:3px}
+.mo-sub{font-size:.62rem;color:var(--tx2);margin-bottom:12px}
+.mo-list{max-height:200px;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:4px}
+.mo-item{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all var(--tr)}
 .mo-item:hover{border-color:var(--acc)}
-.mo-item-n{font-size:.72rem;color:var(--tx)}
-.mo-item-m{font-size:.6rem;color:var(--tx3);margin-top:1px}
-.mo-del{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:.72rem;padding:2px 5px;transition:color var(--tr)}
+.mo-item-n{font-size:.7rem;color:var(--tx)}
+.mo-item-m{font-size:.58rem;color:var(--tx3);margin-top:1px}
+.mo-del{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:.7rem;padding:2px 5px;transition:color var(--tr)}
 .mo-del:hover{color:var(--red)}
-.mo-empty{font-size:.7rem;color:var(--tx3);text-align:center;padding:18px}
+.mo-empty{font-size:.68rem;color:var(--tx3);text-align:center;padding:16px}
 .mo-foot{display:flex;gap:7px}
 
-/* Print */
 @media print{
   html,body{height:auto;overflow:visible}
   .app{display:block;height:auto}
-  .sb,.fbar{display:none}
+  .sb,.fbar,.abar{display:none}
   .main{height:auto;overflow:visible}
   .list{overflow:visible;height:auto;padding:0}
-  .ck-tip,.ck-note{display:block!important}
+  .ck-tip,.ck-note,.ck-finding{display:block!important}
   .ck-acts{display:none}
   @page{margin:1.5cm;size:A4}
 }
@@ -155,15 +169,14 @@ html,body{height:100%;overflow:hidden;font-family:var(--fm);font-size:13.5px;bac
 <body>
 <div class="app">
 
-<!-- SIDEBAR -->
 <aside class="sb">
   <div class="sb-head">
     <div class="sb-logo">SEO<em>.</em>Audit</div>
-    <div class="sb-sub">Professionele checklist tool</div>
+    <div class="sb-sub">AI-gedreven checklist tool</div>
   </div>
   <div class="sb-ring">
     <div class="rw">
-      <svg viewBox="0 0 60 60"><circle class="r-bg" cx="30" cy="30" r="26"/><circle class="r-fg" id="rFg" cx="30" cy="30" r="26" stroke="var(--acc)" stroke-dashoffset="176"/></svg>
+      <svg viewBox="0 0 60 60"><circle class="r-bg" cx="30" cy="30" r="25"/><circle class="r-fg" id="rFg" cx="30" cy="30" r="25" stroke="var(--acc)" stroke-dashoffset="170"/></svg>
       <div class="r-inner"><span class="r-pct" id="rPct">0</span><span class="r-lbl">score</span></div>
     </div>
     <div class="ring-meta">
@@ -182,7 +195,7 @@ html,body{height:100%;overflow:hidden;font-family:var(--fm);font-size:13.5px;bac
     <div class="fr">
       <button class="btn b-acc" onclick="window.print()">⊞ PDF</button>
       <button class="btn b-ghost" onclick="openModal()">⊕ Klanten</button>
-      <button class="btn b-icon" id="thBtn" onclick="toggleTheme()" title="Thema">☀</button>
+      <button class="btn b-icon" id="thBtn" onclick="toggleTheme()">☀</button>
     </div>
     <div class="fr">
       <button class="btn b-ghost" onclick="saveAudit()">↓ Opslaan</button>
@@ -191,7 +204,6 @@ html,body{height:100%;overflow:hidden;font-family:var(--fm);font-size:13.5px;bac
   </div>
 </aside>
 
-<!-- MAIN -->
 <main class="main">
   <div class="hdr">
     <div class="hdr-title">SEO Audit</div>
@@ -204,6 +216,14 @@ html,body{height:100%;overflow:hidden;font-family:var(--fm);font-size:13.5px;bac
     </div>
     <div class="hdr-date" id="hDate"></div>
   </div>
+
+  <div class="abar">
+    <span class="abar-lbl">⚡ AI Analyse</span>
+    <input class="url-inp" id="urlInp" type="url" placeholder="https://www.domein.be" onkeydown="if(event.key==='Enter')runAnalyse()"/>
+    <button class="btn-run" id="runBtn" onclick="runAnalyse()">Analyseer →</button>
+    <span class="abar-status" id="abarSt">Voer URL in en klik Analyseer — Claude vult de checklist automatisch in</span>
+  </div>
+
   <div class="fbar">
     <span class="f-lbl">Toon</span>
     <button class="f-btn active" data-f="all" onclick="setF('all',this)">Alles</button>
@@ -216,10 +236,24 @@ html,body{height:100%;overflow:hidden;font-family:var(--fm);font-size:13.5px;bac
   </div>
   <div class="list" id="list"></div>
 </main>
-
 </div>
 
-<!-- MODAL -->
+<!-- AI OVERLAY -->
+<div class="ai-ov" id="aiOv">
+  <div class="ai-box">
+    <div class="ai-spin" id="aiSpin">⚙</div>
+    <div class="ai-tit" id="aiTit">Website wordt geanalyseerd…</div>
+    <div class="ai-st" id="aiSt">Claude inspecteert de URL en alle SEO-factoren…</div>
+    <div class="ai-pt"><div class="ai-pf" id="aiPf" style="width:5%"></div></div>
+    <div class="ai-summary" id="aiSum"></div>
+    <div class="ai-foot" id="aiF" style="display:none">
+      <button class="btn b-ghost" style="flex:1" onclick="closeAiOv()">Sluiten</button>
+      <button class="btn b-acc" style="flex:1" onclick="closeAiOv()">Bekijk resultaten →</button>
+    </div>
+  </div>
+</div>
+
+<!-- KLANTEN MODAL -->
 <div class="mo" id="mo">
   <div class="mo-box">
     <div class="mo-title">Auditbeheer</div>
@@ -233,114 +267,128 @@ html,body{height:100%;overflow:hidden;font-family:var(--fm);font-size:13.5px;bac
 </div>
 
 <script>
+// ═══════════════════════════════════════════
+// CHECKLIST DATA
+// ═══════════════════════════════════════════
 const CATS=[
   {id:'tech',label:'Technisch',desc:'Crawl, indexering & snelheid',items:[
-    {id:'t1',name:'robots.txt aanwezig & correct geconfigureerd',tip:'Controleer /robots.txt. Zorg dat indexeerbare pagina\'s niet geblokkeerd zijn. Test via Google Search Console > Crawl Stats.',prio:'hoog'},
-    {id:'t2',name:'XML-sitemap aanwezig & ingediend bij GSC',tip:'Sitemap.xml bevat alle indexeerbare URLs, geen 4xx/5xx. Ingediend en verwerkt via Google Search Console.',prio:'hoog'},
-    {id:'t3',name:'HTTPS op alle pagina\'s, geen mixed content',tip:'Controleer via browserconsole of Why No Padlock. Alle resources (afbeeldingen, scripts, CSS) laden via HTTPS.',prio:'hoog'},
-    {id:'t4',name:'Canonical tags correct ingesteld',tip:'Elke pagina heeft self-referencing canonical. Duplicate content heeft canonical naar primaire URL.',prio:'hoog'},
-    {id:'t5',name:'Core Web Vitals OK (LCP, CLS, INP)',tip:'PageSpeed Insights: LCP < 2,5s · CLS < 0,1 · INP < 200ms. Controleer mobile én desktop afzonderlijk.',prio:'hoog'},
-    {id:'t6',name:'Mobieloptimalisatie getest',tip:'Google Mobile-Friendly Test. Controleer: tekstgrootte, tapafstand (min 48px), viewport meta aanwezig.',prio:'hoog'},
+    {id:'t1',name:'robots.txt aanwezig & correct',tip:'Controleer /robots.txt. Zorg dat indexeerbare pagina\'s niet geblokkeerd zijn. Test via Google Search Console > Crawl Stats.',prio:'hoog'},
+    {id:'t2',name:'XML-sitemap ingediend bij GSC',tip:'Sitemap.xml bevat alle indexeerbare URLs, geen 4xx/5xx. Ingediend en verwerkt via Google Search Console.',prio:'hoog'},
+    {id:'t3',name:'HTTPS actief, geen mixed content',tip:'Controleer via browserconsole of Why No Padlock. Alle resources laden via HTTPS.',prio:'hoog'},
+    {id:'t4',name:'Canonical tags correct ingesteld',tip:'Elke pagina heeft self-referencing canonical. Duplicates hebben canonical naar primaire URL.',prio:'hoog'},
+    {id:'t5',name:'Core Web Vitals OK (LCP, CLS, INP)',tip:'PageSpeed Insights: LCP < 2,5s · CLS < 0,1 · INP < 200ms. Controleer mobile én desktop.',prio:'hoog'},
+    {id:'t6',name:'Mobieloptimalisatie getest',tip:'Google Mobile-Friendly Test. Tekstgrootte, tapafstand (min 48px), viewport meta aanwezig.',prio:'hoog'},
     {id:'t7',name:'Geen crawlfouten in Search Console',tip:'GSC > Coverage. Corrigeer 4xx en redirect-ketens. Server errors (5xx) onmiddellijk aanpakken.',prio:'hoog'},
-    {id:'t8',name:'Laadtijd < 3s (mobile & desktop)',tip:'PageSpeed score > 70. Focus op TTFB, LCP en TBT. Overweeg CDN, browser-caching en image lazy loading.',prio:'midden'},
-    {id:'t9',name:'Gestructureerde data (Schema.org) geïmplementeerd',tip:'Test via Rich Results Test. Gebruik relevante types: LocalBusiness, Article, FAQ, Product, BreadcrumbList.',prio:'midden'},
-    {id:'t10',name:'Geen redirect-ketens of -loops',tip:'Elke redirect leidt direct naar eindbestemming. Max 1 stap. Controleer met Screaming Frog of Sitebulb.',prio:'midden'},
-    {id:'t11',name:'Hreflang correct ingesteld (meertalige sites)',tip:'Elke taalvariant linkt naar alle varianten inclusief zichzelf. x-default instellen voor primaire taal.',prio:'laag'},
-    {id:'t12',name:'Nuttige 404-pagina aanwezig',tip:'404-pagina bevat navigatie naar hoofdpagina\'s, zoekfunctie en duidelijke boodschap. Geen lege pagina.',prio:'laag'},
+    {id:'t8',name:'Laadtijd < 3s (mobile & desktop)',tip:'PageSpeed score > 70. Focus op TTFB, LCP en TBT. Overweeg CDN, caching en lazy loading.',prio:'midden'},
+    {id:'t9',name:'Gestructureerde data (Schema.org)',tip:'Test via Rich Results Test. Gebruik LocalBusiness, Article, FAQ, Product, BreadcrumbList.',prio:'midden'},
+    {id:'t10',name:'Geen redirect-ketens of -loops',tip:'Max 1 redirect-stap. Controleer met Screaming Frog of Sitebulb.',prio:'midden'},
+    {id:'t11',name:'Hreflang correct (meertalige sites)',tip:'Elke taalvariant linkt naar alle varianten inclusief zichzelf. x-default instellen.',prio:'laag'},
+    {id:'t12',name:'Nuttige 404-pagina aanwezig',tip:'404-pagina bevat navigatie, zoekfunctie en duidelijke boodschap.',prio:'laag'},
   ]},
   {id:'onpage',label:'On-page',desc:'Titels, headings & interne links',items:[
-    {id:'o1',name:'Unieke title tags (50–60 tekens)',tip:'Elke pagina heeft unieke title. Primair zoekwoord staat vooraan. Geen duplicates zichtbaar in GSC > Pages.',prio:'hoog'},
-    {id:'o2',name:'Meta descriptions aanwezig (130–155 tekens)',tip:'Unieke meta description per pagina. Bevat het zoekwoord en heeft een duidelijke reden om te klikken.',prio:'hoog'},
-    {id:'o3',name:'Één H1 per pagina met hoofdzoekwoord',tip:'Exact één H1 per pagina. Verschilt van de title tag maar is inhoudelijk gerelateerd. Bevat primair zoekwoord.',prio:'hoog'},
-    {id:'o4',name:'Logische heading-hiërarchie (H1→H2→H3)',tip:'Geen H3 zonder H2, geen H2 zonder H1. Headings zijn inhoudelijk beschrijvend — geen decoratief gebruik.',prio:'midden'},
-    {id:'o5',name:'Primair zoekwoord in eerste 100 woorden',tip:'Gebruik het hoofdzoekwoord vroeg in de body. Natuurlijk taalgebruik heeft prioriteit boven plaatsing.',prio:'midden'},
-    {id:'o6',name:'Alt-teksten op alle afbeeldingen',tip:'Beschrijvende alt-teksten voor inhoudelijke afbeeldingen. Decoratieve afbeeldingen krijgen lege alt="".',prio:'midden'},
-    {id:'o7',name:'Interne linkstructuur logisch en aanwezig',tip:'Elke pagina bereikbaar via interne links. Gebruik beschrijvende ankerteksten. Vermijd "klik hier".',prio:'hoog'},
-    {id:'o8',name:'Geen orphan pages aanwezig',tip:'Screaming Frog of Sitebulb om orphan pages te detecteren. Elke pagina minimaal één inkomende interne link.',prio:'midden'},
-    {id:'o9',name:'URL-structuur: kort, beschrijvend, zoekwoordrijk',tip:'Koppeltekens (geen underscores). Geen sessie-IDs. Lowercase. Maximaal 3–4 niveaus diep.',prio:'midden'},
+    {id:'o1',name:'Unieke title tags (50–60 tekens)',tip:'Primair zoekwoord vooraan. Geen duplicates zichtbaar in GSC > Pages.',prio:'hoog'},
+    {id:'o2',name:'Meta descriptions aanwezig (130–155 tekens)',tip:'Uniek per pagina. Bevat zoekwoord en duidelijke reden om te klikken.',prio:'hoog'},
+    {id:'o3',name:'Één H1 per pagina met hoofdzoekwoord',tip:'Exact één H1, verschilt van title tag maar inhoudelijk gerelateerd.',prio:'hoog'},
+    {id:'o4',name:'Logische heading-hiërarchie (H1→H2→H3)',tip:'Geen H3 zonder H2. Headings zijn inhoudelijk beschrijvend.',prio:'midden'},
+    {id:'o5',name:'Primair zoekwoord in eerste 100 woorden',tip:'Gebruik het hoofdzoekwoord vroeg in de body. Natuurlijk taalgebruik heeft prioriteit.',prio:'midden'},
+    {id:'o6',name:'Alt-teksten op alle afbeeldingen',tip:'Beschrijvende alts voor inhoudelijke afbeeldingen. Decoratieve: lege alt="".',prio:'midden'},
+    {id:'o7',name:'Interne linkstructuur logisch en aanwezig',tip:'Elke pagina bereikbaar via interne links. Beschrijvende ankerteksten.',prio:'hoog'},
+    {id:'o8',name:'Geen orphan pages',tip:'Screaming Frog om orphan pages te detecteren. Elke pagina ≥1 inkomende interne link.',prio:'midden'},
+    {id:'o9',name:'URL-structuur: kort, beschrijvend, zoekwoordrijk',tip:'Koppeltekens, geen underscores. Lowercase. Max 3–4 niveaus diep.',prio:'midden'},
     {id:'o10',name:'Open Graph & Twitter Card tags aanwezig',tip:'og:title, og:description, og:image (1200×630px). Test via Facebook Sharing Debugger.',prio:'laag'},
   ]},
   {id:'content',label:'Content',desc:'Kwaliteit, zoekwoorden & structuur',items:[
-    {id:'c1',name:'Zoekwoordenonderzoek uitgevoerd voor doelpagina\'s',tip:'Tools: Ahrefs, Semrush, Google Keyword Planner. Focus op zoekintentie: informationeel, commercieel, transactioneel.',prio:'hoog'},
-    {id:'c2',name:'Content beantwoordt de zoekintentie correct',tip:'Analyseer SERP voor het zoekwoord. Klopt het format en de diepgang van uw content met de top-3?',prio:'hoog'},
-    {id:'c3',name:'Geen duplicate content (intern of extern)',tip:'Gebruik Copyscape of Siteliner. Controleer of paginavarianten (www, http, trailing slash) geconsolideerd zijn.',prio:'hoog'},
-    {id:'c4',name:'Voldoende contentdiepgang t.o.v. concurrenten',tip:'Vergelijk woordtelling en onderwerpbreedte met top-3 SERP. Voeg FAQ, afbeeldingen en video\'s toe.',prio:'midden'},
-    {id:'c5',name:'LSI-zoekwoorden & semantisch verwante termen',tip:'Gebruik Google\'s "Gerelateerde zoekopdrachten" en "People Also Ask" als bron van semantisch verwante begrippen.',prio:'midden'},
-    {id:'c6',name:'Blog aanwezig & regelmatig gepubliceerd',tip:'Min. 2× per maand voor competitieve niches. Consistent publiceren versterkt autoriteits-signalen bij Google.',prio:'midden'},
-    {id:'c7',name:'Afbeeldingen gecomprimeerd & in WebP-formaat',tip:'TinyPNG of Squoosh. WebP bespaart 25–35% bestandsgrootte. Lazy loading inschakelen voor offscreen images.',prio:'midden'},
-    {id:'c8',name:'FAQ-sectie aanwezig met FAQ Schema',tip:'Beantwoord veelgestelde vragen. Voeg FAQ Schema-markup toe voor kans op rich snippets in de SERP.',prio:'laag'},
-    {id:'c9',name:'Content leesvaardig (alinea\'s, bullets, witruimte)',tip:'Korte alinea\'s (max 3 regels). Gebruik bullets en subheadings. Hoog bouncepercentage duidt op slechte leesbaarheid.',prio:'laag'},
-    {id:'c10',name:'Content regelmatig bijgewerkt (freshness)',tip:'Voeg "Bijgewerkt op"-datum toe. Update statistieken en links minstens jaarlijks.',prio:'laag'},
+    {id:'c1',name:'Zoekwoordenonderzoek uitgevoerd',tip:'Ahrefs, Semrush of Keyword Planner. Focus op zoekintentie: informationeel, commercieel, transactioneel.',prio:'hoog'},
+    {id:'c2',name:'Content beantwoordt de zoekintentie',tip:'Past het format en de diepgang bij de top-3 SERP-resultaten voor het doelzoekwoord?',prio:'hoog'},
+    {id:'c3',name:'Geen duplicate content',tip:'Copyscape of Siteliner. Paginavarianten (www, http, trailing slash) geconsolideerd?',prio:'hoog'},
+    {id:'c4',name:'Voldoende contentdiepgang t.o.v. concurrenten',tip:'Vergelijk woordtelling en onderwerpbreedte met top-3. Voeg FAQ en multimedia toe.',prio:'midden'},
+    {id:'c5',name:'LSI-zoekwoorden & semantisch verwante termen',tip:'"Gerelateerde zoekopdrachten" en "People Also Ask" als bron van semantisch verwante begrippen.',prio:'midden'},
+    {id:'c6',name:'Blog aanwezig & regelmatig gepubliceerd',tip:'Min. 2× per maand voor competitieve niches. Consistent publiceren versterkt autoriteit.',prio:'midden'},
+    {id:'c7',name:'Afbeeldingen gecomprimeerd & in WebP',tip:'TinyPNG of Squoosh. WebP bespaart 25–35%. Lazy loading inschakelen.',prio:'midden'},
+    {id:'c8',name:'FAQ-sectie aanwezig met FAQ Schema',tip:'Beantwoord veelgestelde vragen. FAQ Schema-markup voor kans op rich snippets.',prio:'laag'},
+    {id:'c9',name:'Content leesvaardig (alinea\'s, bullets, witruimte)',tip:'Korte alinea\'s, subheadings. Hoog bounce = slechte leesbaarheid.',prio:'laag'},
+    {id:'c10',name:'Content regelmatig bijgewerkt',tip:'"Bijgewerkt op"-datum toevoegen. Update statistieken en links minstens jaarlijks.',prio:'laag'},
   ]},
   {id:'offpage',label:'Off-page',desc:'Backlinks & domein autoriteit',items:[
-    {id:'b1',name:'Backlinkprofiel geanalyseerd (Ahrefs/Semrush)',tip:'Domain Rating, ankertekstverdeling, toxische links. Exporteer rapport voor de klant.',prio:'hoog'},
-    {id:'b2',name:'Geen toxische backlinks (disavow indien nodig)',tip:'Identificeer spammy links via Ahrefs. Dien disavow-bestand in via GSC indien ze Domain Rating schaden.',prio:'hoog'},
-    {id:'b3',name:'Ankertekstverdeling is natuurlijk',tip:'Gezond: merk-ankers 50%+, generiek 20%, zoekwoord-ankers max 20%. Over-optimalisatie riskeert penalty.',prio:'midden'},
-    {id:'b4',name:'Vermeldingen op relevante directories',tip:'Yelp, Trustpilot, branchespecifieke directories. NAP (naam, adres, telefoon) identiek op alle platformen.',prio:'midden'},
-    {id:'b5',name:'Concurrentie-backlinkanalyse uitgevoerd',tip:'Ahrefs Link Intersect: welke sites linken naar concurrenten maar niet naar u? Dit zijn linkbuilding-kansen.',prio:'laag'},
-    {id:'b6',name:'Social media profielen actief & gelinkt naar website',tip:'Actieve social profielen versterken merksignalen. Alle profielen linken naar website met correcte NAP.',prio:'laag'},
+    {id:'b1',name:'Backlinkprofiel geanalyseerd (Ahrefs/Semrush)',tip:'Domain Rating, ankertekstverdeling, toxische links. Exporteer rapport voor klant.',prio:'hoog'},
+    {id:'b2',name:'Geen toxische backlinks (disavow indien nodig)',tip:'Identificeer spammy links. Dien disavow-bestand in via GSC indien nodig.',prio:'hoog'},
+    {id:'b3',name:'Ankertekstverdeling is natuurlijk',tip:'Merk-ankers 50%+, generiek 20%, zoekwoord-ankers max 20%.',prio:'midden'},
+    {id:'b4',name:'Vermeldingen op relevante directories',tip:'Yelp, Trustpilot, branchespecifieke directories. NAP consistent.',prio:'midden'},
+    {id:'b5',name:'Concurrentie-backlinkanalyse uitgevoerd',tip:'Ahrefs Link Intersect: sites die linken naar concurrenten maar niet naar u.',prio:'laag'},
+    {id:'b6',name:'Social media profielen actief & gelinkt',tip:'Actieve social profielen versterken merksignalen. Alle profielen linken naar website.',prio:'laag'},
   ]},
-  {id:'lokaal',label:'Lokaal SEO',desc:'GBP, NAP-consistentie & Belgische directories',items:[
-    {id:'l1',name:'Google Business Profile geclaimd & volledig ingevuld',tip:'Verifieer en vul alle info in: categorieën, beschrijving (750 tekens), openingsuren, minimaal 10 foto\'s.',prio:'hoog'},
-    {id:'l2',name:'NAP-consistentie over alle vermeldingen',tip:'Naam, adres en telefoon identiek op website, GBP en alle directories. Controleer via Moz Local of BrightLocal.',prio:'hoog'},
-    {id:'l3',name:'Google reviews aanwezig & actief beantwoord',tip:'Beantwoord elke review (positief én negatief) professioneel binnen 48u. Vraag klanten actief om een review.',prio:'hoog'},
-    {id:'l4',name:'Lokale zoekwoorden in on-page content',tip:'Gemeente en regio in titles, H1 en body. "Loodgieter Gent" heeft meer kracht dan enkel "loodgieter".',prio:'hoog'},
-    {id:'l5',name:'LocalBusiness Schema geïmplementeerd',tip:'Schema met naam, adres, telefoon, openingsuren en geo-coördinaten. Test via Rich Results Test van Google.',prio:'midden'},
-    {id:'l6',name:'GBP posts regelmatig gepubliceerd',tip:'Wekelijks een post: aanbiedingen, events, nieuws. GBP posts verschijnen direct in de lokale SERP.',prio:'midden'},
-    {id:'l7',name:'Belgische directories (Gouden Gids, Pages d\'Or)',tip:'Belgische lokale directories: Gouden Gids, Pages d\'Or, Horeca.be, Trustpilot.be. NAP-consistent invullen.',prio:'midden'},
+  {id:'lokaal',label:'Lokaal SEO',desc:'GBP, NAP & Belgische directories',items:[
+    {id:'l1',name:'Google Business Profile geclaimd & volledig',tip:'Categorieën, beschrijving (750 tekens), openingsuren, min. 10 foto\'s.',prio:'hoog'},
+    {id:'l2',name:'NAP-consistentie over alle vermeldingen',tip:'Naam, adres, telefoon identiek op website, GBP en alle directories.',prio:'hoog'},
+    {id:'l3',name:'Google reviews aanwezig & beantwoord',tip:'Beantwoord elke review binnen 48u. Vraag klanten actief om een review.',prio:'hoog'},
+    {id:'l4',name:'Lokale zoekwoorden in on-page content',tip:'Gemeente en regio in titles, H1 en body. "Loodgieter Gent" > "loodgieter".',prio:'hoog'},
+    {id:'l5',name:'LocalBusiness Schema geïmplementeerd',tip:'Naam, adres, telefoon, openingsuren, geo-coördinaten. Test via Rich Results Test.',prio:'midden'},
+    {id:'l6',name:'GBP posts regelmatig gepubliceerd',tip:'Wekelijks een post: aanbiedingen, events, nieuws. Verschijnen direct in lokale SERP.',prio:'midden'},
+    {id:'l7',name:'Belgische directories (Gouden Gids, Pages d\'Or)',tip:'Gouden Gids, Pages d\'Or, Horeca.be, Trustpilot.be. NAP-consistent.',prio:'midden'},
   ]},
   {id:'ux',label:'UX & Conversie',desc:'Navigatie, analytics & conversiepaden',items:[
-    {id:'u1',name:'Duidelijke CTA\'s op alle doelpagina\'s',tip:'Elke pagina heeft een primaire CTA die aansluit bij de zoekintentie. Zichtbaar boven de vouw (above the fold).',prio:'hoog'},
-    {id:'u2',name:'Contactformulier functioneel & eenvoudig',tip:'Test volledig doorlopen. Max 5 velden voor leadformulieren. Automatische bevestigingsmail actief.',prio:'hoog'},
-    {id:'u3',name:'GA4 & Search Console correct gekoppeld',tip:'GA4 gekoppeld aan GSC. Conversiedoelen ingesteld. Geen dubbele tags. Google Tag Manager aanbevolen.',prio:'hoog'},
-    {id:'u4',name:'Conversiepaden getest op mobile',tip:'Doorloop het volledige pad op mobiel. Formulieren, knoppen en links eenvoudig klikbaar (min 48px touch target).',prio:'hoog'},
-    {id:'u5',name:'Bouncepercentage/engagement geanalyseerd (GA4)',tip:'Hoog engagement rate (> 50%) is positief in GA4. Laag engagement op landingspagina\'s = intent-mismatch.',prio:'midden'},
-    {id:'u6',name:'Toegankelijkheidscheck (WCAG AA minimum)',tip:'Gebruik axe DevTools of Lighthouse Accessibility. Contrastverhouding min 4,5:1. Focus-states zichtbaar.',prio:'midden'},
-    {id:'u7',name:'Laadsnelheid op 3G getest',tip:'Chrome DevTools > Network > Slow 3G throttling. Veel Belgische mobiele gebruikers zitten op trage verbindingen.',prio:'midden'},
-    {id:'u8',name:'Heatmap-analyse uitgevoerd (Hotjar/Clarity)',tip:'Heatmaps en session recordings tonen waar gebruikers afhaken. Microsoft Clarity is gratis beschikbaar.',prio:'laag'},
+    {id:'u1',name:'Duidelijke CTA\'s op alle doelpagina\'s',tip:'Primaire CTA aansluitend bij zoekintentie. Zichtbaar boven de vouw.',prio:'hoog'},
+    {id:'u2',name:'Contactformulier functioneel & eenvoudig',tip:'Max 5 velden. Automatische bevestigingsmail. Volledig getest op mobile.',prio:'hoog'},
+    {id:'u3',name:'GA4 & Search Console correct gekoppeld',tip:'GA4 aan GSC gekoppeld. Conversiedoelen ingesteld. Geen dubbele tags.',prio:'hoog'},
+    {id:'u4',name:'Conversiepaden getest op mobile',tip:'Formulieren, knoppen en links eenvoudig klikbaar (min 48px touch target).',prio:'hoog'},
+    {id:'u5',name:'Bouncepercentage/engagement geanalyseerd',tip:'Hoog engagement rate (> 50%) is positief. Laag engagement = intent-mismatch.',prio:'midden'},
+    {id:'u6',name:'Toegankelijkheidscheck (WCAG AA)',tip:'axe DevTools of Lighthouse. Contrastverhouding min 4,5:1. Focus-states zichtbaar.',prio:'midden'},
+    {id:'u7',name:'Laadsnelheid op 3G getest',tip:'Chrome DevTools > Network > Slow 3G. Veel Belgische mobiele gebruikers op trage verbindingen.',prio:'midden'},
+    {id:'u8',name:'Heatmap-analyse (Hotjar/Clarity)',tip:'Heatmaps en session recordings tonen waar gebruikers afhaken. Gratis via Microsoft Clarity.',prio:'laag'},
   ]},
 ];
 
-const LS='seo_v3';
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+const LS='seo_v4';
+// ST[id] = { c: bool, na: bool, n: string, ai: 'ok'|'fail'|'warn'|'na'|null, finding: string }
 let ST={},filter='all',curClient='',activeCat='tech';
 
-function initST(){CATS.forEach(c=>c.items.forEach(i=>{if(!ST[i.id])ST[i.id]={c:false,na:false,n:''}}))}
+function initST(){CATS.forEach(c=>c.items.forEach(i=>{if(!ST[i.id])ST[i.id]={c:false,na:false,n:'',ai:null,finding:''}}));}
 function getDB(){try{return JSON.parse(localStorage.getItem(LS))||{}}catch{return{}}}
 function setDB(d){localStorage.setItem(LS,JSON.stringify(d))}
 
+// ═══════════════════════════════════════════
+// SCORE
+// ═══════════════════════════════════════════
 function score(){
   let tot=0,done=0,na=0;
-  CATS.forEach(c=>c.items.forEach(i=>{const s=ST[i.id];if(s.na){na++;return}tot++;if(s.c)done++}));
-  const pct=tot>0?Math.round(done/tot*100):0,left=tot-done;
-  const circ=176,off=circ-(circ*pct/100);
+  CATS.forEach(c=>c.items.forEach(i=>{const s=ST[i.id];if(s.na){na++;return;}tot++;if(s.c)done++;}));
+  const pct=tot>0?Math.round(done/tot*100):0;
+  const circ=170,off=circ-(circ*pct/100);
   document.getElementById('rFg').style.strokeDashoffset=off;
   document.getElementById('rFg').style.stroke=pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--acc)';
   document.getElementById('rPct').textContent=pct;
   document.getElementById('rmDone').textContent=done;
-  document.getElementById('rmLeft').textContent=left;
+  document.getElementById('rmLeft').textContent=tot-done;
   document.getElementById('pf').style.width=pct+'%';
   document.getElementById('piG').textContent=done+' ✓';
-  document.getElementById('piR').textContent=left+' open';
+  document.getElementById('piR').textContent=(tot-done)+' open';
   document.getElementById('piNA').textContent=na+' N/A';
   CATS.forEach(c=>{
     const d=c.items.filter(i=>ST[i.id]?.c).length;
     const el=document.getElementById('nb_'+c.id);if(!el)return;
     el.textContent=d+'/'+c.items.length;
-    const ni=el.closest('.ni');
-    ni.classList.toggle('all-done',d===c.items.length);
+    el.closest('.ni').classList.toggle('all-done',d===c.items.length);
   });
 }
 
+// ═══════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════
 function renderNav(){
   const nav=document.getElementById('sbNav');nav.innerHTML='';
   CATS.forEach(c=>{
     const el=document.createElement('div');
     el.className='ni'+(c.id===activeCat?' active':'');
     el.innerHTML=`<span class="ni-lbl">${c.label}</span><span class="ni-badge" id="nb_${c.id}">0/${c.items.length}</span>`;
-    el.onclick=()=>{activeCat=c.id;renderNav();renderList();const g=document.getElementById('g_'+c.id);if(g)g.scrollIntoView({behavior:'smooth',block:'start'})};
+    el.onclick=()=>{activeCat=c.id;renderNav();renderList();document.getElementById('g_'+c.id)?.scrollIntoView({behavior:'smooth',block:'start'})};
     nav.appendChild(el);
   });
 }
+
+const AI_BADGE={ok:'<span class="ai-badge ai-ok">✓ OK</span>',fail:'<span class="ai-badge ai-fail">✗ Probleem</span>',warn:'<span class="ai-badge ai-warn">⚠ Controleer</span>',na:'<span class="ai-badge ai-na">— N/A</span>'};
 
 function renderList(){
   const con=document.getElementById('list');
@@ -360,20 +408,21 @@ function renderList(){
     const done=cat.items.filter(i=>ST[i.id]?.c).length;
     const pct=Math.round(done/cat.items.length*100);
     const ps=pct===100?'background:var(--gbg);color:var(--green)':pct>=50?'background:var(--abg);color:var(--amber)':'background:var(--rbg);color:var(--red)';
-    const sec=document.createElement('div');
-    sec.className='cg';sec.id='g_'+cat.id;
+    const sec=document.createElement('div');sec.className='cg';sec.id='g_'+cat.id;
     sec.innerHTML=`<div class="cg-h"><span class="cg-title">${cat.label}</span><span class="cg-pill" style="${ps}">${done}/${cat.items.length}</span><span class="cg-desc">${cat.desc}</span></div>`;
     items.forEach(item=>{
       const s=ST[item.id];
       const row=document.createElement('div');
-      row.className='ck'+(s.c?' done':'')+(s.na?' na':'');
+      const hasFinding=s.finding&&s.ai;
+      row.className='ck'+(s.c?' done':'')+(s.na?' na':'')+(hasFinding?' has-finding':'');
       row.id='ck_'+item.id;
-      const bx=s.na?'—':s.c?'✓':'';
       const pc=item.prio==='hoog'?'ph':item.prio==='midden'?'pm':'pl';
+      const badge=s.ai?AI_BADGE[s.ai]:'';
       row.innerHTML=`
-        <div class="ck-box" onclick="toggle('${item.id}')">${bx}</div>
+        <div class="ck-box" onclick="toggle('${item.id}')">${s.na?'—':s.c?'✓':''}</div>
         <div class="ck-body">
-          <div class="ck-name" onclick="tOpen('${item.id}')">${item.name}</div>
+          <div class="ck-name" onclick="tOpen('${item.id}')">${item.name}${badge}</div>
+          ${hasFinding?`<div class="ck-finding">${s.finding}</div>`:''}
           <div class="ck-tip">${item.tip}</div>
           <textarea class="ck-note" placeholder="Notitie…" oninput="setNote('${item.id}',this.value)">${s.n||''}</textarea>
           <div class="ck-acts">
@@ -389,12 +438,15 @@ function renderList(){
   if(!vis)con.innerHTML='<div class="empty">Geen checks gevonden voor deze selectie.</div>';
   document.getElementById('vis').textContent=vis+' checks';
   score();
-  // active nav on scroll
+  // IntersectionObserver for active nav
   if(q||filter!=='all')return;
-  const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){const id=en.target.id.replace('g_','');activeCat=id;document.querySelectorAll('.ni').forEach((n,i)=>n.classList.toggle('active',CATS[i].id===id))}})},{threshold:.25,root:con});
+  const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){const id=en.target.id.replace('g_','');activeCat=id;document.querySelectorAll('.ni').forEach((n,i)=>n.classList.toggle('active',CATS[i].id===id))}})},{threshold:.2,root:con});
   document.querySelectorAll('.cg').forEach(g=>obs.observe(g));
 }
 
+// ═══════════════════════════════════════════
+// TOGGLE ACTIONS
+// ═══════════════════════════════════════════
 function toggle(id){
   const s=ST[id];if(s.na)return;
   s.c=!s.c;
@@ -413,17 +465,178 @@ function tNA(id){
 }
 function tOpen(id){document.getElementById('ck_'+id)?.classList.toggle('open')}
 function setNote(id,v){ST[id].n=v;auto()}
-
 function setF(f,btn){filter=f;document.querySelectorAll('.f-btn').forEach(b=>b.classList.toggle('active',b.dataset.f===f));renderList()}
 
-// Save/load
-function onCI(){curClient=document.getElementById('cName').value.trim();auto()}
-function auto(){if(!curClient)return;const db=getDB();db[curClient]={st:JSON.parse(JSON.stringify(ST)),ts:new Date().toISOString()};setDB(db)}
-function saveAudit(){const c=document.getElementById('cName').value.trim();if(!c){alert('Vul eerst een klantnaam in.');return}auto();alert('Opgeslagen: '+c)}
-function resetAudit(){if(!confirm('Huidige voortgang wissen?'))return;ST={};initST();document.getElementById('cName').value='';curClient='';renderList()}
-function exportJSON(){const blob=new Blob([JSON.stringify({client:curClient,state:ST,audits:getDB(),ts:new Date().toISOString()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='seo-audit-'+(curClient||'export')+'.json';a.click()}
+// ═══════════════════════════════════════════
+// AI ANALYSE
+// ═══════════════════════════════════════════
+async function runAnalyse(){
+  const url=document.getElementById('urlInp').value.trim();
+  if(!url){alert('Voer een geldige URL in (bijv. https://www.domein.be)');return;}
+  let domain=url;
+  try{domain=new URL(url).hostname;}catch{}
 
-// Modal
+  // Pre-fill client name from domain
+  if(!document.getElementById('cName').value){
+    document.getElementById('cName').value=domain;
+    curClient=domain;
+  }
+
+  // Open overlay
+  const ov=document.getElementById('aiOv');
+  ov.classList.add('open');
+  document.getElementById('aiSpin').style.animation='spin 1.5s linear infinite';
+  document.getElementById('aiTit').textContent='Website wordt geanalyseerd…';
+  document.getElementById('aiSt').textContent='Claude inspecteert '+domain+'…';
+  document.getElementById('aiPf').style.width='8%';
+  document.getElementById('aiSum').style.display='none';
+  document.getElementById('aiF').style.display='none';
+  document.getElementById('runBtn').disabled=true;
+
+  const steps=[
+    {pct:20,txt:'Technische factoren controleren…'},
+    {pct:40,txt:'On-page elementen analyseren…'},
+    {pct:60,txt:'Content & structuur beoordelen…'},
+    {pct:75,txt:'Off-page & lokale SEO checken…'},
+    {pct:88,txt:'UX & conversiepaden evalueren…'},
+  ];
+  let si=0;
+  const stepTimer=setInterval(()=>{
+    if(si>=steps.length){clearInterval(stepTimer);return;}
+    document.getElementById('aiPf').style.width=steps[si].pct+'%';
+    document.getElementById('aiSt').textContent=steps[si].txt;
+    si++;
+  },1800);
+
+  // Build the checklist IDs + names for the prompt
+  const allChecks=CATS.flatMap(c=>c.items.map(i=>({id:i.id,name:i.name,cat:c.label,prio:i.prio})));
+  const checksJson=JSON.stringify(allChecks);
+
+  const prompt=`Je bent een senior SEO-specialist. Analyseer de volgende website vanuit een SEO-perspectief: ${url}
+
+Hier is een lijst van 63 SEO-checks die je moet beoordelen voor deze specifieke website:
+${checksJson}
+
+Geef voor elke check een oordeel op basis van wat je weet of redelijkerwijs kunt afleiden over deze URL/domein. 
+- Gebruik "ok" als je redelijk zeker bent dat het in orde is
+- Gebruik "fail" als er een duidelijk probleem is
+- Gebruik "warn" als je het niet zeker kunt weten maar twijfels hebt
+- Gebruik "na" als de check niet van toepassing is (bijv. hreflang voor een ééntalige site)
+
+Geef ook een korte bevinding (max 1 zin, in het Nederlands) per check die uitlegt waarom.
+
+Geef ook een korte algemene samenvatting van de website (2-3 zinnen in het Nederlands): sector, sterkte/zwakte, prioriteit.
+
+Antwoord ALLEEN in dit JSON-formaat (geen uitleg erbuiten):
+{
+  "summary": "Korte samenvatting van de website en voornaamste SEO-bevindingen.",
+  "results": {
+    "t1": {"status": "ok|fail|warn|na", "finding": "Korte bevinding in het Nederlands."},
+    "t2": {"status": "ok|fail|warn|na", "finding": "..."},
+    ... (alle 63 IDs invullen)
+  }
+}`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:4000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    clearInterval(stepTimer);
+    if(!resp.ok)throw new Error('API error: '+resp.status);
+    const data=await resp.json();
+    const raw=data.content[0].text;
+
+    // Parse JSON from response
+    let parsed;
+    try{
+      const match=raw.match(/\{[\s\S]*\}/);
+      parsed=JSON.parse(match?match[0]:raw);
+    }catch{throw new Error('JSON parse error')}
+
+    // Apply results to state
+    const results=parsed.results||{};
+    let autoChecked=0;
+    Object.entries(results).forEach(([id,val])=>{
+      if(!ST[id])return;
+      ST[id].ai=val.status;
+      ST[id].finding=val.finding||'';
+      // Auto-check if OK
+      if(val.status==='ok'&&!ST[id].na){ST[id].c=true;autoChecked++;}
+      // Auto-NA if na
+      if(val.status==='na'){ST[id].na=true;ST[id].c=false;}
+    });
+
+    document.getElementById('aiPf').style.width='100%';
+    document.getElementById('aiSpin').style.animation='none';
+    document.getElementById('aiSpin').textContent='✓';
+    document.getElementById('aiTit').textContent='Analyse voltooid!';
+    document.getElementById('aiSt').textContent=autoChecked+' checks automatisch ingevuld · rest vereist handmatige verificatie';
+
+    const sumEl=document.getElementById('aiSum');
+    sumEl.textContent=parsed.summary||'Analyse voltooid.';
+    sumEl.style.display='block';
+    document.getElementById('aiF').style.display='flex';
+
+    auto();
+    renderList();
+
+  }catch(err){
+    clearInterval(stepTimer);
+    document.getElementById('aiPf').style.width='100%';
+    document.getElementById('aiPf').style.background='var(--red)';
+    document.getElementById('aiSpin').style.animation='none';
+    document.getElementById('aiSpin').textContent='✗';
+    document.getElementById('aiTit').textContent='Analyse mislukt';
+    document.getElementById('aiSt').textContent='Fout: '+err.message+'. Controleer uw verbinding.';
+    document.getElementById('aiF').style.display='flex';
+  }
+  document.getElementById('runBtn').disabled=false;
+}
+
+function closeAiOv(){
+  document.getElementById('aiOv').classList.remove('open');
+  document.getElementById('aiPf').style.background='var(--acc)';
+}
+
+// ═══════════════════════════════════════════
+// SAVE / LOAD
+// ═══════════════════════════════════════════
+function onCI(){curClient=document.getElementById('cName').value.trim();auto()}
+function auto(){
+  if(!curClient)return;
+  const db=getDB();
+  db[curClient]={st:JSON.parse(JSON.stringify(ST)),ts:new Date().toISOString()};
+  setDB(db);
+}
+function saveAudit(){
+  const c=document.getElementById('cName').value.trim();
+  if(!c){alert('Vul eerst een klantnaam in.');return;}
+  auto();
+  document.getElementById('abarSt').textContent='✓ Opgeslagen: '+c;
+  setTimeout(()=>document.getElementById('abarSt').textContent='',2500);
+}
+function resetAudit(){
+  if(!confirm('Huidige voortgang wissen?'))return;
+  ST={};initST();
+  document.getElementById('cName').value='';
+  document.getElementById('urlInp').value='';
+  curClient='';
+  renderList();
+}
+function exportJSON(){
+  const blob=new Blob([JSON.stringify({client:curClient,state:ST,audits:getDB(),ts:new Date().toISOString()},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='seo-audit-'+(curClient||'export')+'.json';a.click();
+}
+
+// ═══════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════
 function openModal(){
   const db=getDB();const ml=document.getElementById('moList');const keys=Object.keys(db);
   ml.innerHTML=!keys.length?'<div class="mo-empty">Geen opgeslagen audits.</div>':keys.map(k=>{
@@ -434,21 +647,44 @@ function openModal(){
   document.getElementById('mo').classList.add('open');
 }
 function closeModal(){document.getElementById('mo').classList.remove('open')}
-function loadAudit(k){const db=getDB();if(!db[k])return;ST={...db[k].st};initST();document.getElementById('cName').value=k;curClient=k;closeModal();renderList()}
-function delAudit(e,k){e.stopPropagation();if(!confirm('Verwijderen: '+k+'?'))return;const db=getDB();delete db[k];setDB(db);openModal()}
+function loadAudit(k){
+  const db=getDB();if(!db[k])return;
+  ST={...db[k].st};initST();
+  document.getElementById('cName').value=k;curClient=k;
+  closeModal();renderList();
+}
+function delAudit(e,k){
+  e.stopPropagation();if(!confirm('Verwijderen: '+k+'?'))return;
+  const db=getDB();delete db[k];setDB(db);openModal();
+}
 
-// Theme
-function toggleTheme(){const h=document.documentElement;const d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('thBtn').textContent=d?'☾':'☀';localStorage.setItem('seo_th',d?'light':'dark')}
+// ═══════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════
+function toggleTheme(){
+  const h=document.documentElement;const d=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme',d?'light':'dark');
+  document.getElementById('thBtn').textContent=d?'☾':'☀';
+  localStorage.setItem('seo_th',d?'light':'dark');
+}
 
-// Init
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
 document.getElementById('hDate').textContent=new Date().toLocaleDateString('nl-BE',{day:'numeric',month:'long',year:'numeric'});
-const th=localStorage.getItem('seo_th');if(th){document.documentElement.setAttribute('data-theme',th);document.getElementById('thBtn').textContent=th==='dark'?'☀':'☾'}
+const th=localStorage.getItem('seo_th');
+if(th){document.documentElement.setAttribute('data-theme',th);document.getElementById('thBtn').textContent=th==='dark'?'☀':'☾';}
+document.getElementById('aiOv').addEventListener('click',function(e){if(e.target===this)closeAiOv()});
 document.getElementById('mo').addEventListener('click',function(e){if(e.target===this)closeModal()});
 
-// Restore last session
 initST();
-try{const db=getDB();const last=Object.keys(db).pop();if(last){ST={...db[last].st};initST();document.getElementById('cName').value=last;curClient=last}}catch{}
-renderNav();renderList();
+// Restore last saved session
+try{
+  const db=getDB();const last=Object.keys(db).pop();
+  if(last){ST={...db[last].st};initST();document.getElementById('cName').value=last;curClient=last;}
+}catch{}
+renderNav();
+renderList();
 </script>
 </body>
 </html>

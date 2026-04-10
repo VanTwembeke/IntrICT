@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Vastgoed De Graef – Immo Gent | Kopen, Verkopen & Verhuren</title>
+<meta name="description" content="Vastgoed De Graef – uw vertrouwde immobiliënkantoor in Gent en Oost-Vlaanderen. Koop, verkoop of verhuur uw woning met persoonlijk advies en marktkennis. Bekijk ons actueel aanbod."/>
+<meta name="keywords" content="immo Gent, vastgoed Oost-Vlaanderen, huis kopen Gent, appartement te koop, woning te huur Gent, immobiliënkantoor, makelaar Gent"/>
+<meta name="author" content="Vastgoed De Graef"/>
+<meta name="robots" content="index,follow"/>
+<link rel="canonical" href="https://www.vastgoeddegr aef.be/"/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Vastgoed De Graef – Immo Gent"/>
+<meta property="og:description" content="Actueel vastgoedaanbod in Gent en Oost-Vlaanderen. Kopen, verkopen, verhuren."/>
+<meta property="og:locale" content="nl_BE"/>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"RealEstateAgent","name":"Vastgoed De Graef","description":"Immobiliënkantoor gespecialiseerd in aan- en verkoop en verhuur van woningen in Gent en Oost-Vlaanderen.","url":"https://www.vastgoeddegr aef.be","telephone":"+32-9-234-00-00","email":"info@vastgoeddegr aef.be","address":{"@type":"PostalAddress","streetAddress":"Veldstraat 88","addressLocality":"Gent","postalCode":"9000","addressCountry":"BE"},"openingHours":["Mo-Fr 09:00-18:00","Sa 10:00-16:00"],"priceRange":"€€"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0a0a08;--ink-m:#1c1c18;--ink-s:#2e2e28;
+  --paper:#f5f4ef;--paper-d:#e8e6de;--paper-dd:#d4d1c4;
+  --neon:#e8ff47;--neon-d:#c8df20;--neon-dim:rgba(232,255,71,.12);
+  --white:#ffffff;--muted:#6b6b60;--muted-l:#9b9b8e;
+  --border:#2e2e28;--border-l:#3e3e36;--border-paper:#c8c6bc;
+  --red:#ff4040;--green:#40e080;
+  --radius:0px;--radius-sm:2px;
+  --sh:0 0 0 1px var(--border);
+  --tr:.22s cubic-bezier(.4,0,.2,1);
+  --font-display:'DM Serif Display',Georgia,serif;
+  --font-mono:'Space Mono',monospace;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font-mono);color:var(--paper);background:var(--ink);line-height:1.6;overflow-x:hidden}
+.container{max-width:1280px;margin:0 auto;padding:0 2rem}
+[id]{scroll-margin-top:70px}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--ink)}
+::-webkit-scrollbar-thumb{background:var(--neon)}
+
+/* ── MOBILE DRAWER ── */
+#mobileDrawer{
+  position:fixed;inset:0;z-index:300;background:var(--ink-m);
+  display:flex;flex-direction:column;justify-content:center;padding:3rem;
+  transform:translateY(-100%);transition:transform .4s cubic-bezier(.76,0,.24,1);
+  border-bottom:2px solid var(--neon);
+}
+#mobileDrawer.open{transform:translateY(0)}
+#mobileDrawer a{
+  font-family:var(--font-display);font-size:3rem;font-weight:400;
+  color:var(--paper);text-decoration:none;display:block;padding:.3rem 0;
+  border-bottom:1px solid var(--border-l);
+  opacity:0;transform:translateY(-20px);
+  transition:opacity .35s,transform .35s,color var(--tr);
+}
+#mobileDrawer.open a{opacity:1;transform:translateY(0)}
+#mobileDrawer.open a:nth-child(1){transition-delay:.05s}
+#mobileDrawer.open a:nth-child(2){transition-delay:.1s}
+#mobileDrawer.open a:nth-child(3){transition-delay:.15s}
+#mobileDrawer.open a:nth-child(4){transition-delay:.2s}
+#mobileDrawer.open a:nth-child(5){transition-delay:.25s}
+#mobileDrawer a:hover{color:var(--neon)}
+.drawer-close{
+  position:absolute;top:1.5rem;right:1.5rem;
+  background:none;border:1px solid var(--border-l);color:var(--paper);
+  width:42px;height:42px;cursor:pointer;font-size:1.1rem;
+  transition:border-color var(--tr),color var(--tr);
+}
+.drawer-close:hover{border-color:var(--neon);color:var(--neon)}
+
+/* ── NAVBAR ── */
+nav#navbar{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(10,10,8,.97);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:.85rem 0;
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1280px;margin:0 auto;padding:0 2rem}
+.nav-logo{text-decoration:none;display:flex;flex-direction:column}
+.nav-logo-name{font-family:var(--font-display);font-size:1.1rem;color:var(--white);letter-spacing:.02em;line-height:1}
+.nav-logo-sub{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--neon);margin-top:2px;font-family:var(--font-mono)}
+.nav-links{display:flex;align-items:center;gap:2rem}
+.nav-links a{
+  font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted-l);text-decoration:none;transition:color var(--tr);font-family:var(--font-mono);
+}
+.nav-links a:hover{color:var(--neon)}
+.btn-nav{
+  padding:.5rem 1.25rem;background:var(--neon);color:var(--ink);
+  border:none;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:700;cursor:pointer;transition:all var(--tr);font-family:var(--font-mono);
+  white-space:nowrap;
+}
+.btn-nav:hover{background:var(--neon-d)}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.hamburger span{display:block;width:22px;height:1.5px;background:var(--paper);transition:all var(--tr)}
+
+/* ── HERO ── */
+#hero{
+  min-height:100vh;display:grid;grid-template-columns:1fr 1fr;
+  padding-top:70px;position:relative;overflow:hidden;
+  border-bottom:1px solid var(--border);
+}
+.hero-left{
+  padding:5rem 3rem 5rem 0;display:flex;flex-direction:column;justify-content:center;
+  border-right:1px solid var(--border);position:relative;
+}
+.hero-eyebrow{
+  font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--neon);margin-bottom:2rem;display:flex;align-items:center;gap:.75rem;
+}
+.hero-eyebrow::before{content:'';display:block;width:32px;height:1px;background:var(--neon)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.fu{animation:fadeUp .7s ease both}
+.fu1{animation-delay:.05s}.fu2{animation-delay:.2s}.fu3{animation-delay:.35s}.fu4{animation-delay:.5s}
+
+h1.hero-title{
+  font-family:var(--font-display);
+  font-size:clamp(3.5rem,7vw,6.5rem);font-weight:400;line-height:.95;
+  color:var(--white);letter-spacing:-.01em;margin-bottom:2rem;
+}
+h1.hero-title em{font-style:italic;color:var(--neon)}
+.hero-desc{
+  font-size:.82rem;color:var(--muted-l);line-height:1.85;
+  max-width:440px;margin-bottom:3rem;letter-spacing:.01em;
+}
+.hero-ctas{display:flex;gap:.75rem;flex-wrap:wrap}
+.btn-primary{
+  padding:.9rem 2rem;background:var(--neon);color:var(--ink);
+  border:none;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;cursor:pointer;transition:all var(--tr);text-decoration:none;
+  display:inline-flex;align-items:center;gap:.5rem;font-family:var(--font-mono);
+}
+.btn-primary:hover{background:var(--neon-d);transform:translateY(-1px)}
+.btn-ghost{
+  padding:.9rem 2rem;border:1px solid var(--border-l);font-size:.65rem;
+  letter-spacing:.16em;text-transform:uppercase;cursor:pointer;color:var(--muted-l);
+  background:transparent;transition:all var(--tr);text-decoration:none;font-family:var(--font-mono);
+}
+.btn-ghost:hover{border-color:var(--paper);color:var(--white)}
+
+.hero-right{
+  padding:5rem 0 5rem 3rem;display:flex;flex-direction:column;justify-content:space-between;
+  position:relative;
+}
+.hero-counter-block{margin-bottom:3rem}
+.hc-label{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-l);margin-bottom:.5rem}
+.hc-num{
+  font-family:var(--font-display);font-size:clamp(4rem,8vw,7rem);font-weight:400;
+  color:var(--neon);line-height:1;
+}
+.hc-sub{font-size:.7rem;color:var(--muted);margin-top:.3rem}
+.hero-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
+.hs-cell{
+  background:var(--ink);padding:1.5rem;
+  transition:background var(--tr);
+}
+.hs-cell:hover{background:var(--ink-m)}
+.hs-n{font-family:var(--font-display);font-size:2rem;color:var(--white);line-height:1;margin-bottom:.2rem}
+.hs-l{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-l)}
+
+.hero-ticker{
+  border-top:1px solid var(--border);padding-top:1.5rem;
+  font-size:.7rem;color:var(--muted-l);letter-spacing:.06em;
+}
+.ticker-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:.5rem;animation:blink 1.8s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── FILTER BAR ── */
+#filter-bar{
+  position:sticky;top:70px;z-index:100;
+  background:var(--ink-m);border-bottom:1px solid var(--border);
+  padding:1rem 0;
+}
+.filter-inner{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.filter-label{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.filter-group{display:flex;gap:0}
+.filter-btn{
+  padding:.45rem 1rem;border:1px solid var(--border-l);border-right:none;
+  background:transparent;color:var(--muted-l);font-size:.65rem;letter-spacing:.1em;
+  text-transform:uppercase;cursor:pointer;transition:all var(--tr);font-family:var(--font-mono);
+  white-space:nowrap;
+}
+.filter-btn:last-child{border-right:1px solid var(--border-l)}
+.filter-btn.active{background:var(--neon);border-color:var(--neon);color:var(--ink);font-weight:700}
+.filter-btn:hover:not(.active){border-color:var(--paper);color:var(--white)}
+.filter-select{
+  padding:.45rem 2rem .45rem .75rem;border:1px solid var(--border-l);
+  background:var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b6b60' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat right .75rem center;
+  color:var(--muted-l);font-size:.65rem;letter-spacing:.06em;font-family:var(--font-mono);
+  -webkit-appearance:none;appearance:none;cursor:pointer;outline:none;
+  transition:border-color var(--tr);
+}
+.filter-select:focus{border-color:var(--neon)}
+.filter-select option{background:var(--ink-m)}
+.filter-count{margin-left:auto;font-size:.65rem;color:var(--muted);letter-spacing:.08em;white-space:nowrap}
+.filter-count span{color:var(--neon);font-weight:700}
+
+/* ── LISTINGS ── */
+#aanbod{padding:4rem 0}
+.listings-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);
+}
+.listing-card{
+  background:var(--ink-m);position:relative;overflow:hidden;
+  cursor:pointer;transition:background var(--tr);
+  display:flex;flex-direction:column;
+}
+.listing-card:hover{background:var(--ink-s)}
+.listing-card.featured{grid-column:span 2}
+.listing-card.hidden{display:none}
+
+/* Property visual */
+.lc-visual{
+  height:240px;position:relative;overflow:hidden;
+  background:var(--ink-s);
+  display:flex;align-items:center;justify-content:center;
+}
+.listing-card.featured .lc-visual{height:320px}
+.lc-type-badge{
+  position:absolute;top:1rem;left:1rem;z-index:2;
+  font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;
+  padding:.3rem .7rem;font-weight:700;font-family:var(--font-mono);
+}
+.badge-koop{background:var(--neon);color:var(--ink)}
+.badge-huur{background:var(--white);color:var(--ink)}
+.badge-verkocht{background:var(--red);color:var(--white)}
+.lc-fav{
+  position:absolute;top:.9rem;right:1rem;z-index:2;
+  background:rgba(10,10,8,.7);border:1px solid var(--border-l);
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all var(--tr);font-size:.9rem;
+}
+.lc-fav:hover,.lc-fav.active{background:var(--neon);border-color:var(--neon)}
+.lc-fav.active{color:var(--ink)}
+
+/* Property SVG placeholder */
+.prop-svg{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+
+.lc-body{padding:1.5rem;flex:1;display:flex;flex-direction:column;border-top:1px solid var(--border)}
+.lc-price{
+  font-family:var(--font-display);font-size:1.6rem;color:var(--neon);
+  line-height:1;margin-bottom:.5rem;
+}
+.listing-card.featured .lc-price{font-size:2rem}
+.lc-address{font-size:.82rem;color:var(--white);margin-bottom:.3rem;letter-spacing:.02em}
+.lc-city{font-size:.7rem;color:var(--muted-l);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.25rem}
+.lc-specs{display:flex;gap:1.25rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.lc-spec{display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:var(--muted-l);letter-spacing:.04em}
+.lc-spec-ico{font-size:.8rem}
+.lc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:1rem;border-top:1px solid var(--border)}
+.lc-ref{font-size:.6rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.lc-btn{
+  font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:.4rem .9rem;border:1px solid var(--neon);color:var(--neon);
+  background:transparent;cursor:pointer;transition:all var(--tr);font-family:var(--font-mono);
+}
+.lc-btn:hover{background:var(--neon);color:var(--ink)}
+
+.no-results{
+  grid-column:1/-1;padding:5rem;text-align:center;
+  color:var(--muted);font-size:.82rem;letter-spacing:.06em;
+}
+.no-results span{display:block;font-family:var(--font-display);font-size:3rem;color:var(--border-l);margin-bottom:1rem}
+
+/* ── PROPERTY MODAL ── */
+#propModal{
+  position:fixed;inset:0;z-index:500;
+  display:none;align-items:flex-start;justify-content:center;
+  background:rgba(10,10,8,.95);backdrop-filter:blur(4px);
+  padding:5rem 2rem 2rem;overflow-y:auto;
+}
+#propModal.open{display:flex}
+.pm-inner{
+  background:var(--ink-m);border:1px solid var(--border-l);
+  width:100%;max-width:900px;position:relative;
+}
+.pm-close{
+  position:absolute;top:1rem;right:1rem;z-index:2;
+  background:var(--ink);border:1px solid var(--border-l);
+  width:40px;height:40px;color:var(--muted-l);cursor:pointer;
+  font-size:1rem;transition:all var(--tr);
+}
+.pm-close:hover{border-color:var(--neon);color:var(--neon)}
+.pm-visual{height:400px;background:var(--ink-s);display:flex;align-items:center;justify-content:center;position:relative;border-bottom:1px solid var(--border)}
+.pm-badge{position:absolute;top:1rem;left:1rem}
+.pm-body{display:grid;grid-template-columns:1.4fr 1fr;gap:0}
+.pm-details{padding:2.5rem;border-right:1px solid var(--border)}
+.pm-price-row{display:flex;align-items:baseline;gap:1rem;margin-bottom:.5rem}
+.pm-price{font-family:var(--font-display);font-size:2.5rem;color:var(--neon);line-height:1}
+.pm-price-label{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.pm-address{font-family:var(--font-display);font-size:1.4rem;color:var(--white);margin-bottom:.25rem}
+.pm-city{font-size:.72rem;color:var(--muted-l);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2rem}
+.pm-specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:2rem}
+.pm-spec-cell{background:var(--ink-m);padding:1rem}
+.pm-spec-label{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem}
+.pm-spec-val{font-family:var(--font-display);font-size:1.2rem;color:var(--white)}
+.pm-desc-title{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--neon);margin-bottom:.75rem}
+.pm-desc{font-size:.82rem;color:var(--muted-l);line-height:1.85}
+.pm-features{display:flex;flex-direction:column;gap:.4rem;margin-top:1.5rem}
+.pm-feat{font-size:.78rem;color:var(--muted-l);display:flex;align-items:center;gap:.6rem}
+.pm-feat::before{content:'';width:14px;height:1px;background:var(--neon);flex-shrink:0}
+
+.pm-contact{padding:2.5rem}
+.pm-contact-title{font-family:var(--font-display);font-size:1.2rem;color:var(--white);margin-bottom:.4rem}
+.pm-contact-sub{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--neon);margin-bottom:2rem}
+.pm-makelaar{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid var(--border)}
+.pm-mak-avatar{width:48px;height:48px;background:var(--neon-dim);border:1px solid var(--neon);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.2rem;color:var(--neon);flex-shrink:0}
+.pm-mak-name{font-size:.88rem;font-weight:700;color:var(--white)}
+.pm-mak-role{font-size:.7rem;color:var(--muted-l);letter-spacing:.06em}
+.pm-form-group{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.75rem}
+.pm-form-label{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-l)}
+.pm-input,.pm-select,.pm-textarea{
+  background:var(--ink);border:1px solid var(--border-l);padding:.65rem .85rem;
+  color:var(--white);font-size:.82rem;font-family:var(--font-mono);
+  outline:none;transition:border-color var(--tr);border-radius:0;
+}
+.pm-input::placeholder,.pm-textarea::placeholder{color:var(--muted)}
+.pm-input:focus,.pm-select:focus,.pm-textarea:focus{border-color:var(--neon)}
+.pm-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b6b60' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center;-webkit-appearance:none;appearance:none;padding-right:2rem}
+.pm-select option{background:var(--ink-m)}
+.pm-textarea{resize:vertical;min-height:80px}
+.pm-submit{
+  width:100%;padding:.85rem;background:var(--neon);color:var(--ink);
+  border:none;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;
+  font-weight:700;cursor:pointer;transition:all var(--tr);font-family:var(--font-mono);
+  margin-top:.5rem;
+}
+.pm-submit:hover{background:var(--neon-d)}
+.pm-success{display:none;text-align:center;padding:2rem}
+.pm-success-icon{font-size:2rem;margin-bottom:.75rem}
+.pm-success-title{font-family:var(--font-display);font-size:1.2rem;color:var(--neon);margin-bottom:.4rem}
+.pm-success-text{font-size:.8rem;color:var(--muted-l);line-height:1.7}
+
+/* ── APPROACH SECTION ── */
+#werkwijze{background:var(--paper);color:var(--ink);padding:7rem 0;border-top:1px solid var(--border-paper)}
+#werkwijze .s-label{color:var(--ink-s);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:.75rem}
+#werkwijze .s-label::before{content:'';width:28px;height:1px;background:var(--ink-s)}
+#werkwijze .s-title{font-family:var(--font-display);font-size:clamp(2.5rem,5vw,4.5rem);font-weight:400;line-height:.95;color:var(--ink);margin-bottom:4rem;letter-spacing:-.01em}
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border-paper);border:1px solid var(--border-paper)}
+.step-card{background:var(--paper);padding:2.5rem 2rem;transition:background var(--tr)}
+.step-card:hover{background:var(--ink);color:var(--paper)}
+.step-card:hover .sc-num{color:rgba(232,255,71,.15)}
+.step-card:hover .sc-title{color:var(--neon)}
+.step-card:hover .sc-text{color:rgba(245,244,239,.6)}
+.sc-num{font-family:var(--font-display);font-size:4rem;color:var(--paper-dd);line-height:1;margin-bottom:1rem;transition:color var(--tr)}
+.sc-title{font-size:.82rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);margin-bottom:.75rem;transition:color var(--tr)}
+.sc-text{font-size:.78rem;color:var(--muted);line-height:1.75;transition:color var(--tr)}
+
+/* ── MAKELAARS ── */
+#team{background:var(--ink);padding:7rem 0;border-top:1px solid var(--border)}
+.team-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:4rem;gap:2rem;flex-wrap:wrap}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border)}
+.team-card{background:var(--ink-m);padding:0;overflow:hidden;transition:background var(--tr)}
+.team-card:hover{background:var(--ink-s)}
+.tc-portrait{
+  height:280px;background:var(--ink-s);position:relative;
+  display:flex;align-items:flex-end;justify-content:center;overflow:hidden;
+  border-bottom:1px solid var(--border);
+}
+.tc-initials{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);
+  font-family:var(--font-display);font-size:6rem;color:var(--neon-dim);
+  line-height:1;letter-spacing:-.05em;
+}
+.tc-badge{
+  position:absolute;bottom:1rem;left:1rem;
+  font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;
+  padding:.3rem .7rem;background:var(--neon);color:var(--ink);font-weight:700;
+}
+.tc-body{padding:1.75rem}
+.tc-name{font-family:var(--font-display);font-size:1.3rem;color:var(--white);margin-bottom:.2rem}
+.tc-role{font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--neon);margin-bottom:1rem}
+.tc-bio{font-size:.78rem;color:var(--muted-l);line-height:1.75;margin-bottom:1.25rem}
+.tc-contact{display:flex;flex-direction:column;gap:.4rem;border-top:1px solid var(--border);padding-top:1.25rem}
+.tc-contact a{font-size:.75rem;color:var(--muted-l);text-decoration:none;transition:color var(--tr);display:flex;align-items:center;gap:.5rem}
+.tc-contact a:hover{color:var(--neon)}
+.tc-contact-ico{font-size:.85rem}
+
+/* ── MARKT CIJFERS ── */
+#markt{background:var(--ink-m);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:5rem 0}
+.markt-inner{display:grid;grid-template-columns:1fr 2fr;gap:6rem;align-items:start}
+.markt-content{}
+.markt-title{font-family:var(--font-display);font-size:clamp(2rem,4vw,3.5rem);color:var(--white);line-height:1;margin-bottom:1.5rem}
+.markt-text{font-size:.82rem;color:var(--muted-l);line-height:1.85}
+.markt-update{font-size:.62rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:1.5rem;display:flex;align-items:center;gap:.5rem}
+.markt-update::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--neon);flex-shrink:0}
+.markt-bars{}
+.markt-bar-row{display:flex;align-items:center;gap:1.25rem;margin-bottom:1.25rem}
+.mb-label{font-size:.7rem;color:var(--muted-l);letter-spacing:.06em;width:120px;flex-shrink:0;text-align:right}
+.mb-track{flex:1;height:2px;background:var(--border-l);position:relative}
+.mb-fill{height:100%;background:var(--neon);transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.mb-val{font-size:.72rem;color:var(--neon);font-weight:700;width:80px;flex-shrink:0;letter-spacing:.04em}
+
+/* ── TESTIMONIALS ── */
+#reviews{background:var(--ink);padding:7rem 0;border-top:1px solid var(--border)}
+.reviews-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:4rem;flex-wrap:wrap;gap:2rem}
+.reviews-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border)}
+.review-card{background:var(--ink-m);padding:2.25rem;transition:background var(--tr)}
+.review-card:hover{background:var(--ink-s)}
+.rc-stars{display:flex;gap:3px;margin-bottom:1.25rem}
+.rc-star{color:var(--neon);font-size:.85rem}
+.rc-text{font-family:var(--font-display);font-size:1.05rem;font-style:italic;color:var(--paper);line-height:1.6;margin-bottom:1.5rem}
+.rc-author{border-top:1px solid var(--border);padding-top:1rem;display:flex;align-items:center;gap:.75rem}
+.rc-av{width:32px;height:32px;background:var(--neon-dim);border:1px solid var(--border-l);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--neon);font-weight:700;flex-shrink:0}
+.rc-name{font-size:.8rem;font-weight:700;color:var(--white);letter-spacing:.03em}
+.rc-meta{font-size:.68rem;color:var(--muted)}
+
+/* ── GRATIS SCHATTING ── */
+#schatting{background:var(--neon);padding:6rem 0;border-top:1px solid var(--border)}
+.schatting-inner{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center}
+.sc-left{}
+.sc-eyebrow{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(10,10,8,.5);margin-bottom:1rem}
+.sc-title{font-family:var(--font-display);font-size:clamp(2.5rem,5vw,4rem);color:var(--ink);line-height:.95;margin-bottom:1.5rem}
+.sc-text{font-size:.85rem;color:rgba(10,10,8,.65);line-height:1.85}
+.sc-right{}
+.sc-form{background:var(--ink);padding:2.5rem}
+.sc-form-title{font-family:var(--font-display);font-size:1.3rem;color:var(--white);margin-bottom:.3rem}
+.sc-form-sub{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--neon);margin-bottom:2rem}
+.sc-form-group{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.85rem}
+.sc-form-label{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-l)}
+.sc-input,.sc-select{
+  background:var(--ink-m);border:1px solid var(--border-l);padding:.65rem .85rem;
+  color:var(--white);font-size:.82rem;font-family:var(--font-mono);
+  outline:none;transition:border-color var(--tr);-webkit-appearance:none;appearance:none;
+}
+.sc-input::placeholder{color:var(--muted)}
+.sc-input:focus,.sc-select:focus{border-color:var(--neon)}
+.sc-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b6b60' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center;padding-right:2rem}
+.sc-select option{background:var(--ink-m)}
+.sc-submit{
+  width:100%;padding:.9rem;background:var(--neon);color:var(--ink);border:none;
+  font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  cursor:pointer;transition:all var(--tr);font-family:var(--font-mono);margin-top:.5rem;
+}
+.sc-submit:hover{background:var(--neon-d)}
+.sc-success{display:none;text-align:center;padding:2rem;color:var(--neon)}
+.sc-success-icon{font-size:2rem;margin-bottom:.5rem}
+.sc-success-text{font-size:.82rem;color:var(--muted-l);line-height:1.7}
+
+/* ── FOOTER ── */
+footer{background:var(--ink-m);border-top:1px solid var(--border);color:var(--muted-l)}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4rem;padding:5rem 0 4rem;border-bottom:1px solid var(--border)}
+.ft-brand-name{font-family:var(--font-display);font-size:1.4rem;color:var(--white);margin-bottom:.2rem}
+.ft-brand-sub{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--neon);margin-bottom:1.25rem}
+.ft-brand-text{font-size:.78rem;line-height:1.85;max-width:260px}
+.ft-cert{display:inline-flex;align-items:center;gap:.5rem;margin-top:1.5rem;border:1px solid var(--border-l);padding:.4rem .85rem}
+.ft-cert-text{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-l)}
+.ft-col-title{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem}
+.ft-links{display:flex;flex-direction:column;gap:.65rem}
+.ft-links a{font-size:.78rem;color:var(--muted-l);text-decoration:none;transition:color var(--tr)}
+.ft-links a:hover{color:var(--neon)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0;font-size:.68rem;letter-spacing:.04em;flex-wrap:wrap;gap:.75rem}
+.fb-legal{display:flex;gap:1.5rem}
+.fb-legal a{color:var(--muted);text-decoration:none}
+.fb-legal a:hover{color:var(--muted-l)}
+
+/* ── ADMIN ── */
+#adminBtn{
+  position:fixed;bottom:2rem;right:2rem;z-index:500;
+  width:40px;height:40px;background:var(--ink-m);border:1px solid var(--border-l);
+  color:var(--muted);font-size:.9rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all var(--tr);
+}
+#adminBtn:hover{border-color:var(--neon);color:var(--neon)}
+#adminOverlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(10,10,8,.92);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;padding:1.5rem;
+}
+#adminOverlay.open{display:flex}
+#adminPanel{
+  background:var(--ink-m);border:1px solid var(--border-l);
+  width:100%;max-width:820px;max-height:92vh;overflow-y:auto;
+}
+#adminLogin{padding:3rem;text-align:center}
+.adm-pw-title{font-family:var(--font-display);font-size:1.8rem;color:var(--white);margin-bottom:.3rem}
+.adm-pw-sub{font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--neon);margin-bottom:2rem}
+.adm-pw-row{display:flex;gap:.5rem;max-width:360px;margin:0 auto 1rem}
+.adm-input{
+  padding:.65rem .85rem;border:1px solid var(--border-l);background:var(--ink);
+  font-size:.82rem;font-family:var(--font-mono);color:var(--white);outline:none;
+  transition:border-color var(--tr);flex:1;
+}
+.adm-input:focus{border-color:var(--neon)}
+.adm-add-btn{
+  padding:.65rem 1.1rem;background:var(--neon);color:var(--ink);border:none;
+  font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  font-family:var(--font-mono);font-weight:700;transition:background var(--tr);white-space:nowrap;
+}
+.adm-add-btn:hover{background:var(--neon-d)}
+.adm-pw-err{font-size:.78rem;color:var(--red);display:none;margin-top:.4rem}
+.adm-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);background:var(--ink);
+}
+.adm-title{font-family:var(--font-display);font-size:1rem;color:var(--white)}
+.adm-close{background:none;border:none;cursor:pointer;font-size:1rem;color:var(--muted);transition:color var(--tr)}
+.adm-close:hover{color:var(--neon)}
+.adm-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--ink-m);overflow-x:auto}
+.adm-tab-btn{
+  padding:.8rem 1.25rem;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+  background:transparent;border:none;border-bottom:2px solid transparent;
+  cursor:pointer;color:var(--muted-l);transition:all var(--tr);font-family:var(--font-mono);
+  white-space:nowrap;margin-bottom:-1px;
+}
+.adm-tab-btn.active{color:var(--neon);border-bottom-color:var(--neon)}
+.adm-tab-btn:hover:not(.active){color:var(--white)}
+.adm-body{padding:1.75rem}
+.adm-section{padding-bottom:1.75rem;margin-bottom:1.75rem;border-bottom:1px solid var(--border)}
+.adm-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.adm-section-title{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--neon);margin-bottom:1rem}
+.adm-hint{font-size:.7rem;color:var(--muted);margin-top:.4rem;font-style:italic}
+.adm-row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:flex-start}
+.adm-tags{display:flex;flex-wrap:wrap;gap:.4rem}
+.adm-tag{
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.25rem .6rem;background:var(--ink);border:1px solid var(--border-l);
+  font-size:.7rem;color:var(--muted-l);font-family:var(--font-mono);
+}
+.adm-tag button{background:none;border:none;cursor:pointer;color:var(--muted);font-size:.85rem;line-height:1;padding:0;transition:color var(--tr)}
+.adm-tag button:hover{color:var(--red)}
+.adm-save{
+  display:block;width:100%;padding:.85rem;
+  background:var(--neon);color:var(--ink);border:none;
+  font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  cursor:pointer;transition:background var(--tr);font-family:var(--font-mono);
+}
+.adm-save:hover{background:var(--neon-d)}
+.adm-saved-msg{font-size:.75rem;color:var(--neon);margin-top:.75rem;display:none;text-align:center;letter-spacing:.06em}
+.adm-select{
+  padding:.6rem .85rem;border:1px solid var(--border-l);background:var(--ink);
+  color:var(--white);font-size:.78rem;font-family:var(--font-mono);outline:none;-webkit-appearance:none;appearance:none;cursor:pointer;
+}
+.adm-select option{background:var(--ink-m)}
+/* listing editor */
+.adm-listing-card{
+  background:var(--ink);border:1px solid var(--border-l);margin-bottom:.75rem;
+}
+.alc-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.85rem 1.1rem;border-bottom:1px solid var(--border);cursor:pointer;
+  transition:background var(--tr);
+}
+.alc-header:hover{background:var(--ink-s)}
+.alc-header-left{display:flex;align-items:center;gap.75rem;gap:.75rem}
+.alc-name{font-size:.85rem;color:var(--white);letter-spacing:.02em}
+.alc-price{font-size:.82rem;color:var(--neon)}
+.alc-actions{display:flex;gap:.4rem}
+.alc-del{background:none;border:1px solid rgba(255,64,64,.3);color:var(--red);padding:.3rem .65rem;cursor:pointer;font-size:.65rem;font-family:var(--font-mono);transition:all var(--tr)}
+.alc-del:hover{background:rgba(255,64,64,.1)}
+.alc-body{padding:1.1rem;display:none}
+.alc-body.open{display:block}
+.alc-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.alc-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem}
+.alc-label{font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-l);margin-bottom:.3rem}
+/* log entries */
+.adm-lead-entry{background:var(--ink);border:1px solid var(--border-l);padding:1rem 1.25rem;margin-bottom:.6rem}
+.ale-header{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:.35rem}
+.ale-name{font-size:.85rem;font-weight:700;color:var(--white)}
+.ale-prop{font-size:.72rem;color:var(--neon);letter-spacing:.04em}
+.ale-details{font-size:.75rem;color:var(--muted-l);line-height:1.6}
+.ale-date{font-size:.65rem;color:var(--muted)}
+.ale-del{background:none;border:1px solid rgba(255,64,64,.3);color:var(--red);font-size:.62rem;padding:.2rem .55rem;cursor:pointer;font-family:var(--font-mono)}
+.ale-del:hover{background:rgba(255,64,64,.08)}
+.adm-empty{padding:2.5rem;text-align:center;color:var(--muted);font-size:.8rem;letter-spacing:.04em}
+.adm-log-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem}
+.adm-export-box{
+  width:100%;padding:.75rem 1rem;border:1px solid var(--border-l);background:var(--ink);
+  font-size:.72rem;font-family:var(--font-mono);color:var(--muted-l);resize:vertical;outline:none;transition:border-color var(--tr);
+}
+.adm-export-box:focus{border-color:var(--neon)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  #hero{grid-template-columns:1fr}
+  .hero-right{border-top:1px solid var(--border);padding:3rem 0}
+  .hero-left{border-right:none;padding:5rem 0}
+  .listings-grid{grid-template-columns:1fr 1fr}
+  .listing-card.featured{grid-column:span 1}
+  .steps-grid{grid-template-columns:1fr 1fr}
+  .team-grid{grid-template-columns:1fr 1fr}
+  .footer-top{grid-template-columns:1fr 1fr;gap:2.5rem}
+  .markt-inner{grid-template-columns:1fr}
+  .schatting-inner{grid-template-columns:1fr}
+  .reviews-grid{grid-template-columns:1fr}
+  .pm-body{grid-template-columns:1fr}
+  .pm-details{border-right:none;border-bottom:1px solid var(--border)}
+}
+@media(max-width:768px){
+  .nav-links,.nav-right{display:none}
+  .hamburger{display:flex}
+  .listings-grid{grid-template-columns:1fr}
+  .listing-card.featured{grid-column:span 1}
+  .team-grid{grid-template-columns:1fr}
+  .steps-grid{grid-template-columns:1fr}
+  .reviews-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr}
+  .filter-inner{gap:.5rem}
+  .hero-stats-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){
+  h1.hero-title{font-size:3rem}
+  section,.schatting-inner{padding:4rem 0}
+  .container{padding:0 1.25rem}
+  .pm-specs-grid{grid-template-columns:1fr 1fr}
+  .alc-grid,.alc-grid-3{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile Drawer -->
+<div id="mobileDrawer" role="dialog" aria-modal="true" aria-label="Navigatiemenu">
+  <button class="drawer-close" onclick="closeDrawer()" aria-label="Menu sluiten">✕</button>
+  <a href="#aanbod" onclick="closeDrawer()">Aanbod</a>
+  <a href="#werkwijze" onclick="closeDrawer()">Werkwijze</a>
+  <a href="#team" onclick="closeDrawer()">Makelaars</a>
+  <a href="#markt" onclick="closeDrawer()">Markt</a>
+  <a href="#reviews" onclick="closeDrawer()">Reviews</a>
+  <a href="#schatting" onclick="closeDrawer()">Gratis schatting</a>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-logo">
+      <span class="nav-logo-name">Vastgoed De Graef</span>
+      <span class="nav-logo-sub">Immo · Gent</span>
+    </a>
+    <div class="nav-links">
+      <a href="#aanbod">Aanbod</a>
+      <a href="#werkwijze">Werkwijze</a>
+      <a href="#team">Makelaars</a>
+      <a href="#markt">Markt</a>
+      <a href="#reviews">Reviews</a>
+    </div>
+    <div class="nav-right">
+      <button class="btn-nav" onclick="document.getElementById('schatting').scrollIntoView({behavior:'smooth'})">Gratis schatting</button>
+    </div>
+    <button class="hamburger" onclick="openDrawer()" aria-label="Menu openen">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+  <div class="hero-left container" style="padding-left:2rem;padding-right:2rem">
+    <div class="hero-eyebrow fu fu1">Immobiliënkantoor · Gent & Oost-Vlaanderen</div>
+    <h1 class="hero-title fu fu2">Uw thuis,<br><em>onze</em><br>expertise.</h1>
+    <p class="hero-desc fu fu3">Vastgoed De Graef begeleidt kopers, verkopers en verhuurders in Gent en omstreken met eerlijk advies, marktkennis en een persoonlijke aanpak. Geen praatjes — resultaten.</p>
+    <div class="hero-ctas fu fu4">
+      <a href="#aanbod" class="btn-primary">→ Bekijk aanbod</a>
+      <a href="#schatting" class="btn-ghost">Gratis schatting</a>
+    </div>
+  </div>
+  <div class="hero-right" style="padding-left:2rem;padding-right:2rem">
+    <div class="hero-counter-block fu fu2">
+      <div class="hc-label">Actieve panden</div>
+      <div class="hc-num" id="heroCounter">0</div>
+      <div class="hc-sub">in portefeuille · bijgewerkt vandaag</div>
+    </div>
+    <div class="hero-stats-grid fu fu3">
+      <div class="hs-cell">
+        <div class="hs-n">€385K</div>
+        <div class="hs-l">Gem. verkoopprijs Gent</div>
+      </div>
+      <div class="hs-cell">
+        <div class="hs-n">34</div>
+        <div class="hs-l">Dagen gem. verkooptijd</div>
+      </div>
+      <div class="hs-cell">
+        <div class="hs-n">98%</div>
+        <div class="hs-l">Vraagprijs gerealiseerd</div>
+      </div>
+      <div class="hs-cell">
+        <div class="hs-n">18j</div>
+        <div class="hs-l">Actief in Gent</div>
+      </div>
+    </div>
+    <div class="hero-ticker fu fu4">
+      <span class="ticker-dot"></span>
+      <span id="tickerText">Nieuw toegevoegd: Rijwoning Wondelgemstraat · €295.000</span>
+    </div>
+  </div>
+</section>
+
+<!-- Filter Bar -->
+<div id="filter-bar">
+  <div class="container">
+    <div class="filter-inner">
+      <span class="filter-label">Filter:</span>
+      <div class="filter-group">
+        <button class="filter-btn active" data-type="all" onclick="filterListings('all',this)">Alles</button>
+        <button class="filter-btn" data-type="koop" onclick="filterListings('koop',this)">Te koop</button>
+        <button class="filter-btn" data-type="huur" onclick="filterListings('huur',this)">Te huur</button>
+        <button class="filter-btn" data-type="verkocht" onclick="filterListings('verkocht',this)">Verkocht</button>
+      </div>
+      <select class="filter-select" id="filterGemeente" onchange="applyFilters()">
+        <option value="all">Alle gemeenten</option>
+      </select>
+      <select class="filter-select" id="filterType" onchange="applyFilters()">
+        <option value="all">Alle types</option>
+        <option>Appartement</option>
+        <option>Woning</option>
+        <option>Villa</option>
+        <option>Grond</option>
+        <option>Commercieel</option>
+      </select>
+      <div class="filter-count">Toont <span id="visibleCount">0</span> panden</div>
+    </div>
+  </div>
+</div>
+
+<!-- Listings -->
+<section id="aanbod">
+  <div class="container">
+    <div class="listings-grid" id="listingsGrid">
+      <!-- injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- Property Modal -->
+<div id="propModal" role="dialog" aria-modal="true" aria-label="Pand details">
+  <div class="pm-inner" id="pmInner">
+    <button class="pm-close" onclick="closeModal()" aria-label="Sluiten">✕</button>
+    <div class="pm-visual" id="pmVisual">
+      <span class="lc-type-badge pm-badge" id="pmBadge"></span>
+    </div>
+    <div class="pm-body">
+      <div class="pm-details" id="pmDetails"></div>
+      <div class="pm-contact" id="pmContact"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Werkwijze -->
+<section id="werkwijze">
+  <div class="container">
+    <div class="s-label">Hoe wij werken</div>
+    <h2 class="s-title">Transparant.<br>Resultaatgericht.</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="sc-num">01</div>
+        <div class="sc-title">Intake & schatting</div>
+        <p class="sc-text">Wij bezoeken uw pand, analyseren de markt en geven u een eerlijke, onderbouwde schattingsprijs — zonder verplichtingen, zonder kosten.</p>
+      </div>
+      <div class="step-card">
+        <div class="sc-num">02</div>
+        <div class="sc-title">Professionele opmaak</div>
+        <p class="sc-text">Professionele fotografie, grondplan, EPC-certificaat en een sterk verkoopsdossier. Uw pand wordt gepresenteerd zoals het verdient.</p>
+      </div>
+      <div class="step-card">
+        <div class="sc-num">03</div>
+        <div class="sc-title">Gerichte promotie</div>
+        <p class="sc-text">Publicatie op Immoweb, Zimmo en onze eigen kanalen. Directe matching met ons kopersbestand van 1.200+ actief zoekende kopers.</p>
+      </div>
+      <div class="step-card">
+        <div class="sc-num">04</div>
+        <div class="sc-title">Verkoop & afhandeling</div>
+        <p class="sc-text">Wij organiseren de bezichtigingen, onderhandelen in uw naam en begeleiden u tot en met de notariële akte. U hoeft nergens aan te denken.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Team -->
+<section id="team">
+  <div class="container">
+    <div class="team-header">
+      <div>
+        <div style="font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--neon);margin-bottom:.75rem;display:flex;align-items:center;gap:.75rem"><span style="display:block;width:28px;height:1px;background:var(--neon)"></span>Ons team</div>
+        <h2 style="font-family:var(--font-display);font-size:clamp(2.5rem,5vw,4rem);color:var(--white);line-height:.95;letter-spacing:-.01em">Mensen die<br>uw markt kennen.</h2>
+      </div>
+      <p style="font-size:.85rem;color:var(--muted-l);max-width:380px;line-height:1.85;padding-top:1rem">Ons team combineert jarenlange lokale marktkennis met een directe, no-nonsense aanpak. Geen call centres — altijd uw vaste makelaar.</p>
+    </div>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="tc-portrait">
+          <div class="tc-initials">LDG</div>
+          <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" width="220" style="position:absolute;bottom:0">
+            <ellipse cx="140" cy="110" rx="38" ry="42" fill="rgba(232,255,71,.08)" stroke="rgba(232,255,71,.15)" stroke-width="1"/>
+            <path d="M60,280 Q80,190 140,175 Q200,190 220,280 Z" fill="rgba(232,255,71,.06)" stroke="rgba(232,255,71,.12)" stroke-width="1"/>
+          </svg>
+          <div class="tc-badge">Zaakvoerder</div>
+        </div>
+        <div class="tc-body">
+          <div class="tc-name">Lore De Graef</div>
+          <div class="tc-role">Vastgoedmakelaar BIV</div>
+          <p class="tc-bio">Lore startte Vastgoed De Graef in 2006 vanuit een diep geloof in eerlijke dienstverlening. Met 18 jaar ervaring in de Gentse markt kent ze elke wijk van binnen en van buiten.</p>
+          <div class="tc-contact">
+            <a href="tel:+32477000001"><span class="tc-contact-ico">↗</span>+32 477 00 00 01</a>
+            <a href="mailto:lore@vastgoeddegraef.be"><span class="tc-contact-ico">↗</span>lore@vastgoeddegraef.be</a>
+          </div>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="tc-portrait">
+          <div class="tc-initials">RV</div>
+          <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" width="220" style="position:absolute;bottom:0">
+            <ellipse cx="140" cy="110" rx="36" ry="40" fill="rgba(232,255,71,.06)" stroke="rgba(232,255,71,.12)" stroke-width="1"/>
+            <path d="M65,280 Q85,192 140,178 Q195,192 215,280 Z" fill="rgba(232,255,71,.05)" stroke="rgba(232,255,71,.1)" stroke-width="1"/>
+          </svg>
+          <div class="tc-badge">Senior Makelaar</div>
+        </div>
+        <div class="tc-body">
+          <div class="tc-name">Raf Vermeersch</div>
+          <div class="tc-role">Vastgoedmakelaar BIV</div>
+          <p class="tc-bio">Gespecialiseerd in nieuwbouw en projectverkoop. Raf beheert relaties met de grootste projectontwikkelaars in Oost-Vlaanderen en heeft een scherp oog voor rendementsberekening.</p>
+          <div class="tc-contact">
+            <a href="tel:+32477000002"><span class="tc-contact-ico">↗</span>+32 477 00 00 02</a>
+            <a href="mailto:raf@vastgoeddegraef.be"><span class="tc-contact-ico">↗</span>raf@vastgoeddegraef.be</a>
+          </div>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="tc-portrait">
+          <div class="tc-initials">ND</div>
+          <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" width="220" style="position:absolute;bottom:0">
+            <ellipse cx="140" cy="112" rx="34" ry="38" fill="rgba(232,255,71,.06)" stroke="rgba(232,255,71,.1)" stroke-width="1"/>
+            <path d="M70,280 Q88,194 140,180 Q192,194 210,280 Z" fill="rgba(232,255,71,.04)" stroke="rgba(232,255,71,.08)" stroke-width="1"/>
+          </svg>
+          <div class="tc-badge">Verhuur specialist</div>
+        </div>
+        <div class="tc-body">
+          <div class="tc-name">Nathalie Dubois</div>
+          <div class="tc-role">Property Manager</div>
+          <p class="tc-bio">Nathalie beheert meer dan 120 verhuurpanden in Gent. Van huurdersselectie tot syndicus en renovatieadvies — ze ontzorgt verhuurders volledig.</p>
+          <div class="tc-contact">
+            <a href="tel:+32477000003"><span class="tc-contact-ico">↗</span>+32 477 00 00 03</a>
+            <a href="mailto:nathalie@vastgoeddegraef.be"><span class="tc-contact-ico">↗</span>nathalie@vastgoeddegraef.be</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Marktcijfers -->
+<section id="markt">
+  <div class="container">
+    <div class="markt-inner">
+      <div class="markt-content">
+        <div style="font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--neon);margin-bottom:.75rem;display:flex;align-items:center;gap:.75rem"><span style="display:block;width:28px;height:1px;background:var(--neon)"></span>Marktcijfers</div>
+        <h2 class="markt-title">Gent in<br>cijfers.</h2>
+        <p class="markt-text">De Gentse vastgoedmarkt blijft sterk presteren. Koopprijzen stabiliseren na de piekjaren, terwijl de verhuurmarkt door structureel woningtekort gespannen blijft. Wij volgen alle evoluties op de voet.</p>
+        <div class="markt-update">Live data · Q1 2025</div>
+      </div>
+      <div class="markt-bars" id="marktBars">
+        <div class="markt-bar-row">
+          <span class="mb-label">Appartementen</span>
+          <div class="mb-track"><div class="mb-fill" style="width:0%" data-target="78"></div></div>
+          <span class="mb-val">€2.850/m²</span>
+        </div>
+        <div class="markt-bar-row">
+          <span class="mb-label">Rijwoningen</span>
+          <div class="mb-track"><div class="mb-fill" style="width:0%" data-target="65"></div></div>
+          <span class="mb-val">€325.000</span>
+        </div>
+        <div class="markt-bar-row">
+          <span class="mb-label">Villa's</span>
+          <div class="mb-track"><div class="mb-fill" style="width:0%" data-target="52"></div></div>
+          <span class="mb-val">€625.000</span>
+        </div>
+        <div class="markt-bar-row">
+          <span class="mb-label">Huurprijzen</span>
+          <div class="mb-track"><div class="mb-fill" style="width:0%" data-target="88"></div></div>
+          <span class="mb-val">€1.050/mnd</span>
+        </div>
+        <div class="markt-bar-row">
+          <span class="mb-label">Rentabiliteit</span>
+          <div class="mb-track"><div class="mb-fill" style="width:0%" data-target="42"></div></div>
+          <span class="mb-val">3,2% netto</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Reviews -->
+<section id="reviews">
+  <div class="container">
+    <div class="reviews-header">
+      <div>
+        <div style="font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--neon);margin-bottom:.75rem;display:flex;align-items:center;gap:.75rem"><span style="display:block;width:28px;height:1px;background:var(--neon)"></span>Klantervaringen</div>
+        <h2 style="font-family:var(--font-display);font-size:clamp(2.5rem,4vw,3.5rem);color:var(--white);line-height:.95">Wat klanten zeggen.</h2>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.3rem">
+        <div style="font-family:var(--font-display);font-size:4rem;color:var(--neon);line-height:1">4.9</div>
+        <div style="display:flex;gap:3px" aria-label="4.9 op 5 sterren">
+          <span class="rc-star">★</span><span class="rc-star">★</span><span class="rc-star">★</span><span class="rc-star">★</span><span class="rc-star">★</span>
+        </div>
+        <div style="font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">op 140+ beoordelingen</div>
+      </div>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="rc-stars"><span class="rc-star">★</span><span class="rc-star">★</span><span class="rc-star">★</span><span class="rc-star">★</span><span class="rc-star">★</span></div>
+        <p class="rc-text">"Wij stonden sceptisch tegenover makelaars, maar Lore heeft ons volledig overtuigd. Onze woning in Wondelgem stond 3 weken te koop en was verkocht aan vraagprijs. Geen stress, gewoon resultaat."</p>
+        <div class="rc-author">
+          <div class="rc-av">JV</div>
+          <div><div class="rc-name">Jan & Veerle Claes</div><div class="rc-meta">Verkoop rijtjeshuis · Wondelgem · 2024</div></div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="rc-stars"><span class="rc-star">★</span><span class="rc-star">★</span><span class="rc-star">★</span><span class="rc-star">★</span><span class="rc-star">★</span></div>
+        <p class="rc-text">"Als investeerder koop ik al 10 jaar panden via Vastgoed De Graef. Raf kent de rendementsberekeningen beter dan ikzelf. Ik word altijd goed gëinformeerd over de markt en nooit oversold."</p>
+        <div class="rc-author">
+          <div class="rc-av">PB</div>
+          <div><div class="rc-name">Philippe Baert</div><div class="rc-meta">Portefeuille-investeerder · Gent · klant sinds 2014</div></div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="rc-stars"><span class="rc-star">★</span><span class="rc-star">★</span><span class="rc-star">★</span><span class="rc-star">★</span><span class="rc-star">★</span></div>
+        <p class="rc-text">"Nathalie beheert twee van mijn appartementen. Ik hoef er nooit aan te denken — huurders worden zorgvuldig geselecteerd, huurprijzen worden jaarlijks geïndexeerd en problemen worden direct opgelost."</p>
+        <div class="rc-author">
+          <div class="rc-av">SM</div>
+          <div><div class="rc-name">Sarah Martens</div><div class="rc-meta">Verhuur 2 appartementen · Gent · 2023</div></div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="rc-stars"><span class="rc-star">★</span><span class="rc-star">★</span><span class="rc-star">★</span><span class="rc-star">★</span><span class="rc-star">★</span></div>
+        <p class="rc-text">"Als eerste koper was ik enorm nerveus. Lore nam alle stress weg: ze legde elk document uit, wees me op verborgen kosten en onderhandelde een mooi bod voor mij. Ik zou haar aan iedereen aanraden."</p>
+        <div class="rc-author">
+          <div class="rc-av">TP</div>
+          <div><div class="rc-name">Thomas Peeters</div><div class="rc-meta">Aankoop eerste woning · Mariakerke · 2024</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Gratis Schatting -->
+<section id="schatting">
+  <div class="container">
+    <div class="schatting-inner">
+      <div class="sc-left">
+        <div class="sc-eyebrow">Vrijblijvend & gratis</div>
+        <h2 class="sc-title">Wat is uw<br>woning waard?</h2>
+        <p class="sc-text">Een eerlijke marktschatting is de eerste stap naar een succesvolle verkoop. Onze makelaars combineren databronnen, vergelijkingspanden en lokale marktkennis voor een nauwkeurige waardebepaling.<br><br>Geen verplichtingen. Geen verkoopspraatjes. Gewoon eerlijk advies.</p>
+      </div>
+      <div class="sc-right">
+        <div class="sc-form" id="schattingForm">
+          <div class="sc-form-title">Gratis schatting</div>
+          <div class="sc-form-sub">Resultaat binnen 48u</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+            <div class="sc-form-group">
+              <label class="sc-form-label">Voornaam</label>
+              <input class="sc-input" type="text" id="sc_fname" placeholder="Jan"/>
+            </div>
+            <div class="sc-form-group">
+              <label class="sc-form-label">Naam</label>
+              <input class="sc-input" type="text" id="sc_lname" placeholder="Janssen"/>
+            </div>
+          </div>
+          <div class="sc-form-group">
+            <label class="sc-form-label">E-mailadres</label>
+            <input class="sc-input" type="email" id="sc_email" placeholder="jan@voorbeeld.be"/>
+          </div>
+          <div class="sc-form-group">
+            <label class="sc-form-label">Telefoon</label>
+            <input class="sc-input" type="tel" id="sc_tel" placeholder="+32 4xx xx xx xx"/>
+          </div>
+          <div class="sc-form-group">
+            <label class="sc-form-label">Adres van het pand</label>
+            <input class="sc-input" type="text" id="sc_adres" placeholder="Straat en nummer"/>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+            <div class="sc-form-group">
+              <label class="sc-form-label">Gemeente</label>
+              <input class="sc-input" type="text" id="sc_gemeente" placeholder="Gent"/>
+            </div>
+            <div class="sc-form-group">
+              <label class="sc-form-label">Type pand</label>
+              <select class="sc-select" id="sc_type">
+                <option value="">Kies…</option>
+                <option>Appartement</option>
+                <option>Rijwoning</option>
+                <option>Halfopen bebouwing</option>
+                <option>Villa / open bebouwing</option>
+                <option>Grond</option>
+                <option>Commercieel pand</option>
+              </select>
+            </div>
+          </div>
+          <button class="sc-submit" onclick="submitSchatting()">Schatting aanvragen →</button>
+        </div>
+        <div class="sc-success" id="schattingSuccess">
+          <div class="sc-success-icon">✦</div>
+          <div style="font-family:var(--font-display);font-size:1.3rem;color:var(--neon);margin-bottom:.5rem">Aanvraag ontvangen</div>
+          <p class="sc-success-text">Één van onze makelaars neemt binnen 48 uur contact met u op voor een afspraak ter plaatse. Dank u voor uw vertrouwen.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <div class="ft-brand-name">Vastgoed De Graef</div>
+        <div class="ft-brand-sub">Erkend Vastgoedmakelaar · BIV 512.345</div>
+        <p class="ft-brand-text">Uw vertrouwde immobiliënkantoor in Gent en Oost-Vlaanderen. Kopen, verkopen, verhuren — altijd met persoonlijk advies en lokale marktkennis.</p>
+        <div class="ft-cert">
+          <span style="font-size:.9rem">✓</span>
+          <span class="ft-cert-text">BIV-erkend · Fonds voor Bescherming</span>
+        </div>
+      </div>
+      <div>
+        <div class="ft-col-title">Aanbod</div>
+        <div class="ft-links">
+          <a href="#aanbod" onclick="filterListings('koop',document.querySelector('[data-type=koop]'))">Te koop</a>
+          <a href="#aanbod" onclick="filterListings('huur',document.querySelector('[data-type=huur]'))">Te huur</a>
+          <a href="#aanbod" onclick="filterListings('verkocht',document.querySelector('[data-type=verkocht]'))">Verkocht</a>
+          <a href="#">Nieuwbouwprojecten</a>
+        </div>
+      </div>
+      <div>
+        <div class="ft-col-title">Diensten</div>
+        <div class="ft-links">
+          <a href="#schatting">Gratis schatting</a>
+          <a href="#werkwijze">Uw woning verkopen</a>
+          <a href="#">Vastgoedbeheer</a>
+          <a href="#">Rentabiliteitsanalyse</a>
+          <a href="#">Aankoopbegeleiding</a>
+        </div>
+      </div>
+      <div>
+        <div class="ft-col-title">Contact</div>
+        <div class="ft-links">
+          <a href="tel:+3292340000">+32 9 234 00 00</a>
+          <a href="mailto:info@vastgoeddegraef.be">info@vastgoeddegraef.be</a>
+          <a href="#">Veldstraat 88, 9000 Gent</a>
+          <a href="#">Ma–Vr 09:00–18:00</a>
+          <a href="#">Za 10:00–16:00</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Vastgoed De Graef BV · BIV 512.345 · BTW BE 0123.456.789</span>
+      <div class="fb-legal">
+        <a href="#">Privacybeleid</a>
+        <a href="#">Cookiebeleid</a>
+        <a href="#">Gebruiksvoorwaarden</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Admin Button -->
+<button id="adminBtn" onclick="openAdmin()" title="Beheerpaneel" aria-label="Beheerpaneel openen">⚙</button>
+
+<!-- Admin Overlay -->
+<div id="adminOverlay" role="dialog" aria-modal="true" aria-label="Beheerpaneel">
+  <div id="adminPanel">
+    <div id="adminLogin">
+      <div style="padding:1.5rem 1.5rem 0;display:flex;justify-content:flex-end">
+        <button class="adm-close" onclick="closeAdmin()">✕</button>
+      </div>
+      <div style="padding:1rem 3rem 3rem">
+        <div class="adm-pw-title">Beheerpaneel</div>
+        <div class="adm-pw-sub">Vastgoed De Graef</div>
+        <div class="adm-pw-row">
+          <input class="adm-input" type="password" id="adminPwInput" placeholder="Wachtwoord…" onkeydown="if(event.key==='Enter')checkAdminPw()"/>
+          <button class="adm-add-btn" onclick="checkAdminPw()">Inloggen</button>
+        </div>
+        <div class="adm-pw-err" id="adminPwErr">Fout wachtwoord.</div>
+        <p style="font-size:.68rem;color:var(--muted);margin-top:1.25rem;text-align:center">Standaard: <code style="background:var(--ink);padding:1px 5px;color:var(--neon)">admin1234</code> · Wijzig onder <code style="color:var(--neon)">ADMIN_PASSWORD</code></p>
+      </div>
+    </div>
+    <div id="adminPanelBody" style="display:none">
+      <div class="adm-header">
+        <span class="adm-title">⚙ Beheerpaneel — Vastgoed De Graef</span>
+        <button class="adm-close" onclick="closeAdmin()">✕</button>
+      </div>
+      <div class="adm-tabs">
+        <button class="adm-tab-btn active" id="admTab_listings" onclick="admTab('listings')">🏠 Panden</button>
+        <button class="adm-tab-btn" id="admTab_leads" onclick="admTab('leads')">📬 Leads <span id="admLeadCount" style="font-size:.62rem;color:var(--neon);margin-left:.2rem"></span></button>
+        <button class="adm-tab-btn" id="admTab_schattingen" onclick="admTab('schattingen')">📐 Schattingen <span id="admSchatCount" style="font-size:.62rem;color:var(--neon);margin-left:.2rem"></span></button>
+        <button class="adm-tab-btn" id="admTab_export" onclick="admTab('export')">💾 Export</button>
+      </div>
+
+      <!-- Tab: Panden -->
+      <div class="adm-tab-panel" id="admPanel_listings" style="display:block">
+        <div class="adm-body">
+          <div class="adm-section">
+            <div class="adm-section-title">Panden beheren</div>
+            <div id="admListingsEditor"></div>
+            <button class="adm-add-btn" style="margin-top:1rem;width:100%" onclick="addListing()">+ Nieuw pand toevoegen</button>
+          </div>
+          <div class="adm-section" style="border-bottom:none">
+            <button class="adm-save" onclick="saveListings()">💾 Opslaan & publiceren</button>
+            <div class="adm-saved-msg" id="admListingsSaved">✓ Panden opgeslagen en gepubliceerd!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Leads -->
+      <div class="adm-tab-panel" id="admPanel_leads" style="display:none">
+        <div class="adm-body">
+          <div class="adm-log-toolbar">
+            <div style="font-size:.75rem;color:var(--muted-l)">Bezoekersvragen per pand.</div>
+            <button onclick="clearLeads()" style="font-size:.68rem;padding:.3rem .7rem;border:1px solid rgba(255,64,64,.3);color:var(--red);cursor:pointer;background:none;font-family:var(--font-mono)">🗑 Alles wissen</button>
+          </div>
+          <div id="admLeadsLog"></div>
+        </div>
+      </div>
+
+      <!-- Tab: Schattingen -->
+      <div class="adm-tab-panel" id="admPanel_schattingen" style="display:none">
+        <div class="adm-body">
+          <div class="adm-log-toolbar">
+            <div style="font-size:.75rem;color:var(--muted-l)">Gratis schattingsaanvragen.</div>
+            <button onclick="clearSchattingen()" style="font-size:.68rem;padding:.3rem .7rem;border:1px solid rgba(255,64,64,.3);color:var(--red);cursor:pointer;background:none;font-family:var(--font-mono)">🗑 Alles wissen</button>
+          </div>
+          <div id="admSchattingenLog"></div>
+        </div>
+      </div>
+
+      <!-- Tab: Export -->
+      <div class="adm-tab-panel" id="admPanel_export" style="display:none">
+        <div class="adm-body">
+          <div class="adm-section">
+            <div class="adm-section-title">Exporteer alle data</div>
+            <textarea class="adm-export-box" id="admExportBox" readonly rows="8" placeholder="Klik op exporteren…"></textarea>
+            <button class="adm-add-btn" onclick="exportAll()" style="margin-top:.6rem" id="admExportBtn">📋 Exporteer JSON</button>
+            <div class="adm-hint" style="margin-top:.5rem">Bevat panden, leads en schattingsaanvragen. Plak ook in <code>DEFAULT_LISTINGS</code> voor permanente opslag.</div>
+          </div>
+          <div class="adm-section" style="border-bottom:none">
+            <div class="adm-section-title">Importeer data</div>
+            <textarea class="adm-export-box" id="admImportBox" rows="6" placeholder="Plak uw JSON hier…"></textarea>
+            <button class="adm-add-btn" onclick="importAll()" style="margin-top:.6rem">📥 Importeren & toepassen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// CONFIGURE
+// ═══════════════════════════════════════════════════════════
+const ADMIN_PASSWORD = 'admin1234';
+const LS_LISTINGS  = 'vdg_listings';
+const LS_LEADS     = 'vdg_leads';
+const LS_SCHAT     = 'vdg_schattingen';
+
+// ── Default listings ────────────────────────────────────────
+const DEFAULT_LISTINGS = [
+  {id:'p1',type:'koop',featured:true,adres:'Bellevuestraat 14',gemeente:'Gent',postcode:'9050',pandtype:'Villa',prijs:'€ 595.000',opp:'218 m²',slaapkamers:'4',badkamers:'2',epc:'B',bouwjaar:'1998',desc:'Uitzonderlijk gelegen vrijstaande villa in Gentbrugge op een perceel van 850 m². Volledig gerenoveerd in 2021 met kwalitatieve materialen. Ruime living met open haard, volledig ingerichte keuken, garage voor 2 wagens en zonnige tuin op het zuiden.',features:['Garage 2 wagens','Tuin 850 m²','Zonnepanelen','Vloerverwarming','Alarm'],makelaar:'Lore De Graef',color:'#1e3a2a'},
+  {id:'p2',type:'koop',featured:false,adres:'Wondelgemstraat 88',gemeente:'Wondelgem',postcode:'9032',pandtype:'Woning',prijs:'€ 295.000',opp:'135 m²',slaapkamers:'3',badkamers:'1',epc:'C',bouwjaar:'1972',desc:'Verzorgde rijwoning in een rustige, groene straat. Instapklaar na recente renovatie van dak, ramen en elektriciteit. Ideaal voor jonge gezinnen. Vlakbij scholen, winkels en openbaar vervoer.',features:['Gerenoveerd dak','Nieuwe ramen','Tuin 180 m²','Kelder','Carport'],makelaar:'Lore De Graef',color:'#1a2a3a'},
+  {id:'p3',type:'huur',featured:false,adres:'Korenmarkt 5 / 3B',gemeente:'Gent',postcode:'9000',pandtype:'Appartement',prijs:'€ 1.050 /mnd',opp:'78 m²',slaapkamers:'2',badkamers:'1',epc:'A',bouwjaar:'2019',desc:'Modern nieuwbouwappartement op de 3e verdieping met zicht op de Korenmarkt. Energiezuinig (A-label), lift, fietsstalling en gemeenschappelijke binnentuin. Beschikbaar vanaf 1 september.',features:['Lift','Fietsstalling','Gemeenschappelijke tuin','A-label EPC','Terras 12 m²'],makelaar:'Nathalie Dubois',color:'#2a1a3a'},
+  {id:'p4',type:'koop',featured:false,adres:'Dendermondsesteenweg 312',gemeente:'Gent',postcode:'9000',pandtype:'Appartement',prijs:'€ 249.000',opp:'92 m²',slaapkamers:'2',badkamers:'1',epc:'B',bouwjaar:'2005',desc:'Ruim hoekAppartement op de 2e verdieping. Lichtrijke leefruimte met uitzicht op binnenkoer. Gunstige ligging langs de ring met uitstekende bereikbaarheid. Ondergrondse parkeerplaats inbegrepen.',features:['Parkeerplaats inbegrepen','Kelder','Dubbele beglazing','Airco in slaapkamers'],makelaar:'Raf Vermeersch',color:'#2a2a1a'},
+  {id:'p5',type:'verkocht',featured:false,adres:'Graaf van Vlaanderenplein 7',gemeente:'Mariakerke',postcode:'9030',pandtype:'Woning',prijs:'€ 345.000',opp:'158 m²',slaapkamers:'3',badkamers:'2',epc:'B',bouwjaar:'1985',desc:'Halfopen bebouwing in een gegeerde woonwijk. Verkocht boven de vraagprijs na 18 dagen. Prachtig voorbeeld van wat wij voor u kunnen realiseren.',features:['Verkocht boven vraagprijs','18 dagen op de markt','3 bezichtigingen','1 bod'],makelaar:'Lore De Graef',color:'#1a1a1a'},
+  {id:'p6',type:'huur',featured:false,adres:'Sint-Pietersnieuwstraat 44',gemeente:'Gent',postcode:'9000',pandtype:'Appartement',prijs:'€ 850 /mnd',opp:'54 m²',slaapkamers:'1',badkamers:'1',epc:'C',bouwjaar:'1995',desc:'Gezellig studio-appartement in het studentenhart van Gent, maar geschikt voor elke bewoner. Nabij UGent, winkels, restaurants en openbaar vervoer.',features:['Volledig gemeubeld mogelijk','Fietsstalling','Onmiddellijk beschikbaar'],makelaar:'Nathalie Dubois',color:'#2a1a1a'},
+];
+
+// ═══════════════════════════════════════════════════════════
+// DATA HELPERS
+// ═══════════════════════════════════════════════════════════
+function loadListings(){try{const d=localStorage.getItem(LS_LISTINGS);return d?JSON.parse(d):DEFAULT_LISTINGS.map(l=>({...l}))}catch{return DEFAULT_LISTINGS.map(l=>({...l}))}}
+function loadLeads(){try{return JSON.parse(localStorage.getItem(LS_LEADS))||[]}catch{return[]}}
+function loadSchattingen(){try{return JSON.parse(localStorage.getItem(LS_SCHAT))||[]}catch{return[]}}
+
+// ═══════════════════════════════════════════════════════════
+// HERO COUNTER ANIMATION
+// ═══════════════════════════════════════════════════════════
+(()=>{
+  const target=loadListings().filter(l=>l.type!=='verkocht').length;
+  const el=document.getElementById('heroCounter');
+  if(!el)return;
+  let cur=0;const step=()=>{cur=Math.min(cur+1,target);el.textContent=cur;if(cur<target)setTimeout(step,60)};
+  setTimeout(step,400);
+})();
+
+// ═══════════════════════════════════════════════════════════
+// TICKER
+// ═══════════════════════════════════════════════════════════
+(()=>{
+  const listings=loadListings();const el=document.getElementById('tickerText');if(!el)return;
+  let i=0;
+  function showNext(){
+    const l=listings[i%listings.length];
+    el.style.opacity=0;
+    setTimeout(()=>{el.textContent=`${l.type==='verkocht'?'Verkocht':'Nieuw'}: ${l.pandtype} ${l.adres} · ${l.prijs}`;el.style.opacity=1;},300);
+    i++;
+  }
+  el.style.transition='opacity .3s';showNext();setInterval(showNext,4000);
+})();
+
+// ═══════════════════════════════════════════════════════════
+// LISTINGS RENDER
+// ═══════════════════════════════════════════════════════════
+let activeTypeFilter='all';
+
+function renderListings(){
+  const grid=document.getElementById('listingsGrid');if(!grid)return;
+  const listings=loadListings();
+
+  // Populate gemeente filter
+  const sel=document.getElementById('filterGemeente');
+  const opts=new Set(listings.map(l=>l.gemeente));
+  const cur=sel.value;
+  sel.innerHTML='<option value="all">Alle gemeenten</option>';
+  opts.forEach(g=>sel.insertAdjacentHTML('beforeend',`<option ${g===cur?'selected':''}>${g}</option>`));
+
+  applyFilters();
+}
+
+function applyFilters(){
+  const grid=document.getElementById('listingsGrid');if(!grid)return;
+  const listings=loadListings();
+  const gem=document.getElementById('filterGemeente').value;
+  const pt=document.getElementById('filterType').value;
+
+  const cards=[];
+  let visible=0;
+
+  listings.forEach(l=>{
+    const show=(activeTypeFilter==='all'||l.type===activeTypeFilter)&&
+               (gem==='all'||l.gemeente===gem)&&
+               (pt==='all'||l.pandtype===pt);
+    if(show)visible++;
+    cards.push({l,show});
+  });
+
+  document.getElementById('visibleCount').textContent=visible;
+
+  grid.innerHTML='';
+  if(visible===0){
+    grid.innerHTML='<div class="no-results"><span>∅</span>Geen panden gevonden voor deze filters.</div>';return;
+  }
+
+  cards.forEach(({l,show})=>{
+    if(!show)return;
+    const card=document.createElement('div');
+    card.className=`listing-card${l.featured?' featured':''}`;
+    card.innerHTML=`
+      <div class="lc-visual" style="background:${l.color||'var(--ink-s)'}">
+        ${buildPropSVG(l)}
+        <span class="lc-type-badge badge-${l.type}">${l.type==='koop'?'Te koop':l.type==='huur'?'Te huur':'Verkocht'}</span>
+        <button class="lc-fav" data-id="${l.id}" onclick="toggleFav(event,'${l.id}')" aria-label="Bewaar pand">♡</button>
+      </div>
+      <div class="lc-body">
+        <div class="lc-price">${l.prijs}</div>
+        <div class="lc-address">${l.adres}</div>
+        <div class="lc-city">${l.gemeente}, ${l.postcode}</div>
+        <div class="lc-specs">
+          <span class="lc-spec"><span class="lc-spec-ico">⊞</span>${l.opp}</span>
+          <span class="lc-spec"><span class="lc-spec-ico">🛏</span>${l.slaapkamers} slpk.</span>
+          <span class="lc-spec"><span class="lc-spec-ico">◫</span>${l.badkamers} badk.</span>
+          <span class="lc-spec"><span class="lc-spec-ico">◈</span>EPC ${l.epc}</span>
+        </div>
+        <div class="lc-footer">
+          <span class="lc-ref">Ref. ${l.id.toUpperCase()}</span>
+          <button class="lc-btn" onclick="openModal('${l.id}')">Meer info →</button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  // restore favs
+  const favs=getFavs();
+  favs.forEach(id=>{const b=grid.querySelector(`[data-id="${id}"]`);if(b)b.classList.add('active');});
+}
+
+function buildPropSVG(l){
+  const h=l.featured?320:240;
+  const colors={koop:'rgba(232,255,71,.06)',huur:'rgba(255,255,255,.05)',verkocht:'rgba(255,64,64,.06)'};
+  const strokeC={koop:'rgba(232,255,71,.2)',huur:'rgba(255,255,255,.15)',verkocht:'rgba(255,64,64,.2)'};
+  const c=colors[l.type]||colors.koop;const s=strokeC[l.type]||strokeC.koop;
+  if(l.pandtype==='Villa'||l.pandtype==='Woning'){
+    return`<svg viewBox="0 0 300 ${h}" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0">
+      <polygon points="50,${h*0.45} 150,${h*0.18} 250,${h*0.45}" fill="${c}" stroke="${s}" stroke-width="1"/>
+      <rect x="60" y="${h*0.45}" width="180" height="${h*0.42}" fill="${c}" stroke="${s}" stroke-width="1"/>
+      <rect x="120" y="${h*0.62}" width="60" height="${h*0.25}" fill="${c}" stroke="${s}" stroke-width=".5"/>
+      <rect x="80" y="${h*0.52}" width="35" height="28" fill="${c}" stroke="${s}" stroke-width=".5"/>
+      <rect x="185" y="${h*0.52}" width="35" height="28" fill="${c}" stroke="${s}" stroke-width=".5"/>
+    </svg>`;
+  }
+  return`<svg viewBox="0 0 300 ${h}" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0">
+    <rect x="60" y="${h*0.15}" width="180" height="${h*0.72}" fill="${c}" stroke="${s}" stroke-width="1"/>
+    ${[0,1,2,3].map(r=>[0,1,2].map(col=>`<rect x="${80+col*52}" y="${h*0.22+r*h*0.15}" width="36" height="${h*0.1}" fill="${c}" stroke="${s}" stroke-width=".5"/>`).join('')).join('')}
+    <rect x="125" y="${h*0.75}" width="50" height="${h*0.12}" fill="${c}" stroke="${s}" stroke-width=".5"/>
+  </svg>`;
+}
+
+function filterListings(type,btn){
+  activeTypeFilter=type;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btn&&btn.classList)btn.classList.add('active');
+  else{const b=document.querySelector(`[data-type="${type}"]`);if(b)b.classList.add('active')}
+  applyFilters();
+}
+
+// favs
+function getFavs(){try{return JSON.parse(localStorage.getItem('vdg_favs'))||[]}catch{return[]}}
+function toggleFav(e,id){
+  e.stopPropagation();
+  const btn=e.currentTarget;const favs=getFavs();
+  const idx=favs.indexOf(id);if(idx>=0)favs.splice(idx,1);else favs.push(id);
+  localStorage.setItem('vdg_favs',JSON.stringify(favs));
+  btn.classList.toggle('active',favs.includes(id));
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROPERTY MODAL
+// ═══════════════════════════════════════════════════════════
+function openModal(id){
+  const listings=loadListings();const l=listings.find(x=>x.id===id);if(!l)return;
+  const modal=document.getElementById('propModal');
+  const visual=document.getElementById('pmVisual');
+  const badge=document.getElementById('pmBadge');
+  const details=document.getElementById('pmDetails');
+  const contact=document.getElementById('pmContact');
+
+  visual.style.background=l.color||'var(--ink-s)';
+  badge.className=`lc-type-badge pm-badge badge-${l.type}`;
+  badge.textContent=l.type==='koop'?'Te koop':l.type==='huur'?'Te huur':'Verkocht';
+  visual.innerHTML=buildPropSVG({...l,featured:true})+`<span class="lc-type-badge pm-badge badge-${l.type}" style="position:absolute;top:1rem;left:1rem">${l.type==='koop'?'Te koop':l.type==='huur'?'Te huur':'Verkocht'}</span>`;
+
+  details.innerHTML=`
+    <div class="pm-price-row">
+      <div class="pm-price">${l.prijs}</div>
+      ${l.type==='huur'?'<div class="pm-price-label">per maand</div>':''}
+    </div>
+    <div class="pm-address">${l.adres}</div>
+    <div class="pm-city">${l.gemeente} · ${l.postcode}</div>
+    <div class="pm-specs-grid">
+      <div class="pm-spec-cell"><div class="pm-spec-label">Opp.</div><div class="pm-spec-val">${l.opp}</div></div>
+      <div class="pm-spec-cell"><div class="pm-spec-label">Slaapkamers</div><div class="pm-spec-val">${l.slaapkamers}</div></div>
+      <div class="pm-spec-cell"><div class="pm-spec-label">Badkamers</div><div class="pm-spec-val">${l.badkamers}</div></div>
+      <div class="pm-spec-cell"><div class="pm-spec-label">EPC-label</div><div class="pm-spec-val">${l.epc}</div></div>
+      <div class="pm-spec-cell"><div class="pm-spec-label">Bouwjaar</div><div class="pm-spec-val">${l.bouwjaar}</div></div>
+      <div class="pm-spec-cell"><div class="pm-spec-label">Type</div><div class="pm-spec-val">${l.pandtype}</div></div>
+    </div>
+    <div class="pm-desc-title">Beschrijving</div>
+    <p class="pm-desc">${l.desc}</p>
+    ${l.features&&l.features.length?`<div class="pm-features">${l.features.map(f=>`<div class="pm-feat">${f}</div>`).join('')}</div>`:''}`;
+
+  const formId='pmForm_'+l.id;
+  const sucId='pmSuc_'+l.id;
+  contact.innerHTML=`
+    <div class="pm-contact-title">Interesse?</div>
+    <div class="pm-contact-sub">Contacteer de makelaar</div>
+    <div class="pm-makelaar">
+      <div class="pm-mak-avatar">${l.makelaar.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+      <div><div class="pm-mak-name">${l.makelaar}</div><div class="pm-mak-role">Vastgoedmakelaar BIV</div></div>
+    </div>
+    <div id="${formId}">
+      <div class="pm-form-group"><label class="pm-form-label">Naam</label><input class="pm-input" id="pm_name_${l.id}" placeholder="Jan Janssen"/></div>
+      <div class="pm-form-group"><label class="pm-form-label">E-mail</label><input class="pm-input" type="email" id="pm_email_${l.id}" placeholder="jan@voorbeeld.be"/></div>
+      <div class="pm-form-group"><label class="pm-form-label">Telefoon</label><input class="pm-input" type="tel" id="pm_tel_${l.id}" placeholder="+32 4xx..."/></div>
+      <div class="pm-form-group"><label class="pm-form-label">Bericht</label><textarea class="pm-textarea" id="pm_msg_${l.id}" placeholder="Ik ben geïnteresseerd in dit pand en wens een bezichtiging te plannen..."></textarea></div>
+      <button class="pm-submit" onclick="submitLead('${l.id}','${l.adres}','${l.prijs}','${formId}','${sucId}')">Bericht versturen →</button>
+    </div>
+    <div id="${sucId}" class="pm-success">
+      <div class="pm-success-icon">✦</div>
+      <div class="pm-success-title">Bericht verzonden</div>
+      <p class="pm-success-text">Uw makelaar neemt spoedig contact op. Referentie: ${l.id.toUpperCase()}</p>
+    </div>`;
+
+  modal.classList.add('open');document.body.style.overflow='hidden';
+}
+function closeModal(){document.getElementById('propModal').classList.remove('open');document.body.style.overflow=''}
+
+function submitLead(id,adres,prijs,formId,sucId){
+  const name=document.getElementById('pm_name_'+id).value.trim();
+  const email=document.getElementById('pm_email_'+id).value.trim();
+  const tel=document.getElementById('pm_tel_'+id).value.trim();
+  const msg=document.getElementById('pm_msg_'+id).value.trim();
+  if(!name||!email){alert('Gelieve naam en e-mail in te vullen.');return;}
+  const leads=loadLeads();
+  leads.unshift({id:'l'+Date.now(),pandId:id,adres,prijs,name,email,tel,msg,ts:new Date().toISOString()});
+  localStorage.setItem(LS_LEADS,JSON.stringify(leads));
+  document.getElementById(formId).style.display='none';
+  document.getElementById(sucId).style.display='block';
+  updateCounts();
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCHATTING FORM
+// ═══════════════════════════════════════════════════════════
+function submitSchatting(){
+  const fname=document.getElementById('sc_fname').value.trim();
+  const lname=document.getElementById('sc_lname').value.trim();
+  const email=document.getElementById('sc_email').value.trim();
+  const tel=document.getElementById('sc_tel').value.trim();
+  const adres=document.getElementById('sc_adres').value.trim();
+  const gemeente=document.getElementById('sc_gemeente').value.trim();
+  const type=document.getElementById('sc_type').value;
+  if(!fname||!email||!adres){alert('Gelieve de verplichte velden in te vullen.');return;}
+  const schattingen=loadSchattingen();
+  schattingen.unshift({id:'s'+Date.now(),name:`${fname} ${lname}`,email,tel,adres,gemeente,type,ts:new Date().toISOString()});
+  localStorage.setItem(LS_SCHAT,JSON.stringify(schattingen));
+  document.getElementById('schattingForm').style.display='none';
+  document.getElementById('schattingSuccess').style.display='block';
+  updateCounts();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MARKT BARS ANIMATION
+// ═══════════════════════════════════════════════════════════
+(()=>{
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){
+      e.target.querySelectorAll('.mb-fill').forEach(bar=>{
+        const t=bar.dataset.target;setTimeout(()=>{bar.style.width=t+'%'},100);
+      });
+      obs.unobserve(e.target);
+    }});
+  },{threshold:.3});
+  const el=document.getElementById('marktBars');if(el)obs.observe(el);
+})();
+
+// ═══════════════════════════════════════════════════════════
+// MOBILE DRAWER & NAV
+// ═══════════════════════════════════════════════════════════
+function openDrawer(){document.getElementById('mobileDrawer').classList.add('open');document.body.style.overflow='hidden'}
+function closeDrawer(){document.getElementById('mobileDrawer').classList.remove('open');document.body.style.overflow=''}
+
+// ═══════════════════════════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════════════════════════
+let adminLoggedIn=false;
+function openAdmin(){
+  document.getElementById('adminOverlay').classList.add('open');document.body.style.overflow='hidden';
+  if(adminLoggedIn){document.getElementById('adminLogin').style.display='none';document.getElementById('adminPanelBody').style.display='block';loadAdminListings();updateCounts()}
+  else{document.getElementById('adminLogin').style.display='block';document.getElementById('adminPanelBody').style.display='none'}
+}
+function closeAdmin(){document.getElementById('adminOverlay').classList.remove('open');document.body.style.overflow=''}
+function checkAdminPw(){
+  const pw=document.getElementById('adminPwInput').value;
+  const err=document.getElementById('adminPwErr');
+  if(pw===ADMIN_PASSWORD){
+    adminLoggedIn=true;err.style.display='none';
+    document.getElementById('adminLogin').style.display='none';
+    document.getElementById('adminPanelBody').style.display='block';
+    loadAdminListings();updateCounts();
+  }else{err.style.display='block';document.getElementById('adminPwInput').value=''}
+}
+function updateCounts(){
+  const lc=loadLeads().length,sc=loadSchattingen().length;
+  const le=document.getElementById('admLeadCount');if(le)le.textContent=lc?`(${lc})`:'';
+  const se=document.getElementById('admSchatCount');if(se)se.textContent=sc?`(${sc})`:'';
+}
+function admTab(name){
+  document.querySelectorAll('.adm-tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.adm-tab-panel').forEach(p=>p.style.display='none');
+  document.getElementById('admTab_'+name).classList.add('active');
+  document.getElementById('admPanel_'+name).style.display='block';
+  if(name==='leads')renderLeads();
+  if(name==='schattingen')renderSchattingen();
+}
+
+// ── Listings editor ─────────────────────────────────────────
+const LISTING_TYPES=['koop','huur','verkocht'];
+const PAND_TYPES=['Appartement','Woning','Villa','Grond','Commercieel'];
+
+function loadAdminListings(){
+  const listings=loadListings();
+  const el=document.getElementById('admListingsEditor');if(!el)return;
+  el.innerHTML='';
+  listings.forEach((l,i)=>el.appendChild(buildListingEditorCard(l,i)));
+}
+
+function buildListingEditorCard(l,i){
+  const wrap=document.createElement('div');wrap.className='adm-listing-card';wrap.id='alc_'+l.id;
+  wrap.innerHTML=`
+    <div class="alc-header" onclick="toggleListingCard('${l.id}')">
+      <div class="alc-header-left">
+        <span class="lc-type-badge badge-${l.type}" style="position:static;font-size:.55rem;padding:.2rem .5rem">${l.type}</span>
+        <span class="alc-name">${l.adres}</span>
+        <span class="alc-price">${l.prijs}</span>
+      </div>
+      <div class="alc-actions">
+        <button class="alc-del" onclick="removeListing(event,'${l.id}')">Verwijderen</button>
+      </div>
+    </div>
+    <div class="alc-body" id="alcBody_${l.id}">
+      <div class="alc-grid" style="margin-bottom:.6rem">
+        <div><div class="alc-label">Adres</div><input class="adm-input" style="width:100%" value="${escH(l.adres)}" data-field="adres" data-id="${l.id}"/></div>
+        <div><div class="alc-label">Gemeente</div><input class="adm-input" style="width:100%" value="${escH(l.gemeente)}" data-field="gemeente" data-id="${l.id}"/></div>
+      </div>
+      <div class="alc-grid-3" style="margin-bottom:.6rem">
+        <div><div class="alc-label">Postcode</div><input class="adm-input" style="width:100%" value="${escH(l.postcode)}" data-field="postcode" data-id="${l.id}"/></div>
+        <div><div class="alc-label">Prijs</div><input class="adm-input" style="width:100%" value="${escH(l.prijs)}" data-field="prijs" data-id="${l.id}"/></div>
+        <div><div class="alc-label">Type transactie</div>
+          <select class="adm-select" style="width:100%" data-field="type" data-id="${l.id}">
+            ${LISTING_TYPES.map(t=>`<option${t===l.type?' selected':''}>${t}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="alc-grid-3" style="margin-bottom:.6rem">
+        <div><div class="alc-label">Pandtype</div>
+          <select class="adm-select" style="width:100%" data-field="pandtype" data-id="${l.id}">
+            ${PAND_TYPES.map(t=>`<option${t===l.pandtype?' selected':''}>${t}</option>`).join('')}
+          </select>
+        </div>
+        <div><div class="alc-label">Oppervlakte</div><input class="adm-input" style="width:100%" value="${escH(l.opp)}" data-field="opp" data-id="${l.id}"/></div>
+        <div><div class="alc-label">Slaapkamers</div><input class="adm-input" style="width:100%" value="${escH(l.slaapkamers)}" data-field="slaapkamers" data-id="${l.id}"/></div>
+      </div>
+      <div class="alc-grid-3" style="margin-bottom:.6rem">
+        <div><div class="alc-label">Badkamers</div><input class="adm-input" style="width:100%" value="${escH(l.badkamers)}" data-field="badkamers" data-id="${l.id}"/></div>
+        <div><div class="alc-label">EPC</div><input class="adm-input" style="width:100%" value="${escH(l.epc)}" data-field="epc" data-id="${l.id}"/></div>
+        <div><div class="alc-label">Bouwjaar</div><input class="adm-input" style="width:100%" value="${escH(l.bouwjaar)}" data-field="bouwjaar" data-id="${l.id}"/></div>
+      </div>
+      <div style="margin-bottom:.6rem">
+        <div class="alc-label">Makelaar</div>
+        <select class="adm-select" style="width:100%" data-field="makelaar" data-id="${l.id}">
+          ${['Lore De Graef','Raf Vermeersch','Nathalie Dubois'].map(m=>`<option${m===l.makelaar?' selected':''}>${m}</option>`).join('')}
+        </select>
+      </div>
+      <div style="margin-bottom:.6rem">
+        <div class="alc-label">Beschrijving</div>
+        <textarea class="adm-input" style="width:100%;min-height:80px;resize:vertical" data-field="desc" data-id="${l.id}">${escH(l.desc)}</textarea>
+      </div>
+      <div>
+        <div class="alc-label">Troeven (1 per regel)</div>
+        <textarea class="adm-input" style="width:100%;min-height:60px;resize:vertical" data-field="features" data-id="${l.id}">${(l.features||[]).join('\n')}</textarea>
+      </div>
+    </div>`;
+  return wrap;
+}
+
+function toggleListingCard(id){
+  const body=document.getElementById('alcBody_'+id);
+  if(body)body.classList.toggle('open');
+}
+function removeListing(e,id){
+  e.stopPropagation();if(!confirm('Dit pand verwijderen?'))return;
+  const listings=loadListings().filter(l=>l.id!==id);
+  localStorage.setItem(LS_LISTINGS,JSON.stringify(listings));
+  loadAdminListings();renderListings();
+}
+function addListing(){
+  const listings=loadListings();
+  const newL={id:'p'+Date.now(),type:'koop',featured:false,adres:'Nieuwe straat 1',gemeente:'Gent',postcode:'9000',pandtype:'Appartement',prijs:'€ 000.000',opp:'00 m²',slaapkamers:'2',badkamers:'1',epc:'C',bouwjaar:'2000',desc:'Beschrijving...',features:[],makelaar:'Lore De Graef',color:'#1e2e22'};
+  listings.push(newL);localStorage.setItem(LS_LISTINGS,JSON.stringify(listings));
+  loadAdminListings();
+  setTimeout(()=>{const b=document.getElementById('alcBody_'+newL.id);if(b)b.classList.add('open')},50);
+}
+function saveListings(){
+  const listings=loadListings();
+  document.querySelectorAll('.adm-listing-card').forEach(card=>{
+    const inputs=card.querySelectorAll('[data-field][data-id]');
+    inputs.forEach(inp=>{
+      const id=inp.dataset.id;const field=inp.dataset.field;
+      const l=listings.find(x=>x.id===id);if(!l)return;
+      if(field==='features'){l[field]=inp.value.split('\n').map(s=>s.trim()).filter(Boolean)}
+      else l[field]=inp.value;
+    });
+  });
+  localStorage.setItem(LS_LISTINGS,JSON.stringify(listings));
+  renderListings();
+  const msg=document.getElementById('admListingsSaved');
+  if(msg){msg.style.display='block';setTimeout(()=>msg.style.display='none',3000)}
+}
+
+// ── Leads log ────────────────────────────────────────────────
+function renderLeads(){
+  const log=loadLeads();const el=document.getElementById('admLeadsLog');if(!el)return;
+  if(!log.length){el.innerHTML='<div class="adm-empty">Geen leads ontvangen.</div>';return}
+  el.innerHTML=log.map(l=>`
+    <div class="adm-lead-entry">
+      <div class="ale-header">
+        <div>
+          <div class="ale-name">${escH(l.name)}</div>
+          <div class="ale-prop">Ref. ${l.pandId?.toUpperCase()} · ${escH(l.adres)} · ${escH(l.prijs)}</div>
+          <div class="ale-details">${escH(l.email)}${l.tel?' · '+escH(l.tel):''}</div>
+          ${l.msg?`<div class="ale-details" style="font-style:italic;margin-top:.2rem">"${escH(l.msg)}"</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.4rem">
+          <div class="ale-date">${new Date(l.ts).toLocaleString('nl-BE')}</div>
+          <button class="ale-del" onclick="deleteLead('${l.id}')">Verwijderen</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function deleteLead(id){if(!confirm('Lead verwijderen?'))return;const log=loadLeads().filter(l=>l.id!==id);localStorage.setItem(LS_LEADS,JSON.stringify(log));renderLeads();updateCounts()}
+function clearLeads(){if(!confirm('Alle leads wissen?'))return;localStorage.removeItem(LS_LEADS);renderLeads();updateCounts()}
+
+// ── Schattingen log ──────────────────────────────────────────
+function renderSchattingen(){
+  const log=loadSchattingen();const el=document.getElementById('admSchattingenLog');if(!el)return;
+  if(!log.length){el.innerHTML='<div class="adm-empty">Geen schattingsaanvragen ontvangen.</div>';return}
+  el.innerHTML=log.map(s=>`
+    <div class="adm-lead-entry">
+      <div class="ale-header">
+        <div>
+          <div class="ale-name">${escH(s.name)}</div>
+          <div class="ale-prop">${escH(s.adres)}, ${escH(s.gemeente)} · ${escH(s.type)}</div>
+          <div class="ale-details">${escH(s.email)}${s.tel?' · '+escH(s.tel):''}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.4rem">
+          <div class="ale-date">${new Date(s.ts).toLocaleString('nl-BE')}</div>
+          <button class="ale-del" onclick="deleteSchatting('${s.id}')">Verwijderen</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function deleteSchatting(id){if(!confirm('Aanvraag verwijderen?'))return;const log=loadSchattingen().filter(s=>s.id!==id);localStorage.setItem(LS_SCHAT,JSON.stringify(log));renderSchattingen();updateCounts()}
+function clearSchattingen(){if(!confirm('Alle schattingen wissen?'))return;localStorage.removeItem(LS_SCHAT);renderSchattingen();updateCounts()}
+
+// ── Export / Import ──────────────────────────────────────────
+function exportAll(){
+  const data={listings:loadListings(),leads:loadLeads(),schattingen:loadSchattingen()};
+  const box=document.getElementById('admExportBox');
+  if(box)box.value=JSON.stringify(data,null,2);
+  const btn=document.getElementById('admExportBtn');
+  navigator.clipboard?.writeText(box.value).catch(()=>{});
+  if(btn){btn.textContent='✓ Gekopieerd!';setTimeout(()=>btn.textContent='📋 Exporteer JSON',2500)}
+}
+function importAll(){
+  const raw=document.getElementById('admImportBox').value.trim();
+  try{
+    const d=JSON.parse(raw);
+    if(d.listings)localStorage.setItem(LS_LISTINGS,JSON.stringify(d.listings));
+    if(d.leads)localStorage.setItem(LS_LEADS,JSON.stringify(d.leads));
+    if(d.schattingen)localStorage.setItem(LS_SCHAT,JSON.stringify(d.schattingen));
+    loadAdminListings();renderListings();updateCounts();
+    alert('Import geslaagd!');document.getElementById('admImportBox').value='';
+  }catch{alert('Ongeldig JSON.')}
+}
+
+// ── Utility ──────────────────────────────────────────────────
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// ── Click outside ────────────────────────────────────────────
+document.getElementById('adminOverlay').addEventListener('click',function(e){if(e.target===this)closeAdmin()});
+document.getElementById('propModal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+document.getElementById('mobileDrawer').addEventListener('click',function(e){if(e.target===this)closeDrawer()});
+
+// ── Init ─────────────────────────────────────────────────────
+renderListings();
+</script>
+</body>
+</html>

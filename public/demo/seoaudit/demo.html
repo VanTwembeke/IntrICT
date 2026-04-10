@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="nl" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SEO Audit Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[data-theme="dark"]{--bg:#0f0f0f;--bg2:#171717;--bg3:#1f1f1f;--bg4:#272727;--tx:#f0f0f0;--tx2:#888;--tx3:#444;--border:#252525;--border2:#333;--card:#181818;--sh:0 1px 3px rgba(0,0,0,.5)}
+[data-theme="light"]{--bg:#f2f1ed;--bg2:#ffffff;--bg3:#f7f6f2;--bg4:#eeede8;--tx:#111;--tx2:#666;--tx3:#aaa;--border:#e4e2da;--border2:#d0cec6;--card:#fff;--sh:0 1px 3px rgba(0,0,0,.07)}
+:root{--acc:#ff5c00;--acc-d:#d94f00;--acc-dim:rgba(255,92,0,.09);--green:#16a34a;--gbg:rgba(22,163,74,.1);--red:#dc2626;--rbg:rgba(220,38,38,.1);--amber:#d97706;--abg:rgba(217,119,6,.1);--fs:'Syne',sans-serif;--fm:'IBM Plex Mono',monospace;--tr:.16s ease;--r:5px}
+html,body{height:100%;overflow:hidden;font-family:var(--fm);font-size:13.5px;background:var(--bg);color:var(--tx)}
+.app{display:grid;grid-template-columns:252px 1fr;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sb{display:flex;flex-direction:column;height:100vh;background:var(--bg2);border-right:1px solid var(--border);overflow:hidden}
+.sb-head{padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-logo{font-family:var(--fs);font-size:.92rem;font-weight:800;color:var(--tx);letter-spacing:.01em}
+.sb-logo em{color:var(--acc);font-style:normal}
+.sb-sub{font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-top:3px}
+
+/* Ring score */
+.sb-ring{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.rw{position:relative;width:68px;height:68px;flex-shrink:0}
+.rw svg{width:68px;height:68px;transform:rotate(-90deg)}
+.r-bg{fill:none;stroke:var(--border2);stroke-width:6}
+.r-fg{fill:none;stroke-width:6;stroke-linecap:round;stroke-dasharray:176;transition:stroke-dashoffset .5s ease,stroke .3s}
+.r-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.r-pct{font-family:var(--fs);font-size:1.05rem;font-weight:800;color:var(--tx);line-height:1}
+.r-lbl{font-size:.48rem;color:var(--tx3);margin-top:1px}
+.ring-meta{flex:1;min-width:0}
+.rm-row{display:flex;justify-content:space-between;font-size:.65rem;color:var(--tx2);margin-bottom:4px}
+.rm-row b{color:var(--tx);font-weight:500}
+.prog{height:2px;background:var(--border2);border-radius:2px;overflow:hidden;margin-bottom:6px}
+.prog-f{height:100%;background:var(--acc);transition:width .4s ease}
+.pills{display:flex;gap:4px}
+.pill{font-size:.56rem;font-weight:500;padding:1px 6px;border-radius:100px}
+.p-g{background:var(--gbg);color:var(--green)}
+.p-r{background:var(--rbg);color:var(--red)}
+.p-a{background:var(--bg4);color:var(--tx2)}
+
+/* Nav */
+.sb-nav{flex:1;overflow-y:auto;padding:6px 0}
+.sb-nav::-webkit-scrollbar{width:2px}.sb-nav::-webkit-scrollbar-thumb{background:var(--border2)}
+.ni{display:flex;align-items:center;justify-content:space-between;padding:7px 16px;cursor:pointer;border-left:2px solid transparent;font-size:.7rem;color:var(--tx2);transition:all var(--tr);gap:6px}
+.ni:hover{color:var(--tx);background:var(--bg3)}
+.ni.active{color:var(--acc);border-left-color:var(--acc);background:var(--acc-dim)}
+.ni-lbl{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ni-badge{font-size:.56rem;background:var(--bg4);color:var(--tx3);padding:1px 6px;border-radius:100px;flex-shrink:0}
+.ni.active .ni-badge{background:var(--acc-dim);color:var(--acc)}
+.ni.all-done .ni-badge{background:var(--gbg);color:var(--green)}
+
+/* Footer */
+.sb-foot{padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:5px}
+.fr{display:flex;gap:5px}
+.btn{font-family:var(--fm);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;font-weight:500;border:none;cursor:pointer;padding:6px 10px;transition:all var(--tr);display:flex;align-items:center;justify-content:center;gap:3px;border-radius:var(--r);white-space:nowrap}
+.b-acc{background:var(--acc);color:#fff;flex:1}.b-acc:hover{background:var(--acc-d)}
+.b-ghost{background:var(--bg3);color:var(--tx2);border:1px solid var(--border2);flex:1}.b-ghost:hover{color:var(--tx)}
+.b-danger{background:var(--rbg);color:var(--red);border:1px solid rgba(220,38,38,.2)}.b-danger:hover{background:rgba(220,38,38,.16)}
+.b-icon{background:var(--bg3);color:var(--tx2);border:1px solid var(--border2);width:28px;height:28px;padding:0;border-radius:var(--r);font-size:.8rem;flex-shrink:0}.b-icon:hover{color:var(--tx)}
+
+/* MAIN */
+.main{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.hdr{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;flex-wrap:wrap}
+.hdr-title{font-family:var(--fs);font-size:.88rem;font-weight:700;color:var(--tx)}
+.hdr-sep{font-size:.65rem;color:var(--tx3)}
+.hdr-cat{font-size:.65rem;color:var(--tx2)}
+.hdr-sp{flex:1}
+.ci-wrap{display:flex;align-items:center;gap:5px}
+.ci-lbl{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3)}
+.ci{background:var(--bg3);border:1px solid var(--border2);color:var(--tx);font-family:var(--fm);font-size:.72rem;padding:4px 9px;border-radius:var(--r);outline:none;width:155px;transition:border-color var(--tr)}
+.ci:focus{border-color:var(--acc)}.ci::placeholder{color:var(--tx3)}
+.hdr-date{font-size:.6rem;color:var(--tx3)}
+
+/* Filter */
+.fbar{display:flex;align-items:center;gap:5px;padding:6px 18px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;flex-wrap:wrap}
+.f-lbl{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3)}
+.f-btn{font-family:var(--fm);font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--border2);background:transparent;color:var(--tx2);padding:3px 9px;cursor:pointer;border-radius:100px;transition:all var(--tr)}
+.f-btn:hover{color:var(--tx)}.f-btn.active{background:var(--acc);border-color:var(--acc);color:#fff}
+.f-sep{width:1px;height:14px;background:var(--border);margin:0 3px}
+.s-inp{background:var(--bg3);border:1px solid var(--border2);color:var(--tx);font-family:var(--fm);font-size:.66rem;padding:3px 9px;border-radius:100px;outline:none;width:150px;transition:border-color var(--tr)}
+.s-inp:focus{border-color:var(--acc)}.s-inp::placeholder{color:var(--tx3)}
+.vis{font-size:.58rem;color:var(--tx3);margin-left:auto}
+
+/* List */
+.list{flex:1;overflow-y:auto;padding:14px 18px}
+.list::-webkit-scrollbar{width:3px}.list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+.cg{margin-bottom:18px}
+.cg-h{display:flex;align-items:center;gap:7px;margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid var(--border)}
+.cg-title{font-family:var(--fs);font-size:.78rem;font-weight:700;color:var(--tx)}
+.cg-pill{font-size:.55rem;font-weight:500;padding:1px 7px;border-radius:100px}
+.cg-desc{font-size:.62rem;color:var(--tx3);margin-left:auto}
+
+/* Check item */
+.ck{display:grid;grid-template-columns:20px 1fr auto;gap:9px;align-items:start;padding:7px 9px;border:1px solid var(--border);border-radius:var(--r);margin-bottom:3px;cursor:default;transition:background var(--tr),border-color var(--tr);background:var(--card)}
+.ck:hover{background:var(--bg3)}
+.ck.done{background:var(--bg3);border-color:rgba(22,163,74,.2)}
+.ck.na{opacity:.4}
+
+.ck-box{width:20px;height:20px;border:1.5px solid var(--border2);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;cursor:pointer;transition:all var(--tr);font-size:.68rem;font-weight:700;color:transparent}
+.ck.done .ck-box{background:var(--green);border-color:var(--green);color:#fff}
+.ck.na .ck-box{background:var(--bg4);color:var(--tx2)}
+
+.ck-body{min-width:0}
+.ck-name{font-size:.72rem;color:var(--tx);line-height:1.45;cursor:pointer;user-select:none}
+.ck.done .ck-name{text-decoration:line-through;color:var(--tx3)}
+.ck-tip{font-size:.63rem;color:var(--tx2);line-height:1.6;margin-top:5px;padding-top:5px;border-top:1px dashed var(--border2);display:none}
+.ck.open .ck-tip{display:block}
+.ck-note{width:100%;margin-top:5px;font-family:var(--fm);font-size:.63rem;background:var(--bg4);border:1px solid var(--border2);color:var(--tx);padding:4px 7px;resize:none;min-height:40px;outline:none;border-radius:3px;display:none;transition:border-color var(--tr)}
+.ck.open .ck-note{display:block}
+.ck-note:focus{border-color:var(--acc)}.ck-note::placeholder{color:var(--tx3)}
+.ck-acts{display:flex;gap:3px;margin-top:4px}
+.ck-act{font-family:var(--fm);font-size:.55rem;padding:2px 6px;background:none;border:1px solid var(--border2);color:var(--tx3);cursor:pointer;border-radius:3px;transition:all var(--tr)}
+.ck-act:hover{color:var(--tx);border-color:var(--border2)}
+.ck-act.on{border-color:rgba(22,163,74,.4);color:var(--green);background:var(--gbg)}
+
+.prio{font-size:.53rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:1px 5px;border-radius:100px;white-space:nowrap;align-self:flex-start;margin-top:2px}
+.ph{background:var(--rbg);color:var(--red)}.pm{background:var(--abg);color:var(--amber)}.pl{background:var(--gbg);color:var(--green)}
+
+.empty{padding:40px;text-align:center;color:var(--tx3);font-size:.72rem}
+
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.mo.open{display:flex}
+.mo-box{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:22px;width:380px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.mo-title{font-family:var(--fs);font-size:.9rem;font-weight:700;color:var(--tx);margin-bottom:3px}
+.mo-sub{font-size:.64rem;color:var(--tx2);margin-bottom:14px}
+.mo-list{max-height:220px;overflow-y:auto;margin-bottom:14px;display:flex;flex-direction:column;gap:5px}
+.mo-item{display:flex;align-items:center;justify-content:space-between;padding:7px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all var(--tr)}
+.mo-item:hover{border-color:var(--acc)}
+.mo-item-n{font-size:.72rem;color:var(--tx)}
+.mo-item-m{font-size:.6rem;color:var(--tx3);margin-top:1px}
+.mo-del{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:.72rem;padding:2px 5px;transition:color var(--tr)}
+.mo-del:hover{color:var(--red)}
+.mo-empty{font-size:.7rem;color:var(--tx3);text-align:center;padding:18px}
+.mo-foot{display:flex;gap:7px}
+
+/* Print */
+@media print{
+  html,body{height:auto;overflow:visible}
+  .app{display:block;height:auto}
+  .sb,.fbar{display:none}
+  .main{height:auto;overflow:visible}
+  .list{overflow:visible;height:auto;padding:0}
+  .ck-tip,.ck-note{display:block!important}
+  .ck-acts{display:none}
+  @page{margin:1.5cm;size:A4}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sb">
+  <div class="sb-head">
+    <div class="sb-logo">SEO<em>.</em>Audit</div>
+    <div class="sb-sub">Professionele checklist tool</div>
+  </div>
+  <div class="sb-ring">
+    <div class="rw">
+      <svg viewBox="0 0 60 60"><circle class="r-bg" cx="30" cy="30" r="26"/><circle class="r-fg" id="rFg" cx="30" cy="30" r="26" stroke="var(--acc)" stroke-dashoffset="176"/></svg>
+      <div class="r-inner"><span class="r-pct" id="rPct">0</span><span class="r-lbl">score</span></div>
+    </div>
+    <div class="ring-meta">
+      <div class="rm-row"><span>Voltooid</span><b id="rmDone">0</b></div>
+      <div class="rm-row"><span>Resterend</span><b id="rmLeft">0</b></div>
+      <div class="prog"><div class="prog-f" id="pf" style="width:0%"></div></div>
+      <div class="pills">
+        <span class="pill p-g" id="piG">0 ✓</span>
+        <span class="pill p-r" id="piR">0 open</span>
+        <span class="pill p-a" id="piNA">0 N/A</span>
+      </div>
+    </div>
+  </div>
+  <nav class="sb-nav" id="sbNav"></nav>
+  <div class="sb-foot">
+    <div class="fr">
+      <button class="btn b-acc" onclick="window.print()">⊞ PDF</button>
+      <button class="btn b-ghost" onclick="openModal()">⊕ Klanten</button>
+      <button class="btn b-icon" id="thBtn" onclick="toggleTheme()" title="Thema">☀</button>
+    </div>
+    <div class="fr">
+      <button class="btn b-ghost" onclick="saveAudit()">↓ Opslaan</button>
+      <button class="btn b-danger" onclick="resetAudit()">↺ Reset</button>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="hdr">
+    <div class="hdr-title">SEO Audit</div>
+    <div class="hdr-sep">·</div>
+    <div class="hdr-cat" id="hCat">63 checks · 6 categorieën</div>
+    <div class="hdr-sp"></div>
+    <div class="ci-wrap">
+      <span class="ci-lbl">Klant</span>
+      <input class="ci" id="cName" placeholder="Naam / domein…" oninput="onCI()"/>
+    </div>
+    <div class="hdr-date" id="hDate"></div>
+  </div>
+  <div class="fbar">
+    <span class="f-lbl">Toon</span>
+    <button class="f-btn active" data-f="all" onclick="setF('all',this)">Alles</button>
+    <button class="f-btn" data-f="open" onclick="setF('open',this)">Open</button>
+    <button class="f-btn" data-f="done" onclick="setF('done',this)">Voltooid</button>
+    <button class="f-btn" data-f="hoog" onclick="setF('hoog',this)">Hoog prio</button>
+    <div class="f-sep"></div>
+    <input class="s-inp" id="sInp" placeholder="Zoek check…" oninput="renderList()"/>
+    <span class="vis" id="vis"></span>
+  </div>
+  <div class="list" id="list"></div>
+</main>
+
+</div>
+
+<!-- MODAL -->
+<div class="mo" id="mo">
+  <div class="mo-box">
+    <div class="mo-title">Auditbeheer</div>
+    <div class="mo-sub">Opgeslagen audits laden of verwijderen</div>
+    <div class="mo-list" id="moList"></div>
+    <div class="mo-foot">
+      <button class="btn b-ghost" style="flex:1" onclick="closeModal()">Sluiten</button>
+      <button class="btn b-acc" style="flex:1" onclick="exportJSON()">↓ JSON export</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const CATS=[
+  {id:'tech',label:'Technisch',desc:'Crawl, indexering & snelheid',items:[
+    {id:'t1',name:'robots.txt aanwezig & correct geconfigureerd',tip:'Controleer /robots.txt. Zorg dat indexeerbare pagina\'s niet geblokkeerd zijn. Test via Google Search Console > Crawl Stats.',prio:'hoog'},
+    {id:'t2',name:'XML-sitemap aanwezig & ingediend bij GSC',tip:'Sitemap.xml bevat alle indexeerbare URLs, geen 4xx/5xx. Ingediend en verwerkt via Google Search Console.',prio:'hoog'},
+    {id:'t3',name:'HTTPS op alle pagina\'s, geen mixed content',tip:'Controleer via browserconsole of Why No Padlock. Alle resources (afbeeldingen, scripts, CSS) laden via HTTPS.',prio:'hoog'},
+    {id:'t4',name:'Canonical tags correct ingesteld',tip:'Elke pagina heeft self-referencing canonical. Duplicate content heeft canonical naar primaire URL.',prio:'hoog'},
+    {id:'t5',name:'Core Web Vitals OK (LCP, CLS, INP)',tip:'PageSpeed Insights: LCP < 2,5s · CLS < 0,1 · INP < 200ms. Controleer mobile én desktop afzonderlijk.',prio:'hoog'},
+    {id:'t6',name:'Mobieloptimalisatie getest',tip:'Google Mobile-Friendly Test. Controleer: tekstgrootte, tapafstand (min 48px), viewport meta aanwezig.',prio:'hoog'},
+    {id:'t7',name:'Geen crawlfouten in Search Console',tip:'GSC > Coverage. Corrigeer 4xx en redirect-ketens. Server errors (5xx) onmiddellijk aanpakken.',prio:'hoog'},
+    {id:'t8',name:'Laadtijd < 3s (mobile & desktop)',tip:'PageSpeed score > 70. Focus op TTFB, LCP en TBT. Overweeg CDN, browser-caching en image lazy loading.',prio:'midden'},
+    {id:'t9',name:'Gestructureerde data (Schema.org) geïmplementeerd',tip:'Test via Rich Results Test. Gebruik relevante types: LocalBusiness, Article, FAQ, Product, BreadcrumbList.',prio:'midden'},
+    {id:'t10',name:'Geen redirect-ketens of -loops',tip:'Elke redirect leidt direct naar eindbestemming. Max 1 stap. Controleer met Screaming Frog of Sitebulb.',prio:'midden'},
+    {id:'t11',name:'Hreflang correct ingesteld (meertalige sites)',tip:'Elke taalvariant linkt naar alle varianten inclusief zichzelf. x-default instellen voor primaire taal.',prio:'laag'},
+    {id:'t12',name:'Nuttige 404-pagina aanwezig',tip:'404-pagina bevat navigatie naar hoofdpagina\'s, zoekfunctie en duidelijke boodschap. Geen lege pagina.',prio:'laag'},
+  ]},
+  {id:'onpage',label:'On-page',desc:'Titels, headings & interne links',items:[
+    {id:'o1',name:'Unieke title tags (50–60 tekens)',tip:'Elke pagina heeft unieke title. Primair zoekwoord staat vooraan. Geen duplicates zichtbaar in GSC > Pages.',prio:'hoog'},
+    {id:'o2',name:'Meta descriptions aanwezig (130–155 tekens)',tip:'Unieke meta description per pagina. Bevat het zoekwoord en heeft een duidelijke reden om te klikken.',prio:'hoog'},
+    {id:'o3',name:'Één H1 per pagina met hoofdzoekwoord',tip:'Exact één H1 per pagina. Verschilt van de title tag maar is inhoudelijk gerelateerd. Bevat primair zoekwoord.',prio:'hoog'},
+    {id:'o4',name:'Logische heading-hiërarchie (H1→H2→H3)',tip:'Geen H3 zonder H2, geen H2 zonder H1. Headings zijn inhoudelijk beschrijvend — geen decoratief gebruik.',prio:'midden'},
+    {id:'o5',name:'Primair zoekwoord in eerste 100 woorden',tip:'Gebruik het hoofdzoekwoord vroeg in de body. Natuurlijk taalgebruik heeft prioriteit boven plaatsing.',prio:'midden'},
+    {id:'o6',name:'Alt-teksten op alle afbeeldingen',tip:'Beschrijvende alt-teksten voor inhoudelijke afbeeldingen. Decoratieve afbeeldingen krijgen lege alt="".',prio:'midden'},
+    {id:'o7',name:'Interne linkstructuur logisch en aanwezig',tip:'Elke pagina bereikbaar via interne links. Gebruik beschrijvende ankerteksten. Vermijd "klik hier".',prio:'hoog'},
+    {id:'o8',name:'Geen orphan pages aanwezig',tip:'Screaming Frog of Sitebulb om orphan pages te detecteren. Elke pagina minimaal één inkomende interne link.',prio:'midden'},
+    {id:'o9',name:'URL-structuur: kort, beschrijvend, zoekwoordrijk',tip:'Koppeltekens (geen underscores). Geen sessie-IDs. Lowercase. Maximaal 3–4 niveaus diep.',prio:'midden'},
+    {id:'o10',name:'Open Graph & Twitter Card tags aanwezig',tip:'og:title, og:description, og:image (1200×630px). Test via Facebook Sharing Debugger.',prio:'laag'},
+  ]},
+  {id:'content',label:'Content',desc:'Kwaliteit, zoekwoorden & structuur',items:[
+    {id:'c1',name:'Zoekwoordenonderzoek uitgevoerd voor doelpagina\'s',tip:'Tools: Ahrefs, Semrush, Google Keyword Planner. Focus op zoekintentie: informationeel, commercieel, transactioneel.',prio:'hoog'},
+    {id:'c2',name:'Content beantwoordt de zoekintentie correct',tip:'Analyseer SERP voor het zoekwoord. Klopt het format en de diepgang van uw content met de top-3?',prio:'hoog'},
+    {id:'c3',name:'Geen duplicate content (intern of extern)',tip:'Gebruik Copyscape of Siteliner. Controleer of paginavarianten (www, http, trailing slash) geconsolideerd zijn.',prio:'hoog'},
+    {id:'c4',name:'Voldoende contentdiepgang t.o.v. concurrenten',tip:'Vergelijk woordtelling en onderwerpbreedte met top-3 SERP. Voeg FAQ, afbeeldingen en video\'s toe.',prio:'midden'},
+    {id:'c5',name:'LSI-zoekwoorden & semantisch verwante termen',tip:'Gebruik Google\'s "Gerelateerde zoekopdrachten" en "People Also Ask" als bron van semantisch verwante begrippen.',prio:'midden'},
+    {id:'c6',name:'Blog aanwezig & regelmatig gepubliceerd',tip:'Min. 2× per maand voor competitieve niches. Consistent publiceren versterkt autoriteits-signalen bij Google.',prio:'midden'},
+    {id:'c7',name:'Afbeeldingen gecomprimeerd & in WebP-formaat',tip:'TinyPNG of Squoosh. WebP bespaart 25–35% bestandsgrootte. Lazy loading inschakelen voor offscreen images.',prio:'midden'},
+    {id:'c8',name:'FAQ-sectie aanwezig met FAQ Schema',tip:'Beantwoord veelgestelde vragen. Voeg FAQ Schema-markup toe voor kans op rich snippets in de SERP.',prio:'laag'},
+    {id:'c9',name:'Content leesvaardig (alinea\'s, bullets, witruimte)',tip:'Korte alinea\'s (max 3 regels). Gebruik bullets en subheadings. Hoog bouncepercentage duidt op slechte leesbaarheid.',prio:'laag'},
+    {id:'c10',name:'Content regelmatig bijgewerkt (freshness)',tip:'Voeg "Bijgewerkt op"-datum toe. Update statistieken en links minstens jaarlijks.',prio:'laag'},
+  ]},
+  {id:'offpage',label:'Off-page',desc:'Backlinks & domein autoriteit',items:[
+    {id:'b1',name:'Backlinkprofiel geanalyseerd (Ahrefs/Semrush)',tip:'Domain Rating, ankertekstverdeling, toxische links. Exporteer rapport voor de klant.',prio:'hoog'},
+    {id:'b2',name:'Geen toxische backlinks (disavow indien nodig)',tip:'Identificeer spammy links via Ahrefs. Dien disavow-bestand in via GSC indien ze Domain Rating schaden.',prio:'hoog'},
+    {id:'b3',name:'Ankertekstverdeling is natuurlijk',tip:'Gezond: merk-ankers 50%+, generiek 20%, zoekwoord-ankers max 20%. Over-optimalisatie riskeert penalty.',prio:'midden'},
+    {id:'b4',name:'Vermeldingen op relevante directories',tip:'Yelp, Trustpilot, branchespecifieke directories. NAP (naam, adres, telefoon) identiek op alle platformen.',prio:'midden'},
+    {id:'b5',name:'Concurrentie-backlinkanalyse uitgevoerd',tip:'Ahrefs Link Intersect: welke sites linken naar concurrenten maar niet naar u? Dit zijn linkbuilding-kansen.',prio:'laag'},
+    {id:'b6',name:'Social media profielen actief & gelinkt naar website',tip:'Actieve social profielen versterken merksignalen. Alle profielen linken naar website met correcte NAP.',prio:'laag'},
+  ]},
+  {id:'lokaal',label:'Lokaal SEO',desc:'GBP, NAP-consistentie & Belgische directories',items:[
+    {id:'l1',name:'Google Business Profile geclaimd & volledig ingevuld',tip:'Verifieer en vul alle info in: categorieën, beschrijving (750 tekens), openingsuren, minimaal 10 foto\'s.',prio:'hoog'},
+    {id:'l2',name:'NAP-consistentie over alle vermeldingen',tip:'Naam, adres en telefoon identiek op website, GBP en alle directories. Controleer via Moz Local of BrightLocal.',prio:'hoog'},
+    {id:'l3',name:'Google reviews aanwezig & actief beantwoord',tip:'Beantwoord elke review (positief én negatief) professioneel binnen 48u. Vraag klanten actief om een review.',prio:'hoog'},
+    {id:'l4',name:'Lokale zoekwoorden in on-page content',tip:'Gemeente en regio in titles, H1 en body. "Loodgieter Gent" heeft meer kracht dan enkel "loodgieter".',prio:'hoog'},
+    {id:'l5',name:'LocalBusiness Schema geïmplementeerd',tip:'Schema met naam, adres, telefoon, openingsuren en geo-coördinaten. Test via Rich Results Test van Google.',prio:'midden'},
+    {id:'l6',name:'GBP posts regelmatig gepubliceerd',tip:'Wekelijks een post: aanbiedingen, events, nieuws. GBP posts verschijnen direct in de lokale SERP.',prio:'midden'},
+    {id:'l7',name:'Belgische directories (Gouden Gids, Pages d\'Or)',tip:'Belgische lokale directories: Gouden Gids, Pages d\'Or, Horeca.be, Trustpilot.be. NAP-consistent invullen.',prio:'midden'},
+  ]},
+  {id:'ux',label:'UX & Conversie',desc:'Navigatie, analytics & conversiepaden',items:[
+    {id:'u1',name:'Duidelijke CTA\'s op alle doelpagina\'s',tip:'Elke pagina heeft een primaire CTA die aansluit bij de zoekintentie. Zichtbaar boven de vouw (above the fold).',prio:'hoog'},
+    {id:'u2',name:'Contactformulier functioneel & eenvoudig',tip:'Test volledig doorlopen. Max 5 velden voor leadformulieren. Automatische bevestigingsmail actief.',prio:'hoog'},
+    {id:'u3',name:'GA4 & Search Console correct gekoppeld',tip:'GA4 gekoppeld aan GSC. Conversiedoelen ingesteld. Geen dubbele tags. Google Tag Manager aanbevolen.',prio:'hoog'},
+    {id:'u4',name:'Conversiepaden getest op mobile',tip:'Doorloop het volledige pad op mobiel. Formulieren, knoppen en links eenvoudig klikbaar (min 48px touch target).',prio:'hoog'},
+    {id:'u5',name:'Bouncepercentage/engagement geanalyseerd (GA4)',tip:'Hoog engagement rate (> 50%) is positief in GA4. Laag engagement op landingspagina\'s = intent-mismatch.',prio:'midden'},
+    {id:'u6',name:'Toegankelijkheidscheck (WCAG AA minimum)',tip:'Gebruik axe DevTools of Lighthouse Accessibility. Contrastverhouding min 4,5:1. Focus-states zichtbaar.',prio:'midden'},
+    {id:'u7',name:'Laadsnelheid op 3G getest',tip:'Chrome DevTools > Network > Slow 3G throttling. Veel Belgische mobiele gebruikers zitten op trage verbindingen.',prio:'midden'},
+    {id:'u8',name:'Heatmap-analyse uitgevoerd (Hotjar/Clarity)',tip:'Heatmaps en session recordings tonen waar gebruikers afhaken. Microsoft Clarity is gratis beschikbaar.',prio:'laag'},
+  ]},
+];
+
+const LS='seo_v3';
+let ST={},filter='all',curClient='',activeCat='tech';
+
+function initST(){CATS.forEach(c=>c.items.forEach(i=>{if(!ST[i.id])ST[i.id]={c:false,na:false,n:''}}))}
+function getDB(){try{return JSON.parse(localStorage.getItem(LS))||{}}catch{return{}}}
+function setDB(d){localStorage.setItem(LS,JSON.stringify(d))}
+
+function score(){
+  let tot=0,done=0,na=0;
+  CATS.forEach(c=>c.items.forEach(i=>{const s=ST[i.id];if(s.na){na++;return}tot++;if(s.c)done++}));
+  const pct=tot>0?Math.round(done/tot*100):0,left=tot-done;
+  const circ=176,off=circ-(circ*pct/100);
+  document.getElementById('rFg').style.strokeDashoffset=off;
+  document.getElementById('rFg').style.stroke=pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--acc)';
+  document.getElementById('rPct').textContent=pct;
+  document.getElementById('rmDone').textContent=done;
+  document.getElementById('rmLeft').textContent=left;
+  document.getElementById('pf').style.width=pct+'%';
+  document.getElementById('piG').textContent=done+' ✓';
+  document.getElementById('piR').textContent=left+' open';
+  document.getElementById('piNA').textContent=na+' N/A';
+  CATS.forEach(c=>{
+    const d=c.items.filter(i=>ST[i.id]?.c).length;
+    const el=document.getElementById('nb_'+c.id);if(!el)return;
+    el.textContent=d+'/'+c.items.length;
+    const ni=el.closest('.ni');
+    ni.classList.toggle('all-done',d===c.items.length);
+  });
+}
+
+function renderNav(){
+  const nav=document.getElementById('sbNav');nav.innerHTML='';
+  CATS.forEach(c=>{
+    const el=document.createElement('div');
+    el.className='ni'+(c.id===activeCat?' active':'');
+    el.innerHTML=`<span class="ni-lbl">${c.label}</span><span class="ni-badge" id="nb_${c.id}">0/${c.items.length}</span>`;
+    el.onclick=()=>{activeCat=c.id;renderNav();renderList();const g=document.getElementById('g_'+c.id);if(g)g.scrollIntoView({behavior:'smooth',block:'start'})};
+    nav.appendChild(el);
+  });
+}
+
+function renderList(){
+  const con=document.getElementById('list');
+  const q=(document.getElementById('sInp').value||'').toLowerCase().trim();
+  let vis=0;con.innerHTML='';
+  CATS.forEach(cat=>{
+    const items=cat.items.filter(i=>{
+      if(q&&!i.name.toLowerCase().includes(q)&&!i.tip.toLowerCase().includes(q))return false;
+      const s=ST[i.id];
+      if(filter==='open')return!s.c&&!s.na;
+      if(filter==='done')return s.c;
+      if(filter==='hoog')return i.prio==='hoog';
+      return true;
+    });
+    if(!items.length)return;
+    vis+=items.length;
+    const done=cat.items.filter(i=>ST[i.id]?.c).length;
+    const pct=Math.round(done/cat.items.length*100);
+    const ps=pct===100?'background:var(--gbg);color:var(--green)':pct>=50?'background:var(--abg);color:var(--amber)':'background:var(--rbg);color:var(--red)';
+    const sec=document.createElement('div');
+    sec.className='cg';sec.id='g_'+cat.id;
+    sec.innerHTML=`<div class="cg-h"><span class="cg-title">${cat.label}</span><span class="cg-pill" style="${ps}">${done}/${cat.items.length}</span><span class="cg-desc">${cat.desc}</span></div>`;
+    items.forEach(item=>{
+      const s=ST[item.id];
+      const row=document.createElement('div');
+      row.className='ck'+(s.c?' done':'')+(s.na?' na':'');
+      row.id='ck_'+item.id;
+      const bx=s.na?'—':s.c?'✓':'';
+      const pc=item.prio==='hoog'?'ph':item.prio==='midden'?'pm':'pl';
+      row.innerHTML=`
+        <div class="ck-box" onclick="toggle('${item.id}')">${bx}</div>
+        <div class="ck-body">
+          <div class="ck-name" onclick="tOpen('${item.id}')">${item.name}</div>
+          <div class="ck-tip">${item.tip}</div>
+          <textarea class="ck-note" placeholder="Notitie…" oninput="setNote('${item.id}',this.value)">${s.n||''}</textarea>
+          <div class="ck-acts">
+            <button class="ck-act" onclick="tOpen('${item.id}')">▸ Info</button>
+            <button class="ck-act${s.na?' on':''}" onclick="tNA('${item.id}')">N/A</button>
+          </div>
+        </div>
+        <span class="prio ${pc}">${item.prio}</span>`;
+      sec.appendChild(row);
+    });
+    con.appendChild(sec);
+  });
+  if(!vis)con.innerHTML='<div class="empty">Geen checks gevonden voor deze selectie.</div>';
+  document.getElementById('vis').textContent=vis+' checks';
+  score();
+  // active nav on scroll
+  if(q||filter!=='all')return;
+  const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){const id=en.target.id.replace('g_','');activeCat=id;document.querySelectorAll('.ni').forEach((n,i)=>n.classList.toggle('active',CATS[i].id===id))}})},{threshold:.25,root:con});
+  document.querySelectorAll('.cg').forEach(g=>obs.observe(g));
+}
+
+function toggle(id){
+  const s=ST[id];if(s.na)return;
+  s.c=!s.c;
+  const row=document.getElementById('ck_'+id);if(!row)return;
+  row.classList.toggle('done',s.c);
+  row.querySelector('.ck-box').textContent=s.c?'✓':'';
+  score();auto();
+}
+function tNA(id){
+  const s=ST[id];s.na=!s.na;if(s.na)s.c=false;
+  const row=document.getElementById('ck_'+id);if(!row)return;
+  row.classList.toggle('na',s.na);row.classList.toggle('done',s.c);
+  row.querySelector('.ck-box').textContent=s.na?'—':s.c?'✓':'';
+  row.querySelectorAll('.ck-act')[1].classList.toggle('on',s.na);
+  score();auto();
+}
+function tOpen(id){document.getElementById('ck_'+id)?.classList.toggle('open')}
+function setNote(id,v){ST[id].n=v;auto()}
+
+function setF(f,btn){filter=f;document.querySelectorAll('.f-btn').forEach(b=>b.classList.toggle('active',b.dataset.f===f));renderList()}
+
+// Save/load
+function onCI(){curClient=document.getElementById('cName').value.trim();auto()}
+function auto(){if(!curClient)return;const db=getDB();db[curClient]={st:JSON.parse(JSON.stringify(ST)),ts:new Date().toISOString()};setDB(db)}
+function saveAudit(){const c=document.getElementById('cName').value.trim();if(!c){alert('Vul eerst een klantnaam in.');return}auto();alert('Opgeslagen: '+c)}
+function resetAudit(){if(!confirm('Huidige voortgang wissen?'))return;ST={};initST();document.getElementById('cName').value='';curClient='';renderList()}
+function exportJSON(){const blob=new Blob([JSON.stringify({client:curClient,state:ST,audits:getDB(),ts:new Date().toISOString()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='seo-audit-'+(curClient||'export')+'.json';a.click()}
+
+// Modal
+function openModal(){
+  const db=getDB();const ml=document.getElementById('moList');const keys=Object.keys(db);
+  ml.innerHTML=!keys.length?'<div class="mo-empty">Geen opgeslagen audits.</div>':keys.map(k=>{
+    const d=new Date(db[k].ts).toLocaleDateString('nl-BE');
+    const done=Object.values(db[k].st).filter(s=>s.c).length;
+    return`<div class="mo-item" onclick="loadAudit('${k}')"><div><div class="mo-item-n">${k}</div><div class="mo-item-m">${d} · ${done} voltooid</div></div><button class="mo-del" onclick="delAudit(event,'${k}')">✕</button></div>`;
+  }).join('');
+  document.getElementById('mo').classList.add('open');
+}
+function closeModal(){document.getElementById('mo').classList.remove('open')}
+function loadAudit(k){const db=getDB();if(!db[k])return;ST={...db[k].st};initST();document.getElementById('cName').value=k;curClient=k;closeModal();renderList()}
+function delAudit(e,k){e.stopPropagation();if(!confirm('Verwijderen: '+k+'?'))return;const db=getDB();delete db[k];setDB(db);openModal()}
+
+// Theme
+function toggleTheme(){const h=document.documentElement;const d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('thBtn').textContent=d?'☾':'☀';localStorage.setItem('seo_th',d?'light':'dark')}
+
+// Init
+document.getElementById('hDate').textContent=new Date().toLocaleDateString('nl-BE',{day:'numeric',month:'long',year:'numeric'});
+const th=localStorage.getItem('seo_th');if(th){document.documentElement.setAttribute('data-theme',th);document.getElementById('thBtn').textContent=th==='dark'?'☀':'☾'}
+document.getElementById('mo').addEventListener('click',function(e){if(e.target===this)closeModal()});
+
+// Restore last session
+initST();
+try{const db=getDB();const last=Object.keys(db).pop();if(last){ST={...db[last].st};initST();document.getElementById('cName').value=last;curClient=last}}catch{}
+renderNav();renderList();
+</script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 import { BlogPost } from '@/lib/blog-api';
 
 export const blogPost: BlogPost = {
-  id: '1',
+  id: '5',
   title: 'AI in 2026: hoe kunstmatige intelligentie bedrijven en dagelijks leven transformeert',
   excerpt: 'Ontdek hoe AI in 2026 evolueert van tool naar strategische motor voor innovatie, automatisatie en groei.',
   content: `# AI in 2026: hoe kunstmatige intelligentie bedrijven en dagelijks leven transformeert

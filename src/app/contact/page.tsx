@@ -2,19 +2,34 @@
 
 import { useEffect, useState, useActionState } from 'react';
 import Lenis from 'lenis';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
 import { sendContactForm, type ContactFormState } from '@/app/actions/contact';
-import ContactCalendar from './ContactCalendar';
+import InlineAppointmentPicker, { type AppointmentSelection } from './ContactCalendar';
+import { CalendarDays, CheckCircle, AlertCircle } from 'lucide-react';
 
 const initialState: ContactFormState = { success: false };
+const APPOINTMENT_SUBJECT = 'Plan een afspraak in';
 
 export default function Contact() {
   const [state, formAction, pending] = useActionState(sendContactForm, initialState);
   const [openFaq, setOpenFaq]        = useState<number | null>(null);
   const [availability, setAvailability] = useState('Ma – Zo, 9:00 – 18:00');
+
+  // Form state
+  const [onderwerp, setOnderwerp]             = useState('');
+  const [apptSelection, setApptSelection]     = useState<AppointmentSelection | null>(null);
+  const [apptSubmitting, setApptSubmitting]   = useState(false);
+  const [apptError, setApptError]             = useState<string | null>(null);
+  const [apptDone, setApptDone]               = useState(false);
+  const [apptConfirmed, setApptConfirmed]     = useState<AppointmentSelection | null>(null);
+  // Name/email captured from uncontrolled inputs for appointment mode
+  const [nameVal, setNameVal]   = useState('');
+  const [emailVal, setEmailVal] = useState('');
+
+  const isApptMode = onderwerp === APPOINTMENT_SUBJECT;
 
   useEffect(() => {
     fetch('/api/working-hours')
@@ -22,8 +37,6 @@ export default function Contact() {
       .then((hours: { day_of_week: number; start_time: string; end_time: string; is_active: boolean }[]) => {
         const active = hours.filter((h) => h.is_active);
         if (active.length === 0) { setAvailability('Op afspraak'); return; }
-
-        // Format consecutive day ranges
         const dayAbbr = ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za'];
         const groups: string[] = [];
         let i = 0;
@@ -31,75 +44,94 @@ export default function Contact() {
           let j = i;
           while (j + 1 < active.length && active[j + 1].day_of_week === active[j].day_of_week + 1) j++;
           groups.push(
-            i === j
-              ? dayAbbr[active[i].day_of_week]
+            i === j ? dayAbbr[active[i].day_of_week]
               : `${dayAbbr[active[i].day_of_week]} – ${dayAbbr[active[j].day_of_week]}`
           );
           i = j + 1;
         }
-
         const first = active[0];
-        const allSameTime = active.every(
-          (h) => h.start_time === first.start_time && h.end_time === first.end_time
-        );
+        const allSameTime = active.every((h) => h.start_time === first.start_time && h.end_time === first.end_time);
         const fmt = (t: string) => t.slice(0, 5);
         const timeStr = allSameTime ? `, ${fmt(first.start_time)} – ${fmt(first.end_time)}` : '';
         const caps = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         setAvailability(caps(groups.join(', ') + timeStr));
       })
-      .catch(() => { /* keep fallback */ });
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
     const lenis = new Lenis();
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
+    function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
     requestAnimationFrame(raf);
   }, []);
+
+  const handleAppointmentSubmit = async () => {
+    if (!apptSelection || !nameVal.trim() || !emailVal.trim()) return;
+    setApptSubmitting(true);
+    setApptError(null);
+
+    const [h, m] = apptSelection.time.split(':').map(Number);
+    const starts = new Date(apptSelection.date);
+    starts.setHours(h, m, 0, 0);
+
+    try {
+      const res = await fetch('/api/appointments/public', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          guest_name:          nameVal.trim(),
+          guest_email:         emailVal.trim(),
+          appointment_type_id: apptSelection.type.id,
+          starts_at:           starts.toISOString(),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setApptError(data.error ?? 'Er is een fout opgetreden.'); return; }
+      setApptConfirmed(apptSelection);
+      setApptDone(true);
+    } catch {
+      setApptError('Netwerkfout. Probeer het opnieuw.');
+    } finally {
+      setApptSubmitting(false);
+    }
+  };
 
   const faqItems = [
     {
       vraag: 'Hoe lang duurt het om een website te bouwen?',
-      antwoord:
-        'De doorlooptijd hangt af van de complexiteit van het project. Een eenvoudige website is doorgaans klaar binnen 2 à 3 weken. Een uitgebreider project met maatwerk functionaliteiten kan 4 tot 8 weken in beslag nemen. Tijdens ons eerste gesprek geef ik je een realistische inschatting.',
+      antwoord: 'De doorlooptijd hangt af van de complexiteit van het project. Een eenvoudige website is doorgaans klaar binnen 2 à 3 weken. Een uitgebreider project met maatwerk functionaliteiten kan 4 tot 8 weken in beslag nemen. Tijdens ons eerste gesprek geef ik je een realistische inschatting.',
     },
     {
       vraag: 'Wat kost het laten maken van een website?',
-      antwoord:
-        'Elke opdracht is uniek, dus ik werk altijd op maat. Een eenvoudige landingspagina start vanaf €500, terwijl een volledige webshop of webapp meer kan kosten. Na een kennismakingsgesprek ontvang je een gedetailleerde offerte zonder verborgen kosten.',
+      antwoord: 'Elke opdracht is uniek, dus ik werk altijd op maat. Een eenvoudige landingspagina start vanaf €500, terwijl een volledige webshop of webapp meer kan kosten. Na een kennismakingsgesprek ontvang je een gedetailleerde offerte zonder verborgen kosten.',
     },
     {
       vraag: 'Bied je ook onderhoud en support na oplevering?',
-      antwoord:
-        'Absoluut. Ik bied flexibele onderhoudscontracten aan waarbij ik zorg voor updates, beveiliging en technische ondersteuning. Zo blijft jouw website altijd up-to-date en veilig. Dit wordt apart besproken en afgestemd op jouw behoeften.',
+      antwoord: 'Absoluut. Ik bied flexibele onderhoudscontracten aan waarbij ik zorg voor updates, beveiliging en technische ondersteuning. Zo blijft jouw website altijd up-to-date en veilig. Dit wordt apart besproken en afgestemd op jouw behoeften.',
     },
     {
       vraag: 'Kan ik mijn website zelf aanpassen na oplevering?',
-      antwoord:
-        "Dat is zeker mogelijk, ik kan altijd voor een gebruiksvriendelijk CMS (zoals een headless CMS of een eenvoudig beheerpaneel) zorgen zodat je zelf teksten, afbeeldingen en pagina's kunt aanpassen. Ik geef ook een korte training zodat je zelfstandig aan de slag kunt.",
+      antwoord: "Dat is zeker mogelijk, ik kan altijd voor een gebruiksvriendelijk CMS (zoals een headless CMS of een eenvoudig beheerpaneel) zorgen zodat je zelf teksten, afbeeldingen en pagina's kunt aanpassen. Ik geef ook een korte training zodat je zelfstandig aan de slag kunt.",
     },
     {
       vraag: 'In welke regio werk je?',
-      antwoord:
-        'Ik ben gevestigd in Gent maar werk voor klanten door heel België en Nederland. De meeste samenwerking verloopt online, maar voor een persoonlijk gesprek ben ik ook beschikbaar in de regio Gent en omgeving.',
+      antwoord: 'Ik ben gevestigd in Gent maar werk voor klanten door heel België en Nederland. De meeste samenwerking verloopt online, maar voor een persoonlijk gesprek ben ik ook beschikbaar in de regio Gent en omgeving.',
     },
     {
       vraag: 'Hoe verloopt een samenwerking stap voor stap?',
-      antwoord:
-        'We starten met een gratis kennismakingsgesprek. Daarna ontvang je een offerte en planning. Na akkoord start de ontwerp- en ontwikkelfase, met regelmatige updates en feedbackmomenten. Bij oplevering krijg je een werkende, geoptimaliseerde website plus een korte handleiding.',
+      antwoord: 'We starten met een gratis kennismakingsgesprek. Daarna ontvang je een offerte en planning. Na akkoord start de ontwerp- en ontwikkelfase, met regelmatige updates en feedbackmomenten. Bij oplevering krijg je een werkende, geoptimaliseerde website plus een korte handleiding.',
     },
   ];
 
   const contactInfo = [
-    { icon: '📧', title: 'E-mail', value: 'info@intrict.com', href: 'mailto:info@intrict.com' },
-    { icon: '📱', title: 'Telefoon', value: '+32 470 00 00 00', href: 'tel:+32470000000' },
-    { icon: '📍', title: 'Locatie', value: 'Gent, België', href: '#' },
-    { icon: '🕐', title: 'Beschikbaarheid', value: availability, href: '#' },
+    { icon: '📧', title: 'E-mail',           value: 'info@intrict.com',    href: 'mailto:info@intrict.com' },
+    { icon: '📱', title: 'Telefoon',          value: '+32 470 00 00 00',   href: 'tel:+32470000000' },
+    { icon: '📍', title: 'Locatie',           value: 'Gent, België',       href: '#' },
+    { icon: '🕐', title: 'Beschikbaarheid',   value: availability,         href: '#' },
   ];
 
   const onderwerpOpties = [
+    APPOINTMENT_SUBJECT,
     'Nieuwe website',
     'Redesign bestaande website',
     'E-commerce',
@@ -113,7 +145,7 @@ export default function Contact() {
       <Header />
 
       <main>
-        {/* Hero Section */}
+        {/* Hero */}
         <section className="relative pt-20 pb-16 overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900" />
           <div className="absolute inset-0 opacity-40">
@@ -153,7 +185,7 @@ export default function Contact() {
           </div>
         </section>
 
-        {/* Contact Info Cards */}
+        {/* Contact info cards */}
         <section className="py-16 bg-white">
           <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -177,35 +209,12 @@ export default function Contact() {
           </div>
         </section>
 
-        {/* Calendar booking */}
+        {/* Form + Side Info */}
         <section className="py-20 bg-linear-to-br from-slate-50 to-blue-50">
           <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="mb-12 text-center"
-            >
-              <h2 className="mb-4 text-4xl font-bold md:text-5xl text-slate-800">
-                Plan een{' '}
-                <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">
-                  Gesprek
-                </span>{' '}
-                In
-              </h2>
-              <p className="max-w-2xl mx-auto text-xl leading-relaxed text-slate-600">
-                Kies een moment dat je uitkomt. Geen account nodig — gewoon inplannen en we nemen contact op.
-              </p>
-            </motion.div>
-            <ContactCalendar />
-          </div>
-        </section>
-
-        {/* Form + Side Info */}
-        <section className="py-20 bg-white">
-          <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div className="grid items-start grid-cols-1 gap-12 lg:grid-cols-5">
+
+              {/* Form card */}
               <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -221,14 +230,41 @@ export default function Contact() {
                     </span>
                   </h2>
                   <p className="mb-8 text-slate-500">
-                    Vul het formulier in en ik neem zo snel mogelijk contact met je op.
+                    Vul het formulier in of plan meteen een gesprek in.
                   </p>
 
-                  {state.success ? (
+                  {/* ── Appointment success ───────────────────────────────── */}
+                  {apptDone && apptConfirmed ? (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.97 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="flex flex-col items-center text-center py-10"
+                    >
+                      <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
+                        <CheckCircle size={32} className="text-green-500" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-slate-800 mb-2">Afspraak aangevraagd!</h3>
+                      <p className="text-slate-500 text-sm mb-6 max-w-xs">
+                        We bevestigen zo snel mogelijk per e-mail op <strong>{emailVal}</strong>.
+                      </p>
+                      <div className="bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm space-y-1 text-left w-full max-w-xs mb-6">
+                        <p><span className="font-semibold text-slate-600">Type:</span> {apptConfirmed.type.name}</p>
+                        <p className="capitalize"><span className="font-semibold text-slate-600">Datum:</span> {apptConfirmed.date.toLocaleDateString('nl-BE', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+                        <p><span className="font-semibold text-slate-600">Tijdstip:</span> {apptConfirmed.time}</p>
+                      </div>
+                      <button
+                        onClick={() => { setApptDone(false); setApptConfirmed(null); setApptSelection(null); setOnderwerp(''); }}
+                        className="text-sm text-blue-600 hover:underline"
+                      >
+                        Nieuw bericht sturen
+                      </button>
+                    </motion.div>
+
+                  /* ── Message success ──────────────────────────────────── */
+                  ) : state.success ? (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.5 }}
                       className="flex flex-col items-center justify-center py-16 text-center"
                     >
                       <div className="mb-4 text-6xl">🎉</div>
@@ -238,8 +274,14 @@ export default function Contact() {
                         24 uur contact met je op.
                       </p>
                     </motion.div>
+
+                  /* ── Form ─────────────────────────────────────────────── */
                   ) : (
-                    <form action={formAction} className="space-y-6">
+                    <form
+                      action={formAction}
+                      onSubmit={(e) => { if (isApptMode) e.preventDefault(); }}
+                      className="space-y-6"
+                    >
                       {state.error && (
                         <motion.div
                           initial={{ opacity: 0, y: -10 }}
@@ -251,6 +293,7 @@ export default function Contact() {
                         </motion.div>
                       )}
 
+                      {/* Name + Email */}
                       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <div>
                           <label htmlFor="naam" className="block mb-2 text-sm font-semibold text-slate-700">
@@ -262,6 +305,8 @@ export default function Contact() {
                             name="naam"
                             required
                             placeholder="Jan Janssen"
+                            value={nameVal}
+                            onChange={(e) => setNameVal(e.target.value)}
                             className="w-full px-4 py-3 transition-all duration-200 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
                           />
                         </div>
@@ -275,11 +320,14 @@ export default function Contact() {
                             name="email"
                             required
                             placeholder="jan@bedrijf.be"
+                            value={emailVal}
+                            onChange={(e) => setEmailVal(e.target.value)}
                             className="w-full px-4 py-3 transition-all duration-200 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
                           />
                         </div>
                       </div>
 
+                      {/* Phone + Subject */}
                       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <div>
                           <label htmlFor="telefoon" className="block mb-2 text-sm font-semibold text-slate-700">
@@ -301,65 +349,120 @@ export default function Contact() {
                             id="onderwerp"
                             name="onderwerp"
                             required
-                            defaultValue=""
+                            value={onderwerp}
+                            onChange={(e) => { setOnderwerp(e.target.value); setApptSelection(null); }}
                             className="w-full px-4 py-3 transition-all duration-200 bg-white border-2 appearance-none cursor-pointer border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800"
                           >
-                            <option value="" disabled>
-                              Selecteer een onderwerp
-                            </option>
+                            <option value="" disabled>Selecteer een onderwerp</option>
                             {onderwerpOpties.map((opt) => (
-                              <option key={opt} value={opt}>
-                                {opt}
-                              </option>
+                              <option key={opt} value={opt}>{opt}</option>
                             ))}
                           </select>
                         </div>
                       </div>
 
-                      <div>
-                        <label htmlFor="bericht" className="block mb-2 text-sm font-semibold text-slate-700">
-                          Bericht <span className="text-blue-500">*</span>
-                        </label>
-                        <textarea
-                          id="bericht"
-                          name="bericht"
-                          required
-                          rows={6}
-                          placeholder="Vertel me over je project, idee of vraag..."
-                          className="w-full px-4 py-3 transition-all duration-200 border-2 resize-none border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
-                        />
-                      </div>
-
-                      <motion.button
-                        type="submit"
-                        disabled={pending}
-                        whileHover={{ scale: pending ? 1 : 1.02 }}
-                        whileTap={{ scale: pending ? 1 : 0.98 }}
-                        className="w-full py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
-                      >
-                        {pending ? (
-                          <span className="flex items-center justify-center gap-2">
-                            <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                              />
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8v8H4z"
-                              />
-                            </svg>
-                            Versturen...
-                          </span>
-                        ) : (
-                          'Bericht Versturen'
+                      {/* Inline appointment picker — shown when subject = plan een afspraak */}
+                      <AnimatePresence>
+                        {isApptMode && (
+                          <motion.div
+                            key="appt-picker"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="pt-1 pb-1 border-t border-slate-100">
+                              <div className="flex items-center gap-2 mb-4 mt-3">
+                                <CalendarDays size={16} className="text-blue-500" />
+                                <span className="text-sm font-semibold text-slate-700">Kies een datum en tijdstip</span>
+                              </div>
+                              <InlineAppointmentPicker onChange={setApptSelection} />
+                            </div>
+                          </motion.div>
                         )}
-                      </motion.button>
+                      </AnimatePresence>
+
+                      {/* Message textarea — hidden in appointment mode */}
+                      <AnimatePresence>
+                        {!isApptMode && (
+                          <motion.div
+                            key="message-field"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <label htmlFor="bericht" className="block mb-2 text-sm font-semibold text-slate-700">
+                              Bericht <span className="text-blue-500">*</span>
+                            </label>
+                            <textarea
+                              id="bericht"
+                              name="bericht"
+                              required={!isApptMode}
+                              rows={6}
+                              placeholder="Vertel me over je project, idee of vraag..."
+                              className="w-full px-4 py-3 transition-all duration-200 border-2 resize-none border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
+                            />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      {/* Appointment error */}
+                      {isApptMode && apptError && (
+                        <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+                          <AlertCircle size={15} className="mt-0.5 shrink-0" />
+                          {apptError}
+                        </div>
+                      )}
+
+                      {/* Submit */}
+                      {isApptMode ? (
+                        <motion.button
+                          type="button"
+                          onClick={handleAppointmentSubmit}
+                          disabled={apptSubmitting || !apptSelection || !nameVal.trim() || !emailVal.trim()}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="w-full py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                          {apptSubmitting ? (
+                            <span className="flex items-center justify-center gap-2">
+                              <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                              </svg>
+                              Bezig met inplannen...
+                            </span>
+                          ) : (
+                            <span className="flex items-center justify-center gap-2">
+                              <CalendarDays size={18} />
+                              {apptSelection
+                                ? `Bevestig afspraak op ${apptSelection.date.toLocaleDateString('nl-BE', { day: 'numeric', month: 'short' })} om ${apptSelection.time}`
+                                : 'Kies eerst een datum en tijdstip'}
+                            </span>
+                          )}
+                        </motion.button>
+                      ) : (
+                        <motion.button
+                          type="submit"
+                          disabled={pending}
+                          whileHover={{ scale: pending ? 1 : 1.02 }}
+                          whileTap={{ scale: pending ? 1 : 0.98 }}
+                          className="w-full py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                          {pending ? (
+                            <span className="flex items-center justify-center gap-2">
+                              <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                              </svg>
+                              Versturen...
+                            </span>
+                          ) : (
+                            'Bericht Versturen'
+                          )}
+                        </motion.button>
+                      )}
                     </form>
                   )}
                 </div>
@@ -392,25 +495,21 @@ export default function Contact() {
 
                 <div className="p-8 border border-blue-100 bg-linear-to-br from-blue-50 to-purple-50 rounded-2xl">
                   <h3 className="mb-4 text-xl font-bold text-slate-800">Gratis Kennismaking</h3>
-                  <p className="mb-6 leading-relaxed text-slate-600">
-                    Elke samenwerking start met een gratis kennismakingsgesprek van 30 minuten.
-                    Zo leer ik je project kennen en bespreek ik hoe ik je het beste kan helpen.
+                  <p className="mb-4 leading-relaxed text-slate-600">
+                    Elke samenwerking start met een gratis kennismakingsgesprek. Selecteer{' '}
+                    <strong>"Plan een afspraak in"</strong> in het formulier om direct een moment te kiezen.
                   </p>
-                  <motion.a
-                    href="mailto:info@intrict.com"
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="inline-block px-6 py-3 font-semibold text-white transition-all duration-300 shadow-md bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-lg"
-                  >
-                    Plan een Gesprek
-                  </motion.a>
+                  <div className="flex items-center gap-2 text-sm text-blue-600 font-semibold">
+                    <CalendarDays size={15} />
+                    Geen account nodig
+                  </div>
                 </div>
               </motion.div>
             </div>
           </div>
         </section>
 
-        {/* Map Section */}
+        {/* Map */}
         <section className="py-20 bg-white">
           <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <motion.div
@@ -430,7 +529,6 @@ export default function Contact() {
                 Gevestigd in het hartje van Gent, beschikbaar voor heel België.
               </p>
             </motion.div>
-
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -464,7 +562,7 @@ export default function Contact() {
           </div>
         </section>
 
-        {/* FAQ Section */}
+        {/* FAQ */}
         <section className="py-20 bg-linear-to-br from-slate-50 to-blue-50">
           <div className="max-w-4xl px-4 mx-auto sm:px-6 lg:px-8">
             <motion.div
@@ -484,7 +582,6 @@ export default function Contact() {
                 Staat jouw vraag er niet bij? Neem gerust contact op.
               </p>
             </motion.div>
-
             <div className="space-y-4">
               {faqItems.map((item, index) => (
                 <motion.div
@@ -510,11 +607,7 @@ export default function Contact() {
                   </button>
                   <motion.div
                     initial={false}
-                    animate={
-                      openFaq === index
-                        ? { height: 'auto', opacity: 1 }
-                        : { height: 0, opacity: 0 }
-                    }
+                    animate={openFaq === index ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }}
                     transition={{ duration: 0.35, ease: 'easeInOut' }}
                     style={{ overflow: 'hidden' }}
                   >
@@ -526,7 +619,7 @@ export default function Contact() {
           </div>
         </section>
 
-        {/* CTA Section */}
+        {/* CTA */}
         <section className="py-20 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900">
           <div className="px-4 mx-auto text-center max-w-7xl sm:px-6 lg:px-8">
             <motion.div

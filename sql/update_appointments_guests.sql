@@ -11,7 +11,8 @@ ALTER TABLE appointments ADD COLUMN IF NOT EXISTS guest_email text;
 -- 3. RLS: allow public/anon inserts for guest bookings
 --    Server-side validation (API route) is the primary guard;
 --    this policy is a secondary constraint at the DB level.
-CREATE POLICY IF NOT EXISTS "Public can create guest appointments"
+DROP POLICY IF EXISTS "Public can create guest appointments" ON appointments;
+CREATE POLICY "Public can create guest appointments"
   ON appointments FOR INSERT
   WITH CHECK (
     user_id IS NULL

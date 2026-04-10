@@ -187,6 +187,6 @@ Wie vandaag investeert in AI, bouwt aan de fundamenten van morgen.`,
   category: 'Web Development',
   tags: ['Responsive Design', 'Performance', 'CSS', 'UX', 'Frontend'],
   image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80',
-  slug: 'website-ontwikkeling',
+  slug: 'AI-in-2026',
   readTime: 12
 };

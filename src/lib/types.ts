@@ -94,6 +94,95 @@ export interface Package {
   updated_at: string;
 }
 
+export type DossierStatus = 'lead' | 'prospect' | 'klant' | 'completed';
+export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled';
+export type ActivityType  = 'appointment_created' | 'package_request' | 'invoice_created' | 'status_change' | 'message_sent';
+
+export interface ClientDossier {
+  id: string;
+  profile_id: string;
+  status: DossierStatus;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  // joined
+  profile?: {
+    id?: string;
+    full_name: string | null;
+    email: string;
+    phone: string | null;
+    company: string | null;
+    customer_number: number | null;
+    vat_number?: string | null;
+    address?: string | null;
+    postal_code?: string | null;
+    city?: string | null;
+  };
+  packages?: DossierPackage[];
+}
+
+export interface DossierPackage {
+  id: string;
+  dossier_id: string;
+  package_id: string;
+  is_active: boolean;
+  is_recurring: boolean;
+  started_at: string;
+  created_at: string;
+  // joined
+  package?: {
+    id: string;
+    name: string;
+    price: number;
+    color: string;
+  };
+}
+
+export interface ActivityLog {
+  id: string;
+  profile_id: string | null;
+  dossier_id: string | null;
+  type: ActivityType;
+  title: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  // joined
+  profile?: { full_name: string | null; email: string } | null;
+}
+
+export interface Invoice {
+  id: string;
+  invoice_number: string;
+  dossier_id: string | null;
+  profile_id: string;
+  status: InvoiceStatus;
+  issue_date: string;
+  due_date: string;
+  subtotal: number;
+  vat_rate: number;
+  vat_amount: number;
+  total: number;
+  notes: string | null;
+  is_recurring: boolean;
+  recurring_interval: 'monthly' | 'quarterly' | 'yearly' | null;
+  created_at: string;
+  updated_at: string;
+  // joined
+  profile?: { full_name: string | null; email: string; company: string | null; vat_number: string | null; address: string | null; postal_code: string | null; city: string | null } | null;
+  items?: InvoiceItem[];
+}
+
+export interface InvoiceItem {
+  id: string;
+  invoice_id: string;
+  description: string;
+  quantity: number;
+  unit_price: number;
+  total: number;
+  package_id: string | null;
+  created_at: string;
+}
+
 export interface Profile {
   id: string;
   email: string;

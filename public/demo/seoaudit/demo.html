@@ -172,7 +172,7 @@ html,body{height:100%;overflow:hidden;font-family:var(--fm);font-size:13.5px;bac
 <aside class="sb">
   <div class="sb-head">
     <div class="sb-logo">SEO<em>.</em>Audit</div>
-    <div class="sb-sub">AI-gedreven checklist tool</div>
+    <div class="sb-sub">Automatische website analyse</div>
   </div>
   <div class="sb-ring">
     <div class="rw">
@@ -218,10 +218,10 @@ html,body{height:100%;overflow:hidden;font-family:var(--fm);font-size:13.5px;bac
   </div>
 
   <div class="abar">
-    <span class="abar-lbl">⚡ AI Analyse</span>
+    <span class="abar-lbl">⚡ Analyse</span>
     <input class="url-inp" id="urlInp" type="url" placeholder="https://www.domein.be" onkeydown="if(event.key==='Enter')runAnalyse()"/>
     <button class="btn-run" id="runBtn" onclick="runAnalyse()">Analyseer →</button>
-    <span class="abar-status" id="abarSt">Voer URL in en klik Analyseer — Claude vult de checklist automatisch in</span>
+    <span class="abar-status" id="abarSt">Voer een URL in — technische checks worden automatisch ingevuld</span>
   </div>
 
   <div class="fbar">
@@ -468,13 +468,13 @@ function setNote(id,v){ST[id].n=v;auto()}
 function setF(f,btn){filter=f;document.querySelectorAll('.f-btn').forEach(b=>b.classList.toggle('active',b.dataset.f===f));renderList()}
 
 // ═══════════════════════════════════════════
-// AI ANALYSE
+// WEBSITE ANALYSE (server-side fetch)
 // ═══════════════════════════════════════════
 async function runAnalyse(){
   const url=document.getElementById('urlInp').value.trim();
   if(!url){alert('Voer een geldige URL in (bijv. https://www.domein.be)');return;}
   let domain=url;
-  try{domain=new URL(url).hostname;}catch{}
+  try{domain=new URL(url.startsWith('http')?url:'https://'+url).hostname;}catch{}
 
   // Pre-fill client name from domain
   if(!document.getElementById('cName').value){
@@ -487,18 +487,18 @@ async function runAnalyse(){
   ov.classList.add('open');
   document.getElementById('aiSpin').style.animation='spin 1.5s linear infinite';
   document.getElementById('aiTit').textContent='Website wordt geanalyseerd…';
-  document.getElementById('aiSt').textContent='Claude inspecteert '+domain+'…';
+  document.getElementById('aiSt').textContent=domain+' ophalen en inspecteren…';
   document.getElementById('aiPf').style.width='8%';
   document.getElementById('aiSum').style.display='none';
   document.getElementById('aiF').style.display='none';
   document.getElementById('runBtn').disabled=true;
 
   const steps=[
-    {pct:20,txt:'Technische factoren controleren…'},
-    {pct:40,txt:'On-page elementen analyseren…'},
-    {pct:60,txt:'Content & structuur beoordelen…'},
-    {pct:75,txt:'Off-page & lokale SEO checken…'},
-    {pct:88,txt:'UX & conversiepaden evalueren…'},
+    {pct:25,txt:'Pagina ophalen via server…'},
+    {pct:45,txt:'Title, meta & canonical analyseren…'},
+    {pct:65,txt:'Headings, afbeeldingen & links controleren…'},
+    {pct:82,txt:'Open Graph, Schema & robots.txt checken…'},
+    {pct:93,txt:'Resultaten verwerken…'},
   ];
   let si=0;
   const stepTimer=setInterval(()=>{
@@ -506,69 +506,28 @@ async function runAnalyse(){
     document.getElementById('aiPf').style.width=steps[si].pct+'%';
     document.getElementById('aiSt').textContent=steps[si].txt;
     si++;
-  },1800);
-
-  // Build the checklist IDs + names for the prompt
-  const allChecks=CATS.flatMap(c=>c.items.map(i=>({id:i.id,name:i.name,cat:c.label,prio:i.prio})));
-  const checksJson=JSON.stringify(allChecks);
-
-  const prompt=`Je bent een senior SEO-specialist. Analyseer de volgende website vanuit een SEO-perspectief: ${url}
-
-Hier is een lijst van 63 SEO-checks die je moet beoordelen voor deze specifieke website:
-${checksJson}
-
-Geef voor elke check een oordeel op basis van wat je weet of redelijkerwijs kunt afleiden over deze URL/domein. 
-- Gebruik "ok" als je redelijk zeker bent dat het in orde is
-- Gebruik "fail" als er een duidelijk probleem is
-- Gebruik "warn" als je het niet zeker kunt weten maar twijfels hebt
-- Gebruik "na" als de check niet van toepassing is (bijv. hreflang voor een ééntalige site)
-
-Geef ook een korte bevinding (max 1 zin, in het Nederlands) per check die uitlegt waarom.
-
-Geef ook een korte algemene samenvatting van de website (2-3 zinnen in het Nederlands): sector, sterkte/zwakte, prioriteit.
-
-Antwoord ALLEEN in dit JSON-formaat (geen uitleg erbuiten):
-{
-  "summary": "Korte samenvatting van de website en voornaamste SEO-bevindingen.",
-  "results": {
-    "t1": {"status": "ok|fail|warn|na", "finding": "Korte bevinding in het Nederlands."},
-    "t2": {"status": "ok|fail|warn|na", "finding": "..."},
-    ... (alle 63 IDs invullen)
-  }
-}`;
+  },1200);
 
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    // Call our own Next.js API route — server fetches the target URL
+    const resp=await fetch('/api/seo-audit',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:4000,
-        messages:[{role:'user',content:prompt}]
-      })
+      body:JSON.stringify({url})
     });
     clearInterval(stepTimer);
-    if(!resp.ok)throw new Error('API error: '+resp.status);
-    const data=await resp.json();
-    const raw=data.content[0].text;
 
-    // Parse JSON from response
-    let parsed;
-    try{
-      const match=raw.match(/\{[\s\S]*\}/);
-      parsed=JSON.parse(match?match[0]:raw);
-    }catch{throw new Error('JSON parse error')}
+    const data=await resp.json();
+    if(!resp.ok)throw new Error(data.error||'Serverfout '+resp.status);
 
     // Apply results to state
-    const results=parsed.results||{};
+    const results=data.results||{};
     let autoChecked=0;
     Object.entries(results).forEach(([id,val])=>{
       if(!ST[id])return;
       ST[id].ai=val.status;
       ST[id].finding=val.finding||'';
-      // Auto-check if OK
       if(val.status==='ok'&&!ST[id].na){ST[id].c=true;autoChecked++;}
-      // Auto-NA if na
       if(val.status==='na'){ST[id].na=true;ST[id].c=false;}
     });
 
@@ -576,13 +535,14 @@ Antwoord ALLEEN in dit JSON-formaat (geen uitleg erbuiten):
     document.getElementById('aiSpin').style.animation='none';
     document.getElementById('aiSpin').textContent='✓';
     document.getElementById('aiTit').textContent='Analyse voltooid!';
-    document.getElementById('aiSt').textContent=autoChecked+' checks automatisch ingevuld · rest vereist handmatige verificatie';
+    document.getElementById('aiSt').textContent=autoChecked+' technische checks automatisch ingevuld · content & off-page vereisen handmatige verificatie';
 
     const sumEl=document.getElementById('aiSum');
-    sumEl.textContent=parsed.summary||'Analyse voltooid.';
+    sumEl.textContent=data.summary||'Analyse voltooid.';
     sumEl.style.display='block';
     document.getElementById('aiF').style.display='flex';
 
+    document.getElementById('abarSt').textContent='✓ '+domain+' geanalyseerd — '+autoChecked+' checks ingevuld';
     auto();
     renderList();
 
@@ -593,7 +553,7 @@ Antwoord ALLEEN in dit JSON-formaat (geen uitleg erbuiten):
     document.getElementById('aiSpin').style.animation='none';
     document.getElementById('aiSpin').textContent='✗';
     document.getElementById('aiTit').textContent='Analyse mislukt';
-    document.getElementById('aiSt').textContent='Fout: '+err.message+'. Controleer uw verbinding.';
+    document.getElementById('aiSt').textContent=String(err.message||err);
     document.getElementById('aiF').style.display='flex';
   }
   document.getElementById('runBtn').disabled=false;

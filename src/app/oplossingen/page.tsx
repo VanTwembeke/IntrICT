@@ -39,23 +39,22 @@ export default function Oplossingen() {
       
       <main>
         {/* Banner Section */}
-        <section className="relative overflow-hidden min-h-105 md:min-h-130">
+        <section className="relative overflow-hidden min-h-[420px] md:min-h-[520px] flex items-center pt-16">
           <Image
             src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
             alt="Oplossingen - Gespecialiseerde web development oplossingen"
             fill
             className="object-cover"
+            priority
           />
-          <div className="absolute inset-0 bg-linear-to-r from-slate-900/70 via-slate-800/50 to-slate-900/70"></div>
-          <div className="relative z-10 flex items-center h-full">
-            <div className="max-w-6xl px-4 mx-auto text-center">
-              <h1 className="mb-6 text-6xl font-bold text-white md:text-7xl">
-                Oplossingen
-              </h1>
-              <p className="max-w-3xl mx-auto text-xl leading-relaxed text-slate-200">
-                Gespecialiseerde web development oplossingen voor jouw specifieke uitdagingen
-              </p>
-            </div>
+          <div className="absolute inset-0 bg-linear-to-r from-slate-900/80 via-slate-800/60 to-slate-900/80" />
+          <div className="relative z-10 w-full px-4 py-16 mx-auto max-w-7xl sm:px-6 lg:px-8 text-center">
+            <h1 className="mb-6 text-5xl font-bold text-white md:text-6xl lg:text-7xl">
+              Oplossingen
+            </h1>
+            <p className="max-w-3xl mx-auto text-xl leading-relaxed text-slate-200">
+              Gespecialiseerde web development oplossingen voor jouw specifieke uitdagingen
+            </p>
           </div>
         </section>
 

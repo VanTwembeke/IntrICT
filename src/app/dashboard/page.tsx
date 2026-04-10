@@ -4,37 +4,42 @@ import { createClient } from '@/lib/supabase/server';
 import {
   Users, User, Mail, Package, ArrowRight, Calendar,
   Sparkles, ClipboardList, Clock, CheckCircle,
-  MessageSquare, TrendingUp, CalendarCheck,
+  MessageSquare, TrendingUp, CalendarCheck, Receipt, FolderOpen,
+  RefreshCw, AlertCircle,
 } from 'lucide-react';
-import type { Profile, Appointment } from '@/lib/types';
+import type { Profile, Appointment, ActivityLog } from '@/lib/types';
 import AdminOnly from '@/components/dashboard/AdminOnly';
 
 // ─── Activity feed item ───────────────────────────────────────────────────────
 
 interface ActivityItem {
   id: string;
-  type: 'request' | 'message';
+  type: 'request' | 'message' | 'activity_log';
+  activityType?: string;
   title: string;
   subtitle: string;
   time: string;
   status?: string;
 }
 
-function ActivityIcon({ type, status }: { type: string; status?: string }) {
+function ActivityIcon({ type, status, activityType }: { type: string; status?: string; activityType?: string }) {
+  if (type === 'activity_log') {
+    if (activityType === 'invoice_created') return <Receipt size={15} className="text-blue-500" />;
+    if (activityType === 'status_change') return <RefreshCw size={15} className="text-amber-500" />;
+    if (activityType === 'appointment_created') return <CalendarCheck size={15} className="text-green-500" />;
+    if (activityType === 'package_request') return <Package size={15} className="text-indigo-500" />;
+    return <AlertCircle size={15} className="text-slate-400" />;
+  }
   if (type === 'request') {
     if (status === 'accepted') return <CheckCircle size={15} className="text-green-500" />;
-    if (status === 'rejected') return <XIcon />;
+    if (status === 'rejected') return (
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" className="text-slate-400">
+        <path d="M3 3l9 9M12 3l-9 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    );
     return <Package size={15} className="text-blue-500" />;
   }
   return <MessageSquare size={15} className="text-purple-500" />;
-}
-
-function XIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" className="text-slate-400">
-      <path d="M3 3l9 9M12 3l-9 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  );
 }
 
 const REQUEST_STATUS_LABELS: Record<string, string> = {
@@ -75,6 +80,8 @@ export default async function DashboardPage() {
   let revenueAccepted = 0;
   let revenuePending = 0;
   let upcomingAppointments: Appointment[] = [];
+  let activeClientCount = 0;
+  let overdueInvoiceCount = 0;
 
   if (isAdmin) {
     userCount = (await supabase.from('profiles').select('id', { count: 'exact', head: true })).count ?? 0;
@@ -110,6 +117,13 @@ export default async function DashboardPage() {
         .limit(5);
       upcomingAppointments = (upcoming ?? []) as Appointment[];
     } catch { /* appointments table not yet created */ }
+
+    try {
+      activeClientCount =
+        (await supabase.from('client_dossiers').select('id', { count: 'exact', head: true }).eq('status', 'klant')).count ?? 0;
+      overdueInvoiceCount =
+        (await supabase.from('invoices').select('id', { count: 'exact', head: true }).eq('status', 'overdue')).count ?? 0;
+    } catch { /* tables not yet created */ }
   }
 
   // ── Activity feed (recent 8 items) ───────────────────────────────────────────
@@ -143,6 +157,30 @@ export default async function DashboardPage() {
       }
     }
   } catch { /* table not yet created */ }
+
+  // Activity logs (from client system)
+  if (isAdmin) {
+    try {
+      const { data: logs } = await supabase
+        .from('activity_logs')
+        .select('*, profile:profiles(full_name, email)')
+        .order('created_at', { ascending: false })
+        .limit(8);
+
+      if (logs) {
+        for (const log of logs as ActivityLog[]) {
+          activity.push({
+            id: `log-${log.id}`,
+            type: 'activity_log',
+            activityType: log.type,
+            title: log.title,
+            subtitle: log.profile?.full_name ?? log.profile?.email ?? '',
+            time: log.created_at,
+          });
+        }
+      }
+    } catch { /* table not yet created */ }
+  }
 
   // Sort by time and take most recent 8
   activity.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
@@ -181,7 +219,7 @@ export default async function DashboardPage() {
       {/* Admin stats grid */}
       {isAdmin && (
       <AdminOnly>
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-7 gap-4 mb-6">
           <Link href="/dashboard/users" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
             <div className="flex items-center justify-between mb-3">
               <div className="p-2 bg-blue-50 rounded-xl"><Users size={18} className="text-blue-600" /></div>
@@ -235,6 +273,29 @@ export default async function DashboardPage() {
             </div>
             <p className="text-2xl font-bold text-slate-900">Berichten</p>
             <p className="text-xs font-medium text-slate-400 mt-0.5">Gesprekken</p>
+          </Link>
+
+          <Link href="/dashboard/klanten" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
+            <div className="flex items-center justify-between mb-3">
+              <div className="p-2 bg-teal-50 rounded-xl"><FolderOpen size={18} className="text-teal-600" /></div>
+              <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <p className="text-2xl font-bold text-slate-900">{activeClientCount}</p>
+            <p className="text-xs font-medium text-slate-400 mt-0.5">Actieve klanten</p>
+          </Link>
+
+          <Link href="/dashboard/facturen" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 relative">
+            {overdueInvoiceCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-400 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                {overdueInvoiceCount > 9 ? '9+' : overdueInvoiceCount}
+              </span>
+            )}
+            <div className="flex items-center justify-between mb-3">
+              <div className="p-2 bg-orange-50 rounded-xl"><Receipt size={18} className="text-orange-600" /></div>
+              <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <p className="text-2xl font-bold text-slate-900">{overdueInvoiceCount > 0 ? overdueInvoiceCount : 'Facturen'}</p>
+            <p className="text-xs font-medium text-slate-400 mt-0.5">{overdueInvoiceCount > 0 ? 'Vervallen' : 'Facturatie'}</p>
           </Link>
         </div>
 
@@ -392,7 +453,7 @@ export default async function DashboardPage() {
               {recentActivity.map((item) => (
                 <div key={item.id} className="flex items-center gap-4 px-6 py-3.5">
                   <div className="p-2 bg-slate-50 rounded-xl shrink-0">
-                    <ActivityIcon type={item.type} status={item.status} />
+                    <ActivityIcon type={item.type} status={item.status} activityType={item.activityType} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-slate-800 truncate">{item.title}</p>

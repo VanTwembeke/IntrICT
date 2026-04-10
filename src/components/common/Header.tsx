@@ -1,81 +1,622 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Search, X, Menu, ChevronDown, LogOut, Settings, LayoutDashboard,
+  Package, Mail, Building2, Eye, ArrowRight, BookOpen, MessageSquare,
+  Zap, Globe, User as UserIcon, ClipboardList, Bell,
+} from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
 import { useMessages } from '@/hooks/useMessages';
 
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+interface NavItem { href: string; Icon: React.ElementType; label: string; desc: string }
+interface NavGroup { label: string; href?: string; items?: NavItem[] }
+
+const NAV: NavGroup[] = [
+  {
+    label: 'Diensten',
+    items: [
+      { href: '/#services',  Icon: Building2,  label: 'Wat we doen',  desc: 'Websites, apps & webshops' },
+      { href: '/portfolio',  Icon: Globe,       label: 'Portfolio',    desc: "Projecten & live demo's" },
+      { href: '/oplossingen',Icon: Zap,         label: 'Oplossingen',  desc: 'Technische oplossingen op maat' },
+      { href: '/#workflow',  Icon: ArrowRight,  label: 'Ons proces',   desc: 'Hoe werken we samen?' },
+    ],
+  },
+  { label: 'Blog', href: '/blog' },
+  {
+    label: 'Over',
+    items: [
+      { href: '/over',    Icon: UserIcon,  label: 'Over IntrICT', desc: 'Het verhaal achter IntrICT' },
+      { href: '/visie',   Icon: Eye,       label: 'Onze visie',   desc: 'Missie & kernwaarden' },
+      { href: '/blog',    Icon: BookOpen,  label: 'Blog',         desc: 'Artikelen & nieuws' },
+      { href: '/contact', Icon: Mail,      label: 'Contact',      desc: 'Direct in contact komen' },
+    ],
+  },
+  { label: 'Contact', href: '/contact' },
+];
+
+const SEARCH_PAGES = [
+  { label: 'Home',        desc: 'Homepagina & diensten',        href: '/',            Icon: Globe,           cat: "Pagina's" },
+  { label: 'Portfolio',   desc: "Projecten & live demo's",      href: '/portfolio',   Icon: Building2,       cat: "Pagina's" },
+  { label: 'Blog',        desc: 'Artikelen & nieuws',           href: '/blog',        Icon: BookOpen,        cat: "Pagina's" },
+  { label: 'Oplossingen', desc: 'Oplossingen op maat',          href: '/oplossingen', Icon: Zap,             cat: "Pagina's" },
+  { label: 'Over ons',    desc: 'Wie is IntrICT?',              href: '/over',        Icon: UserIcon,        cat: "Pagina's" },
+  { label: 'Visie',       desc: 'Missie & waarden',             href: '/visie',       Icon: Eye,             cat: "Pagina's" },
+  { label: 'Contact',     desc: 'Neem contact op',              href: '/contact',     Icon: Mail,            cat: "Pagina's" },
+];
+const SEARCH_DASHBOARD = [
+  { label: 'Dashboard',  desc: 'Jouw persoonlijk dashboard', href: '/dashboard',           Icon: LayoutDashboard, cat: 'Dashboard', auth: true },
+  { label: 'Pakketten',  desc: 'Diensten & prijzen',         href: '/dashboard/pakketten', Icon: Package,         cat: 'Dashboard', auth: true },
+  { label: 'Berichten',  desc: 'Jouw gesprekken',            href: '/dashboard/messages',  Icon: MessageSquare,   cat: 'Dashboard', auth: true },
+  { label: 'Aanvragen',  desc: 'Pakketaanvragen',            href: '/dashboard/aanvragen', Icon: ClipboardList,   cat: 'Dashboard', auth: true },
+];
+const SEARCH_ACTIONS = [
+  { label: 'Gratis offerte aanvragen', desc: 'Vraag een offerte aan voor jouw project', href: '/contact',   Icon: ArrowRight, cat: 'Acties' },
+  { label: "Demo's bekijken",          desc: "Live project demo's van IntrICT",          href: '/portfolio', Icon: Eye,        cat: 'Acties' },
+];
+
+const STATUS_LABELS: Record<string, string> = {
+  pending: 'Nieuw', contacted: 'Gecontacteerd', accepted: 'Geaccepteerd', rejected: 'Afgewezen',
+};
+
+// ─── Command palette ──────────────────────────────────────────────────────────
+
+function CommandPalette({ isLoggedIn, onClose }: { isLoggedIn: boolean; onClose: () => void }) {
+  const [query, setQuery] = useState('');
+  const [cursor, setCursor] = useState(0);
+  const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { inputRef.current?.focus(); }, []);
+
+  const allItems = [
+    ...SEARCH_PAGES,
+    ...(isLoggedIn ? SEARCH_DASHBOARD : []),
+    ...SEARCH_ACTIONS,
+  ];
+
+  const filtered = query
+    ? allItems.filter(i =>
+        i.label.toLowerCase().includes(query.toLowerCase()) ||
+        i.desc.toLowerCase().includes(query.toLowerCase())
+      )
+    : allItems;
+
+  // group by category
+  const groups = filtered.reduce<Record<string, typeof allItems>>((acc, item) => {
+    (acc[item.cat] ??= []).push(item);
+    return acc;
+  }, {});
+
+  useEffect(() => { setCursor(0); }, [query]);
+
+  const navigate = useCallback((href: string) => {
+    router.push(href);
+    onClose();
+  }, [router, onClose]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key === 'ArrowDown') { e.preventDefault(); setCursor(c => Math.min(c + 1, filtered.length - 1)); }
+      if (e.key === 'ArrowUp') { e.preventDefault(); setCursor(c => Math.max(c - 1, 0)); }
+      if (e.key === 'Enter' && filtered[cursor]) navigate(filtered[cursor].href);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [filtered, cursor, navigate, onClose]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] flex items-start justify-center pt-[10vh] px-4 bg-black/60 backdrop-blur-sm"
+      onClick={e => e.target === e.currentTarget && onClose()}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: -10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, y: -10 }}
+        transition={{ duration: 0.18 }}
+        className="w-full max-w-xl bg-white rounded-2xl shadow-2xl overflow-hidden"
+      >
+        {/* Input */}
+        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-slate-100">
+          <Search size={17} className="text-slate-400 shrink-0" />
+          <input
+            ref={inputRef}
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Zoek pagina's, dashboard, acties..."
+            className="flex-1 text-slate-800 bg-transparent outline-none placeholder:text-slate-400 text-sm"
+          />
+          <kbd className="px-1.5 py-0.5 text-[10px] font-bold text-slate-400 bg-slate-100 rounded border border-slate-200 shrink-0">ESC</kbd>
+        </div>
+
+        {/* Results */}
+        <div className="overflow-y-auto max-h-[58vh] py-2">
+          {filtered.length === 0 ? (
+            <div className="py-12 text-center">
+              <Search size={24} className="text-slate-200 mx-auto mb-2" />
+              <p className="text-sm text-slate-400">Geen resultaten voor &ldquo;{query}&rdquo;</p>
+            </div>
+          ) : (
+            Object.entries(groups).map(([cat, items]) => (
+              <div key={cat} className="mb-2">
+                <p className="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">{cat}</p>
+                {items.map(item => {
+                  const idx = filtered.indexOf(item);
+                  const active = cursor === idx;
+                  const Icon = item.Icon;
+                  return (
+                    <button
+                      key={item.href + item.label}
+                      onClick={() => navigate(item.href)}
+                      onMouseEnter={() => setCursor(idx)}
+                      className={`flex items-center gap-3 w-full px-4 py-2.5 text-left transition-colors ${active ? 'bg-blue-50' : 'hover:bg-slate-50'}`}
+                    >
+                      <div className={`p-1.5 rounded-lg shrink-0 ${active ? 'bg-blue-100' : 'bg-slate-100'}`}>
+                        <Icon size={14} className={active ? 'text-blue-600' : 'text-slate-500'} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-semibold truncate ${active ? 'text-blue-700' : 'text-slate-800'}`}>{item.label}</p>
+                        <p className="text-xs text-slate-400 truncate">{item.desc}</p>
+                      </div>
+                      {active && <ArrowRight size={13} className="text-blue-400 shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center gap-4 px-4 py-2.5 border-t border-slate-100 bg-slate-50/50 text-[11px] text-slate-400">
+          <span className="flex items-center gap-1">
+            <kbd className="px-1 py-0.5 bg-white border border-slate-200 rounded text-[9px] font-bold">↑</kbd>
+            <kbd className="px-1 py-0.5 bg-white border border-slate-200 rounded text-[9px] font-bold">↓</kbd>
+            Navigeren
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="px-1 py-0.5 bg-white border border-slate-200 rounded text-[9px] font-bold">↵</kbd>
+            Openen
+          </span>
+          <span className="ml-auto">⌘K om te zoeken</span>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// ─── Notifications panel ──────────────────────────────────────────────────────
+
+interface PackageReqMini { id: string; package_name: string; status: string }
+
+function NotificationsPanel({
+  conversations, unreadCount, messagesLoading, packageRequests, onClose,
+}: {
+  conversations: ReturnType<typeof useMessages>['conversations'];
+  unreadCount: number;
+  messagesLoading: boolean;
+  packageRequests: PackageReqMini[];
+  onClose: () => void;
+}) {
+  const router = useRouter();
+  const [tab, setTab] = useState<'messages' | 'requests'>('messages');
+
+  const go = (href: string) => { router.push(href); onClose(); };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 8, scale: 0.97 }}
+      transition={{ duration: 0.18 }}
+      className="absolute right-0 z-50 mt-3 w-80 bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden"
+    >
+      {/* Tabs */}
+      <div className="flex border-b border-slate-100">
+        {[
+          { id: 'messages' as const, label: 'Berichten', Icon: MessageSquare, count: unreadCount },
+          ...(packageRequests.length > 0 ? [{ id: 'requests' as const, label: 'Aanvragen', Icon: Package, count: packageRequests.length }] : []),
+        ].map(t => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-semibold transition-colors border-b-2 ${
+              tab === t.id ? 'text-blue-600 border-blue-500' : 'text-slate-500 hover:text-slate-700 border-transparent'
+            }`}
+          >
+            <t.Icon size={14} />
+            {t.label}
+            {t.count > 0 && (
+              <span className={`min-w-[18px] h-[18px] px-1 flex items-center justify-center text-[10px] font-bold rounded-full ${
+                tab === t.id ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-600'
+              }`}>
+                {t.count > 9 ? '9+' : t.count}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'messages' ? (
+        <>
+          <div className="flex items-center justify-between px-4 py-2.5">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Gesprekken</span>
+            <button onClick={() => go('/dashboard/messages')} className="text-xs font-semibold text-blue-500 hover:text-blue-600">Alles →</button>
+          </div>
+          {messagesLoading ? (
+            <div className="py-8 text-sm text-center text-slate-400">Laden...</div>
+          ) : conversations.length === 0 ? (
+            <div className="py-10 text-center">
+              <MessageSquare size={24} className="text-slate-200 mx-auto mb-2" />
+              <p className="text-sm text-slate-400">Geen berichten</p>
+            </div>
+          ) : (
+            <ul className="divide-y divide-slate-100 max-h-64 overflow-y-auto">
+              {conversations.slice(0, 5).map(conv => (
+                <li key={conv.id} onClick={() => go('/dashboard/messages')}
+                  className="flex items-start gap-3 px-4 py-3 cursor-pointer hover:bg-slate-50 transition-colors">
+                  <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${conv.unread_count > 0 ? 'bg-blue-500' : 'bg-slate-200'}`} />
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm truncate ${conv.unread_count > 0 ? 'font-semibold text-slate-800' : 'text-slate-600'}`}>
+                      {conv.subject}
+                    </p>
+                    {conv.last_message?.sender && (
+                      <p className="text-xs text-slate-400 truncate">
+                        {conv.last_message.sender.full_name ?? conv.last_message.sender.email}: {conv.last_message.content}
+                      </p>
+                    )}
+                    <p className="text-xs text-slate-300 mt-0.5">
+                      {new Date(conv.updated_at).toLocaleString('nl-BE', { dateStyle: 'short', timeStyle: 'short' })}
+                    </p>
+                  </div>
+                  {conv.unread_count > 0 && (
+                    <span className="min-w-[18px] h-[18px] px-1 flex items-center justify-center bg-blue-500 text-white text-[10px] font-bold rounded-full shrink-0">
+                      {conv.unread_count}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      ) : (
+        <>
+          <div className="flex items-center justify-between px-4 py-2.5">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Pakketaanvragen</span>
+            <button onClick={() => go('/dashboard/aanvragen')} className="text-xs font-semibold text-blue-500 hover:text-blue-600">Alles →</button>
+          </div>
+          <ul className="divide-y divide-slate-100 max-h-64 overflow-y-auto">
+            {packageRequests.map(req => (
+              <li key={req.id} onClick={() => go('/dashboard/aanvragen')}
+                className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-50 transition-colors">
+                <div className={`p-1.5 rounded-lg shrink-0 ${
+                  req.status === 'accepted' ? 'bg-green-50' : req.status === 'rejected' ? 'bg-slate-100' : 'bg-amber-50'
+                }`}>
+                  <Package size={13} className={
+                    req.status === 'accepted' ? 'text-green-500' : req.status === 'rejected' ? 'text-slate-400' : 'text-amber-500'
+                  } />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-slate-800 truncate">{req.package_name}</p>
+                  <p className="text-xs text-slate-400">{STATUS_LABELS[req.status] ?? req.status}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </motion.div>
+  );
+}
+
+// ─── Mega dropdown ────────────────────────────────────────────────────────────
+
+function MegaDropdown({ items }: { items: NavItem[] }) {
+  return (
+    <div className="absolute left-0 top-full z-50 pt-3 invisible opacity-0 translate-y-1 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl py-2 w-56">
+        {items.map(item => {
+          const Icon = item.Icon;
+          return (
+            <Link key={item.href} href={item.href}
+              className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors group/item">
+              <div className="p-1.5 rounded-lg bg-slate-100 group-hover/item:bg-blue-100 transition-colors shrink-0">
+                <Icon size={14} className="text-slate-500 group-hover/item:text-blue-600 transition-colors" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-slate-800 group-hover/item:text-blue-700 transition-colors truncate">{item.label}</p>
+                <p className="text-xs text-slate-400 truncate">{item.desc}</p>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Mobile drawer ────────────────────────────────────────────────────────────
+
+function MobileDrawer({
+  isOpen, onClose, user, avatarLabel, profilePicture, userRole, unreadCount,
+  onLogout, onOpenSearch, pathname,
+}: {
+  isOpen: boolean; onClose: () => void; user: User | null;
+  avatarLabel: string; profilePicture: string | null; userRole: string;
+  unreadCount: number; onLogout: () => void; onOpenSearch: () => void; pathname: string;
+}) {
+  const router = useRouter();
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  const go = (href: string) => { router.push(href); onClose(); };
+  const isActive = (href: string) => pathname === href;
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+            onClick={onClose}
+          />
+          <motion.div
+            initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+            className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-sm bg-white shadow-2xl flex flex-col"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-5 border-b border-slate-100 shrink-0">
+              <Link href="/" onClick={onClose} className="text-xl font-bold text-slate-900">IntrICT</Link>
+              <button onClick={onClose} className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all">
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Search bar */}
+            <div className="px-4 py-3 border-b border-slate-100 shrink-0">
+              <button
+                onClick={() => { onClose(); setTimeout(onOpenSearch, 50); }}
+                className="flex items-center gap-2.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-400 hover:bg-slate-100 transition-all text-left"
+              >
+                <Search size={15} />
+                Zoek pagina&apos;s, acties...
+                <kbd className="ml-auto px-1.5 py-0.5 text-[9px] font-bold bg-white border border-slate-200 rounded">⌘K</kbd>
+              </button>
+            </div>
+
+            {/* Nav */}
+            <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-0.5">
+              {NAV.map(group => {
+                if (group.href) {
+                  return (
+                    <Link key={group.href} href={group.href} onClick={onClose}
+                      className={`flex items-center px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                        isActive(group.href) ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'
+                      }`}>
+                      {group.label}
+                    </Link>
+                  );
+                }
+                const isExp = expanded === group.label;
+                return (
+                  <div key={group.label}>
+                    <button
+                      onClick={() => setExpanded(isExp ? null : group.label)}
+                      className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all"
+                    >
+                      {group.label}
+                      <ChevronDown size={15} className={`text-slate-400 transition-transform duration-200 ${isExp ? 'rotate-180' : ''}`} />
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {isExp && group.items && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="ml-3 mt-0.5 mb-1.5 space-y-0.5">
+                            {group.items.map(item => {
+                              const Icon = item.Icon;
+                              return (
+                                <Link key={item.href} href={item.href} onClick={onClose}
+                                  className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
+                                  <Icon size={14} className="text-slate-400 shrink-0" />
+                                  <div>
+                                    <p className="text-sm font-semibold">{item.label}</p>
+                                    <p className="text-xs text-slate-400">{item.desc}</p>
+                                  </div>
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
+            </nav>
+
+            {/* User section */}
+            <div className="px-4 pb-8 pt-4 border-t border-slate-100 shrink-0 space-y-2">
+              {user ? (
+                <>
+                  <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-slate-50 mb-3">
+                    {profilePicture ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={profilePicture} alt="Profiel" className="w-9 h-9 rounded-full object-cover shrink-0" />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold shrink-0">
+                        {avatarLabel}
+                      </div>
+                    )}
+                    <div className="overflow-hidden flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-slate-800 truncate">{user.email?.split('@')[0]}</p>
+                      <span className={`inline-block text-xs px-1.5 py-0.5 rounded-full font-semibold ${
+                        userRole === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        {userRole === 'admin' ? 'Administrator' : 'Gebruiker'}
+                      </span>
+                    </div>
+                  </div>
+                  <button onClick={() => go('/dashboard')}
+                    className="flex items-center justify-center w-full gap-2 py-3 font-semibold text-white rounded-xl bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all">
+                    <LayoutDashboard size={16} />
+                    Dashboard
+                    {unreadCount > 0 && (
+                      <span className="bg-white/25 px-1.5 py-0.5 rounded-full text-xs font-bold">{unreadCount}</span>
+                    )}
+                  </button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button onClick={() => go('/dashboard/profile')}
+                      className="flex items-center justify-center gap-1.5 py-2.5 text-sm font-semibold text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
+                      <UserIcon size={14} /> Profiel
+                    </button>
+                    <button onClick={() => go('/dashboard/settings')}
+                      className="flex items-center justify-center gap-1.5 py-2.5 text-sm font-semibold text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
+                      <Settings size={14} /> Instellingen
+                    </button>
+                  </div>
+                  <button onClick={() => { onLogout(); onClose(); }}
+                    className="flex items-center justify-center w-full gap-2 py-2.5 text-sm font-semibold text-red-600 border border-red-200 rounded-xl hover:bg-red-50 transition-all">
+                    <LogOut size={15} /> Uitloggen
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/contact" onClick={onClose}
+                    className="flex items-center justify-center gap-2 w-full py-3 text-sm font-semibold text-white rounded-xl bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all">
+                    Gratis offerte aanvragen <ArrowRight size={14} />
+                  </Link>
+                  <button onClick={() => { router.push('/login'); onClose(); }}
+                    className="w-full py-2.5 text-sm font-semibold text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
+                    Log in
+                  </button>
+                </>
+              )}
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// ─── Main Header ──────────────────────────────────────────────────────────────
+
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname();
+
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showMessages, setShowMessages] = useState(false);
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState('user');
+  const [userName, setUserName] = useState<string | null>(null);
+  const [packageRequests, setPackageRequests] = useState<PackageReqMini[]>([]);
 
+  const notifRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const messagesRef = useRef<HTMLDivElement>(null);
 
-  // ── Auth listener ──────────────────────────────────────────────────────────
+  const { conversations, unreadCount, loading: messagesLoading } = useMessages();
+
+  // ── Auth ───────────────────────────────────────────────────────────────────
   useEffect(() => {
     const supabase = createClient();
 
-    const loadUserProfile = async (userId: string) => {
+    const loadProfile = async (userId: string) => {
       const { data } = await supabase
         .from('profiles')
-        .select('profile_picture_url')
+        .select('profile_picture_url, role, full_name')
         .eq('id', userId)
         .single();
-      if (data?.profile_picture_url) {
-        setProfilePicture(data.profile_picture_url);
+      if (data) {
+        setProfilePicture(data.profile_picture_url ?? null);
+        setUserRole(data.role ?? 'user');
+        setUserName(data.full_name ?? null);
       }
     };
 
     supabase.auth.getSession().then(({ data: { session } }) => {
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
-      if (currentUser?.id) {
-        loadUserProfile(currentUser.id);
-      }
+      const u = session?.user ?? null;
+      setUser(u);
+      if (u) loadProfile(u.id);
       setAuthLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
-      if (currentUser?.id) {
-        loadUserProfile(currentUser.id);
-      } else {
-        setProfilePicture(null);
-      }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      const u = session?.user ?? null;
+      setUser(u);
+      if (u) loadProfile(u.id);
+      else { setProfilePicture(null); setUserRole('user'); setUserName(null); }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  // ── Scroll listener ────────────────────────────────────────────────────────
+  // ── Package requests ───────────────────────────────────────────────────────
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    if (!user) return;
+    fetch('/api/package-requests')
+      .then(r => r.json())
+      .then((data: PackageReqMini[]) => setPackageRequests(Array.isArray(data) ? data.slice(0, 5) : []))
+      .catch(() => {});
+  }, [user]);
+
+  // ── Scroll ─────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const handler = () => setIsScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
   }, []);
 
-  // ── Click-outside to close dropdowns ──────────────────────────────────────
+  // ── Global keyboard shortcuts ──────────────────────────────────────────────
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setShowSearch(true);
+        setShowNotifications(false);
         setShowUserMenu(false);
       }
-      if (messagesRef.current && !messagesRef.current.contains(e.target as Node)) {
-        setShowMessages(false);
+      if (e.key === 'Escape') {
+        setShowSearch(false);
+        setShowNotifications(false);
+        setShowUserMenu(false);
+        setIsMobileOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
+  // ── Click outside ──────────────────────────────────────────────────────────
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setShowNotifications(false);
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setShowUserMenu(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   // ── Logout ─────────────────────────────────────────────────────────────────
@@ -83,161 +624,201 @@ export default function Header() {
     const supabase = createClient();
     await supabase.auth.signOut();
     setShowUserMenu(false);
-    setShowMessages(false);
     router.push('/');
     router.refresh();
   };
 
-  const { conversations, unreadCount, loading: messagesLoading } = useMessages();
-
-  // ── Avatar initials ────────────────────────────────────────────────────────
-  const avatarLabel = user?.email ? user.email[0].toUpperCase() : '?';
-
-  // ── Shared text colour class ───────────────────────────────────────────────
+  const avatarLabel = userName?.[0]?.toUpperCase() ?? user?.email?.[0]?.toUpperCase() ?? '?';
   const navText = isScrolled ? 'text-slate-600 hover:text-slate-900' : 'text-slate-200 hover:text-white';
-  const iconStroke = isScrolled ? '#475569' : '#e2e8f0';
+  const totalNotifs = unreadCount + (packageRequests.length > 0 ? 1 : 0);
 
   return (
-    <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-lg'
-          : 'bg-black/20 backdrop-blur-sm'
-      }`}
-    >
-      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <>
+      <motion.header
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? 'bg-white/92 backdrop-blur-md border-b border-slate-200 shadow-sm'
+            : 'bg-black/20 backdrop-blur-sm'
+        }`}
+      >
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 gap-4">
 
-          {/* ── Logo ── */}
-          <motion.a href="/" whileHover={{ scale: 1.05 }} className="flex items-center space-x-2">
-            <span className={`font-semibold text-lg transition-colors duration-300 ${isScrolled ? 'text-slate-800' : 'text-white'}`}>
+            {/* Logo */}
+            <motion.a href="/" whileHover={{ scale: 1.04 }}
+              className={`font-bold text-xl shrink-0 transition-colors duration-300 ${isScrolled ? 'text-slate-900' : 'text-white'}`}>
               IntrICT
-            </span>
-          </motion.a>
+            </motion.a>
 
-          {/* ── Desktop Nav ── */}
-          <nav className="items-center hidden space-x-8 md:flex">
-            <DropdownNav label="Home" scrolled={isScrolled}>
-              <DropdownLink href="/#services" icon="building">Diensten</DropdownLink>
-              <DropdownLink href="/#workflow" icon="check">Proces</DropdownLink>
-              <DropdownLink href="/#contact" icon="mail">Contact</DropdownLink>
-            </DropdownNav>
+            {/* Desktop nav */}
+            <nav className="hidden md:flex items-center gap-0.5 flex-1">
+              {NAV.map(group => {
+                const active = group.href ? pathname === group.href : group.items?.some(i => pathname === i.href);
+                if (group.href) {
+                  return (
+                    <Link key={group.href} href={group.href}
+                      className={`px-3.5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                        active
+                          ? isScrolled ? 'bg-slate-100 text-slate-900' : 'bg-white/15 text-white'
+                          : navText
+                      }`}>
+                      {group.label}
+                    </Link>
+                  );
+                }
+                return (
+                  <div key={group.label} className="relative group">
+                    <button className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                      active
+                        ? isScrolled ? 'bg-slate-100 text-slate-900' : 'bg-white/15 text-white'
+                        : navText
+                    } group-hover:${isScrolled ? 'bg-slate-100' : 'bg-white/10'}`}>
+                      {group.label}
+                      <ChevronDown size={13} className="transition-transform duration-200 group-hover:rotate-180" />
+                    </button>
+                    <MegaDropdown items={group.items!} />
+                  </div>
+                );
+              })}
+            </nav>
 
-            {(['Portfolio', 'Blog', 'Oplossingen'] as const).map((item) => (
-              <motion.a
-                key={item}
-                href={`/${item.toLowerCase()}`}
-                whileHover={{ scale: 1.05 }}
-                className={`transition-colors duration-200 ${navText}`}
+            {/* Right controls */}
+            <div className="hidden md:flex items-center gap-2 shrink-0">
+
+              {/* Search button */}
+              <motion.button
+                whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                onClick={() => setShowSearch(true)}
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition-all duration-200 ${
+                  isScrolled ? 'text-slate-500 hover:bg-slate-100' : 'text-slate-200 hover:bg-white/10'
+                }`}
+                aria-label="Zoeken (⌘K)"
               >
-                {item}
-              </motion.a>
-            ))}
+                <Search size={16} />
+                <kbd className={`text-[10px] px-1.5 py-0.5 rounded border font-bold ${
+                  isScrolled ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-white/10 border-white/20 text-white/60'
+                }`}>⌘K</kbd>
+              </motion.button>
 
-            <DropdownNav label="Info" scrolled={isScrolled} accentColor="green">
-              <DropdownLink href="/visie" icon="eye" accentColor="green">Visie</DropdownLink>
-              <DropdownLink href="/over" icon="user" accentColor="green">Over</DropdownLink>
-              <DropdownLink href="/contact" icon="mail" accentColor="green">Contact</DropdownLink>
-            </DropdownNav>
-          </nav>
-
-          {/* ── Right Controls ── */}
-          {!authLoading && (
-            <div className="items-center hidden gap-2 md:flex">
-
-              {user && (
+              {!authLoading && user && (
                 <>
-                  {/* ─ Messages button ─ */}
-                  <div ref={messagesRef} className="relative">
+                  {/* Notifications bell */}
+                  <div ref={notifRef} className="relative">
                     <motion.button
-                      whileHover={{ scale: 1.08 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => { setShowMessages(!showMessages); setShowUserMenu(false); }}
-                      className={`relative p-2 rounded-full transition-all duration-200 ${
-                        isScrolled ? 'hover:bg-slate-100' : 'hover:bg-white/10'
+                      whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}
+                      onClick={() => { setShowNotifications(!showNotifications); setShowUserMenu(false); }}
+                      className={`relative p-2 rounded-xl transition-all duration-200 ${
+                        isScrolled ? 'text-slate-500 hover:bg-slate-100' : 'text-slate-200 hover:bg-white/10'
                       }`}
-                      aria-label="Berichten"
+                      aria-label="Meldingen"
                     >
-                      {/* Mail icon */}
-                      <svg width="20" height="20" fill="none" stroke={iconStroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                        <path d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                      {unreadCount > 0 && (
-                        <motion.span
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-blue-500 rounded-full shadow"
-                        >
-                          {unreadCount > 9 ? '9+' : unreadCount}
+                      <Bell size={18} />
+                      {totalNotifs > 0 && (
+                        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}
+                          className="absolute top-1.5 right-1.5 w-2 h-2 bg-blue-500 rounded-full shadow">
                         </motion.span>
                       )}
                     </motion.button>
-
-                    {/* Messages dropdown */}
                     <AnimatePresence>
-                      {showMessages && (
+                      {showNotifications && (
+                        <NotificationsPanel
+                          conversations={conversations}
+                          unreadCount={unreadCount}
+                          messagesLoading={messagesLoading}
+                          packageRequests={packageRequests}
+                          onClose={() => setShowNotifications(false)}
+                        />
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* User menu */}
+                  <div ref={userMenuRef} className="relative">
+                    <motion.button
+                      whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.95 }}
+                      onClick={() => { setShowUserMenu(!showUserMenu); setShowNotifications(false); }}
+                      className={`flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full text-sm font-semibold transition-all duration-300 ${
+                        isScrolled
+                          ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                          : 'bg-white/15 text-white hover:bg-white/25 backdrop-blur-sm'
+                      }`}
+                    >
+                      {profilePicture ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={profilePicture} alt="Profiel" className="w-7 h-7 rounded-full object-cover" />
+                      ) : (
+                        <span className="w-7 h-7 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center text-[11px] font-bold text-white shadow">
+                          {avatarLabel}
+                        </span>
+                      )}
+                      <span className="truncate max-w-24">{userName ?? user.email?.split('@')[0]}</span>
+                      <ChevronDown size={13} className={`transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''}`} />
+                    </motion.button>
+
+                    <AnimatePresence>
+                      {showUserMenu && (
                         <motion.div
                           initial={{ opacity: 0, y: 8, scale: 0.97 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.97 }}
                           transition={{ duration: 0.18 }}
-                          className="absolute right-0 z-50 mt-3 overflow-hidden border shadow-2xl w-80 bg-white/98 backdrop-blur-md rounded-2xl border-slate-200"
+                          className="absolute right-0 z-50 w-60 mt-3 bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden"
                         >
-                          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-                            <span className="font-semibold text-slate-800">Berichten</span>
-                            <button
-                              onClick={() => router.push('/dashboard/messages')}
-                              className="text-xs font-medium text-blue-500 hover:underline"
-                            >
-                              Alle berichten
+                          {/* Profile header */}
+                          <div className="px-4 py-3.5 border-b border-slate-100 bg-linear-to-br from-slate-50 to-blue-50/40">
+                            <div className="flex items-center gap-3">
+                              {profilePicture ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={profilePicture} alt="Profiel" className="w-10 h-10 rounded-full object-cover shadow" />
+                              ) : (
+                                <span className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center text-sm font-bold text-white shadow">
+                                  {avatarLabel}
+                                </span>
+                              )}
+                              <div className="overflow-hidden">
+                                <p className="text-sm font-bold text-slate-800 truncate">{userName ?? user.email?.split('@')[0]}</p>
+                                <p className="text-xs text-slate-400 truncate">{user.email}</p>
+                                <span className={`inline-block mt-0.5 text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                                  userRole === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
+                                }`}>
+                                  {userRole === 'admin' ? 'Administrator' : 'Gebruiker'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="py-1.5">
+                            {[
+                              { href: '/dashboard', Icon: LayoutDashboard, label: 'Dashboard' },
+                              { href: '/dashboard/pakketten', Icon: Package, label: 'Pakketten' },
+                              { href: '/dashboard/messages', Icon: MessageSquare, label: 'Berichten', count: unreadCount },
+                              { href: '/dashboard/profile', Icon: UserIcon, label: 'Profiel' },
+                              { href: '/dashboard/settings', Icon: Settings, label: 'Instellingen' },
+                            ].map(item => (
+                              <Link key={item.href} href={item.href}
+                                onClick={() => setShowUserMenu(false)}
+                                className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                <item.Icon size={15} className="text-slate-400 shrink-0" />
+                                <span className="flex-1">{item.label}</span>
+                                {item.count && item.count > 0 && (
+                                  <span className="min-w-[18px] h-[18px] px-1 flex items-center justify-center bg-blue-500 text-white text-[10px] font-bold rounded-full">
+                                    {item.count > 9 ? '9+' : item.count}
+                                  </span>
+                                )}
+                              </Link>
+                            ))}
+                          </div>
+
+                          <div className="border-t border-slate-100 py-1.5">
+                            <button onClick={handleLogout}
+                              className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                              <LogOut size={15} className="shrink-0" />
+                              Uitloggen
                             </button>
                           </div>
-                          {messagesLoading ? (
-                            <div className="px-4 py-6 text-sm text-center text-slate-400">Laden...</div>
-                          ) : conversations.length === 0 ? (
-                            <div className="px-4 py-6 text-center">
-                              <p className="text-sm font-medium text-slate-500">Geen berichten</p>
-                              <p className="mt-1 text-xs text-slate-400">Start een gesprek om te beginnen</p>
-                            </div>
-                          ) : (
-                            <ul className="overflow-y-auto divide-y divide-slate-100 max-h-72">
-                              {conversations.slice(0, 5).map((conversation) => (
-                                <li
-                                  key={conversation.id}
-                                  className="px-4 py-3 cursor-pointer hover:bg-slate-50"
-                                  onClick={() => {
-                                    router.push('/dashboard/messages');
-                                    setShowMessages(false);
-                                  }}
-                                >
-                                  <div className="flex items-start gap-3">
-                                    <div className="w-2 h-2 mt-2 bg-blue-500 rounded-full shrink-0" />
-                                    <div className="flex-1 min-w-0">
-                                      <p className={`text-sm truncate ${conversation.unread_count > 0 ? 'font-semibold text-slate-800' : 'text-slate-600'}`}>
-                                        {conversation.subject}
-                                      </p>
-                                      {conversation.last_message && conversation.last_message.sender && (
-                                        <p className="text-xs text-slate-500 mt-0.5 truncate">
-                                          {conversation.last_message.sender.full_name || conversation.last_message.sender.email}: {conversation.last_message.content}
-                                        </p>
-                                      )}
-                                      <p className="mt-0.5 text-xs text-slate-400">
-                                        {new Date(conversation.updated_at).toLocaleString('nl-BE', { dateStyle: 'short', timeStyle: 'short' })}
-                                      </p>
-                                    </div>
-                                    {conversation.unread_count > 0 && (
-                                      <span className="inline-flex items-center justify-center h-5 w-5 text-[10px] font-bold text-white bg-blue-500 rounded-full">
-                                        {conversation.unread_count}
-                                      </span>
-                                    )}
-                                  </div>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -245,294 +826,61 @@ export default function Header() {
                 </>
               )}
 
-              {/* ─ User Menu / Login button ─ */}
-              {user ? (
-                <div ref={userMenuRef} className="relative">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => { setShowUserMenu(!showUserMenu); setShowMessages(false); }}
-                    className={`flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full font-medium text-sm transition-all duration-300 ${
-                      isScrolled
-                        ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                        : 'bg-white/15 text-white hover:bg-white/25 backdrop-blur-sm'
-                    }`}
-                  >
-                    {profilePicture ? (
-                      <img
-                        src={profilePicture}
-                        alt="Profiel foto"
-                        className="object-cover w-7 h-7 rounded-full shadow"
-                      />
-                    ) : (
-                      <span className="flex items-center justify-center text-xs font-bold text-white rounded-full shadow w-7 h-7 bg-linear-to-br from-blue-500 to-purple-500">
-                        {avatarLabel}
-                      </span>
-                    )}
-                    <span className="truncate max-w-30">{user.email?.split('@')[0]}</span>
-                    <svg
-                      className={`w-3.5 h-3.5 transition-transform duration-300 ${showUserMenu ? 'rotate-180' : ''}`}
-                      fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
+              {/* Guest: CTA + Login */}
+              {!authLoading && !user && (
+                <div className="flex items-center gap-2">
+                  <motion.button onClick={() => router.push('/login')}
+                    whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+                    className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                      isScrolled ? 'text-slate-600 hover:bg-slate-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+                    }`}>
+                    Log in
                   </motion.button>
-
-                  <AnimatePresence>
-                    {showUserMenu && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8, scale: 0.97 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 8, scale: 0.97 }}
-                        transition={{ duration: 0.18 }}
-                        className="absolute right-0 z-50 w-56 mt-3 overflow-hidden border shadow-2xl bg-white/98 backdrop-blur-md rounded-2xl border-slate-200"
-                      >
-                        <div className="px-4 py-3 border-b border-slate-100 bg-linear-to-br from-slate-50 to-blue-50/30">
-                          <div className="flex items-center gap-3">
-                            <span className="flex items-center justify-center font-bold text-white rounded-full shadow w-9 h-9 bg-linear-to-br from-blue-500 to-purple-500">
-                              {avatarLabel}
-                            </span>
-                            <div className="overflow-hidden">
-                              <p className="text-sm font-semibold truncate text-slate-800">{user.email?.split('@')[0]}</p>
-                              <p className="text-xs truncate text-slate-400">{user.email}</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="py-2">
-                          <MenuLink href="/dashboard" icon="grid">Dashboard</MenuLink>
-                          <MenuLink href="/dashboard/profile" icon="user">Profiel</MenuLink>
-                          <MenuLink href="/dashboard/settings" icon="settings">Instellingen</MenuLink>
-                        </div>
-
-                        <div className="py-2 border-t border-slate-100">
-                          <button
-                            onClick={handleLogout}
-                            className="flex items-center w-full gap-3 px-4 py-2.5 text-sm text-red-600 transition-colors duration-150 hover:bg-red-50"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                            Uitloggen
-                          </button>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  <motion.a href="/contact"
+                    whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-white bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-md shadow-blue-500/20 transition-all duration-300">
+                    Gratis offerte
+                    <ArrowRight size={13} />
+                  </motion.a>
                 </div>
-              ) : (
-                <motion.button
-                  onClick={() => router.push('/login')}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`px-6 py-2 rounded-full font-semibold text-sm transition-all duration-300 ${
-                    isScrolled
-                      ? 'bg-slate-800 text-white hover:bg-slate-700'
-                      : 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm'
-                  }`}
-                >
-                  Log In
-                </motion.button>
               )}
             </div>
-          )}
 
-          {/* ── Mobile Menu Toggle ── */}
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 rounded-lg md:hidden glass-card"
-          >
-            <svg
-              className={`w-6 h-6 transition-colors duration-300 ${isScrolled ? 'text-slate-600' : 'text-white'}`}
-              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            {/* Mobile hamburger */}
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsMobileOpen(true)}
+              className={`md:hidden p-2 rounded-xl transition-colors ${
+                isScrolled ? 'text-slate-700 hover:bg-slate-100' : 'text-white hover:bg-white/10'
+              }`}
+              aria-label="Menu openen"
             >
-              <path
-                strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d={isMobileMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'}
-              />
-            </svg>
-          </motion.button>
+              <Menu size={22} />
+            </motion.button>
+          </div>
         </div>
-      </div>
+      </motion.header>
 
-      {/* ── Mobile Menu ── */}
+      {/* Command palette */}
       <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="border-b border-gray-200 shadow-lg md:hidden bg-white/95 backdrop-blur-md"
-          >
-            <div className="px-4 py-6 space-y-4">
-              {user && (
-                <div className="flex items-center gap-3 p-3 border rounded-xl bg-linear-to-r from-slate-50 to-blue-50 border-slate-100">
-                  <span className="flex items-center justify-center font-bold text-white rounded-full shadow w-9 h-9 bg-linear-to-br from-blue-500 to-purple-500">
-                    {avatarLabel}
-                  </span>
-                  <div className="overflow-hidden">
-                    <p className="text-sm font-semibold truncate text-slate-800">{user.email?.split('@')[0]}</p>
-                    <p className="text-xs truncate text-slate-400">{user.email}</p>
-                  </div>
-                </div>
-              )}
-
-              <div>
-                <h3 className="mb-3 text-xs font-semibold tracking-wider uppercase text-slate-400">Home</h3>
-                <div className="ml-2 space-y-1">
-                  {[['/#services', 'Diensten'], ['/#workflow', 'Proces'], ['/#contact', 'Contact']].map(([href, label]) => (
-                    <a key={href} href={href} className="flex items-center gap-2 px-3 py-2 transition-colors rounded-lg text-slate-600 hover:text-slate-800 hover:bg-slate-50">
-                      {label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                {[['Portfolio', '/portfolio'], ['Blog', '/blog'], ['Oplossingen', '/oplossingen']].map(([label, href]) => (
-                  <a key={href} href={href} className="block px-3 py-2 font-semibold transition-colors rounded-lg text-slate-800 hover:bg-slate-50">
-                    {label}
-                  </a>
-                ))}
-              </div>
-
-              <div>
-                <h3 className="mb-3 text-xs font-semibold tracking-wider uppercase text-slate-400">Info</h3>
-                <div className="ml-2 space-y-1">
-                  {[['/visie', 'Visie'], ['/over', 'Over'], ['/contact', 'Contact']].map(([href, label]) => (
-                    <a key={href} href={href} className="flex items-center gap-2 px-3 py-2 transition-colors rounded-lg text-slate-600 hover:text-slate-800 hover:bg-slate-50">
-                      {label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              <div className="pt-2 space-y-2 border-t border-slate-100">
-                {user ? (
-                  <>
-                    <button
-                      onClick={() => router.push('/dashboard/messages')}
-                      className="flex items-center justify-center w-full gap-2 px-6 py-3 font-semibold text-blue-700 transition-all border border-blue-200 rounded-xl bg-blue-50 hover:bg-blue-100"
-                    >
-                      Berichten
-                      {unreadCount > 0 && (
-                        <span className="flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-blue-500 rounded-full">
-                          {unreadCount}
-                        </span>
-                      )}
-                    </button>
-                    <button
-                      onClick={() => router.push('/dashboard')}
-                      className="w-full px-6 py-3 font-semibold text-white transition-all shadow-md rounded-xl bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-                    >
-                      Dashboard
-                    </button>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full px-6 py-3 font-semibold text-red-600 transition-all border border-red-200 rounded-xl hover:bg-red-50"
-                    >
-                      Uitloggen
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => router.push('/login')}
-                    className="w-full px-6 py-3 font-semibold text-white transition-all rounded-xl bg-slate-800 hover:bg-slate-700"
-                  >
-                    Log In
-                  </button>
-                )}
-              </div>
-            </div>
-          </motion.div>
+        {showSearch && (
+          <CommandPalette isLoggedIn={!!user} onClose={() => setShowSearch(false)} />
         )}
       </AnimatePresence>
-    </motion.header>
-  );
-}
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function DropdownNav({
-  label,
-  scrolled,
-  children,
-}: {
-  label: string;
-  scrolled: boolean;
-  accentColor?: 'blue' | 'green';
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="relative group">
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        className={`flex items-center gap-1.5 font-semibold transition-colors duration-200 ${
-          scrolled ? 'text-slate-600 hover:text-slate-900' : 'text-slate-200 hover:text-white'
-        }`}
-      >
-        {label}
-        <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
-      </motion.button>
-
-      <div className="absolute left-0 z-50 invisible mt-3 transition-all duration-200 transform translate-y-2 border shadow-2xl opacity-0 w-52 top-full bg-white/96 backdrop-blur-md rounded-2xl border-slate-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
-        <div className="py-2">{children}</div>
-      </div>
-    </div>
-  );
-}
-
-const ICONS: Record<string, string> = {
-  building: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
-  check: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
-  mail: 'M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
-  eye: 'M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z',
-  user: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
-  grid: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z',
-  settings: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z',
-};
-
-function DropdownLink({
-  href,
-  icon,
-  accentColor = 'blue',
-  children,
-}: {
-  href: string;
-  icon: keyof typeof ICONS;
-  accentColor?: 'blue' | 'green';
-  children: React.ReactNode;
-}) {
-  const accent = accentColor === 'green'
-    ? 'group-hover:text-green-500 hover:from-slate-50 hover:to-green-50'
-    : 'group-hover:text-blue-500 hover:from-slate-50 hover:to-blue-50';
-
-  return (
-    <motion.a
-      href={href}
-      whileHover={{ x: 3 }}
-      className={`flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:text-slate-900 transition-all duration-150 bg-linear-to-r ${accent} group`}
-    >
-      <svg className={`w-4 h-4 shrink-0 text-slate-400 transition-colors duration-150 ${accent.split(' ')[0]}`}
-        fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d={ICONS[icon]} />
-      </svg>
-      {children}
-    </motion.a>
-  );
-}
-
-function MenuLink({ href, icon, children }: { href: string; icon: keyof typeof ICONS; children: React.ReactNode }) {
-  return (
-    <a href={href} className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors duration-150">
-      <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d={ICONS[icon]} />
-      </svg>
-      {children}
-    </a>
+      {/* Mobile drawer */}
+      <MobileDrawer
+        isOpen={isMobileOpen}
+        onClose={() => setIsMobileOpen(false)}
+        user={user}
+        avatarLabel={avatarLabel}
+        profilePicture={profilePicture}
+        userRole={userRole}
+        unreadCount={unreadCount}
+        onLogout={handleLogout}
+        onOpenSearch={() => setShowSearch(true)}
+        pathname={pathname}
+      />
+    </>
   );
 }

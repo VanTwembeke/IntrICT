@@ -3,13 +3,10 @@
 
 import React from 'react';
 import {
-  Document, Page, Text, View, StyleSheet, Font, Link,
+  Document, Page, Text, View, StyleSheet, Link,
 } from '@react-pdf/renderer';
 import { COMPANY } from './company';
 import type { Invoice } from './types';
-
-// ─── Fonts ────────────────────────────────────────────────────────────────────
-// Helvetica is built-in to @react-pdf/renderer (no download needed)
 
 // ─── Palette ─────────────────────────────────────────────────────────────────
 const BLUE   = '#1d4ed8';
@@ -24,164 +21,149 @@ const RED    = '#dc2626';
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
   page: {
-    fontFamily:   'Helvetica',
-    fontSize:     9,
-    color:        DARK,
-    paddingTop:   48,
-    paddingBottom: 56,
-    paddingHorizontal: 48,
-    lineHeight:   1.45,
+    fontFamily:        'Helvetica',
+    fontSize:          9,
+    color:             DARK,
+    paddingTop:        36,
+    paddingBottom:     52,
+    paddingHorizontal: 44,
+    lineHeight:        1.4,
   },
 
   // Header band
   headerBand: {
-    flexDirection: 'row',
+    flexDirection:  'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 28,
-    paddingBottom: 20,
-    borderBottom: `1.5 solid ${BLUE}`,
+    alignItems:     'flex-start',
+    marginBottom:   16,
+    paddingBottom:  14,
+    borderBottom:   `1.5 solid ${BLUE}`,
   },
   companyName: {
-    fontSize: 22,
-    fontFamily: 'Helvetica-Bold',
-    color: BLUE,
+    fontSize:    20,
+    fontFamily:  'Helvetica-Bold',
+    color:       BLUE,
     letterSpacing: 1,
   },
   companyTagline: {
-    fontSize: 8,
-    color: MID,
+    fontSize:  7.5,
+    color:     MID,
     marginTop: 2,
   },
   companyDetails: {
-    fontSize: 8,
-    color: MID,
-    textAlign: 'right',
-    lineHeight: 1.6,
+    fontSize:   7.5,
+    color:      MID,
+    textAlign:  'right',
+    lineHeight: 1.55,
   },
 
-  // Invoice title band
+  // Title row
   titleRow: {
-    flexDirection: 'row',
+    flexDirection:  'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    marginBottom: 20,
+    alignItems:     'flex-end',
+    marginBottom:   14,
   },
   invoiceTitle: {
-    fontSize: 20,
-    fontFamily: 'Helvetica-Bold',
-    color: DARK,
+    fontSize:      18,
+    fontFamily:    'Helvetica-Bold',
+    color:         DARK,
     letterSpacing: 0.5,
   },
   invoiceNumber: {
-    fontSize: 10,
+    fontSize:   9,
     fontFamily: 'Helvetica-Bold',
-    color: BLUE,
+    color:      BLUE,
+    marginTop:  2,
   },
   statusBadge: {
     paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 4,
-    fontSize: 8,
-    fontFamily: 'Helvetica-Bold',
+    paddingVertical:   3,
+    borderRadius:      4,
+    fontSize:          8,
+    fontFamily:        'Helvetica-Bold',
   },
 
-  // Parties
-  partiesRow: {
+  // Info row — client left, dates right
+  infoRow: {
     flexDirection: 'row',
-    gap: 16,
-    marginBottom: 24,
+    gap:           12,
+    marginBottom:  16,
   },
-  partyBox: {
-    flex: 1,
+  infoBox: {
+    flex:            1,
     backgroundColor: BG,
-    padding: 12,
-    borderRadius: 4,
-    border: `1 solid ${BORDER}`,
+    padding:         10,
+    borderRadius:    4,
+    border:          `1 solid ${BORDER}`,
   },
-  partyLabel: {
-    fontSize: 7,
-    fontFamily: 'Helvetica-Bold',
-    color: BLUE,
+  infoLabel: {
+    fontSize:      7,
+    fontFamily:    'Helvetica-Bold',
+    color:         BLUE,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
-    marginBottom: 5,
+    marginBottom:  4,
   },
-  partyName: {
-    fontSize: 10,
+  infoName: {
+    fontSize:   9.5,
     fontFamily: 'Helvetica-Bold',
-    color: DARK,
-    marginBottom: 2,
+    color:      DARK,
+    marginBottom: 1,
   },
-  partyLine: {
-    fontSize: 8,
-    color: MID,
-    lineHeight: 1.6,
+  infoLine: {
+    fontSize:   7.5,
+    color:      MID,
+    lineHeight: 1.55,
   },
 
-  // Dates row
-  datesRow: {
+  // Dates inside infoBox
+  dateRow: {
     flexDirection: 'row',
-    gap: 10,
-    marginBottom: 20,
-  },
-  dateBox: {
-    flex: 1,
-    backgroundColor: BG,
-    padding: 10,
-    borderRadius: 4,
-    border: `1 solid ${BORDER}`,
+    marginBottom:  3,
   },
   dateLabel: {
-    fontSize: 7,
-    fontFamily: 'Helvetica-Bold',
-    color: LIGHT,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 3,
+    fontSize: 7.5,
+    color:    LIGHT,
+    width:    90,
   },
   dateValue: {
-    fontSize: 9,
+    fontSize:   7.5,
     fontFamily: 'Helvetica-Bold',
-    color: DARK,
+    color:      DARK,
+    flex:       1,
   },
   dateValueRed: {
-    fontSize: 9,
+    fontSize:   7.5,
     fontFamily: 'Helvetica-Bold',
-    color: RED,
+    color:      RED,
+    flex:       1,
   },
 
   // Table
   table: {
-    marginBottom: 16,
+    marginBottom: 12,
   },
   tableHeader: {
-    flexDirection: 'row',
+    flexDirection:   'row',
     backgroundColor: BLUE,
-    paddingVertical: 7,
+    paddingVertical:  6,
     paddingHorizontal: 10,
-    borderRadius: 4,
-    marginBottom: 2,
-  },
-  tableHeaderCell: {
-    fontSize: 7,
-    fontFamily: 'Helvetica-Bold',
-    color: '#ffffff',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    borderRadius:     4,
+    marginBottom:     1,
   },
   tableRow: {
-    flexDirection: 'row',
-    paddingVertical: 7,
+    flexDirection:    'row',
+    paddingVertical:  5,
     paddingHorizontal: 10,
-    borderBottom: `1 solid ${BORDER}`,
+    borderBottom:     `1 solid ${BORDER}`,
   },
   tableRowAlt: {
-    flexDirection: 'row',
-    paddingVertical: 7,
+    flexDirection:    'row',
+    paddingVertical:  5,
     paddingHorizontal: 10,
-    backgroundColor: BG,
-    borderBottom: `1 solid ${BORDER}`,
+    backgroundColor:  BG,
+    borderBottom:     `1 solid ${BORDER}`,
   },
   cellDesc:  { flex: 5, fontSize: 8.5, color: DARK },
   cellQty:   { flex: 1, fontSize: 8.5, color: MID,  textAlign: 'center' },
@@ -195,137 +177,142 @@ const s = StyleSheet.create({
 
   // Totals block
   totalsRow: {
-    flexDirection: 'row',
+    flexDirection:  'row',
     justifyContent: 'flex-end',
-    marginBottom: 4,
+    marginBottom:   4,
   },
   totalsBlock: {
     width: 220,
   },
   totalLine: {
-    flexDirection: 'row',
+    flexDirection:  'row',
     justifyContent: 'space-between',
     paddingVertical: 3,
-    borderBottom: `1 solid ${BORDER}`,
+    borderBottom:   `1 solid ${BORDER}`,
   },
   totalLineGrand: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 6,
-    backgroundColor: BLUE,
+    flexDirection:    'row',
+    justifyContent:   'space-between',
+    paddingVertical:  6,
+    backgroundColor:  BLUE,
     paddingHorizontal: 10,
-    borderRadius: 4,
-    marginTop: 4,
+    borderRadius:     4,
+    marginTop:        4,
   },
   totalLabel: {
     fontSize: 8,
-    color: MID,
+    color:    MID,
   },
   totalValue: {
-    fontSize: 8,
+    fontSize:   8,
     fontFamily: 'Helvetica-Bold',
-    color: DARK,
+    color:      DARK,
   },
   totalLabelGrand: {
-    fontSize: 10,
+    fontSize:   9,
     fontFamily: 'Helvetica-Bold',
-    color: '#ffffff',
+    color:      '#ffffff',
   },
   totalValueGrand: {
-    fontSize: 10,
+    fontSize:   9,
     fontFamily: 'Helvetica-Bold',
-    color: '#ffffff',
+    color:      '#ffffff',
   },
 
   // Payment section
   paymentBox: {
-    marginTop: 20,
-    padding: 12,
+    marginTop:       14,
+    padding:         10,
     backgroundColor: '#eff6ff',
-    border: `1 solid #bfdbfe`,
-    borderRadius: 4,
+    border:          `1 solid #bfdbfe`,
+    borderRadius:    4,
   },
   paymentTitle: {
-    fontSize: 8,
-    fontFamily: 'Helvetica-Bold',
-    color: BLUE,
-    marginBottom: 6,
+    fontSize:      7.5,
+    fontFamily:    'Helvetica-Bold',
+    color:         BLUE,
+    marginBottom:  5,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
+  paymentGrid: {
+    flexDirection:  'row',
+    flexWrap:       'wrap',
+  },
   paymentRow: {
     flexDirection: 'row',
-    marginBottom: 3,
+    width:         '50%',
+    marginBottom:  2,
   },
   paymentLabel: {
-    fontSize: 8,
-    color: MID,
-    width: 80,
+    fontSize: 7.5,
+    color:    MID,
+    width:    70,
   },
   paymentValue: {
-    fontSize: 8,
+    fontSize:   7.5,
     fontFamily: 'Helvetica-Bold',
-    color: DARK,
-    flex: 1,
+    color:      DARK,
+    flex:       1,
   },
   paymentRef: {
-    fontSize: 8,
-    color: MID,
-    marginTop: 6,
+    fontSize:   7,
+    color:      MID,
+    marginTop:  5,
   },
 
   // Notes
   notesBox: {
-    marginTop: 14,
-    padding: 10,
+    marginTop:       10,
+    padding:         9,
     backgroundColor: BG,
-    border: `1 solid ${BORDER}`,
-    borderRadius: 4,
+    border:          `1 solid ${BORDER}`,
+    borderRadius:    4,
   },
   notesLabel: {
-    fontSize: 7,
-    fontFamily: 'Helvetica-Bold',
-    color: LIGHT,
+    fontSize:      7,
+    fontFamily:    'Helvetica-Bold',
+    color:         LIGHT,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    marginBottom: 4,
+    marginBottom:  3,
   },
   notesText: {
     fontSize: 8,
-    color: MID,
+    color:    MID,
   },
 
   // Footer
   footer: {
-    position: 'absolute',
-    bottom: 28,
-    left: 48,
-    right: 48,
-    borderTop: `1 solid ${BORDER}`,
-    paddingTop: 8,
-    flexDirection: 'row',
+    position:       'absolute',
+    bottom:         24,
+    left:           44,
+    right:          44,
+    borderTop:      `1 solid ${BORDER}`,
+    paddingTop:     6,
+    flexDirection:  'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems:     'center',
   },
   footerLeft: {
     fontSize: 7,
-    color: LIGHT,
+    color:    LIGHT,
   },
   footerRight: {
-    fontSize: 7,
-    color: LIGHT,
+    fontSize:  7,
+    color:     LIGHT,
     textAlign: 'right',
   },
   footerLink: {
     fontSize: 7,
-    color: BLUE,
+    color:    BLUE,
   },
 });
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function fmtEur(n: number) {
-  return `€ ${n.toLocaleString('nl-BE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `\u20ac ${n.toLocaleString('nl-BE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 function fmtDate(iso: string) {
@@ -338,7 +325,7 @@ function statusColor(status: string): { bg: string; fg: string } {
     case 'overdue':   return { bg: '#fee2e2', fg: RED };
     case 'sent':      return { bg: '#dbeafe', fg: BLUE };
     case 'cancelled': return { bg: '#f1f5f9', fg: LIGHT };
-    default:          return { bg: '#f1f5f9', fg: MID }; // draft
+    default:          return { bg: '#f1f5f9', fg: MID };
   }
 }
 
@@ -350,7 +337,6 @@ function statusLabel(status: string) {
   return map[status] ?? status.toUpperCase();
 }
 
-// Belgian structured payment reference (OGM/VCS) — optional
 function buildRef(invoiceNumber: string) {
   return `Factuur ${invoiceNumber}`;
 }
@@ -358,7 +344,7 @@ function buildRef(invoiceNumber: string) {
 // ─── PDF Document ─────────────────────────────────────────────────────────────
 
 export function InvoicePDF({ invoice }: { invoice: Invoice }) {
-  const items   = invoice.items ?? [];
+  const items    = invoice.items ?? [];
   const subtotal = invoice.subtotal ?? 0;
   const vatAmt   = invoice.vat_amount ?? 0;
   const total    = invoice.total ?? 0;
@@ -370,11 +356,11 @@ export function InvoicePDF({ invoice }: { invoice: Invoice }) {
   const sc = statusColor(invoice.status);
   const isOverdue = invoice.status === 'overdue';
 
-  const clientName    = invoice.profile?.full_name ?? invoice.profile?.email ?? '—';
+  const clientName    = invoice.profile?.full_name ?? invoice.profile?.email ?? '\u2014';
   const clientCompany = invoice.profile?.company;
   const clientVat     = invoice.profile?.vat_number;
   const clientAddr    = invoice.profile?.address
-    ? `${invoice.profile.address}\n${invoice.profile.postal_code ?? ''} ${invoice.profile.city ?? ''}`
+    ? `${invoice.profile.address}, ${invoice.profile.postal_code ?? ''} ${invoice.profile.city ?? ''}`
     : null;
 
   return (
@@ -394,12 +380,7 @@ export function InvoicePDF({ invoice }: { invoice: Invoice }) {
           </View>
           <View>
             <Text style={s.companyDetails}>
-              {`${COMPANY.name} ${COMPANY.legal_form}\n`}
-              {`${COMPANY.address}\n`}
-              {`${COMPANY.postal} ${COMPANY.city}\n`}
-              {`BTW: ${COMPANY.vat}\n`}
-              {`KBO: ${COMPANY.kbo}\n`}
-              {`${COMPANY.email}`}
+              {`${COMPANY.name} ${COMPANY.legal_form}\n${COMPANY.address}\n${COMPANY.postal} ${COMPANY.city}\nBTW: ${COMPANY.vat}   KBO: ${COMPANY.kbo}\n${COMPANY.email}`}
             </Text>
           </View>
         </View>
@@ -417,56 +398,49 @@ export function InvoicePDF({ invoice }: { invoice: Invoice }) {
           </View>
         </View>
 
-        {/* ── Parties ── */}
-        <View style={s.partiesRow}>
-          {/* Seller */}
-          <View style={s.partyBox}>
-            <Text style={s.partyLabel}>Leverancier</Text>
-            <Text style={s.partyName}>{COMPANY.name} {COMPANY.legal_form}</Text>
-            <Text style={s.partyLine}>{COMPANY.address}</Text>
-            <Text style={s.partyLine}>{COMPANY.postal} {COMPANY.city}</Text>
-            <Text style={s.partyLine}>BTW: {COMPANY.vat}</Text>
-            <Text style={s.partyLine}>KBO: {COMPANY.kbo}</Text>
-            <Text style={s.partyLine}>{COMPANY.email}</Text>
+        {/* ── Info row: client (left) + dates (right) ── */}
+        <View style={s.infoRow}>
+          {/* Client */}
+          <View style={s.infoBox}>
+            <Text style={s.infoLabel}>Klant</Text>
+            {clientCompany && <Text style={s.infoName}>{clientCompany}</Text>}
+            <Text style={clientCompany ? s.infoLine : s.infoName}>{clientName}</Text>
+            {clientAddr && <Text style={s.infoLine}>{clientAddr}</Text>}
+            {clientVat  && <Text style={s.infoLine}>BTW: {clientVat}</Text>}
+            <Text style={s.infoLine}>{invoice.profile?.email}</Text>
           </View>
 
-          {/* Buyer */}
-          <View style={s.partyBox}>
-            <Text style={s.partyLabel}>Klant</Text>
-            {clientCompany && <Text style={s.partyName}>{clientCompany}</Text>}
-            <Text style={clientCompany ? s.partyLine : s.partyName}>{clientName}</Text>
-            {clientAddr && <Text style={s.partyLine}>{clientAddr}</Text>}
-            {clientVat   && <Text style={s.partyLine}>BTW: {clientVat}</Text>}
-            <Text style={s.partyLine}>{invoice.profile?.email}</Text>
-          </View>
-        </View>
-
-        {/* ── Dates ── */}
-        <View style={s.datesRow}>
-          <View style={s.dateBox}>
-            <Text style={s.dateLabel}>Factuurdatum</Text>
-            <Text style={s.dateValue}>{fmtDate(issueDate)}</Text>
-          </View>
-          <View style={s.dateBox}>
-            <Text style={s.dateLabel}>Vervaldatum</Text>
-            <Text style={isOverdue ? s.dateValueRed : s.dateValue}>
-              {dueDate ? fmtDate(dueDate) : `${COMPANY.payment_days} dagen na factuurdatum`}
-            </Text>
-          </View>
-          <View style={s.dateBox}>
-            <Text style={s.dateLabel}>Betalingsreferentie</Text>
-            <Text style={s.dateValue}>{buildRef(invoice.invoice_number)}</Text>
-          </View>
-          {invoice.is_recurring && (
-            <View style={s.dateBox}>
-              <Text style={s.dateLabel}>Facturatietype</Text>
-              <Text style={[s.dateValue, { color: '#7c3aed' }]}>
-                Terugkerend {invoice.recurring_interval === 'monthly'
-                  ? '(maandelijks)' : invoice.recurring_interval === 'quarterly'
-                  ? '(kwartaal)' : '(jaarlijks)'}
+          {/* Dates */}
+          <View style={s.infoBox}>
+            <Text style={s.infoLabel}>Factuurgegevens</Text>
+            <View style={s.dateRow}>
+              <Text style={s.dateLabel}>Factuurdatum</Text>
+              <Text style={s.dateValue}>{fmtDate(issueDate)}</Text>
+            </View>
+            <View style={s.dateRow}>
+              <Text style={s.dateLabel}>Vervaldatum</Text>
+              <Text style={isOverdue ? s.dateValueRed : s.dateValue}>
+                {dueDate ? fmtDate(dueDate) : `${COMPANY.payment_days} dagen na factuurdatum`}
               </Text>
             </View>
-          )}
+            <View style={s.dateRow}>
+              <Text style={s.dateLabel}>Referentie</Text>
+              <Text style={s.dateValue}>{buildRef(invoice.invoice_number)}</Text>
+            </View>
+            {invoice.is_recurring && (
+              <View style={s.dateRow}>
+                <Text style={s.dateLabel}>Type</Text>
+                <Text style={[s.dateValue, { color: '#7c3aed' }]}>
+                  {'Terugkerend '}
+                  {invoice.recurring_interval === 'monthly'
+                    ? '(maandelijks)'
+                    : invoice.recurring_interval === 'quarterly'
+                    ? '(kwartaal)'
+                    : '(jaarlijks)'}
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
 
         {/* ── Items table ── */}
@@ -509,21 +483,23 @@ export function InvoicePDF({ invoice }: { invoice: Invoice }) {
         {/* ── Payment instructions ── */}
         <View style={s.paymentBox}>
           <Text style={s.paymentTitle}>Betalingsinstructies</Text>
-          <View style={s.paymentRow}>
-            <Text style={s.paymentLabel}>Begunstigde:</Text>
-            <Text style={s.paymentValue}>{COMPANY.name} {COMPANY.legal_form}</Text>
-          </View>
-          <View style={s.paymentRow}>
-            <Text style={s.paymentLabel}>IBAN:</Text>
-            <Text style={s.paymentValue}>{COMPANY.iban}</Text>
-          </View>
-          <View style={s.paymentRow}>
-            <Text style={s.paymentLabel}>BIC:</Text>
-            <Text style={s.paymentValue}>{COMPANY.bic}</Text>
-          </View>
-          <View style={s.paymentRow}>
-            <Text style={s.paymentLabel}>Mededeling:</Text>
-            <Text style={s.paymentValue}>{buildRef(invoice.invoice_number)}</Text>
+          <View style={s.paymentGrid}>
+            <View style={s.paymentRow}>
+              <Text style={s.paymentLabel}>Begunstigde:</Text>
+              <Text style={s.paymentValue}>{COMPANY.name} {COMPANY.legal_form}</Text>
+            </View>
+            <View style={s.paymentRow}>
+              <Text style={s.paymentLabel}>IBAN:</Text>
+              <Text style={s.paymentValue}>{COMPANY.iban}</Text>
+            </View>
+            <View style={s.paymentRow}>
+              <Text style={s.paymentLabel}>BIC:</Text>
+              <Text style={s.paymentValue}>{COMPANY.bic}</Text>
+            </View>
+            <View style={s.paymentRow}>
+              <Text style={s.paymentLabel}>Mededeling:</Text>
+              <Text style={s.paymentValue}>{buildRef(invoice.invoice_number)}</Text>
+            </View>
           </View>
           <Text style={s.paymentRef}>
             {'Gelieve te betalen binnen '}
@@ -545,9 +521,9 @@ export function InvoicePDF({ invoice }: { invoice: Invoice }) {
         {/* ── Footer ── */}
         <View style={s.footer} fixed>
           <Text style={s.footerLeft}>
-            {`${COMPANY.name} ${COMPANY.legal_form} · BTW ${COMPANY.vat} · KBO ${COMPANY.kbo}`}
+            {`${COMPANY.name} ${COMPANY.legal_form} \u00b7 BTW ${COMPANY.vat} \u00b7 KBO ${COMPANY.kbo}`}
           </Text>
-          <View style={{ flexDirection: 'row', gap: 4 }}>
+          <View style={{ flexDirection: 'row', gap: 3 }}>
             <Text style={s.footerRight}>Algemene voorwaarden: </Text>
             <Link src={COMPANY.terms_url} style={s.footerLink}>{COMPANY.terms_url}</Link>
           </View>

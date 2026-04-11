@@ -437,7 +437,7 @@ export default function KalenderClient({
                       <div
                         key={hour}
                         className={`absolute left-0 right-0 border-b border-slate-100 cursor-pointer group transition-colors
-                          ${isBreak ? 'bg-amber-50/50' : working ? '' : 'bg-slate-50/60'}
+                          ${isBreak ? 'bg-red-200' : working ? '' : 'bg-slate-50/60'}
                         `}
                         style={{ top: `${hi * HOUR_HEIGHT}px`, height: `${HOUR_HEIGHT}px` }}
                         onClick={() => handleSlotClick(day, hour)}
@@ -486,7 +486,7 @@ export default function KalenderClient({
         </div>
         <div className="p-4 bg-white border border-slate-200 rounded-xl">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-3 h-3 border rounded bg-amber-50 border-amber-100" />
+            <div className="w-3 h-3 bg-red-200 border border-red-300 rounded" />
             <span className="text-xs font-semibold text-slate-600">Pauze</span>
           </div>
           <p className="text-xs text-slate-400">Gele achtergrond = pauzetijd</p>

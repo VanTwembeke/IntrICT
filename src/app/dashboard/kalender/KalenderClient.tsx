@@ -487,9 +487,9 @@ export default function KalenderClient({
         <div className="p-4 bg-white border border-slate-200 rounded-xl">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-3 h-3 bg-red-200 border border-red-300 rounded" />
-            <span className="text-xs font-semibold text-slate-600">Pauze</span>
+            <span className="text-xs font-semibold text-slate-600">Onbeschikbaar</span>
           </div>
-          <p className="text-xs text-slate-400">Gele achtergrond = pauzetijd</p>
+          <p className="text-xs text-slate-400">Rode achtergrond = Onbeschikbaar</p>
         </div>
         <div className="p-4 bg-white border border-slate-200 rounded-xl">
           <div className="flex items-center gap-2 mb-1">

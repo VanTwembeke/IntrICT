@@ -15,10 +15,10 @@ import { useViewMode } from '@/components/dashboard/DashboardShell';
 
 const HOUR_HEIGHT = 56; // px per hour
 const GRID_START  = 8;  // 08:00
-const GRID_END    = 19; // 19:00
+const GRID_END    = 23; // 23:00
 const HOURS       = Array.from({ length: GRID_END - GRID_START }, (_, i) => GRID_START + i);
 
-const DAY_NAMES_SHORT = ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za'];
+const DAY_NAMES_SHORT = ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'];
 
 const STATUS_STYLE: Record<string, string> = {
   pending:   'border-l-amber-400  bg-amber-50  text-amber-900',
@@ -239,16 +239,16 @@ export default function KalenderClient({
       {/* ── Page header ── */}
       <div className="flex flex-col gap-4 mb-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">
+          <p className="mb-1 text-xs font-semibold tracking-widest uppercase text-slate-400">
             {effectiveAdmin ? 'Administrator' : 'Gebruiker'}
           </p>
           <h1 className="text-3xl font-bold text-slate-900">Kalender</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="mt-1 text-sm text-slate-500">
             {activeAppts.length} afspraak{activeAppts.length !== 1 ? 'en' : ''} deze week
           </p>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex flex-wrap items-center gap-2">
           {effectiveAdmin && (
             <>
               <a
@@ -276,7 +276,7 @@ export default function KalenderClient({
           </button>
           <button
             onClick={() => setBookingSlot({ date: new Date(), time: '09:00' })}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-all"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-all bg-blue-600 rounded-xl hover:bg-blue-700"
           >
             <Plus size={15} />
             Afspraak
@@ -291,16 +291,16 @@ export default function KalenderClient({
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            className="mb-5 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm"
+            className="p-5 mb-5 bg-white border shadow-sm border-slate-200 rounded-2xl"
           >
-            <h3 className="font-bold text-slate-900 mb-1">Agenda synchroniseren</h3>
-            <p className="text-sm text-slate-500 mb-4">
+            <h3 className="mb-1 font-bold text-slate-900">Agenda synchroniseren</h3>
+            <p className="mb-4 text-sm text-slate-500">
               Synchroniseer je Intrict-afspraken met Google Calendar, Apple Agenda, Outlook of
               elke andere app die iCal ondersteunt.
             </p>
             {feedUrl ? (
               <div className="flex items-center gap-2">
-                <code className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 truncate">
+                <code className="flex-1 px-3 py-2 text-xs truncate border bg-slate-50 border-slate-200 rounded-xl text-slate-700">
                   {feedUrl}
                 </code>
                 <button
@@ -315,7 +315,7 @@ export default function KalenderClient({
               <p className="text-sm text-amber-600">Geen agenda-token. Ververs de pagina.</p>
             )}
             {feedUrl && (
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mt-3">
                 <a
                   href={`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(feedUrl.replace(/^https?:\/\//, 'webcal://'))}`}
                   target="_blank" rel="noopener noreferrer"
@@ -344,10 +344,10 @@ export default function KalenderClient({
 
       {/* ── Week navigation ── */}
       <div className="flex items-center gap-3 mb-4">
-        <button onClick={() => navigate(-1)} className="p-2 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 transition-all">
+        <button onClick={() => navigate(-1)} className="p-2 transition-all border rounded-xl border-slate-200 text-slate-500 hover:bg-slate-50">
           <ChevronLeft size={16} />
         </button>
-        <button onClick={() => navigate(1)}  className="p-2 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 transition-all">
+        <button onClick={() => navigate(1)}  className="p-2 transition-all border rounded-xl border-slate-200 text-slate-500 hover:bg-slate-50">
           <ChevronRight size={16} />
         </button>
         <span className="text-sm font-semibold text-slate-700 min-w-48">
@@ -376,11 +376,11 @@ export default function KalenderClient({
       </div>
 
       {/* ── Calendar grid ── */}
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+      <div className="overflow-hidden bg-white border shadow-sm border-slate-200 rounded-2xl">
         {/* Day header row */}
         <div className="flex border-b border-slate-100">
           {/* Gutter spacer */}
-          <div className="w-14 shrink-0 border-r border-slate-100" />
+          <div className="border-r w-14 shrink-0 border-slate-100" />
           {weekDays.map((day, i) => {
             const isToday = isSameDay(day, today);
             return (
@@ -403,11 +403,11 @@ export default function KalenderClient({
         <div className="overflow-y-auto" style={{ maxHeight: '62vh' }}>
           <div className="flex">
             {/* Time gutter */}
-            <div className="w-14 shrink-0 border-r border-slate-100 bg-white">
+            <div className="bg-white border-r w-14 shrink-0 border-slate-100">
               {HOURS.map((hour) => (
                 <div
                   key={hour}
-                  className="flex items-start justify-end pr-2 pt-1 border-b border-slate-100"
+                  className="flex items-start justify-end pt-1 pr-2 border-b border-slate-100"
                   style={{ height: `${HOUR_HEIGHT}px` }}
                 >
                   <span className="text-[10px] text-slate-400 font-medium">
@@ -448,7 +448,7 @@ export default function KalenderClient({
                           style={{ top: `${HOUR_HEIGHT / 2}px` }}
                         />
                         {/* Hover hint */}
-                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
+                        <div className="absolute inset-0 flex items-center justify-center transition-opacity opacity-0 pointer-events-none group-hover:opacity-100">
                           <Plus size={12} className="text-slate-200" />
                         </div>
                       </div>
@@ -476,22 +476,22 @@ export default function KalenderClient({
       </div>
 
       {/* ── Legend ── */}
-      <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
+      <div className="grid grid-cols-1 gap-3 mt-4 sm:grid-cols-3">
+        <div className="p-4 bg-white border border-slate-200 rounded-xl">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-3 h-3 rounded bg-white border border-slate-200" />
+            <div className="w-3 h-3 bg-white border rounded border-slate-200" />
             <span className="text-xs font-semibold text-slate-600">Werktijden</span>
           </div>
           <p className="text-xs text-slate-400">Witte achtergrond = beschikbaar</p>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
+        <div className="p-4 bg-white border border-slate-200 rounded-xl">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-3 h-3 rounded bg-amber-50 border border-amber-100" />
+            <div className="w-3 h-3 border rounded bg-amber-50 border-amber-100" />
             <span className="text-xs font-semibold text-slate-600">Pauze</span>
           </div>
           <p className="text-xs text-slate-400">Gele achtergrond = pauzetijd</p>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
+        <div className="p-4 bg-white border border-slate-200 rounded-xl">
           <div className="flex items-center gap-2 mb-1">
             <Calendar size={12} className="text-slate-400" />
             <span className="text-xs font-semibold text-slate-600">Klik op tijdslot</span>

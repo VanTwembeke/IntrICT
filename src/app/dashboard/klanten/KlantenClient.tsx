@@ -67,7 +67,7 @@ function InviteClientModal({ onClose, onSuccess }: { onClose: () => void; onSucc
         initial={{ opacity: 0, scale: 0.96, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 10 }}
-        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 z-10"
+        className="relative z-10 w-full max-w-md p-6 bg-white shadow-2xl rounded-2xl"
       >
         <div className="flex items-center justify-between mb-5">
           <div>
@@ -80,7 +80,7 @@ function InviteClientModal({ onClose, onSuccess }: { onClose: () => void; onSucc
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">{error}</div>
+          <div className="p-3 mb-4 text-sm text-red-700 border border-red-200 bg-red-50 rounded-xl">{error}</div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -145,17 +145,17 @@ function InviteSuccessModal({ email, onClose }: { email: string; onClose: () => 
         initial={{ opacity: 0, scale: 0.96, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 10 }}
-        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 z-10 text-center"
+        className="relative z-10 w-full max-w-sm p-8 text-center bg-white shadow-2xl rounded-2xl"
       >
-        <div className="flex items-center justify-center w-14 h-14 bg-green-100 rounded-full mx-auto mb-4">
+        <div className="flex items-center justify-center mx-auto mb-4 bg-green-100 rounded-full w-14 h-14">
           <CheckCircle size={28} className="text-green-600" />
         </div>
-        <h2 className="text-lg font-bold text-slate-900 mb-2">Uitnodiging verstuurd!</h2>
-        <p className="text-sm text-slate-500 mb-1">
+        <h2 className="mb-2 text-lg font-bold text-slate-900">Uitnodiging verstuurd!</h2>
+        <p className="mb-1 text-sm text-slate-500">
           Een uitnodigingslink is verstuurd naar:
         </p>
-        <p className="font-semibold text-blue-600 mb-5">{email}</p>
-        <p className="text-xs text-slate-400 mb-6">
+        <p className="mb-5 font-semibold text-blue-600">{email}</p>
+        <p className="mb-6 text-xs text-slate-400">
           De klant ontvangt een e-mail met een link om een wachtwoord in te stellen en toegang te krijgen tot het klantportaal.
           Een dossier wordt automatisch aangemaakt zodra zij zich aanmelden.
         </p>
@@ -233,7 +233,7 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
             Klant uitnodigen
           </button>
           {/* View toggle */}
-          <div className="flex items-center bg-slate-100 rounded-xl p-1">
+          <div className="flex items-center p-1 bg-slate-100 rounded-xl">
             {(['pipeline', 'list'] as const).map((v) => (
               <button
                 key={v}
@@ -252,7 +252,7 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
 
       {/* Search */}
       <div className="relative max-w-sm">
-        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+        <Search size={15} className="absolute -translate-y-1/2 left-3 top-1/2 text-slate-400" />
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -280,25 +280,25 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
                 </div>
 
                 {/* Cards */}
-                <div className="space-y-2 min-h-[120px]">
+                <div className="space-y-2 min-h-30">
                   {cards.map((d) => (
                     <motion.div
                       key={d.id}
                       layout
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all group"
+                      className="p-4 transition-all bg-white border shadow-sm border-slate-200 rounded-2xl hover:shadow-md group"
                     >
                       <div className="flex items-start gap-3 mb-3">
-                        <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 text-white text-xs font-bold shrink-0">
+                        <div className="flex items-center justify-center text-xs font-bold text-white w-9 h-9 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 shrink-0">
                           {initials(d.profile?.full_name ?? null, d.profile?.email ?? '?')}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-slate-900 truncate">
+                          <p className="text-sm font-semibold truncate text-slate-900">
                             {d.profile?.full_name ?? d.profile?.email ?? 'Onbekend'}
                           </p>
                           {d.profile?.company && (
-                            <p className="text-xs text-slate-400 truncate flex items-center gap-1">
+                            <p className="flex items-center gap-1 text-xs truncate text-slate-400">
                               <Building2 size={10} />{d.profile.company}
                             </p>
                           )}
@@ -345,7 +345,7 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
                   ))}
 
                   {cards.length === 0 && (
-                    <div className="flex items-center justify-center h-16 rounded-xl border-2 border-dashed border-slate-200">
+                    <div className="flex items-center justify-center h-16 border-2 border-dashed rounded-xl border-slate-200">
                       <span className="text-xs text-slate-400">Geen klanten</span>
                     </div>
                   )}
@@ -358,23 +358,23 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
 
       {/* List view */}
       {view === 'list' && (
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="overflow-hidden bg-white border shadow-sm border-slate-200 rounded-2xl">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100">
-                <th className="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">Klant</th>
-                <th className="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide hidden md:table-cell">Bedrijf</th>
-                <th className="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">Status</th>
-                <th className="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide hidden lg:table-cell">Pakket</th>
+                <th className="px-5 py-3 text-xs font-semibold tracking-wide text-left uppercase text-slate-400">Klant</th>
+                <th className="hidden px-5 py-3 text-xs font-semibold tracking-wide text-left uppercase text-slate-400 md:table-cell">Bedrijf</th>
+                <th className="px-5 py-3 text-xs font-semibold tracking-wide text-left uppercase text-slate-400">Status</th>
+                <th className="hidden px-5 py-3 text-xs font-semibold tracking-wide text-left uppercase text-slate-400 lg:table-cell">Pakket</th>
                 <th className="px-5 py-3" />
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filtered.map((d) => (
-                <tr key={d.id} className="hover:bg-slate-50 transition-colors">
+                <tr key={d.id} className="transition-colors hover:bg-slate-50">
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-linear-to-br from-blue-500 to-indigo-600 text-white text-xs font-bold shrink-0">
+                      <div className="flex items-center justify-center w-8 h-8 text-xs font-bold text-white rounded-lg bg-linear-to-br from-blue-500 to-indigo-600 shrink-0">
                         {initials(d.profile?.full_name ?? null, d.profile?.email ?? '?')}
                       </div>
                       <div>
@@ -405,7 +405,7 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
                   <td className="px-5 py-3.5 text-right">
                     <Link
                       href={`/dashboard/klanten/${d.id}`}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 transition-colors hover:text-blue-700"
                     >
                       Dossier <ArrowRight size={12} />
                     </Link>
@@ -415,7 +415,7 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
               {filtered.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-5 py-12 text-center">
-                    <Users size={24} className="text-slate-200 mx-auto mb-2" />
+                    <Users size={24} className="mx-auto mb-2 text-slate-200" />
                     <p className="text-sm text-slate-400">Geen klanten gevonden</p>
                   </td>
                 </tr>

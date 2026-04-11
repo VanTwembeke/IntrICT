@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, ArrowLeft, Clock, Euro, User, CheckCircle, AlertCircle } from 'lucide-react';
+import { Plus, Trash2, ArrowLeft, Clock, User, CheckCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import type { TimeLog } from '@/lib/types';
 
@@ -108,9 +108,9 @@ export default function TijdregistratieClient({ initialLogs, users }: Props) {
       {/* Header */}
       <div className="flex flex-col gap-4 mb-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">Administrator</p>
+          <p className="mb-1 text-xs font-semibold tracking-widest uppercase text-slate-400">Administrator</p>
           <h1 className="text-3xl font-bold text-slate-900">Tijdregistratie</h1>
-          <p className="text-sm text-slate-500 mt-1">Log gewerkte uren per klant per dag.</p>
+          <p className="mt-1 text-sm text-slate-500">Log gewerkte uren per klant per dag.</p>
         </div>
         <button
           onClick={() => setShowForm((v) => !v)}
@@ -128,20 +128,20 @@ export default function TijdregistratieClient({ initialLogs, users }: Props) {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mb-6"
+            className="p-5 mb-6 bg-white border shadow-sm border-slate-200 rounded-2xl"
           >
-            <h3 className="font-bold text-slate-900 mb-4">Nieuwe tijdsregistratie</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <h3 className="mb-4 font-bold text-slate-900">Nieuwe tijdsregistratie</h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {/* User */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-widest text-slate-500 mb-2">
+                <label className="block mb-2 text-xs font-semibold tracking-widest uppercase text-slate-500">
                   <User size={10} className="inline mr-1" />
                   Klant
                 </label>
                 <select
                   value={form.user_id}
                   onChange={(e) => setForm((f) => ({ ...f, user_id: e.target.value }))}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   {users.map((u) => (
                     <option key={u.id} value={u.id}>{u.full_name ?? u.email}</option>
@@ -151,18 +151,18 @@ export default function TijdregistratieClient({ initialLogs, users }: Props) {
 
               {/* Date */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-widest text-slate-500 mb-2">Datum</label>
+                <label className="block mb-2 text-xs font-semibold tracking-widest uppercase text-slate-500">Datum</label>
                 <input
                   type="date"
                   value={form.logged_date}
                   onChange={(e) => setForm((f) => ({ ...f, logged_date: e.target.value }))}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
               </div>
 
               {/* Duration */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-widest text-slate-500 mb-2">
+                <label className="block mb-2 text-xs font-semibold tracking-widest uppercase text-slate-500">
                   <Clock size={10} className="inline mr-1" />
                   Duur
                 </label>
@@ -173,7 +173,7 @@ export default function TijdregistratieClient({ initialLogs, users }: Props) {
                     max="24"
                     value={form.hours}
                     onChange={(e) => setForm((f) => ({ ...f, hours: e.target.value }))}
-                    className="w-20 px-3 py-2 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-20 px-3 py-2 text-sm border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
                     placeholder="0"
                   />
                   <span className="text-sm text-slate-500">u</span>
@@ -184,7 +184,7 @@ export default function TijdregistratieClient({ initialLogs, users }: Props) {
                     step="5"
                     value={form.minutes}
                     onChange={(e) => setForm((f) => ({ ...f, minutes: e.target.value }))}
-                    className="w-20 px-3 py-2 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-20 px-3 py-2 text-sm border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
                     placeholder="0"
                   />
                   <span className="text-sm text-slate-500">min</span>
@@ -223,18 +223,18 @@ export default function TijdregistratieClient({ initialLogs, users }: Props) {
 
             {/* Description */}
             <div className="mt-4">
-              <label className="block text-xs font-semibold uppercase tracking-widest text-slate-500 mb-2">Omschrijving</label>
+              <label className="block mb-2 text-xs font-semibold tracking-widest uppercase text-slate-500">Omschrijving</label>
               <textarea
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                 rows={2}
                 placeholder="Wat heb je gedaan?"
-                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-slate-400 resize-none"
+                className="w-full px-3 py-2 text-sm border resize-none border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-slate-400"
               />
             </div>
 
             {formError && (
-              <div className="mt-3 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+              <div className="flex items-start gap-2 p-3 mt-3 text-sm text-red-700 border border-red-200 bg-red-50 rounded-xl">
                 <AlertCircle size={14} className="mt-0.5 shrink-0" />
                 {formError}
               </div>
@@ -253,7 +253,7 @@ export default function TijdregistratieClient({ initialLogs, users }: Props) {
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 disabled:opacity-70 transition-all"
               >
                 {submitting
-                  ? <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  ? <span className="w-4 h-4 border-2 rounded-full border-white/40 border-t-white animate-spin" />
                   : <CheckCircle size={14} />}
                 {submitting ? 'Opslaan...' : 'Opslaan'}
               </button>
@@ -263,28 +263,28 @@ export default function TijdregistratieClient({ initialLogs, users }: Props) {
       </AnimatePresence>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
-          <p className="text-xs text-slate-400 font-medium mb-1">Totaal</p>
+      <div className="grid grid-cols-2 gap-3 mb-6 sm:grid-cols-4">
+        <div className="p-4 bg-white border border-slate-200 rounded-xl">
+          <p className="mb-1 text-xs font-medium text-slate-400">Totaal</p>
           <p className="text-xl font-bold text-slate-900">{formatDuration(totalMinutes)}</p>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
-          <p className="text-xs text-slate-400 font-medium mb-1">Factureerbaar</p>
+        <div className="p-4 bg-white border border-slate-200 rounded-xl">
+          <p className="mb-1 text-xs font-medium text-slate-400">Factureerbaar</p>
           <p className="text-xl font-bold text-green-600">{formatDuration(billableMin)}</p>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
-          <p className="text-xs text-slate-400 font-medium mb-1">Niet factureerbaar</p>
+        <div className="p-4 bg-white border border-slate-200 rounded-xl">
+          <p className="mb-1 text-xs font-medium text-slate-400">Niet factureerbaar</p>
           <p className="text-xl font-bold text-slate-500">{formatDuration(totalMinutes - billableMin)}</p>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
-          <p className="text-xs text-slate-400 font-medium mb-1">Registraties</p>
+        <div className="p-4 bg-white border border-slate-200 rounded-xl">
+          <p className="mb-1 text-xs font-medium text-slate-400">Registraties</p>
           <p className="text-xl font-bold text-slate-900">{filtered.length}</p>
         </div>
       </div>
 
       {/* Filter by user */}
       <div className="flex items-center gap-3 mb-4">
-        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Filter:</span>
+        <span className="text-xs font-semibold tracking-wider uppercase text-slate-400">Filter:</span>
         <select
           value={filterUser}
           onChange={(e) => setFilterUser(e.target.value)}
@@ -299,10 +299,10 @@ export default function TijdregistratieClient({ initialLogs, users }: Props) {
 
       {/* Log list grouped by date */}
       {grouped.length === 0 ? (
-        <div className="text-center py-16 bg-white border border-slate-200 rounded-2xl">
-          <Clock size={32} className="text-slate-200 mx-auto mb-3" />
-          <p className="text-slate-400 text-sm">Nog geen tijdsregistraties.</p>
-          <p className="text-slate-300 text-xs mt-1">Klik op &quot;Tijd loggen&quot; om te beginnen.</p>
+        <div className="py-16 text-center bg-white border border-slate-200 rounded-2xl">
+          <Clock size={32} className="mx-auto mb-3 text-slate-200" />
+          <p className="text-sm text-slate-400">Nog geen tijdsregistraties.</p>
+          <p className="mt-1 text-xs text-slate-300">Klik op &quot;Tijd loggen&quot; om te beginnen.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -314,7 +314,7 @@ export default function TijdregistratieClient({ initialLogs, users }: Props) {
             return (
               <div key={date}>
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 capitalize">
+                  <p className="text-xs font-semibold tracking-widest uppercase text-slate-400">
                     {dateLabel}
                   </p>
                   <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
@@ -326,12 +326,12 @@ export default function TijdregistratieClient({ initialLogs, users }: Props) {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const p = (log as any).profile;
                     return (
-                      <div key={log.id} className="bg-white border border-slate-200 rounded-xl px-4 py-3 flex items-center gap-4">
-                        <div className="p-2 bg-slate-50 rounded-lg shrink-0">
+                      <div key={log.id} className="flex items-center gap-4 px-4 py-3 bg-white border border-slate-200 rounded-xl">
+                        <div className="p-2 rounded-lg bg-slate-50 shrink-0">
                           <Clock size={14} className="text-slate-400" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex flex-wrap items-center gap-2">
                             <p className="text-sm font-semibold text-slate-800">
                               {p?.full_name ?? p?.email ?? 'Klant'}
                             </p>

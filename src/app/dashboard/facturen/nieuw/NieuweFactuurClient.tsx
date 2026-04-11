@@ -133,12 +133,12 @@ export default function NieuweFactuurClient({
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
         <button
           onClick={() => router.back()}
-          className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all"
+          className="p-2 transition-all rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100"
         >
           <ArrowLeft size={18} />
         </button>
@@ -146,10 +146,10 @@ export default function NieuweFactuurClient({
           <h1 className="text-2xl font-bold text-slate-900">Nieuwe factuur</h1>
           <p className="text-sm text-slate-500">Maak een factuur aan voor een klant</p>
         </div>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex items-center gap-2 ml-auto">
           <button
             onClick={() => setShowPreview((v) => !v)}
-            className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all"
+            className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl"
           >
             {showPreview ? <EyeOff size={15} /> : <Eye size={15} />}
             {showPreview ? 'Verberg preview' : 'Toon preview'}
@@ -157,15 +157,15 @@ export default function NieuweFactuurClient({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Main form */}
-        <div className="lg:col-span-2 space-y-5">
+        <div className="space-y-5 lg:col-span-2">
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">{error}</div>
+            <div className="p-3 text-sm text-red-700 border border-red-200 bg-red-50 rounded-xl">{error}</div>
           )}
 
           {/* Client */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+          <div className="p-5 space-y-4 bg-white border shadow-sm rounded-2xl border-slate-200">
             <h2 className="font-bold text-slate-900">Klant</h2>
             <select
               value={dossierId}
@@ -197,9 +197,9 @@ export default function NieuweFactuurClient({
           </div>
 
           {/* Dates & VAT */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+          <div className="p-5 space-y-4 bg-white border shadow-sm rounded-2xl border-slate-200">
             <h2 className="font-bold text-slate-900">Factuurgegevens</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">Factuurdatum</label>
                 <input
@@ -223,7 +223,7 @@ export default function NieuweFactuurClient({
                 <select
                   value={vatRate}
                   onChange={(e) => setVatRate(Number(e.target.value))}
-                  className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 bg-white"
+                  className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800"
                 >
                   <option value={0}>0% (vrijgesteld)</option>
                   <option value={6}>6%</option>
@@ -270,7 +270,7 @@ export default function NieuweFactuurClient({
           </div>
 
           {/* Line items */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+          <div className="p-5 space-y-4 bg-white border shadow-sm rounded-2xl border-slate-200">
             <div className="flex items-center justify-between">
               <h2 className="font-bold text-slate-900">Regelposten</h2>
             </div>
@@ -296,9 +296,9 @@ export default function NieuweFactuurClient({
             {/* Items list */}
             <div className="space-y-2">
               {items.map((item, i) => (
-                <div key={item.id} className="grid grid-cols-12 gap-2 items-center">
+                <div key={item.id} className="grid items-center grid-cols-12 gap-2">
                   <div className="col-span-6">
-                    {i === 0 && <label className="block text-xs font-semibold text-slate-400 mb-1">Omschrijving</label>}
+                    {i === 0 && <label className="block mb-1 text-xs font-semibold text-slate-400">Omschrijving</label>}
                     <input
                       type="text"
                       value={item.description}
@@ -308,17 +308,17 @@ export default function NieuweFactuurClient({
                     />
                   </div>
                   <div className="col-span-2">
-                    {i === 0 && <label className="block text-xs font-semibold text-slate-400 mb-1">Aantal</label>}
+                    {i === 0 && <label className="block mb-1 text-xs font-semibold text-slate-400">Aantal</label>}
                     <input
                       type="number"
                       min={1}
                       value={item.quantity}
                       onChange={(e) => updateItem(item.id, 'quantity', Number(e.target.value))}
-                      className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 text-center"
+                      className="w-full px-3 py-2 text-sm text-center border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800"
                     />
                   </div>
                   <div className="col-span-3">
-                    {i === 0 && <label className="block text-xs font-semibold text-slate-400 mb-1">Eenheidsprijs</label>}
+                    {i === 0 && <label className="block mb-1 text-xs font-semibold text-slate-400">Eenheidsprijs</label>}
                     <input
                       type="number"
                       min={0}
@@ -329,7 +329,7 @@ export default function NieuweFactuurClient({
                     />
                   </div>
                   <div className="col-span-1 flex items-end justify-center pb-0.5">
-                    {i === 0 && <div className="h-[22px]" />}
+                    {i === 0 && <div className="h-5.5" />}
                     <button
                       type="button"
                       onClick={() => removeItem(item.id)}
@@ -345,7 +345,7 @@ export default function NieuweFactuurClient({
             <button
               type="button"
               onClick={() => setItems((prev) => [...prev, newItem()])}
-              className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 transition-colors hover:text-blue-700"
             >
               <Plus size={15} />
               Regelpost toevoegen
@@ -353,7 +353,7 @@ export default function NieuweFactuurClient({
           </div>
 
           {/* Notes */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+          <div className="p-5 space-y-3 bg-white border shadow-sm rounded-2xl border-slate-200">
             <h2 className="font-bold text-slate-900">Opmerkingen</h2>
             <textarea
               value={notes}
@@ -368,7 +368,7 @@ export default function NieuweFactuurClient({
         {/* Sidebar: totals + actions */}
         <div className="space-y-5">
           {/* Totals */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3 sticky top-6">
+          <div className="sticky p-5 space-y-3 bg-white border shadow-sm rounded-2xl border-slate-200 top-6">
             <h2 className="font-bold text-slate-900">Totaal</h2>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between text-slate-600">
@@ -379,13 +379,13 @@ export default function NieuweFactuurClient({
                 <span>BTW ({vatRate}%)</span>
                 <span className="font-medium">{fmt(vatAmount)}</span>
               </div>
-              <div className="flex justify-between text-slate-900 font-bold text-base pt-2 border-t border-slate-100">
+              <div className="flex justify-between pt-2 text-base font-bold border-t text-slate-900 border-slate-100">
                 <span>Totaal</span>
                 <span>{fmt(total)}</span>
               </div>
             </div>
 
-            <div className="space-y-2 pt-2">
+            <div className="pt-2 space-y-2">
               <button
                 onClick={() => handleSave('sent')}
                 disabled={saving}
@@ -413,13 +413,13 @@ export default function NieuweFactuurClient({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 max-w-2xl"
+            className="max-w-2xl p-8 bg-white border shadow-sm rounded-2xl border-slate-200"
           >
             <div className="flex items-start justify-between mb-8">
               <div>
                 <h2 className="text-2xl font-bold text-slate-900">FACTUUR</h2>
-                <p className="text-slate-400 text-sm mt-1">Datum: {new Date(issueDate).toLocaleDateString('nl-BE')}</p>
-                {dueDate && <p className="text-slate-400 text-sm">Vervaldatum: {new Date(dueDate).toLocaleDateString('nl-BE')}</p>}
+                <p className="mt-1 text-sm text-slate-400">Datum: {new Date(issueDate).toLocaleDateString('nl-BE')}</p>
+                {dueDate && <p className="text-sm text-slate-400">Vervaldatum: {new Date(dueDate).toLocaleDateString('nl-BE')}</p>}
               </div>
               <div className="text-right">
                 <p className="text-xl font-bold text-blue-600">IntrICT</p>
@@ -428,21 +428,21 @@ export default function NieuweFactuurClient({
             </div>
 
             {selectedDossier && (
-              <div className="mb-6 p-4 bg-slate-50 rounded-xl text-sm">
-                <p className="font-semibold text-slate-800 mb-1">Aan:</p>
+              <div className="p-4 mb-6 text-sm bg-slate-50 rounded-xl">
+                <p className="mb-1 font-semibold text-slate-800">Aan:</p>
                 {selectedDossier.profile?.company && <p className="font-medium">{selectedDossier.profile.company}</p>}
                 <p>{selectedDossier.profile?.full_name}</p>
                 <p className="text-slate-500">{selectedDossier.profile?.email}</p>
               </div>
             )}
 
-            <table className="w-full text-sm mb-6">
+            <table className="w-full mb-6 text-sm">
               <thead>
                 <tr className="border-b border-slate-200">
-                  <th className="text-left py-2 text-xs font-semibold text-slate-400 uppercase">Omschrijving</th>
-                  <th className="text-right py-2 text-xs font-semibold text-slate-400 uppercase">Aantal</th>
-                  <th className="text-right py-2 text-xs font-semibold text-slate-400 uppercase">Prijs</th>
-                  <th className="text-right py-2 text-xs font-semibold text-slate-400 uppercase">Totaal</th>
+                  <th className="py-2 text-xs font-semibold text-left uppercase text-slate-400">Omschrijving</th>
+                  <th className="py-2 text-xs font-semibold text-right uppercase text-slate-400">Aantal</th>
+                  <th className="py-2 text-xs font-semibold text-right uppercase text-slate-400">Prijs</th>
+                  <th className="py-2 text-xs font-semibold text-right uppercase text-slate-400">Totaal</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -464,14 +464,14 @@ export default function NieuweFactuurClient({
               <div className="flex justify-between text-slate-600">
                 <span>BTW {vatRate}%</span><span>{fmt(vatAmount)}</span>
               </div>
-              <div className="flex justify-between font-bold text-slate-900 text-base pt-2 border-t border-slate-200">
+              <div className="flex justify-between pt-2 text-base font-bold border-t text-slate-900 border-slate-200">
                 <span>TOTAAL</span><span>{fmt(total)}</span>
               </div>
             </div>
 
             {notes && (
-              <div className="mt-6 pt-4 border-t border-slate-100 text-sm text-slate-500">
-                <p className="font-semibold text-slate-700 mb-1">Opmerkingen</p>
+              <div className="pt-4 mt-6 text-sm border-t border-slate-100 text-slate-500">
+                <p className="mb-1 font-semibold text-slate-700">Opmerkingen</p>
                 <p>{notes}</p>
               </div>
             )}

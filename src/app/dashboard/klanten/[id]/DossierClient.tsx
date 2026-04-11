@@ -103,7 +103,7 @@ export default function DossierClient({
   const totalPaid     = invoices.filter((i) => i.status === 'paid').reduce((s, i) => s + i.total, 0);
 
   return (
-    <div className="space-y-6 max-w-6xl">
+    <div className="max-w-6xl space-y-6">
       {/* Back + header */}
       <div>
         <Link href="/dashboard/klanten" className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 transition-colors mb-4">
@@ -119,14 +119,14 @@ export default function DossierClient({
           <div className="flex items-center gap-2">
             <Link
               href={`/dashboard/facturen/nieuw?client=${dossier.profile_id}`}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-colors bg-blue-600 rounded-xl hover:bg-blue-700"
             >
               <Plus size={14} /> Nieuwe factuur
             </Link>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-60"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-colors bg-slate-900 rounded-xl hover:bg-slate-800 disabled:opacity-60"
             >
               {saved ? <CheckCircle size={14} /> : <Save size={14} />}
               {saved ? 'Opgeslagen' : saving ? 'Bezig…' : 'Opslaan'}
@@ -137,11 +137,11 @@ export default function DossierClient({
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Left column */}
-        <div className="lg:col-span-1 space-y-5">
+        <div className="space-y-5 lg:col-span-1">
           {/* Profile card */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
-            <div className="flex items-center gap-3 mb-4 pb-4 border-b border-slate-100">
-              <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-linear-to-br from-blue-500 to-indigo-600 text-white font-bold text-lg">
+          <div className="p-5 bg-white border shadow-sm border-slate-200 rounded-2xl">
+            <div className="flex items-center gap-3 pb-4 mb-4 border-b border-slate-100">
+              <div className="flex items-center justify-center w-12 h-12 text-lg font-bold text-white rounded-2xl bg-linear-to-br from-blue-500 to-indigo-600">
                 {(profile?.full_name ?? profile?.email ?? '?').slice(0, 2).toUpperCase()}
               </div>
               <div>
@@ -167,8 +167,8 @@ export default function DossierClient({
           </div>
 
           {/* Status */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Pipeline status</h3>
+          <div className="p-5 bg-white border shadow-sm border-slate-200 rounded-2xl">
+            <h3 className="mb-3 text-xs font-bold tracking-widest uppercase text-slate-400">Pipeline status</h3>
             <div className="space-y-1.5">
               {STAGES.map((s) => (
                 <button
@@ -189,8 +189,8 @@ export default function DossierClient({
           </div>
 
           {/* Financials */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Financieel</h3>
+          <div className="p-5 bg-white border shadow-sm border-slate-200 rounded-2xl">
+            <h3 className="mb-3 text-xs font-bold tracking-widest uppercase text-slate-400">Financieel</h3>
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-slate-500">Gefactureerd</span>
@@ -209,26 +209,26 @@ export default function DossierClient({
         </div>
 
         {/* Right column */}
-        <div className="lg:col-span-2 space-y-5">
+        <div className="space-y-5 lg:col-span-2">
           {/* Notes */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Notities</h3>
+          <div className="p-5 bg-white border shadow-sm border-slate-200 rounded-2xl">
+            <h3 className="mb-3 text-xs font-bold tracking-widest uppercase text-slate-400">Notities</h3>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={4}
               placeholder="Voeg notities toe over deze klant…"
-              className="w-full px-4 py-3 text-sm border border-slate-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 placeholder:text-slate-400"
+              className="w-full px-4 py-3 text-sm border resize-none border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 placeholder:text-slate-400"
             />
           </div>
 
           {/* Packages */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
+          <div className="p-5 bg-white border shadow-sm border-slate-200 rounded-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">Actieve pakketten</h3>
+              <h3 className="text-xs font-bold tracking-widest uppercase text-slate-400">Actieve pakketten</h3>
               <button
                 onClick={() => setAddPkg(true)}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 transition-colors hover:text-blue-700"
               >
                 <Plus size={12} /> Toevoegen
               </button>
@@ -240,30 +240,30 @@ export default function DossierClient({
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden mb-4"
+                  className="mb-4 overflow-hidden"
                 >
-                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                  <div className="p-3 space-y-3 border bg-slate-50 rounded-xl border-slate-200">
                     <select
                       value={selectedPkg}
                       onChange={(e) => setSelectedPkg(e.target.value)}
-                      className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 text-slate-800"
+                      className="w-full px-3 py-2 text-sm bg-white border rounded-lg border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-100 text-slate-800"
                     >
                       <option value="">Selecteer pakket…</option>
                       {availablePackages.map((p) => (
                         <option key={p.id} value={p.id}>{p.name} — €{p.price}</option>
                       ))}
                     </select>
-                    <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
+                    <label className="flex items-center gap-2 text-sm cursor-pointer text-slate-600">
                       <input type="checkbox" checked={isRecurring} onChange={(e) => setIsRecurring(e.target.checked)} className="rounded" />
                       Terugkerend (maandelijks factureren)
                     </label>
                     <div className="flex gap-2">
                       <button onClick={handleAddPackage} disabled={!selectedPkg || pkgSaving}
-                        className="flex-1 px-3 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-60 transition-colors">
+                        className="flex-1 px-3 py-2 text-xs font-semibold text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-60">
                         {pkgSaving ? 'Bezig…' : 'Toevoegen'}
                       </button>
                       <button onClick={() => setAddPkg(false)}
-                        className="px-3 py-2 border border-slate-200 text-slate-600 text-xs font-semibold rounded-lg hover:bg-slate-50 transition-colors">
+                        className="px-3 py-2 text-xs font-semibold transition-colors border rounded-lg border-slate-200 text-slate-600 hover:bg-slate-50">
                         Annuleren
                       </button>
                     </div>
@@ -273,11 +273,11 @@ export default function DossierClient({
             </AnimatePresence>
 
             {(dossier.packages?.length ?? 0) === 0 ? (
-              <p className="text-sm text-slate-400 text-center py-4">Geen pakketten gekoppeld.</p>
+              <p className="py-4 text-sm text-center text-slate-400">Geen pakketten gekoppeld.</p>
             ) : (
               <div className="space-y-2">
                 {dossier.packages!.map((dp) => (
-                  <div key={dp.id} className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 bg-slate-50">
+                  <div key={dp.id} className="flex items-center gap-3 p-3 border rounded-xl border-slate-100 bg-slate-50">
                     <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: dp.package?.color ?? '#3b82f6' }} />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-slate-800">{dp.package?.name}</p>
@@ -287,7 +287,7 @@ export default function DossierClient({
                       </p>
                     </div>
                     <button onClick={() => handleRemovePackage(dp.id)}
-                      className="p-1 text-slate-300 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50">
+                      className="p-1 transition-colors rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50">
                       <X size={13} />
                     </button>
                   </div>
@@ -297,21 +297,21 @@ export default function DossierClient({
           </div>
 
           {/* Invoices */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
+          <div className="p-5 bg-white border shadow-sm border-slate-200 rounded-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">Facturen</h3>
+              <h3 className="text-xs font-bold tracking-widest uppercase text-slate-400">Facturen</h3>
               <Link href={`/dashboard/facturen/nieuw?client=${dossier.profile_id}`}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 transition-colors hover:text-blue-700">
                 <Plus size={12} /> Nieuwe factuur
               </Link>
             </div>
             {invoices.length === 0 ? (
-              <p className="text-sm text-slate-400 text-center py-4">Geen facturen voor deze klant.</p>
+              <p className="py-4 text-sm text-center text-slate-400">Geen facturen voor deze klant.</p>
             ) : (
               <div className="space-y-2">
                 {invoices.map((inv) => (
                   <Link key={inv.id} href={`/dashboard/facturen/${inv.id}`}
-                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50 transition-all group">
+                    className="flex items-center gap-3 p-3 transition-all border rounded-xl border-slate-100 hover:border-blue-200 hover:bg-blue-50 group">
                     <FileText size={14} className="text-slate-400 shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-slate-800">{inv.invoice_number}</p>
@@ -330,16 +330,16 @@ export default function DossierClient({
           </div>
 
           {/* Activity timeline */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Activiteit</h3>
+          <div className="p-5 bg-white border shadow-sm border-slate-200 rounded-2xl">
+            <h3 className="mb-4 text-xs font-bold tracking-widest uppercase text-slate-400">Activiteit</h3>
             {activity.length === 0 ? (
-              <p className="text-sm text-slate-400 text-center py-4">Nog geen activiteit.</p>
+              <p className="py-4 text-sm text-center text-slate-400">Nog geen activiteit.</p>
             ) : (
               <div className="relative space-y-0">
-                <div className="absolute left-[18px] top-0 bottom-0 w-px bg-slate-100" />
+                <div className="absolute left-4.5 top-0 bottom-0 w-px bg-slate-100" />
                 {activity.map((a, i) => (
-                  <div key={a.id} className="flex gap-3 pl-1 pb-4 last:pb-0">
-                    <div className="relative z-10 flex items-center justify-center w-8 h-8 rounded-full bg-white border border-slate-200 shrink-0">
+                  <div key={a.id} className="flex gap-3 pb-4 pl-1 last:pb-0">
+                    <div className="relative z-10 flex items-center justify-center w-8 h-8 bg-white border rounded-full border-slate-200 shrink-0">
                       {ACT_ICON[a.type] ?? <Clock size={13} className="text-slate-400" />}
                     </div>
                     <div className="flex-1 pt-1">

@@ -18,7 +18,7 @@ const GRID_START  = 8;  // 08:00
 const GRID_END    = 23; // 23:00
 const HOURS       = Array.from({ length: GRID_END - GRID_START }, (_, i) => GRID_START + i);
 
-const DAY_NAMES_SHORT = ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'];
+const DAY_NAMES_SHORT = ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za'];
 
 const STATUS_STYLE: Record<string, string> = {
   pending:   'border-l-amber-400  bg-amber-50  text-amber-900',

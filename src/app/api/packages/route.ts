@@ -66,6 +66,7 @@ export async function POST(request: NextRequest) {
         highlight: Boolean(body.highlight),
         active: body.active !== undefined ? Boolean(body.active) : true,
         sort_order: Number(body.sort_order ?? 0),
+        billing_interval: body.billing_interval ?? 'one_time',
       })
       .select()
       .single();

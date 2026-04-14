@@ -80,6 +80,8 @@ export interface PackageRequest {
   };
 }
 
+export type BillingInterval = 'one_time' | 'monthly' | 'yearly';
+
 export interface Package {
   id: string;
   name: string;
@@ -90,6 +92,7 @@ export interface Package {
   highlight: boolean;
   active: boolean;
   sort_order: number;
+  billing_interval: BillingInterval;
   created_at: string;
   updated_at: string;
 }
@@ -183,6 +186,13 @@ export interface InvoiceItem {
   created_at: string;
 }
 
+export interface NotificationPreferences {
+  email_messages?: boolean;
+  email_invoices?: boolean;
+  email_appointments?: boolean;
+  newsletter?: boolean;
+}
+
 export interface Profile {
   id: string;
   email: string;
@@ -203,6 +213,7 @@ export interface Profile {
   show_public_review?: boolean | null;
   review_score?: number | null;
   review_text?: string | null;
+  notification_preferences?: NotificationPreferences | null;
   role: UserRole;
   created_at: string;
   updated_at?: string;

@@ -18,6 +18,7 @@ const FALLBACK_PACKAGES: Package[] = [
     highlight: false,
     active: true,
     sort_order: 0,
+    billing_interval: 'one_time',
     created_at: '',
     updated_at: '',
   },
@@ -31,6 +32,7 @@ const FALLBACK_PACKAGES: Package[] = [
     highlight: true,
     active: true,
     sort_order: 1,
+    billing_interval: 'one_time',
     created_at: '',
     updated_at: '',
   },
@@ -44,6 +46,7 @@ const FALLBACK_PACKAGES: Package[] = [
     highlight: false,
     active: true,
     sort_order: 2,
+    billing_interval: 'one_time',
     created_at: '',
     updated_at: '',
   },
@@ -57,6 +60,7 @@ const FALLBACK_PACKAGES: Package[] = [
     highlight: false,
     active: true,
     sort_order: 3,
+    billing_interval: 'one_time',
     created_at: '',
     updated_at: '',
   },
@@ -186,7 +190,7 @@ export default async function PakkettenPage() {
                 >
                   <span className="text-3xl font-bold">€{pkg.price.toLocaleString('nl-BE')}</span>
                   <span className={`text-sm ${isHighlight ? 'text-purple-200' : 'text-slate-400'}`}>
-                    eenmalig
+                    {pkg.billing_interval === 'monthly' ? '/ maand' : pkg.billing_interval === 'yearly' ? '/ jaar' : 'eenmalig'}
                   </span>
                 </div>
 

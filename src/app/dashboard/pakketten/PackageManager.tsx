@@ -14,7 +14,7 @@ import {
   GripVertical,
   Check,
 } from 'lucide-react';
-import type { Package } from '@/lib/types';
+import type { Package, BillingInterval } from '@/lib/types';
 
 // ─── Color options ────────────────────────────────────────────────────────────
 
@@ -45,6 +45,7 @@ interface FormState {
   highlight: boolean;
   active: boolean;
   sort_order: string;
+  billing_interval: BillingInterval;
 }
 
 const EMPTY_FORM: FormState = {
@@ -56,6 +57,7 @@ const EMPTY_FORM: FormState = {
   highlight: false,
   active: true,
   sort_order: '0',
+  billing_interval: 'one_time',
 };
 
 function packageToForm(pkg: Package): FormState {
@@ -68,6 +70,7 @@ function packageToForm(pkg: Package): FormState {
     highlight: pkg.highlight,
     active: pkg.active,
     sort_order: String(pkg.sort_order),
+    billing_interval: pkg.billing_interval ?? 'one_time',
   };
 }
 
@@ -84,6 +87,7 @@ function formToPayload(form: FormState) {
     highlight: form.highlight,
     active: form.active,
     sort_order: Number(form.sort_order) || 0,
+    billing_interval: form.billing_interval,
   };
 }
 
@@ -301,6 +305,31 @@ function PackageModal({
                 >
                   <span className={`w-3 h-3 rounded-full ${c.dot}`} />
                   {c.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Billing interval */}
+          <div>
+            <label className={labelClass}>Factureringsinterval</label>
+            <div className="flex gap-2">
+              {([
+                { id: 'one_time', label: 'Eenmalig' },
+                { id: 'monthly',  label: 'Maandelijks' },
+                { id: 'yearly',   label: 'Jaarlijks' },
+              ] as { id: BillingInterval; label: string }[]).map((opt) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setForm((prev) => ({ ...prev, billing_interval: opt.id }))}
+                  className={`flex-1 px-3 py-2.5 rounded-xl border text-sm font-medium transition-all ${
+                    form.billing_interval === opt.id
+                      ? 'border-blue-400 bg-blue-50 text-blue-700'
+                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                  }`}
+                >
+                  {opt.label}
                 </button>
               ))}
             </div>

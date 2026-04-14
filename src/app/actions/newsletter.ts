@@ -11,6 +11,23 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID ?? '';
 
+export async function updateNewsletterSubscription(email: string, subscribe: boolean): Promise<NewsletterState> {
+  if (!AUDIENCE_ID) return { success: false, error: 'Nieuwsbrief service niet beschikbaar.' };
+  try {
+    const { error } = await resend.contacts.create({
+      email: email.trim().toLowerCase(),
+      audienceId: AUDIENCE_ID,
+      unsubscribed: !subscribe,
+    });
+    if (error && !error.message?.toLowerCase().includes('already exists')) {
+      return { success: false, error: 'Kon nieuwsbrief voorkeur niet opslaan.' };
+    }
+    return { success: true };
+  } catch {
+    return { success: false, error: 'Er is iets misgegaan.' };
+  }
+}
+
 export async function subscribeNewsletter(
   _prevState: NewsletterState,
   formData: FormData

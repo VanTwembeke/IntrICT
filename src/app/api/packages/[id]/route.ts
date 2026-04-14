@@ -43,6 +43,7 @@ export async function PUT(
         highlight: Boolean(body.highlight),
         active: Boolean(body.active),
         sort_order: Number(body.sort_order ?? 0),
+        billing_interval: body.billing_interval ?? 'one_time',
       })
       .eq('id', id)
       .select()

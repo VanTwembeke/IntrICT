@@ -14,6 +14,34 @@ import type { User } from '@supabase/supabase-js';
 import { useMessages } from '@/hooks/useMessages';
 import { blogPosts } from '@/data/blog-posts';
 
+// ─── Fuzzy search ─────────────────────────────────────────────────────────────
+
+function levenshtein(a: string, b: string): number {
+  const m = a.length, n = b.length;
+  const dp: number[][] = Array.from({ length: m + 1 }, (_, i) =>
+    Array.from({ length: n + 1 }, (_, j) => (i === 0 ? j : j === 0 ? i : 0))
+  );
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      dp[i][j] = a[i - 1] === b[j - 1]
+        ? dp[i - 1][j - 1]
+        : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+  return dp[m][n];
+}
+
+function fuzzyMatch(query: string, text: string): boolean {
+  const q = query.toLowerCase().trim();
+  const t = text.toLowerCase();
+  if (!q) return true;
+  if (t.includes(q)) return true;
+  if (q.length < 3) return false;
+  return t.split(/\s+/).some(word => {
+    if (word.startsWith(q)) return true;
+    if (Math.abs(word.length - q.length) > 2) return false;
+    return levenshtein(q, word) <= 1;
+  });
+}
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 interface NavItem { href: string; Icon: React.ElementType; label: string; desc: string }
@@ -54,6 +82,7 @@ const SEARCH_BLOGS = blogPosts.map((post) => ({
   href:  `/blog/${post.slug}`,
   Icon:  BookOpen,
   cat:   'Blog',
+  tags:  post.tags,
 }));
 const SEARCH_DASHBOARD = [
   { label: 'Dashboard',  desc: 'Jouw persoonlijk dashboard', href: '/dashboard',           Icon: LayoutDashboard, cat: 'Dashboard', auth: true },
@@ -72,7 +101,7 @@ const STATUS_LABELS: Record<string, string> = {
 
 // ─── Command palette ──────────────────────────────────────────────────────────
 
-function CommandPalette({ isLoggedIn, onClose }: { isLoggedIn: boolean; onClose: () => void }) {
+function CommandPalette({ isLoggedIn, onClose, isMac }: { isLoggedIn: boolean; onClose: () => void; isMac: boolean }) {
   const [query, setQuery] = useState('');
   const [cursor, setCursor] = useState(0);
   const router = useRouter();
@@ -88,10 +117,11 @@ function CommandPalette({ isLoggedIn, onClose }: { isLoggedIn: boolean; onClose:
   ];
 
   const filtered = query
-    ? allItems.filter(i =>
-        i.label.toLowerCase().includes(query.toLowerCase()) ||
-        i.desc.toLowerCase().includes(query.toLowerCase())
-      )
+    ? allItems.filter(i => {
+        if (fuzzyMatch(query, i.label) || fuzzyMatch(query, i.desc)) return true;
+        const tags = (i as { tags?: string[] }).tags;
+        return tags?.some(t => fuzzyMatch(query, t)) ?? false;
+      })
     : allItems;
 
   // group by category
@@ -123,7 +153,7 @@ function CommandPalette({ isLoggedIn, onClose }: { isLoggedIn: boolean; onClose:
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-start justify-center pt-[10vh] px-4 bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-100 flex items-start justify-center pt-[10vh] px-4 bg-black/60 backdrop-blur-sm"
       onClick={e => e.target === e.currentTarget && onClose()}
     >
       <motion.div
@@ -131,7 +161,7 @@ function CommandPalette({ isLoggedIn, onClose }: { isLoggedIn: boolean; onClose:
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: -10 }}
         transition={{ duration: 0.18 }}
-        className="w-full max-w-xl bg-white rounded-2xl shadow-2xl overflow-hidden"
+        className="w-full max-w-xl overflow-hidden bg-white shadow-2xl rounded-2xl"
       >
         {/* Input */}
         <div className="flex items-center gap-3 px-4 py-3.5 border-b border-slate-100">
@@ -141,7 +171,7 @@ function CommandPalette({ isLoggedIn, onClose }: { isLoggedIn: boolean; onClose:
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Zoek pagina's, dashboard, acties..."
-            className="flex-1 text-slate-800 bg-transparent outline-none placeholder:text-slate-400 text-sm"
+            className="flex-1 text-sm bg-transparent outline-none text-slate-800 placeholder:text-slate-400"
           />
           <kbd className="px-1.5 py-0.5 text-[10px] font-bold text-slate-400 bg-slate-100 rounded border border-slate-200 shrink-0">ESC</kbd>
         </div>
@@ -150,7 +180,7 @@ function CommandPalette({ isLoggedIn, onClose }: { isLoggedIn: boolean; onClose:
         <div className="overflow-y-auto max-h-[58vh] py-2">
           {filtered.length === 0 ? (
             <div className="py-12 text-center">
-              <Search size={24} className="text-slate-200 mx-auto mb-2" />
+              <Search size={24} className="mx-auto mb-2 text-slate-200" />
               <p className="text-sm text-slate-400">Geen resultaten voor &ldquo;{query}&rdquo;</p>
             </div>
           ) : (
@@ -173,7 +203,7 @@ function CommandPalette({ isLoggedIn, onClose }: { isLoggedIn: boolean; onClose:
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm font-semibold truncate ${active ? 'text-blue-700' : 'text-slate-800'}`}>{item.label}</p>
-                        <p className="text-xs text-slate-400 truncate">{item.desc}</p>
+                        <p className="text-xs truncate text-slate-400">{item.desc}</p>
                       </div>
                       {active && <ArrowRight size={13} className="text-blue-400 shrink-0" />}
                     </button>
@@ -195,7 +225,7 @@ function CommandPalette({ isLoggedIn, onClose }: { isLoggedIn: boolean; onClose:
             <kbd className="px-1 py-0.5 bg-white border border-slate-200 rounded text-[9px] font-bold">↵</kbd>
             Openen
           </span>
-          <span className="ml-auto">⌘K om te zoeken</span>
+          <span className="ml-auto">{isMac ? '⌘K' : 'Ctrl+K'} om te zoeken</span>
         </div>
       </motion.div>
     </motion.div>
@@ -229,7 +259,7 @@ function NotificationsPanel({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 8, scale: 0.97 }}
       transition={{ duration: 0.18 }}
-      className="absolute right-0 z-50 mt-3 w-80 bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden"
+      className="absolute right-0 z-50 mt-3 overflow-hidden bg-white border shadow-2xl w-80 rounded-2xl border-slate-200"
     >
       {/* Tabs */}
       <div className="flex border-b border-slate-100">
@@ -247,7 +277,7 @@ function NotificationsPanel({
             <t.Icon size={14} />
             {t.label}
             {t.count > 0 && (
-              <span className={`min-w-[18px] h-[18px] px-1 flex items-center justify-center text-[10px] font-bold rounded-full ${
+              <span className={`min-w-4.5 h-4.5 px-1 flex items-center justify-center text-[10px] font-bold rounded-full ${
                 tab === t.id ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-600'
               }`}>
                 {t.count > 9 ? '9+' : t.count}
@@ -267,21 +297,21 @@ function NotificationsPanel({
             <div className="py-8 text-sm text-center text-slate-400">Laden...</div>
           ) : conversations.length === 0 ? (
             <div className="py-10 text-center">
-              <MessageSquare size={24} className="text-slate-200 mx-auto mb-2" />
+              <MessageSquare size={24} className="mx-auto mb-2 text-slate-200" />
               <p className="text-sm text-slate-400">Geen berichten</p>
             </div>
           ) : (
-            <ul className="divide-y divide-slate-100 max-h-64 overflow-y-auto">
+            <ul className="overflow-y-auto divide-y divide-slate-100 max-h-64">
               {conversations.slice(0, 5).map(conv => (
                 <li key={conv.id} onClick={() => go('/dashboard/messages')}
-                  className="flex items-start gap-3 px-4 py-3 cursor-pointer hover:bg-slate-50 transition-colors">
+                  className="flex items-start gap-3 px-4 py-3 transition-colors cursor-pointer hover:bg-slate-50">
                   <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${conv.unread_count > 0 ? 'bg-blue-500' : 'bg-slate-200'}`} />
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm truncate ${conv.unread_count > 0 ? 'font-semibold text-slate-800' : 'text-slate-600'}`}>
                       {conv.subject}
                     </p>
                     {conv.last_message?.sender && (
-                      <p className="text-xs text-slate-400 truncate">
+                      <p className="text-xs truncate text-slate-400">
                         {conv.last_message.sender.full_name ?? conv.last_message.sender.email}: {conv.last_message.content}
                       </p>
                     )}
@@ -290,7 +320,7 @@ function NotificationsPanel({
                     </p>
                   </div>
                   {conv.unread_count > 0 && (
-                    <span className="min-w-[18px] h-[18px] px-1 flex items-center justify-center bg-blue-500 text-white text-[10px] font-bold rounded-full shrink-0">
+                    <span className="min-w-4.5 h-4.5 px-1 flex items-center justify-center bg-blue-500 text-white text-[10px] font-bold rounded-full shrink-0">
                       {conv.unread_count}
                     </span>
                   )}
@@ -314,14 +344,14 @@ function NotificationsPanel({
           </div>
           {packageRequests.length === 0 ? (
             <div className="py-10 text-center">
-              <Package size={24} className="text-slate-200 mx-auto mb-2" />
+              <Package size={24} className="mx-auto mb-2 text-slate-200" />
               <p className="text-sm text-slate-400">Geen aanvragen</p>
             </div>
           ) : (
-            <ul className="divide-y divide-slate-100 max-h-64 overflow-y-auto">
+            <ul className="overflow-y-auto divide-y divide-slate-100 max-h-64">
               {packageRequests.map(req => (
                 <li key={req.id}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors">
+                  className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-slate-50">
                   <div
                     className={`p-1.5 rounded-lg shrink-0 cursor-pointer ${
                       req.status === 'accepted' ? 'bg-green-50' : req.status === 'rejected' ? 'bg-slate-100' : 'bg-amber-50'
@@ -333,12 +363,12 @@ function NotificationsPanel({
                     } />
                   </div>
                   <div className="flex-1 min-w-0 cursor-pointer" onClick={() => go('/dashboard/aanvragen')}>
-                    <p className="text-sm font-semibold text-slate-800 truncate">{req.package_name}</p>
+                    <p className="text-sm font-semibold truncate text-slate-800">{req.package_name}</p>
                     <p className="text-xs text-slate-400">{STATUS_LABELS[req.status] ?? req.status}</p>
                   </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); onDismissRequest(req.id); }}
-                    className="p-1 text-slate-300 hover:text-slate-500 rounded transition-colors shrink-0"
+                    className="p-1 transition-colors rounded text-slate-300 hover:text-slate-500 shrink-0"
                     aria-label="Verwijder melding"
                   >
                     <X size={13} />
@@ -357,19 +387,19 @@ function NotificationsPanel({
 
 function MegaDropdown({ items }: { items: NavItem[] }) {
   return (
-    <div className="absolute left-0 top-full z-50 pt-3 invisible opacity-0 translate-y-1 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200">
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl py-2 w-56">
+    <div className="absolute left-0 z-50 invisible pt-3 transition-all duration-200 translate-y-1 opacity-0 top-full group-hover:visible group-hover:opacity-100 group-hover:translate-y-0">
+      <div className="w-56 py-2 bg-white border shadow-2xl rounded-2xl border-slate-200">
         {items.map(item => {
           const Icon = item.Icon;
           return (
             <Link key={item.href} href={item.href}
               className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors group/item">
               <div className="p-1.5 rounded-lg bg-slate-100 group-hover/item:bg-blue-100 transition-colors shrink-0">
-                <Icon size={14} className="text-slate-500 group-hover/item:text-blue-600 transition-colors" />
+                <Icon size={14} className="transition-colors text-slate-500 group-hover/item:text-blue-600" />
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-slate-800 group-hover/item:text-blue-700 transition-colors truncate">{item.label}</p>
-                <p className="text-xs text-slate-400 truncate">{item.desc}</p>
+                <p className="text-sm font-semibold truncate transition-colors text-slate-800 group-hover/item:text-blue-700">{item.label}</p>
+                <p className="text-xs truncate text-slate-400">{item.desc}</p>
               </div>
             </Link>
           );
@@ -383,11 +413,11 @@ function MegaDropdown({ items }: { items: NavItem[] }) {
 
 function MobileDrawer({
   isOpen, onClose, user, avatarLabel, profilePicture, userRole, unreadCount,
-  onLogout, onOpenSearch, pathname,
+  onLogout, onOpenSearch, pathname, isMac,
 }: {
   isOpen: boolean; onClose: () => void; user: User | null;
   avatarLabel: string; profilePicture: string | null; userRole: string;
-  unreadCount: number; onLogout: () => void; onOpenSearch: () => void; pathname: string;
+  unreadCount: number; onLogout: () => void; onOpenSearch: () => void; pathname: string; isMac: boolean;
 }) {
   const router = useRouter();
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -408,12 +438,12 @@ function MobileDrawer({
           <motion.div
             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-            className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-sm bg-white shadow-2xl flex flex-col"
+            className="fixed top-0 bottom-0 right-0 z-50 flex flex-col w-full max-w-sm bg-white shadow-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-5 border-b border-slate-100 shrink-0">
               <Link href="/" onClick={onClose} className="text-xl font-bold text-slate-900">IntrICT</Link>
-              <button onClick={onClose} className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all">
+              <button onClick={onClose} className="p-2 transition-all rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100">
                 <X size={20} />
               </button>
             </div>
@@ -426,7 +456,7 @@ function MobileDrawer({
               >
                 <Search size={15} />
                 Zoek pagina&apos;s, acties...
-                <kbd className="ml-auto px-1.5 py-0.5 text-[9px] font-bold bg-white border border-slate-200 rounded">⌘K</kbd>
+                <kbd className="ml-auto px-1.5 py-0.5 text-[9px] font-bold bg-white border border-slate-200 rounded">{isMac ? '⌘K' : 'Ctrl+K'}</kbd>
               </button>
             </div>
 
@@ -448,7 +478,7 @@ function MobileDrawer({
                   <div key={group.label}>
                     <button
                       onClick={() => setExpanded(isExp ? null : group.label)}
-                      className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all"
+                      className="flex items-center justify-between w-full px-4 py-3 text-sm font-semibold transition-all rounded-xl text-slate-700 hover:bg-slate-50"
                     >
                       {group.label}
                       <ChevronDown size={15} className={`text-slate-400 transition-transform duration-200 ${isExp ? 'rotate-180' : ''}`} />
@@ -484,20 +514,20 @@ function MobileDrawer({
             </nav>
 
             {/* User section */}
-            <div className="px-4 pb-8 pt-4 border-t border-slate-100 shrink-0 space-y-2">
+            <div className="px-4 pt-4 pb-8 space-y-2 border-t border-slate-100 shrink-0">
               {user ? (
                 <>
-                  <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-slate-50 mb-3">
+                  <div className="flex items-center gap-3 px-3 py-3 mb-3 rounded-xl bg-slate-50">
                     {profilePicture ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={profilePicture} alt="Profiel" className="w-9 h-9 rounded-full object-cover shrink-0" />
+                      <img src={profilePicture} alt="Profiel" className="object-cover rounded-full w-9 h-9 shrink-0" />
                     ) : (
-                      <div className="w-9 h-9 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold shrink-0">
+                      <div className="flex items-center justify-center text-sm font-bold text-white rounded-full w-9 h-9 bg-linear-to-br from-blue-500 to-purple-500 shrink-0">
                         {avatarLabel}
                       </div>
                     )}
-                    <div className="overflow-hidden flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-slate-800 truncate">{user.email?.split('@')[0]}</p>
+                    <div className="flex-1 min-w-0 overflow-hidden">
+                      <p className="text-sm font-semibold truncate text-slate-800">{user.email?.split('@')[0]}</p>
                       <span className={`inline-block text-xs px-1.5 py-0.5 rounded-full font-semibold ${
                         userRole === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'
                       }`}>
@@ -506,7 +536,7 @@ function MobileDrawer({
                     </div>
                   </div>
                   <button onClick={() => go('/dashboard')}
-                    className="flex items-center justify-center w-full gap-2 py-3 font-semibold text-white rounded-xl bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all">
+                    className="flex items-center justify-center w-full gap-2 py-3 font-semibold text-white transition-all rounded-xl bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
                     <LayoutDashboard size={16} />
                     Dashboard
                     {unreadCount > 0 && (
@@ -531,7 +561,7 @@ function MobileDrawer({
               ) : (
                 <>
                   <Link href="/contact" onClick={onClose}
-                    className="flex items-center justify-center gap-2 w-full py-3 text-sm font-semibold text-white rounded-xl bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all">
+                    className="flex items-center justify-center w-full gap-2 py-3 text-sm font-semibold text-white transition-all rounded-xl bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
                     Gratis offerte aanvragen <ArrowRight size={14} />
                   </Link>
                   <button onClick={() => { router.push('/login'); onClose(); }}
@@ -557,6 +587,9 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [isMac] = useState(() =>
+    typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.platform)
+  );
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -744,7 +777,7 @@ export default function Header() {
             </nav>
 
             {/* Right controls */}
-            <div className="hidden md:flex items-center gap-2 shrink-0">
+            <div className="items-center hidden gap-2 md:flex shrink-0">
 
               {/* Search button */}
               <motion.button
@@ -753,12 +786,12 @@ export default function Header() {
                 className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition-all duration-200 ${
                   isScrolled ? 'text-slate-500 hover:bg-slate-100' : 'text-slate-200 hover:bg-white/10'
                 }`}
-                aria-label="Zoeken (⌘K)"
+                aria-label={`Zoeken (${isMac ? '⌘K' : 'Ctrl+K'})`}
               >
                 <Search size={16} />
                 <kbd className={`text-[10px] px-1.5 py-0.5 rounded border font-bold ${
                   isScrolled ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-white/10 border-white/20 text-white/60'
-                }`}>⌘K</kbd>
+                }`}>{isMac ? '⌘K' : 'Ctrl+K'}</kbd>
               </motion.button>
 
               {!authLoading && user && (
@@ -808,7 +841,7 @@ export default function Header() {
                     >
                       {profilePicture ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={profilePicture} alt="Profiel" className="w-7 h-7 rounded-full object-cover" />
+                        <img src={profilePicture} alt="Profiel" className="object-cover rounded-full w-7 h-7" />
                       ) : (
                         <span className="w-7 h-7 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center text-[11px] font-bold text-white shadow">
                           {avatarLabel}
@@ -825,22 +858,22 @@ export default function Header() {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.97 }}
                           transition={{ duration: 0.18 }}
-                          className="absolute right-0 z-50 w-60 mt-3 bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden"
+                          className="absolute right-0 z-50 mt-3 overflow-hidden bg-white border shadow-2xl w-60 rounded-2xl border-slate-200"
                         >
                           {/* Profile header */}
                           <div className="px-4 py-3.5 border-b border-slate-100 bg-linear-to-br from-slate-50 to-blue-50/40">
                             <div className="flex items-center gap-3">
                               {profilePicture ? (
                                 // eslint-disable-next-line @next/next/no-img-element
-                                <img src={profilePicture} alt="Profiel" className="w-10 h-10 rounded-full object-cover shadow" />
+                                <img src={profilePicture} alt="Profiel" className="object-cover w-10 h-10 rounded-full shadow" />
                               ) : (
-                                <span className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center text-sm font-bold text-white shadow">
+                                <span className="flex items-center justify-center w-10 h-10 text-sm font-bold text-white rounded-full shadow bg-linear-to-br from-blue-500 to-purple-500">
                                   {avatarLabel}
                                 </span>
                               )}
                               <div className="overflow-hidden">
-                                <p className="text-sm font-bold text-slate-800 truncate">{userName ?? user.email?.split('@')[0]}</p>
-                                <p className="text-xs text-slate-400 truncate">{user.email}</p>
+                                <p className="text-sm font-bold truncate text-slate-800">{userName ?? user.email?.split('@')[0]}</p>
+                                <p className="text-xs truncate text-slate-400">{user.email}</p>
                                 <span className={`inline-block mt-0.5 text-[10px] px-2 py-0.5 rounded-full font-bold ${
                                   userRole === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
                                 }`}>
@@ -864,7 +897,7 @@ export default function Header() {
                                 <item.Icon size={15} className="text-slate-400 shrink-0" />
                                 <span className="flex-1">{item.label}</span>
                                 {item.count && item.count > 0 && (
-                                  <span className="min-w-[18px] h-[18px] px-1 flex items-center justify-center bg-blue-500 text-white text-[10px] font-bold rounded-full">
+                                  <span className="min-w-4.5 h-4.5 px-1 flex items-center justify-center bg-blue-500 text-white text-[10px] font-bold rounded-full">
                                     {item.count > 9 ? '9+' : item.count}
                                   </span>
                                 )}
@@ -924,7 +957,7 @@ export default function Header() {
       {/* Command palette */}
       <AnimatePresence>
         {showSearch && (
-          <CommandPalette isLoggedIn={!!user} onClose={() => setShowSearch(false)} />
+          <CommandPalette isLoggedIn={!!user} onClose={() => setShowSearch(false)} isMac={isMac} />
         )}
       </AnimatePresence>
 
@@ -940,6 +973,7 @@ export default function Header() {
         onLogout={handleLogout}
         onOpenSearch={() => setShowSearch(true)}
         pathname={pathname}
+        isMac={isMac}
       />
     </>
   );

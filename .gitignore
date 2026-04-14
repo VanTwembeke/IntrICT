@@ -85,6 +85,7 @@ coverage.json
 ############################
 coverage/
 .nyc_output/
+.claude/
 
 ############################
 # IDEs & Editors

@@ -8,8 +8,8 @@ export default function Contact() {
   const router = useRouter();
 
   return (
-    <section id="contact" className="relative py-20">
-      <div className="relative overflow-hidden h-96 md:h-125">
+    <section id="contact" className="relative pt-20">
+      <div className="relative overflow-hidden h-[520px] md:h-125">
         <Image
           src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
           alt="Contact - Laten we je project bespreken"
@@ -19,7 +19,7 @@ export default function Contact() {
         />
         <div className="absolute inset-0 bg-linear-to-r from-slate-900/80 via-slate-800/60 to-slate-900/80"></div>
         <div className="relative z-10 flex items-center h-full">
-          <div className="max-w-6xl px-4 mx-auto text-center">
+          <div className="w-full max-w-6xl px-4 mx-auto text-center">
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}

@@ -24,7 +24,7 @@ export default function Process() {
 
   return (
     <section id="workflow" className="relative py-20">
-      <div className="relative overflow-hidden h-96 md:h-125">
+      <div className="relative overflow-hidden h-[340px] md:h-125">
         <Image
           src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
           alt="Web development proces - Stap voor stap ontwikkeling"

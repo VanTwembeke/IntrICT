@@ -1,22 +1,46 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { DemoMeta } from '@/app/api/demos/route';
 
 // ─── Live iframe preview ──────────────────────────────────────────────────────
 
 function DemoPreview({ slug, title }: { slug: string; title: string }) {
+  const [inView, setInView] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="relative overflow-hidden bg-slate-100" style={{ height: '220px' }}>
-      {/* Skeleton loader */}
-      {!loaded && !error && (
+    <div ref={containerRef} className="relative overflow-hidden bg-slate-100" style={{ height: '220px' }}>
+      {/* Skeleton loader — shown until iframe loads */}
+      {(!inView || !loaded) && !error && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-100 to-slate-200">
-          <div className="w-7 h-7 border-2 border-slate-300 border-t-blue-400 rounded-full animate-spin" />
-          <span className="text-xs font-medium text-slate-400">Preview laden…</span>
+          {inView ? (
+            <>
+              <div className="w-7 h-7 border-2 border-slate-300 border-t-blue-400 rounded-full animate-spin" />
+              <span className="text-xs font-medium text-slate-400">Preview laden…</span>
+            </>
+          ) : (
+            <span className="text-xs font-medium text-slate-400">{title}</span>
+          )}
         </div>
       )}
 
@@ -30,8 +54,8 @@ function DemoPreview({ slug, title }: { slug: string; title: string }) {
         </div>
       )}
 
-      {/* Iframe (scaled down from 1280×720 to fit ~384px wide container) */}
-      {!error && (
+      {/* Iframe — only mounted once card enters viewport */}
+      {inView && !error && (
         <iframe
           src={`/demo/${slug}/demo.html`}
           title={`Preview: ${title}`}
@@ -44,7 +68,6 @@ function DemoPreview({ slug, title }: { slug: string; title: string }) {
             opacity: loaded ? 1 : 0,
             transition: 'opacity 0.4s ease',
           }}
-          loading="lazy"
           sandbox="allow-scripts allow-same-origin"
           onLoad={() => setLoaded(true)}
           onError={() => setError(true)}

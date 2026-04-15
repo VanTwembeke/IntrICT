@@ -154,6 +154,18 @@ html,body{height:100%;overflow:hidden;font-family:var(--fm);font-size:13.5px;bac
 .mo-empty{font-size:.68rem;color:var(--tx3);text-align:center;padding:16px}
 .mo-foot{display:flex;gap:7px}
 
+@media(max-width:768px){
+  .app{grid-template-columns:1fr;height:auto;min-height:100vh}
+  .sb{height:auto;max-height:none;overflow:visible}
+  .sb-nav{max-height:220px;overflow-y:auto}
+  .main{height:auto;overflow:visible}
+  .list{overflow:visible;height:auto;padding:8px}
+  .fbar{flex-wrap:wrap;gap:4px;padding:6px 10px}
+  .url-inp{min-width:0;width:100%}
+  .ci,.s-inp{width:100%}
+  .abar{flex-wrap:wrap;gap:4px;padding:6px 8px}
+  .ai-box,.mo-box{width:92vw;max-width:92vw}
+}
 @media print{
   html,body{height:auto;overflow:visible}
   .app{display:block;height:auto}

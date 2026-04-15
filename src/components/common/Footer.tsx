@@ -1,11 +1,19 @@
 'use client';
 
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useActionState } from 'react';
 import { subscribeNewsletter, type NewsletterState } from '@/app/actions/newsletter';
+import { blogPosts } from '@/data/blog-posts';
+
+function pickRandom3() {
+  const shuffled = [...blogPosts].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 3).map((p) => ({ name: p.title, href: `/blog/${p.slug}` }));
+}
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [randomPosts] = useState(pickRandom3);
 
   const footerLinks = {
     navigation: [
@@ -18,11 +26,6 @@ export default function Footer() {
       { name: 'Visie', href: '/visie' },
       { name: 'Over Mij', href: '/over' },
       { name: 'Contact', href: '/contact' },
-    ],
-    services: [
-      { name: 'Website Ontwikkeling', href: '/blog/website-ontwikkeling' },
-      { name: 'Logo & Branding', href: '/blog/logo-en-branding' },
-      { name: 'Digitale Strategie', href: '/blog/digitale-strategie' },
     ],
     legal: [
       { name: 'Sitemap', href: '/sitemap.xml' },
@@ -261,7 +264,7 @@ export default function Footer() {
               </ul>
             </motion.div>
 
-            {/* Diensten */}
+            {/* Recente artikels (3 random blog posts) */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -269,11 +272,11 @@ export default function Footer() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <h3 className="mb-4 text-xs font-bold tracking-widest uppercase text-slate-500">
-                Diensten
+                Recente artikels
               </h3>
               <ul className="space-y-2.5">
-                {footerLinks.services.map((link) => (
-                  <li key={link.name}>
+                {randomPosts.map((link) => (
+                  <li key={link.href}>
                     <a
                       href={link.href}
                       className="text-sm text-slate-400 hover:text-white transition-colors duration-200 hover:translate-x-0.5 inline-block"

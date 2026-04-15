@@ -23,6 +23,7 @@ import {
   CalendarDays,
   FolderOpen,
   Receipt,
+  Newspaper,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useMessages } from '@/hooks/useMessages';
@@ -50,7 +51,8 @@ const mainNavItems: NavItem[] = [
   { label: 'Klanten',         href: '/dashboard/klanten',    icon: <FolderOpen size={18} />,      roles: ['admin'],         exact: false },
   { label: 'Facturen',        href: '/dashboard/facturen',   icon: <Receipt size={18} />,         roles: ['admin'],         exact: false },
   { label: 'Gebruikers',      href: '/dashboard/users',      icon: <Users size={18} />,           roles: ['admin'] },
-  { label: 'E-mail verzenden',href: '/dashboard/email',      icon: <Send size={18} />,            roles: ['admin'] },
+  { label: 'E-mail verzenden',href: '/dashboard/email',          icon: <Send size={18} />,      roles: ['admin'] },
+  { label: 'Nieuwsbrief',    href: '/dashboard/nieuwsbrief',    icon: <Newspaper size={18} />, roles: ['admin'], exact: false },
 ];
 
 const accountNavItems: NavItem[] = [

@@ -69,12 +69,13 @@ const s = StyleSheet.create({
     fontFamily:    'Helvetica-Bold',
     color:         DARK,
     letterSpacing: 0.5,
+    marginBottom:  4,
   },
   invoiceNumber: {
-    fontSize:   9,
-    fontFamily: 'Helvetica-Bold',
-    color:      BLUE,
-    marginTop:  2,
+    fontSize:      9,
+    fontFamily:    'Helvetica-Bold',
+    color:         BLUE,
+    letterSpacing: 0.3,
   },
   statusBadge: {
     paddingHorizontal: 8,
@@ -373,10 +374,10 @@ export function InvoicePDF({ invoice }: { invoice: Invoice }) {
       <Page size="A4" style={s.page}>
 
         {/* ── Header band ── */}
-        <View style={s.headerBand}>
+        <View style={s.headerBand} wrap={false}>
           <View>
             <Text style={s.companyName}>{COMPANY.name}</Text>
-            <Text style={s.companyTagline}>IT-diensten &amp; weboplossingen</Text>
+            <Text style={s.companyTagline}>IT-diensten {'&'} weboplossingen</Text>
           </View>
           <View>
             <Text style={s.companyDetails}>
@@ -386,7 +387,7 @@ export function InvoicePDF({ invoice }: { invoice: Invoice }) {
         </View>
 
         {/* ── Title row ── */}
-        <View style={s.titleRow}>
+        <View style={s.titleRow} wrap={false}>
           <View>
             <Text style={s.invoiceTitle}>FACTUUR</Text>
             <Text style={s.invoiceNumber}>{invoice.invoice_number}</Text>

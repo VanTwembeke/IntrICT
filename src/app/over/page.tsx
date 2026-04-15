@@ -12,13 +12,9 @@ import Link from 'next/link';
 export default function Over() {
   useEffect(() => {
     const lenis = new Lenis();
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
+    const raf = (time: number) => { lenis.raf(time); requestAnimationFrame(raf); };
     requestAnimationFrame(raf);
+    return () => lenis.destroy();
   }, []);
 
   const skills = [

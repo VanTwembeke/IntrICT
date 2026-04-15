@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import Lenis from 'lenis';
 import Image from 'next/image';
@@ -93,37 +93,33 @@ export default function BlogPostPage() {
   const [relatedPosts, setRelatedPosts] = useState<BlogPostMeta[]>([]);  // ← Fixed: BlogPostMeta[]
   const [loading, setLoading] = useState(true);
 
+  // Smooth scroll — isolated with cleanup to prevent memory leaks
   useEffect(() => {
     const lenis = new Lenis();
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
+    const raf = (time: number) => { lenis.raf(time); requestAnimationFrame(raf); };
     requestAnimationFrame(raf);
+    return () => lenis.destroy();
+  }, []);
 
-    // Load blog post
-    const loadBlogPost = async () => {
+  // Load static blog data (no real async work — just array lookups)
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
       try {
         const post = await getBlogPostBySlug(slug);
-        if (!post) {
-          notFound();
-        }
+        if (cancelled) return;
+        if (!post) { notFound(); return; }
         setBlogPost(post);
-
-        // Load related posts
         const related = await getRelatedPosts(slug);
-        setRelatedPosts(related);
-      } catch (error) {
-        console.error('Error loading blog post:', error);
-        notFound();
+        if (!cancelled) setRelatedPosts(related);
+      } catch {
+        if (!cancelled) notFound();
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
-
-    loadBlogPost();
+    load();
+    return () => { cancelled = true; };
   }, [slug]);
 
   const formatDate = (dateString: string) => {
@@ -134,7 +130,10 @@ export default function BlogPostPage() {
     });
   };
 
-  const formatContent = (content: string) => {
+  const formattedContent = useMemo(() => {
+    if (!blogPost) return null;
+    const content = blogPost.content;
+    const formatContent = (content: string) => {
     const lines = content.split('\n');
     const elements: React.ReactElement[] = [];
     let i = 0;
@@ -213,8 +212,11 @@ export default function BlogPostPage() {
       i++;
     }
 
-    return elements;
-  };
+      return elements;
+    };
+    return formatContent(content);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blogPost?.content]);
 
   const extractYouTubeVideoId = (url: string): string | null => {
     const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
@@ -322,6 +324,8 @@ export default function BlogPostPage() {
                 src={blogPost.image}
                 alt={blogPost.title}
                 fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 1024px"
                 className="object-cover"
               />
             </motion.div>
@@ -339,7 +343,7 @@ export default function BlogPostPage() {
             >
               <div className="prose prose-lg max-w-none">
                 <div className="space-y-2">
-                  {formatContent(blogPost.content)}
+                  {formattedContent}
                 </div>
               </div>
 
@@ -395,6 +399,7 @@ export default function BlogPostPage() {
                         src={post.image}
                         alt={post.title}
                         fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                       <div className="absolute top-4 left-4">

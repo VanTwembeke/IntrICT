@@ -11,6 +11,7 @@ export default function Hero() {
           src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
           alt="Web development - Moderne code en technologie"
           fill
+          sizes="100vw"
           className="object-cover"
           priority
         />

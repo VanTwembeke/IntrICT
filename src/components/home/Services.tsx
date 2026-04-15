@@ -39,6 +39,7 @@ export default function Services() {
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.8 }}
           className="mb-16 text-5xl font-bold text-center md:text-6xl text-slate-800"
         >
@@ -51,7 +52,8 @@ export default function Services() {
               key={index}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
               className="grid items-center gap-12 md:grid-cols-2"
             >
               <div className={`relative h-96 rounded-2xl overflow-hidden ${service.reverse ? 'order-1 md:order-2' : ''}`}>
@@ -59,6 +61,7 @@ export default function Services() {
                   src={service.image}
                   alt={service.alt}
                   fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-slate-900/60 to-transparent"></div>

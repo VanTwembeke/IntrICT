@@ -304,7 +304,7 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <label className={labelClass}>Gemeente</label>
-                      <input type="text" value={form.city} onChange={handleChange('city')} placeholder="Brugge" className={inputClass} />
+                      <input type="text" value={form.city} onChange={handleChange('city')} placeholder="Gent" className={inputClass} />
                     </div>
                     <div>
                       <label className={labelClass}>Land</label>

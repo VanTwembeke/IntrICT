@@ -32,7 +32,7 @@ Kernwaarden: kwaliteit, performance, transparantie en langdurige samenwerking.
   mini-apps, GDPR-compliance en API development.
 - [Visie](https://www.intrict.com/visie): Filosofie en langetermijnmissie van IntrICT.
 - [Blog](https://www.intrict.com/blog): Artikelen over web development, SEO en digitale trends.
-- [Contact](https://www.intrict.com/contact): Contactformulier, locatie (Brugge) en beschikbaarheid.
+- [Contact](https://www.intrict.com/contact): Contactformulier, locatie (Gent) en beschikbaarheid.
 
 ## Technische Stack
 

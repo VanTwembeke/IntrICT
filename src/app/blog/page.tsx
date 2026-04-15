@@ -1,224 +1,301 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Lenis from 'lenis';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Clock, Calendar, Tag, ArrowRight } from 'lucide-react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
-import { getAllBlogPosts, BlogPostMeta } from '@/lib/blog-api';
+import { blogPosts as allPosts } from '@/data/blog-posts';
+import type { BlogPostMeta } from '@/lib/blog-api';
 
-export default function Blog() {
-  const [blogPosts, setBlogPosts] = useState<BlogPostMeta[]>([]);
-  const [loading, setLoading] = useState(true);
+// Sort newest first — static data, done once
+const SORTED_POSTS: BlogPostMeta[] = [...allPosts]
+  .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+  .map(({ content: _c, ...meta }) => meta as BlogPostMeta);
+
+const CATEGORIES = ['Alle', ...Array.from(new Set(SORTED_POSTS.map((p) => p.category)))];
+
+const CATEGORY_NL: Record<string, string> = {
+  'Web Development':   'Web Development',
+  'Digital Strategy':  'Digitale Strategie',
+  'Branding':          'Branding',
+  'Technical Support': 'Technische Support',
+};
+
+function fmtDate(iso: string) {
+  return new Date(iso).toLocaleDateString('nl-BE', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+// ─── Featured post (first / newest) ──────────────────────────────────────────
+
+function FeaturedPost({ post }: { post: BlogPostMeta }) {
+  return (
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.98 }}
+      transition={{ duration: 0.35 }}
+      className="group relative bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-4 hover:shadow-md transition-shadow duration-200"
+    >
+      <Link href={`/blog/${post.slug}`} className="flex flex-col sm:flex-row">
+        {/* Image */}
+        <div className="relative sm:w-72 lg:w-96 h-52 sm:h-auto shrink-0 overflow-hidden">
+          <Image
+            src={post.image}
+            alt={post.title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-slate-900/30 to-transparent sm:bg-linear-to-r" />
+          <span className="absolute top-3 left-3 px-2.5 py-1 text-xs font-bold bg-blue-600 text-white rounded-full">
+            Nieuwste
+          </span>
+        </div>
+
+        {/* Content */}
+        <div className="flex flex-col justify-between p-6 lg:p-8 flex-1">
+          <div>
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              <span className="px-2.5 py-1 text-xs font-semibold bg-slate-100 text-slate-600 rounded-full">
+                {CATEGORY_NL[post.category] ?? post.category}
+              </span>
+              <span className="flex items-center gap-1 text-xs text-slate-400">
+                <Calendar size={11} />
+                {fmtDate(post.publishedAt)}
+              </span>
+              <span className="flex items-center gap-1 text-xs text-slate-400">
+                <Clock size={11} />
+                {post.readTime} min
+              </span>
+            </div>
+
+            <h2 className="text-xl lg:text-2xl font-bold text-slate-900 leading-snug mb-3 group-hover:text-blue-600 transition-colors duration-200">
+              {post.title}
+            </h2>
+
+            <p className="text-sm text-slate-500 leading-relaxed line-clamp-3 mb-4">
+              {post.excerpt}
+            </p>
+
+            <div className="flex flex-wrap gap-1.5">
+              {post.tags.slice(0, 4).map((tag) => (
+                <span key={tag} className="flex items-center gap-1 px-2 py-0.5 text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-md">
+                  <Tag size={9} />
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-sm font-semibold text-blue-600 mt-5 group-hover:gap-3 transition-all duration-200">
+            Lees artikel <ArrowRight size={15} />
+          </div>
+        </div>
+      </Link>
+    </motion.article>
+  );
+}
+
+// ─── List post ────────────────────────────────────────────────────────────────
+
+function ListPost({ post, index }: { post: BlogPostMeta; index: number }) {
+  return (
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.98 }}
+      transition={{ duration: 0.3, delay: index * 0.04 }}
+      className="group bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200"
+    >
+      <Link href={`/blog/${post.slug}`} className="flex gap-0">
+        {/* Thumbnail */}
+        <div className="relative w-28 sm:w-40 shrink-0 overflow-hidden">
+          <Image
+            src={post.image}
+            alt={post.title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        </div>
+
+        {/* Content */}
+        <div className="flex flex-col justify-between p-4 sm:p-5 flex-1 min-w-0">
+          <div>
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className="px-2 py-0.5 text-xs font-semibold bg-slate-100 text-slate-600 rounded-full">
+                {CATEGORY_NL[post.category] ?? post.category}
+              </span>
+              <span className="flex items-center gap-1 text-xs text-slate-400">
+                <Calendar size={10} />
+                {fmtDate(post.publishedAt)}
+              </span>
+              <span className="flex items-center gap-1 text-xs text-slate-400">
+                <Clock size={10} />
+                {post.readTime} min
+              </span>
+            </div>
+
+            <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-snug mb-1.5 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
+              {post.title}
+            </h3>
+
+            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed line-clamp-2 hidden sm:block">
+              {post.excerpt}
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between mt-3">
+            <div className="flex flex-wrap gap-1 hidden sm:flex">
+              {post.tags.slice(0, 3).map((tag) => (
+                <span key={tag} className="px-1.5 py-0.5 text-xs text-slate-400 bg-slate-50 border border-slate-200 rounded">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+            <span className="flex items-center gap-1 text-xs font-semibold text-blue-600 ml-auto group-hover:gap-2 transition-all duration-200">
+              Lees meer <ArrowRight size={12} />
+            </span>
+          </div>
+        </div>
+      </Link>
+    </motion.article>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function BlogPage() {
+  const [activeCategory, setActiveCategory] = useState('Alle');
 
   useEffect(() => {
     const lenis = new Lenis();
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
+    const raf = (time: number) => { lenis.raf(time); requestAnimationFrame(raf); };
     requestAnimationFrame(raf);
-
-    // Load blog posts
-    const loadBlogPosts = async () => {
-      try {
-        const posts = await getAllBlogPosts();
-        setBlogPosts(posts);
-      } catch (error) {
-        console.error('Error loading blog posts:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadBlogPosts();
+    return () => lenis.destroy();
   }, []);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('nl-NL', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
+  const filtered = useMemo(() =>
+    activeCategory === 'Alle'
+      ? SORTED_POSTS
+      : SORTED_POSTS.filter((p) => p.category === activeCategory),
+    [activeCategory]
+  );
+
+  const featured = filtered[0] ?? null;
+  const rest = filtered.slice(1);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/40 to-indigo-50/30">
       <Header />
-      
+
       <main>
-        {/* Hero Section */}
-        <section className="relative pt-20 pb-16 overflow-hidden">
-          <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900"></div>
-          <div className="absolute inset-0 opacity-40">
-            <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')]"></div>
-          </div>
-          
-          <div className="relative z-10 px-4 mx-auto text-center max-w-7xl sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h1 className="mb-6 text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
-                Blog
+        {/* Hero */}
+        <section className="relative pt-20 pb-12 overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900" />
+          <div className="absolute inset-0 opacity-[0.03]"
+            style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}
+          />
+          <div className="relative z-10 px-4 mx-auto text-center max-w-3xl sm:px-6 lg:px-8">
+            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+              <p className="text-xs font-semibold uppercase tracking-widest text-blue-400 mb-3">IntrICT Blog</p>
+              <h1 className="text-4xl font-bold text-white md:text-5xl mb-4 leading-tight">
+                Inzichten & artikels
               </h1>
-              <p className="max-w-3xl mx-auto mb-8 text-xl leading-relaxed text-slate-200">
-                Tips, inzichten en verhalen over web development en digitale transformatie
+              <p className="text-slate-400 text-base leading-relaxed">
+                Tips, trends en verhalen over webontwikkeling, strategie en digitale transformatie.
               </p>
             </motion.div>
           </div>
         </section>
 
-        {/* Blog Posts Section */}
-        <section className="py-20">
-          <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            {loading ? (
-              <div className="py-16 text-center">
-                <div className="w-12 h-12 mx-auto border-b-2 border-blue-500 rounded-full animate-spin"></div>
-                <p className="mt-4 text-slate-600">Blogposts laden...</p>
-              </div>
-            ) : (
-              <>
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8 }}
-                  className="mb-16 text-center"
+        {/* Posts */}
+        <section className="py-12">
+          <div className="px-4 mx-auto max-w-4xl sm:px-6 lg:px-8">
+
+            {/* Filter bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="flex flex-wrap items-center gap-2 mb-8"
+            >
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
+                    activeCategory === cat
+                      ? 'bg-slate-900 text-white shadow-sm'
+                      : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900'
+                  }`}
                 >
-                  <h2 className="mb-6 text-4xl font-bold md:text-5xl text-slate-800">
-                    Laatste <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">Artikelen</span>
-                  </h2>
-                  <p className="max-w-3xl mx-auto text-xl leading-relaxed text-slate-600">
-                    Ontdek mijn nieuwste inzichten en tips over web development
-                  </p>
+                  {cat === 'Alle' ? 'Alle artikels' : (CATEGORY_NL[cat] ?? cat)}
+                  {cat === 'Alle' && (
+                    <span className={`ml-2 text-xs px-1.5 py-0.5 rounded-full font-bold ${
+                      activeCategory === cat ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
+                    }`}>
+                      {SORTED_POSTS.length}
+                    </span>
+                  )}
+                </button>
+              ))}
+              <span className="ml-auto text-xs text-slate-400 hidden sm:block">
+                {filtered.length} artikel{filtered.length !== 1 ? 's' : ''}
+              </span>
+            </motion.div>
+
+            {/* List */}
+            <AnimatePresence mode="wait">
+              {filtered.length === 0 ? (
+                <motion.div
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="py-16 text-center bg-white rounded-2xl border border-slate-200"
+                >
+                  <p className="text-slate-400 text-sm">Geen artikels in deze categorie.</p>
                 </motion.div>
-
-                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                  {blogPosts.map((post, index) => (
-                    <motion.article
-                      key={post.id}
-                      initial={{ opacity: 0, y: 50 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.8, delay: index * 0.1 }}
-                      className="overflow-hidden transition-all duration-300 bg-white shadow-lg rounded-2xl hover:shadow-xl group"
-                    >
-                      <div className="relative h-48 overflow-hidden">
-                        <Image
-                          src={post.image}
-                          alt={post.title}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                        <div className="absolute top-4 left-4">
-                          <span className="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-full">
-                            {post.category}
-                          </span>
-                        </div>
-                        <div className="absolute top-4 right-4">
-                          <span className="px-2 py-1 text-sm font-medium rounded-full bg-white/90 backdrop-blur-sm text-slate-800">
-                            {post.readTime} min
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <div className="p-6">
-                        <div className="flex items-center mb-3 text-sm text-slate-500">
-                          <span>{formatDate(post.publishedAt)}</span>
-                          <span className="mx-2">•</span>
-                          <span>door {post.author}</span>
-                        </div>
-                        
-                        <h3 className="mb-3 text-xl font-bold transition-colors duration-300 text-slate-800 line-clamp-2 group-hover:text-blue-600">
-                          {post.title}
-                        </h3>
-                        
-                        <p className="mb-4 leading-relaxed text-slate-600 line-clamp-3">
-                          {post.excerpt}
-                        </p>
-                        
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {post.tags.slice(0, 3).map((tag) => (
-                            <span
-                              key={tag}
-                              className="px-2 py-1 text-xs font-medium rounded-md bg-slate-100 text-slate-600"
-                            >
-                              #{tag}
-                            </span>
-                          ))}
-                        </div>
-                        
-                        <Link
-                          href={`/blog/${post.slug}`}
-                          className="inline-flex items-center font-semibold text-blue-600 transition-colors duration-300 hover:text-blue-700"
-                        >
-                          Lees meer
-                          <svg className="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </Link>
-                      </div>
-                    </motion.article>
+              ) : (
+                <motion.div key={activeCategory} layout className="space-y-4">
+                  {featured && <FeaturedPost post={featured} />}
+                  {rest.map((post, i) => (
+                    <ListPost key={post.id} post={post} index={i} />
                   ))}
-                </div>
-
-                {blogPosts.length === 0 && (
-                  <div className="py-16 text-center">
-                    <div className="p-12 bg-white shadow-lg rounded-2xl">
-                      <div className="mb-4 text-6xl">📝</div>
-                      <h3 className="mb-4 text-2xl font-bold text-slate-800">Geen artikelen gevonden</h3>
-                      <p className="mb-6 text-slate-600">Er zijn momenteel geen blogposts beschikbaar.</p>
-                      <Link
-                        href="/#contact"
-                        className="inline-flex items-center px-6 py-3 font-semibold text-white transition-colors duration-300 bg-blue-500 rounded-lg hover:bg-blue-600"
-                      >
-                        Neem contact op
-                      </Link>
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-20 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900">
-          <div className="px-4 mx-auto text-center max-w-7xl sm:px-6 lg:px-8">
+        {/* CTA */}
+        <section className="py-16 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900">
+          <div className="px-4 mx-auto text-center max-w-3xl sm:px-6 lg:px-8">
             <motion.div
-              initial={{ opacity: 0, y: 50 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className="mb-6 text-4xl font-bold text-white md:text-5xl">
-                Klaar voor je <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">Project?</span>
+              <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl">
+                Klaar voor je <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">project?</span>
               </h2>
-              <p className="max-w-3xl mx-auto mb-8 text-xl leading-relaxed text-slate-200">
-                Heb je een project in gedachten? Laten we kennismaken en kijken wat er mogelijk is.
+              <p className="text-slate-400 mb-8 leading-relaxed">
+                Heb je een idee? Neem contact op en we kijken samen wat mogelijk is.
               </p>
-              <div className="flex flex-col justify-center gap-4 sm:flex-row">
-                <motion.a
-                  href="/contact"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
-                >
+              <div className="flex flex-col justify-center gap-3 sm:flex-row">
+                <Link href="/contact" className="px-7 py-3 font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-500 transition-colors">
                   Neem contact op
-                </motion.a>
-                <motion.a
-                  href="/portfolio"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10"
-                >
+                </Link>
+                <Link href="/portfolio" className="px-7 py-3 font-semibold text-slate-300 border border-white/20 rounded-xl hover:bg-white/10 transition-colors">
                   Bekijk portfolio
-                </motion.a>
+                </Link>
               </div>
             </motion.div>
           </div>

@@ -6,9 +6,20 @@ import { useActionState } from 'react';
 import { subscribeNewsletter, type NewsletterState } from '@/app/actions/newsletter';
 import { blogPosts } from '@/data/blog-posts';
 
+function shortTitle(title: string, max = 34): string {
+  if (title.length <= max) return title;
+  const cut = title.slice(0, max);
+  const lastSpace = cut.lastIndexOf(' ');
+  return (lastSpace > 20 ? cut.slice(0, lastSpace) : cut) + '\u2026';
+}
+
 function pickRandom3() {
   const shuffled = [...blogPosts].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, 3).map((p) => ({ name: p.title, href: `/blog/${p.slug}` }));
+  return shuffled.slice(0, 3).map((p) => ({
+    name: shortTitle(p.title),
+    full: p.title,
+    href: `/blog/${p.slug}`,
+  }));
 }
 
 export default function Footer() {
@@ -279,7 +290,8 @@ export default function Footer() {
                   <li key={link.href}>
                     <a
                       href={link.href}
-                      className="text-sm text-slate-400 hover:text-white transition-colors duration-200 hover:translate-x-0.5 inline-block"
+                      title={link.full}
+                      className="text-sm text-slate-400 hover:text-white transition-colors duration-200 hover:translate-x-0.5 block truncate"
                     >
                       {link.name}
                     </a>

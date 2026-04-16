@@ -4,6 +4,7 @@ import { blogPost as post3 } from './logo-en-branding';
 import { blogPost as post4 } from './technische-ondersteuning'; 
 import { blogPost as post5 } from './AI-in-2026';
 import { blogPost as post6 } from './waarom-wordpress-verouderd-is';
+import { blogPost as post7 } from './lokale-designer-vs-groot-bureau';
 
 export const blogPosts = [
   post1,
@@ -11,8 +12,9 @@ export const blogPosts = [
   post3,
   post4,
   post5,
-  post6
+  post6,
+  post7
 ];
 
 // Export individual posts for easier access
-export {  post1, post2, post3, post4, post5, post6 };
+export {  post1, post2, post3, post4, post5, post6, post7 };

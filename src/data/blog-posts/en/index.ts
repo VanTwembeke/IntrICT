@@ -34,10 +34,8 @@
  */
 
 import type { BlogPost } from '@/lib/blog-api';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type _check = BlogPost; // keep type in scope
+import { blogPost as post7En } from './local-designer-vs-large-agency';
 
 export const blogPostsEn: BlogPost[] = [
-  // Add your English posts here once you create the translation files.
+  post7En,
 ];

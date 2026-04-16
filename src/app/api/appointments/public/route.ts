@@ -1,6 +1,7 @@
 // Public appointment booking — no auth required (contact page)
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -74,7 +75,9 @@ export async function POST(request: Request) {
   // ── Insert appointment ──────────────────────────────────────────────────────
   const endsAt = new Date(startDate.getTime() + apptType.duration_minutes * 60_000);
 
-  const { data: appointment, error: insertErr } = await supabase
+  // Use the service-role client to bypass RLS — all validation is done above.
+  const adminClient = createAdminClient();
+  const { data: appointment, error: insertErr } = await adminClient
     .from('appointments')
     .insert({
       user_id:             null,

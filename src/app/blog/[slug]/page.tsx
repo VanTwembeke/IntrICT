@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { blogPosts } from '@/data/blog-posts';
+import { blogPostsNl, blogPostsEn } from '@/lib/blog-api';
 import BlogPostClient from './BlogPostClient';
 
 const SITE_URL = 'https://www.intrict.com';
@@ -7,12 +7,15 @@ const SITE_URL = 'https://www.intrict.com';
 type Props = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return blogPosts.map((p) => ({ slug: p.slug }));
+  // Pre-render pages for both NL and EN slugs
+  const allSlugs = [...blogPostsNl, ...blogPostsEn].map((p) => ({ slug: p.slug }));
+  return allSlugs;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = blogPosts.find((p) => p.slug === slug);
+  const allPosts = [...blogPostsNl, ...blogPostsEn];
+  const post = allPosts.find((p) => p.slug === slug);
 
   if (!post) {
     return {
@@ -26,14 +29,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? post.image.replace(/\?.*$/, '') + '?w=1200&h=630&fit=crop&auto=format&q=80'
     : post.image;
 
+  const postLang = post.lang ?? 'nl';
   const url = `${SITE_URL}/blog/${post.slug}`;
+
+  // Build hreflang alternates when a translation exists
+  const languageAlternates: Record<string, string> = {};
+  if (post.translationSlug) {
+    const altLang = postLang === 'nl' ? 'en' : 'nl';
+    languageAlternates[postLang] = url;
+    languageAlternates[altLang] = `${SITE_URL}/blog/${post.translationSlug}`;
+  }
 
   return {
     title: post.title,
     description: post.excerpt,
     authors: [{ name: post.author }],
     keywords: post.tags,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      ...(Object.keys(languageAlternates).length > 0 ? { languages: languageAlternates } : {}),
+    },
     openGraph: {
       type: 'article',
       url,

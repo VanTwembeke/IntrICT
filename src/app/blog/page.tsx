@@ -9,16 +9,9 @@ import { Clock, Calendar, Tag, ArrowRight } from 'lucide-react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
-import { blogPosts as allPosts } from '@/data/blog-posts';
+import { getBlogPostsForLang } from '@/lib/blog-api';
 import type { BlogPostMeta } from '@/lib/blog-api';
 import { useLanguage } from '@/contexts/LanguageContext';
-
-// Sort newest first — static data, done once
-const SORTED_POSTS: BlogPostMeta[] = [...allPosts]
-  .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-  .map(({ content: _c, ...meta }) => meta as BlogPostMeta);
-
-const CATEGORIES = ['Alle', ...Array.from(new Set(SORTED_POSTS.map((p) => p.category)))];
 
 function fmtDate(iso: string, lang: string) {
   return new Date(iso).toLocaleDateString(lang === 'en' ? 'en-GB' : 'nl-BE', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -168,6 +161,22 @@ export default function BlogPage() {
   const { t, lang } = useLanguage();
   const [activeCategory, setActiveCategory] = useState('Alle');
 
+  // Re-compute when language changes so the list switches to the correct posts
+  const SORTED_POSTS = useMemo<BlogPostMeta[]>(() => {
+    const posts = getBlogPostsForLang(lang);
+    return [...posts]
+      .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+      .map(({ content: _c, ...meta }) => meta as BlogPostMeta);
+  }, [lang]);
+
+  const CATEGORIES = useMemo(
+    () => ['Alle', ...Array.from(new Set(SORTED_POSTS.map((p) => p.category)))],
+    [SORTED_POSTS]
+  );
+
+  // Reset category filter when language changes (categories may differ)
+  useEffect(() => { setActiveCategory('Alle'); }, [lang]);
+
   useEffect(() => {
     const lenis = new Lenis();
     const raf = (time: number) => { lenis.raf(time); requestAnimationFrame(raf); };
@@ -179,7 +188,7 @@ export default function BlogPage() {
     activeCategory === 'Alle'
       ? SORTED_POSTS
       : SORTED_POSTS.filter((p) => p.category === activeCategory),
-    [activeCategory]
+    [activeCategory, SORTED_POSTS]
   );
 
   const featured = filtered[0] ?? null;

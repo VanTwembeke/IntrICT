@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 // GET /api/appointments?from=ISO&to=ISO
 // Admin: all appointments in range. User: own only.
@@ -96,7 +97,9 @@ export async function POST(request: Request) {
   const startsAt = new Date(body.starts_at);
   const endsAt   = new Date(startsAt.getTime() + apptType.duration_minutes * 60_000);
 
-  const { data: newAppt, error } = await supabase
+  // Use the service-role client to bypass RLS — all entitlement checks are done above.
+  const adminClient = createAdminClient();
+  const { data: newAppt, error } = await adminClient
     .from('appointments')
     .insert({
       user_id:             targetUserId,

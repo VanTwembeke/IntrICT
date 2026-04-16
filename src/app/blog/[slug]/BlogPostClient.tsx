@@ -10,9 +10,10 @@ import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
 import { getBlogPostBySlug, getRelatedPosts, BlogPost, BlogPostMeta } from '@/lib/blog-api';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // CodeBlock Component
-const CodeBlock = ({ code, language }: { code: string; language: string }) => {
+const CodeBlock = ({ code, language, copyLabel, copiedLabel }: { code: string; language: string; copyLabel: string; copiedLabel: string }) => {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async () => {
@@ -45,14 +46,14 @@ const CodeBlock = ({ code, language }: { code: string; language: string }) => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span>Gekopieerd!</span>
+                <span>{copiedLabel}</span>
               </>
             ) : (
               <>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
-                <span>Kopiëren</span>
+                <span>{copyLabel}</span>
               </>
             )}
           </button>
@@ -85,12 +86,20 @@ const YouTubeEmbed = ({ videoId }: { videoId: string }) => {
   );
 };
 
+const extractYouTubeVideoId = (url: string): string | null => {
+  const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+};
+
 export default function BlogPostClient() {
   const params = useParams();
   const slug = params.slug as string;
+  const { t, lang } = useLanguage();
+  const p = t.blog.post;
 
   const [blogPost, setBlogPost] = useState<BlogPost | null>(null);
-  const [relatedPosts, setRelatedPosts] = useState<BlogPostMeta[]>([]);  // ← Fixed: BlogPostMeta[]
+  const [relatedPosts, setRelatedPosts] = useState<BlogPostMeta[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Smooth scroll — isolated with cleanup to prevent memory leaks
@@ -101,7 +110,7 @@ export default function BlogPostClient() {
     return () => lenis.destroy();
   }, []);
 
-  // Load static blog data (no real async work — just array lookups)
+  // Load static blog data
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
@@ -123,10 +132,10 @@ export default function BlogPostClient() {
   }, [slug]);
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('nl-NL', {
+    return new Date(dateString).toLocaleDateString(lang === 'en' ? 'en-GB' : 'nl-BE', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -134,95 +143,87 @@ export default function BlogPostClient() {
     if (!blogPost) return null;
     const content = blogPost.content;
     const formatContent = (content: string) => {
-    const lines = content.split('\n');
-    const elements: React.ReactElement[] = [];
-    let i = 0;
+      const lines = content.split('\n');
+      const elements: React.ReactElement[] = [];
+      let i = 0;
 
-    while (i < lines.length) {
-      const line = lines[i];
+      while (i < lines.length) {
+        const line = lines[i];
 
-      // Headers
-      if (line.startsWith('# ')) {
-        elements.push(
-          <h1 key={i} className="mt-8 mb-4 text-4xl font-bold text-slate-800">
-            {line.substring(2)}
-          </h1>
-        );
-      } else if (line.startsWith('## ')) {
-        elements.push(
-          <h2 key={i} className="mt-6 mb-3 text-3xl font-bold text-slate-800">
-            {line.substring(3)}
-          </h2>
-        );
-      } else if (line.startsWith('### ')) {
-        elements.push(
-          <h3 key={i} className="mt-4 mb-2 text-2xl font-bold text-slate-800">
-            {line.substring(4)}
-          </h3>
-        );
-      } else if (line.startsWith('```')) {
-        // Code block
-        const language = line.substring(3).trim() || 'text';
-        const codeLines: string[] = [];
-        i++;
-
-        while (i < lines.length && !lines[i].startsWith('```')) {
-          codeLines.push(lines[i]);
-          i++;
-        }
-
-        const code = codeLines.join('\n');
-        elements.push(
-          <div key={i} className="my-4">
-            <CodeBlock code={code} language={language} />
-          </div>
-        );
-      } else if (line.startsWith('https://www.youtube.com/watch?v=') || line.startsWith('https://youtu.be/')) {
-        // YouTube video
-        const videoId = extractYouTubeVideoId(line);
-        if (videoId) {
+        if (line.startsWith('# ')) {
           elements.push(
-            <div key={i} className="my-6">
-              <YouTubeEmbed videoId={videoId} />
+            <h1 key={i} className="mt-8 mb-4 text-4xl font-bold text-slate-800">
+              {line.substring(2)}
+            </h1>
+          );
+        } else if (line.startsWith('## ')) {
+          elements.push(
+            <h2 key={i} className="mt-6 mb-3 text-3xl font-bold text-slate-800">
+              {line.substring(3)}
+            </h2>
+          );
+        } else if (line.startsWith('### ')) {
+          elements.push(
+            <h3 key={i} className="mt-4 mb-2 text-2xl font-bold text-slate-800">
+              {line.substring(4)}
+            </h3>
+          );
+        } else if (line.startsWith('```')) {
+          const language = line.substring(3).trim() || 'text';
+          const codeLines: string[] = [];
+          i++;
+
+          while (i < lines.length && !lines[i].startsWith('```')) {
+            codeLines.push(lines[i]);
+            i++;
+          }
+
+          elements.push(
+            <div key={i} className="my-4">
+              <CodeBlock
+                code={codeLines.join('\n')}
+                language={language}
+                copyLabel={p.copy}
+                copiedLabel={p.copied}
+              />
             </div>
           );
+        } else if (line.startsWith('https://www.youtube.com/watch?v=') || line.startsWith('https://youtu.be/')) {
+          const videoId = extractYouTubeVideoId(line);
+          if (videoId) {
+            elements.push(
+              <div key={i} className="my-6">
+                <YouTubeEmbed videoId={videoId} />
+              </div>
+            );
+          }
+        } else if (line.startsWith('- ')) {
+          elements.push(
+            <li key={i} className="mb-1 ml-4 leading-relaxed list-disc text-slate-700">
+              {line.substring(2)}
+            </li>
+          );
+        } else if (line.trim() === '') {
+          const prevElement = elements[elements.length - 1];
+          if (prevElement && prevElement.type !== 'li') {
+            elements.push(<br key={i} />);
+          }
+        } else if (line.trim()) {
+          elements.push(
+            <p key={i} className="mb-3 leading-relaxed text-slate-700">
+              {line}
+            </p>
+          );
         }
-      } else if (line.startsWith('- ')) {
-        // List item
-        elements.push(
-          <li key={i} className="mb-1 ml-4 leading-relaxed list-disc text-slate-700">
-            {line.substring(2)}
-          </li>
-        );
-      } else if (line.trim() === '') {
-        // Empty line - only add break if previous element wasn't a list item
-        const prevElement = elements[elements.length - 1];
-        if (prevElement && prevElement.type !== 'li') {
-          elements.push(<br key={i} />);
-        }
-      } else if (line.trim()) {
-        // Regular paragraph
-        elements.push(
-          <p key={i} className="mb-3 leading-relaxed text-slate-700">
-            {line}
-          </p>
-        );
-      }
 
-      i++;
-    }
+        i++;
+      }
 
       return elements;
     };
     return formatContent(content);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [blogPost?.content]);
-
-  const extractYouTubeVideoId = (url: string): string | null => {
-    const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
-    const match = url.match(regex);
-    return match ? match[1] : null;
-  };
+  }, [blogPost?.content, p.copy, p.copied]);
 
   if (loading) {
     return (
@@ -231,7 +232,7 @@ export default function BlogPostClient() {
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="w-12 h-12 mx-auto border-b-2 border-blue-500 rounded-full animate-spin"></div>
-            <p className="mt-4 text-slate-600">Blogpost laden...</p>
+            <p className="mt-4 text-slate-600">{p.loading}</p>
           </div>
         </div>
       </div>
@@ -241,6 +242,10 @@ export default function BlogPostClient() {
   if (!blogPost) {
     notFound();
   }
+
+  // Show a translation-available banner when the post language differs from the UI language
+  const postLang = blogPost.lang ?? 'nl';
+  const showTranslationBanner = postLang !== lang && !!blogPost.translationSlug;
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -269,7 +274,7 @@ export default function BlogPostClient() {
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
-                  Terug naar Blog
+                  {p.backToBlog}
                 </Link>
               </div>
 
@@ -304,12 +309,24 @@ export default function BlogPostClient() {
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  {blogPost.readTime} min lezen
+                  {p.minRead(blogPost.readTime)}
                 </div>
               </div>
             </motion.div>
           </div>
         </section>
+
+        {/* Translation available banner */}
+        {showTranslationBanner && (
+          <div className="bg-blue-50 border-b border-blue-100">
+            <div className="max-w-5xl px-4 py-3 mx-auto text-sm text-blue-700 sm:px-6 lg:px-8">
+              {p.translationBanner}
+              <Link href={`/blog/${blogPost.translationSlug}`} className="font-semibold underline hover:text-blue-800">
+                {p.translationLinkLabel}
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Featured Image */}
         <section className="py-6">
@@ -377,10 +394,13 @@ export default function BlogPostClient() {
                 className="mb-16 text-center"
               >
                 <h2 className="mb-6 text-4xl font-bold md:text-5xl text-slate-800">
-                  Gerelateerde <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">Artikelen</span>
+                  {p.relatedHeading}{' '}
+                  <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">
+                    {p.relatedHighlight}
+                  </span>
                 </h2>
                 <p className="max-w-3xl mx-auto text-xl leading-relaxed text-slate-600">
-                  Meer interessante artikelen die je mogelijk interessant vindt
+                  {p.relatedSubtitle}
                 </p>
               </motion.div>
 
@@ -422,7 +442,7 @@ export default function BlogPostClient() {
                         href={`/blog/${post.slug}`}
                         className="inline-flex items-center font-semibold text-blue-600 transition-colors duration-300 hover:text-blue-700"
                       >
-                        Lees meer
+                        {p.readMore}
                         <svg className="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
@@ -445,31 +465,34 @@ export default function BlogPostClient() {
               viewport={{ once: true }}
             >
               <h2 className="mb-6 text-4xl font-bold text-white md:text-5xl">
-                Vond Je Dit <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">Interessant?</span>
+                {p.ctaHeading}
+                <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">
+                  {p.ctaHighlight}
+                </span>
               </h2>
               <p className="max-w-3xl mx-auto mb-8 text-xl leading-relaxed text-slate-200">
-                Laten we samenwerken aan jouw volgende project. Ik help je graag met web development, design en digitale strategie.
+                {p.ctaBody}
               </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
                 <Link href="/contact">
-  <motion.button
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    className="px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
-  >
-    Start Je Project
-  </motion.button>
-</Link>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
+                  >
+                    {p.ctaStart}
+                  </motion.button>
+                </Link>
 
-<Link href="/portfolio">
-  <motion.button
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    className="px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10 backdrop-blur-sm"
-  >
-    Bekijk Portfolio
-  </motion.button>
-</Link>
+                <Link href="/portfolio">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10 backdrop-blur-sm"
+                  >
+                    {p.ctaPortfolio}
+                  </motion.button>
+                </Link>
               </div>
             </motion.div>
           </div>

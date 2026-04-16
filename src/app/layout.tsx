@@ -3,6 +3,7 @@ import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import CookieConsent from "@/components/common/CookieConsent";
+import Providers from "@/components/Providers";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -206,6 +207,7 @@ export default function RootLayout({
   return (
     <html lang="nl">
       <body className={`${geistMono.variable} font-mono antialiased`}>
+        <Providers>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -234,6 +236,7 @@ export default function RootLayout({
             alt=""
           />
         </noscript>
+        </Providers>
       </body>
     </html>
   );

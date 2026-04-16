@@ -3,9 +3,11 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Contact() {
   const router = useRouter();
+  const { t } = useLanguage();
 
   return (
     <section id="contact" className="relative pt-20">
@@ -29,7 +31,7 @@ export default function Contact() {
               transition={{ duration: 0.6 }}
               className="mb-4 text-3xl font-bold text-white sm:text-4xl md:text-6xl"
             >
-              Laten we je project bespreken
+              {t.contactSection.heading}
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 30 }}
@@ -38,8 +40,7 @@ export default function Contact() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="mx-auto mb-10 text-base leading-relaxed md:text-xl text-slate-200"
             >
-              Klaar om je digitale aanwezigheid naar het volgende niveau te tillen?
-              Laten we bespreken hoe ik je kan helpen.
+              {t.contactSection.subtitle}
             </motion.p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <motion.button
@@ -55,7 +56,7 @@ export default function Contact() {
                 <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
-                Bespreek je project
+                {t.contactSection.cta1}
               </motion.button>
               <motion.button
                 initial={{ opacity: 0, y: 30 }}
@@ -70,7 +71,7 @@ export default function Contact() {
                 <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                Bekijk mijn portfolio
+                {t.contactSection.cta2}
               </motion.button>
             </div>
           </div>

@@ -3,8 +3,10 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { X, Settings, Shield, Cookie, Eye } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function CookieConsent() {
+  const { t } = useLanguage();
   const [isVisible, setIsVisible] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [preferences, setPreferences] = useState({
@@ -81,19 +83,19 @@ export default function CookieConsent() {
                     <Cookie className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-slate-800">Cookie Voorkeuren</h3>
-                    <p className="text-xs text-slate-600">We respecteren je privacy</p>
+                    <h3 className="text-sm font-bold text-slate-800">{t.cookies.heading}</h3>
+                    <p className="text-xs text-slate-600">{t.cookies.subtitle}</p>
                   </div>
                 </div>
                 
                 <div className="items-center hidden space-x-4 text-xs md:flex text-slate-600">
                   <div className="flex items-center space-x-1">
                     <Shield className="w-3 h-3 text-green-500" />
-                    <span>Veilig</span>
+                    <span>{t.cookies.safe}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Eye className="w-3 h-3 text-blue-500" />
-                    <span>Transparant</span>
+                    <span>{t.cookies.transparent}</span>
                   </div>
                 </div>
               </div>
@@ -107,9 +109,9 @@ export default function CookieConsent() {
                     onClick={handleAcceptAll}
                     className="bg-linear-to-r from-slate-800 to-slate-700 text-white px-3 py-1.5 rounded text-xs font-semibold hover:from-slate-700 hover:to-slate-600 transition-all duration-300"
                   >
-                    Accepteren
+                    {t.cookies.accept}
                   </motion.button>
-                  
+
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -117,16 +119,16 @@ export default function CookieConsent() {
                     className="bg-slate-100 text-slate-700 px-3 py-1.5 rounded text-xs font-semibold hover:bg-slate-200 transition-all duration-300 flex items-center space-x-1"
                   >
                     <Settings className="w-3 h-3" />
-                    <span>Instellingen</span>
+                    <span>{t.cookies.settings}</span>
                   </motion.button>
-                  
+
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleRejectAll}
                     className="border border-slate-300 text-slate-700 px-3 py-1.5 rounded text-xs font-semibold hover:bg-slate-50 transition-all duration-300"
                   >
-                    Alleen Essentieel
+                    {t.cookies.essentialOnly}
                   </motion.button>
                 </div>
                 
@@ -147,8 +149,8 @@ export default function CookieConsent() {
                     <Settings className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-slate-800">Cookie Instellingen</h3>
-                    <p className="text-xs text-slate-600">Kies welke cookies je wilt toestaan</p>
+                    <h3 className="text-sm font-bold text-slate-800">{t.cookies.settingsHeading}</h3>
+                    <p className="text-xs text-slate-600">{t.cookies.settingsSubtitle}</p>
                   </div>
                 </div>
                 <button
@@ -164,20 +166,20 @@ export default function CookieConsent() {
                 {/* Essential Cookies */}
                 <div className="p-3 rounded-lg bg-slate-50">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xs font-semibold text-slate-800">Essentiële</h4>
+                    <h4 className="text-xs font-semibold text-slate-800">{t.cookies.essential}</h4>
                     <div className="relative w-8 h-4 rounded-full opacity-50 cursor-not-allowed bg-slate-300">
                       <div className="w-3 h-3 bg-white rounded-full absolute top-0.5 left-0.5"></div>
                     </div>
                   </div>
                   <p className="text-xs leading-relaxed text-slate-600">
-                    Noodzakelijk voor de werking van de website.
+                    {t.cookies.essentialDesc}
                   </p>
                 </div>
 
                 {/* Analytics Cookies */}
                 <div className="p-3 rounded-lg bg-slate-50">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xs font-semibold text-slate-800">Analytisch</h4>
+                    <h4 className="text-xs font-semibold text-slate-800">{t.cookies.analytics}</h4>
                     <div 
                       className={`w-8 h-4 rounded-full relative cursor-pointer transition-colors ${
                         preferences.analytics ? 'bg-blue-500' : 'bg-slate-300'
@@ -190,14 +192,14 @@ export default function CookieConsent() {
                     </div>
                   </div>
                   <p className="text-xs leading-relaxed text-slate-600">
-                    Website verbeteren.
+                    {t.cookies.analyticsDesc}
                   </p>
                 </div>
 
                 {/* Functional Cookies */}
                 <div className="p-3 rounded-lg bg-slate-50">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xs font-semibold text-slate-800">Functioneel</h4>
+                    <h4 className="text-xs font-semibold text-slate-800">{t.cookies.functional}</h4>
                     <div 
                       className={`w-8 h-4 rounded-full relative cursor-pointer transition-colors ${
                         preferences.functional ? 'bg-blue-500' : 'bg-slate-300'
@@ -210,14 +212,14 @@ export default function CookieConsent() {
                     </div>
                   </div>
                   <p className="text-xs leading-relaxed text-slate-600">
-                    Voorkeuren onthouden.
+                    {t.cookies.functionalDesc}
                   </p>
                 </div>
 
                 {/* Marketing Cookies */}
                 <div className="p-3 rounded-lg bg-slate-50">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xs font-semibold text-slate-800">Marketing</h4>
+                    <h4 className="text-xs font-semibold text-slate-800">{t.cookies.marketing}</h4>
                     <div 
                       className={`w-8 h-4 rounded-full relative cursor-pointer transition-colors ${
                         preferences.marketing ? 'bg-blue-500' : 'bg-slate-300'
@@ -230,7 +232,7 @@ export default function CookieConsent() {
                     </div>
                   </div>
                   <p className="text-xs leading-relaxed text-slate-600">
-                    Gepersonaliseerd.
+                    {t.cookies.marketingDesc}
                   </p>
                 </div>
               </div>
@@ -243,16 +245,16 @@ export default function CookieConsent() {
                   onClick={handleAcceptSelected}
                   className="bg-linear-to-r from-slate-800 to-slate-700 text-white px-4 py-1.5 rounded text-xs font-semibold hover:from-slate-700 hover:to-slate-600 transition-all duration-300"
                 >
-                  Opslaan
+                  {t.cookies.save}
                 </motion.button>
-                
+
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={closeSettings}
                   className="border border-slate-300 text-slate-700 px-4 py-1.5 rounded text-xs font-semibold hover:bg-slate-50 transition-all duration-300"
                 >
-                  Annuleren
+                  {t.cookies.cancel}
                 </motion.button>
               </div>
             </div>

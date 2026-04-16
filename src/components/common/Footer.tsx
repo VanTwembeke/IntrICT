@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useActionState } from 'react';
 import { subscribeNewsletter, type NewsletterState } from '@/app/actions/newsletter';
 import { blogPosts } from '@/data/blog-posts';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 function shortTitle(title: string, max = 34): string {
   if (title.length <= max) return title;
@@ -25,26 +26,27 @@ function pickRandom3() {
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const [randomPosts] = useState(pickRandom3);
+  const { t } = useLanguage();
 
   const footerLinks = {
     navigation: [
       { name: 'Home', href: '/' },
-      { name: 'Portfolio', href: '/portfolio' },
-      { name: 'Blog', href: '/blog' },
-      { name: 'Oplossingen', href: '/oplossingen' },
+      { name: t.nav.portfolio, href: '/portfolio' },
+      { name: t.nav.blog, href: '/blog' },
+      { name: t.nav.oplossingen, href: '/oplossingen' },
     ],
     info: [
-      { name: 'Visie', href: '/visie' },
-      { name: 'Over Mij', href: '/over' },
-      { name: 'Contact', href: '/contact' },
+      { name: t.nav.onzeVisie, href: '/visie' },
+      { name: t.nav.overIntrict, href: '/over' },
+      { name: t.nav.contact, href: '/contact' },
     ],
     legal: [
-      { name: 'Sitemap', href: '/sitemap.xml' },
-      { name: 'Robots', href: '/robots.txt' },
-      { name: 'Privacybeleid', href: '/privacy' },
-      { name: 'Algemene Voorwaarden', href: '/voorwaarden' },
-      { name: 'Cookiebeleid', href: '/cookies' },
-      { name: 'GDPR', href: '/gdpr' },
+      { name: t.footer.legal.sitemap, href: '/sitemap.xml' },
+      { name: t.footer.legal.robots,  href: '/robots.txt' },
+      { name: t.footer.legal.privacy, href: '/privacy' },
+      { name: t.footer.legal.terms,   href: '/voorwaarden' },
+      { name: t.footer.legal.cookies, href: '/cookies' },
+      { name: t.footer.legal.gdpr,    href: '/gdpr' },
     ],
   };
 
@@ -109,13 +111,13 @@ export default function Footer() {
             <div className="max-w-md">
               <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 text-xs font-semibold tracking-widest uppercase border rounded-full bg-slate-800 text-slate-400 border-slate-700">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Nieuwsbrief
+                {t.footer.newsletter.badge}
               </div>
               <h2 className="mb-2 text-2xl font-bold tracking-tight text-white md:text-3xl">
-                Blijf op de hoogte
+                {t.footer.newsletter.heading}
               </h2>
               <p className="text-sm leading-relaxed text-slate-400">
-                Ontvang tips over webontwikkeling, design en digitale strategie — geen spam, enkel waardevolle inzichten.
+                {t.footer.newsletter.subtitle}
               </p>
             </div>
 
@@ -136,8 +138,8 @@ export default function Footer() {
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-emerald-400">Je bent ingeschreven!</p>
-                      <p className="text-xs text-emerald-500/70">Bedankt — je ontvangt binnenkort nieuws.</p>
+                      <p className="text-sm font-semibold text-emerald-400">{t.footer.newsletter.success}</p>
+                      <p className="text-xs text-emerald-500/70">{t.footer.newsletter.successSub}</p>
                     </div>
                   </motion.div>
                 ) : (
@@ -159,7 +161,7 @@ export default function Footer() {
                           type="email"
                           name="email"
                           required
-                          placeholder="jouw@email.be"
+                          placeholder={t.footer.newsletter.placeholder}
                           className="w-full py-3 pl-10 pr-4 text-sm text-white transition-all duration-300 border placeholder-slate-500 bg-slate-800 rounded-xl border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 hover:border-slate-600"
                         />
                       </div>
@@ -176,11 +178,11 @@ export default function Footer() {
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                             </svg>
-                            Bezig…
+                            {t.footer.newsletter.loading}
                           </>
                         ) : (
                           <>
-                            Aanmelden
+                            {t.footer.newsletter.cta}
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                             </svg>
@@ -201,7 +203,7 @@ export default function Footer() {
                       </motion.p>
                     )}
                     <p className="mt-2.5 text-xs text-slate-600">
-                      Geen spam. Uitschrijven kan altijd. Powered by{' '}
+                      {t.footer.newsletter.noSpam}{' '}
                       <a href="https://resend.com" target="_blank" rel="noopener noreferrer" className="underline transition-colors text-slate-500 hover:text-slate-400 underline-offset-2">
                         Resend
                       </a>
@@ -230,7 +232,7 @@ export default function Footer() {
                 IntrICT
               </a>
               <p className="mb-5 text-sm leading-relaxed text-slate-500">
-                Moderne websites die werken — van concept tot live.
+                {t.footer.tagline}
               </p>
               <div className="flex gap-2">
                 {socialLinks.map((social, i) => (
@@ -259,7 +261,7 @@ export default function Footer() {
               transition={{ duration: 0.6, delay: 0.1 }}
             >
               <h3 className="mb-4 text-xs font-bold tracking-widest uppercase text-slate-500">
-                Navigatie
+                {t.footer.nav}
               </h3>
               <ul className="space-y-2.5">
                 {footerLinks.navigation.map((link) => (
@@ -283,7 +285,7 @@ export default function Footer() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <h3 className="mb-4 text-xs font-bold tracking-widest uppercase text-slate-500">
-                Recente artikels
+                {t.footer.recentPosts}
               </h3>
               <ul className="space-y-2.5">
                 {randomPosts.map((link) => (
@@ -308,7 +310,7 @@ export default function Footer() {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <h3 className="mb-4 text-xs font-bold tracking-widest uppercase text-slate-500">
-                Info
+                {t.footer.info}
               </h3>
               <ul className="space-y-2.5">
                 {footerLinks.info.map((link) => (
@@ -329,7 +331,7 @@ export default function Footer() {
                   href="/contact"
                   className="inline-flex items-center gap-1.5 text-sm font-semibold text-white hover:text-slate-300 transition-colors group"
                 >
-                  Start je project
+                  {t.footer.startProject}
                   <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
@@ -348,7 +350,7 @@ export default function Footer() {
           className="flex flex-col items-center justify-between gap-3 py-5 border-t border-slate-800 sm:flex-row"
         >
           <p className="text-xs text-slate-600">
-            © {currentYear} IntrICT — Alle rechten voorbehouden.
+            {t.footer.copyright(currentYear)}
           </p>
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
             {footerLinks.legal.map((link) => (

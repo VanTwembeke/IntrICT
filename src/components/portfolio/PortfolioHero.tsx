@@ -2,8 +2,10 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function PortfolioHero() {
+  const { t } = useLanguage();
   return (
     <section className="relative flex items-center justify-center min-h-screen overflow-hidden">
       <div className="absolute inset-0 z-0">
@@ -30,7 +32,7 @@ export default function PortfolioHero() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="mb-8 text-6xl font-bold leading-tight text-white md:text-8xl"
           >
-            Mijn Portfolio
+            {t.portfolio.heading}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -38,7 +40,7 @@ export default function PortfolioHero() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="max-w-3xl mx-auto mb-12 text-xl leading-relaxed md:text-2xl text-slate-200"
           >
-            Een selectie van mijn recente web development projecten. Van moderne websites tot complexe webapplicaties.
+            {t.portfolio.subtitle}
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -52,7 +54,7 @@ export default function PortfolioHero() {
               whileTap={{ scale: 0.95 }}
               className="inline-block px-12 py-4 text-lg font-semibold transition-all duration-300 bg-white rounded-full shadow-2xl text-slate-800 hover:bg-slate-100"
             >
-              Bekijk alle projecten
+              {t.portfolio.viewProjects}
             </motion.a>
             <motion.a
               href="/contact"
@@ -60,7 +62,7 @@ export default function PortfolioHero() {
               whileTap={{ scale: 0.95 }}
               className="inline-block px-12 py-4 text-lg font-semibold text-white transition-all duration-300 border-2 border-white rounded-full hover:bg-white hover:text-slate-800"
             >
-              Start je project
+              {t.portfolio.startProject}
             </motion.a>
           </motion.div>
         </motion.div>

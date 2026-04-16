@@ -5,14 +5,14 @@ import { useEffect } from 'react';
 import Lenis from 'lenis';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { 
-  Coins, 
-  Smartphone, 
-  BookOpen, 
-  GraduationCap, 
-  Zap, 
-  Shield, 
-  FileText, 
+import {
+  Coins,
+  Smartphone,
+  BookOpen,
+  GraduationCap,
+  Zap,
+  Shield,
+  FileText,
   Code,
   Heart,
   MessageCircle
@@ -20,23 +20,24 @@ import {
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+const SERVICE_ICONS = [BookOpen, GraduationCap, Zap, Shield, FileText, Code];
 
 export default function Oplossingen() {
+  const { t } = useLanguage();
+  const s = t.solutions;
+
   useEffect(() => {
     const lenis = new Lenis();
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
+    function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
     requestAnimationFrame(raf);
   }, []);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Header />
-      
+
       <main>
         {/* Banner Section */}
         <section className="relative overflow-hidden min-h-[420px] md:min-h-[520px] flex items-center pt-16">
@@ -50,17 +51,17 @@ export default function Oplossingen() {
           <div className="absolute inset-0 bg-linear-to-r from-slate-900/80 via-slate-800/60 to-slate-900/80" />
           <div className="relative z-10 w-full px-4 py-16 mx-auto max-w-7xl sm:px-6 lg:px-8 text-center">
             <h1 className="mb-6 text-5xl font-bold text-white md:text-6xl lg:text-7xl">
-              Oplossingen
+              {s.heading}
             </h1>
             <p className="max-w-3xl mx-auto text-xl leading-relaxed text-slate-200">
-              Gespecialiseerde web development oplossingen voor jouw specifieke uitdagingen
+              {s.heroSubtitle}
             </p>
           </div>
         </section>
 
         <div className="px-4 py-20 mx-auto max-w-7xl">
-          
-          {/* Intro Sectie */}
+
+          {/* Intro */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -69,20 +70,18 @@ export default function Oplossingen() {
           >
             <div className="max-w-4xl mx-auto">
               <h2 className="mb-8 text-4xl font-bold leading-tight md:text-5xl text-slate-800">
-                Gespecialiseerde Oplossingen
+                {s.introHeading}
               </h2>
               <p className="mb-8 text-xl leading-relaxed text-slate-600">
-                Voor complexe digitale uitdagingen bied ik gespecialiseerde oplossingen 
-                die verder gaan dan standaard web development.
+                {s.introP1}
               </p>
               <p className="text-lg leading-relaxed text-slate-500">
-                Van crypto-advies tot mini-apps, van technologische uitleg tot veiligheidsaudits - 
-                ik help je met de digitale uitdagingen waar andere developers niet aan toekomen.
+                {s.introP2}
               </p>
             </div>
           </motion.div>
 
-          {/* Hoofdoplossingen Grid */}
+          {/* Main cards */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -93,34 +92,22 @@ export default function Oplossingen() {
               <div className="flex items-center justify-center w-12 h-12 mb-6 rounded-lg bg-slate-100">
                 <Coins className="w-6 h-6 text-slate-600" />
               </div>
-              <h3 className="mb-4 text-2xl font-bold text-slate-800">Crypto & Blockchain Advies</h3>
-              <p className="mb-4 text-lg leading-relaxed text-slate-600">
-                Praktisch advies over cryptocurrency, blockchain technologie en digitale assets. 
-                Geen technisch jargon, maar heldere uitleg over wat het voor jouw bedrijf kan betekenen.
-              </p>
-              <p className="leading-relaxed text-slate-500">
-                Van wallet setup tot smart contracts, van NFT&apos;s tot DeFi - ik help je begrijpen 
-                wat er mogelijk is en wat de risico&apos;s zijn.
-              </p>
+              <h3 className="mb-4 text-2xl font-bold text-slate-800">{s.cryptoHeading}</h3>
+              <p className="mb-4 text-lg leading-relaxed text-slate-600">{s.cryptoP1}</p>
+              <p className="leading-relaxed text-slate-500">{s.cryptoP2}</p>
             </div>
 
             <div className="p-10 border bg-slate-50 border-slate-200 rounded-2xl">
               <div className="flex items-center justify-center w-12 h-12 mb-6 rounded-lg bg-slate-100">
                 <Smartphone className="w-6 h-6 text-slate-600" />
               </div>
-              <h3 className="mb-4 text-2xl font-bold text-slate-800">Mini App Ontwikkeling</h3>
-              <p className="mb-4 text-lg leading-relaxed text-slate-600">
-                Kleine, gerichte applicaties die één specifiek probleem oplossen. 
-                Snel te ontwikkelen, makkelijk te onderhouden en perfect voor specifieke workflows.
-              </p>
-              <p className="leading-relaxed text-slate-500">
-                Van automatiseringstools tot data-verwerkingsscripts, van integraties tot 
-                workflow-optimalisaties - soms is een kleine app precies wat je nodig hebt.
-              </p>
+              <h3 className="mb-4 text-2xl font-bold text-slate-800">{s.miniAppsHeading}</h3>
+              <p className="mb-4 text-lg leading-relaxed text-slate-600">{s.miniAppsP1}</p>
+              <p className="leading-relaxed text-slate-500">{s.miniAppsP2}</p>
             </div>
           </motion.div>
 
-          {/* Gespecialiseerde Diensten */}
+          {/* Specialised services */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -128,78 +115,25 @@ export default function Oplossingen() {
             className="mb-20"
           >
             <div className="p-12 bg-white border border-slate-200 rounded-2xl">
-              <h3 className="mb-12 text-3xl font-bold text-center text-slate-800">Gespecialiseerde Diensten</h3>
+              <h3 className="mb-12 text-3xl font-bold text-center text-slate-800">{s.specialHeading}</h3>
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 rounded-lg bg-slate-100">
-                    <BookOpen className="w-6 h-6 text-slate-600" />
-                  </div>
-                  <h4 className="mb-3 text-lg font-bold text-slate-800">Technologische Uitleg</h4>
-                  <p className="text-sm leading-relaxed text-slate-600">
-                    Complexe technologieën uitgelegd in gewone taal. Van AI tot blockchain, 
-                    van cloud computing tot cybersecurity.
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 rounded-lg bg-slate-100">
-                    <GraduationCap className="w-6 h-6 text-slate-600" />
-                  </div>
-                  <h4 className="mb-3 text-lg font-bold text-slate-800">Trainingen & Workshops</h4>
-                  <p className="text-sm leading-relaxed text-slate-600">
-                    Praktische trainingen in digitale tools en applicaties. 
-                    Van basis tot gevorderd, op maat voor jouw team.
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 rounded-lg bg-slate-100">
-                    <Zap className="w-6 h-6 text-slate-600" />
-                  </div>
-                  <h4 className="mb-3 text-lg font-bold text-slate-800">Optimalisaties</h4>
-                  <p className="text-sm leading-relaxed text-slate-600">
-                    Bestaande systemen optimaliseren voor betere prestaties, 
-                    gebruiksvriendelijkheid en efficiëntie.
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 rounded-lg bg-slate-100">
-                    <Shield className="w-6 h-6 text-slate-600" />
-                  </div>
-                  <h4 className="mb-3 text-lg font-bold text-slate-800">Veiligheid & Security</h4>
-                  <p className="text-sm leading-relaxed text-slate-600">
-                    Security audits, beveiligingsadvies en implementatie van 
-                    best practices voor jouw digitale omgeving.
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 rounded-lg bg-slate-100">
-                    <FileText className="w-6 h-6 text-slate-600" />
-                  </div>
-                  <h4 className="mb-3 text-lg font-bold text-slate-800">GDPR & Compliance</h4>
-                  <p className="text-sm leading-relaxed text-slate-600">
-                    Hulp bij GDPR-compliance, privacy-richtlijnen en 
-                    wettelijke verplichtingen voor jouw website of app.
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 rounded-lg bg-slate-100">
-                    <Code className="w-6 h-6 text-slate-600" />
-                  </div>
-                  <h4 className="mb-3 text-lg font-bold text-slate-800">API Development</h4>
-                  <p className="text-sm leading-relaxed text-slate-600">
-                    Custom API&apos;s voor data-uitwisseling, integraties tussen systemen 
-                    en automatisering van workflows.
-                  </p>
-                </div>
+                {s.services.map((svc, i) => {
+                  const Icon = SERVICE_ICONS[i];
+                  return (
+                    <div key={svc.title} className="text-center">
+                      <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 rounded-lg bg-slate-100">
+                        <Icon className="w-6 h-6 text-slate-600" />
+                      </div>
+                      <h4 className="mb-3 text-lg font-bold text-slate-800">{svc.title}</h4>
+                      <p className="text-sm leading-relaxed text-slate-600">{svc.desc}</p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </motion.div>
 
-          {/* Toegankelijke Web Development */}
+          {/* Accessible web dev */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -207,11 +141,10 @@ export default function Oplossingen() {
             className="mb-20"
           >
             <div className="p-12 border bg-linear-to-br from-slate-50 to-slate-100 border-slate-200 rounded-2xl">
-              <h3 className="mb-8 text-3xl font-bold text-center text-slate-800">Toegankelijke Web Development</h3>
+              <h3 className="mb-8 text-3xl font-bold text-center text-slate-800">{s.accessHeading}</h3>
               <div className="max-w-4xl mx-auto">
                 <p className="mb-8 text-xl leading-relaxed text-center text-slate-600">
-                  Ik geloof dat iedereen toegang moet hebben tot een professionele online aanwezigheid, 
-                  ongeacht het budget. Daarom bied ik speciale tarieven voor mensen die financieel minder sterk staan.
+                  {s.accessP}
                 </p>
                 <div className="grid gap-8 md:grid-cols-2">
                   <div className="p-6 bg-white border rounded-xl border-slate-200">
@@ -219,16 +152,12 @@ export default function Oplossingen() {
                       <div className="flex items-center justify-center w-10 h-10 mr-3 rounded-lg bg-slate-100">
                         <MessageCircle className="w-5 h-5 text-slate-600" />
                       </div>
-                      <h4 className="text-xl font-bold text-slate-800">Gratis Eerste Gesprek</h4>
+                      <h4 className="text-xl font-bold text-slate-800">{s.freeConsultTitle}</h4>
                     </div>
-                    <p className="mb-4 leading-relaxed text-slate-600">
-                      Elk project begint met een gratis, vrijblijvend gesprek. We bespreken jouw behoeften, 
-                      mogelijkheden en budget. Geen verplichtingen, gewoon kennismaken.
-                    </p>
+                    <p className="mb-4 leading-relaxed text-slate-600">{s.freeConsultP}</p>
                     <div className="p-4 rounded-lg bg-slate-50">
                       <p className="text-sm text-slate-500">
-                        <strong>Wat we bespreken:</strong> Je doelen, budget, tijdlijn en wat er mogelijk is. 
-                        Soms is een eenvoudige website precies wat je nodig hebt.
+                        <strong>{s.freeConsultNoteLabel}</strong> {s.freeConsultNote}
                       </p>
                     </div>
                   </div>
@@ -237,16 +166,12 @@ export default function Oplossingen() {
                       <div className="flex items-center justify-center w-10 h-10 mr-3 rounded-lg bg-slate-100">
                         <Heart className="w-5 h-5 text-slate-600" />
                       </div>
-                      <h4 className="text-xl font-bold text-slate-800">Flexibele Tarieven</h4>
+                      <h4 className="text-xl font-bold text-slate-800">{s.flexPriceTitle}</h4>
                     </div>
-                    <p className="mb-4 leading-relaxed text-slate-600">
-                      Voor kleine websites en projecten kunnen we altijd een oplossing vinden die past bij jouw budget. 
-                      Soms is een eenvoudige website precies wat je nodig hebt.
-                    </p>
+                    <p className="mb-4 leading-relaxed text-slate-600">{s.flexPriceP}</p>
                     <div className="p-4 rounded-lg bg-slate-50">
                       <p className="text-sm text-slate-500">
-                        <strong>Mogelijkheden:</strong> Eenvoudige websites, portfolio&apos;s, contactpagina&apos;s, 
-                        of kleine webapplicaties - alles bespreekbaar.
+                        <strong>{s.flexPriceNoteLabel}</strong> {s.flexPriceNote}
                       </p>
                     </div>
                   </div>
@@ -255,7 +180,7 @@ export default function Oplossingen() {
             </div>
           </motion.div>
 
-          {/* Call to Action */}
+          {/* CTA */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -263,23 +188,20 @@ export default function Oplossingen() {
             className="text-center"
           >
             <div className="p-12 bg-white border border-slate-200 rounded-2xl">
-              <h3 className="mb-6 text-3xl font-bold text-slate-800">Klaar voor een gesprek?</h3>
+              <h3 className="mb-6 text-3xl font-bold text-slate-800">{s.ctaBoxHeading}</h3>
               <p className="max-w-3xl mx-auto mb-8 text-xl leading-relaxed text-slate-600">
-                Of je nu een complexe technologische uitdaging hebt of gewoon een eenvoudige website nodig hebt - 
-                laten we kennismaken en kijken wat er mogelijk is.
+                {s.ctaBoxP}
               </p>
-              <a 
-                href="/#contact" 
+              <a
+                href="/#contact"
                 className="inline-flex items-center px-8 py-4 space-x-3 text-lg font-medium text-white transition-colors duration-300 bg-slate-800 rounded-xl hover:bg-slate-700"
               >
-                <span>Gratis gesprek inplannen</span>
-                <span>→</span>
+                <span>{s.ctaBoxBtn}</span>
               </a>
             </div>
           </motion.div>
 
         </div>
-
       </main>
 
       <Footer />

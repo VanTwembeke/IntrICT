@@ -13,6 +13,8 @@ import { createClient } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
 import { useMessages } from '@/hooks/useMessages';
 import { blogPosts } from '@/data/blog-posts';
+import { useLanguage } from '@/contexts/LanguageContext';
+import type { Lang } from '@/i18n';
 
 // ─── Fuzzy search ─────────────────────────────────────────────────────────────
 
@@ -47,35 +49,14 @@ function fuzzyMatch(query: string, text: string): boolean {
 interface NavItem { href: string; Icon: React.ElementType; label: string; desc: string }
 interface NavGroup { label: string; href?: string; items?: NavItem[] }
 
-const NAV: NavGroup[] = [
-  {
-    label: 'Diensten',
-    items: [
-      { href: '/#services',   Icon: Building2, label: 'Wat we doen',  desc: 'Websites, apps & webshops' },
-      { href: '/oplossingen', Icon: Zap,        label: 'Oplossingen',  desc: 'Technische oplossingen op maat' },
-      { href: '/#workflow',   Icon: ArrowRight, label: 'Ons proces',   desc: 'Hoe werken we samen?' },
-    ],
-  },
-  { label: 'Portfolio', href: '/portfolio' },
-  { label: 'Blog',      href: '/blog' },
-  {
-    label: 'Over',
-    items: [
-      { href: '/over',  Icon: UserIcon, label: 'Over IntrICT', desc: 'Het verhaal achter IntrICT' },
-      { href: '/visie', Icon: Eye,      label: 'Onze visie',   desc: 'Missie & kernwaarden' },
-    ],
-  },
-  { label: 'Contact', href: '/contact' },
-];
+const STATUS_LABELS_NL: Record<string, string> = {
+  pending: 'Nieuw', contacted: 'Gecontacteerd', accepted: 'Geaccepteerd', rejected: 'Afgewezen',
+};
+const STATUS_LABELS_EN: Record<string, string> = {
+  pending: 'New', contacted: 'Contacted', accepted: 'Accepted', rejected: 'Rejected',
+};
 
-const SEARCH_PAGES = [
-  { label: 'Home',        desc: 'Homepagina & diensten',        href: '/',            Icon: Globe,     cat: "Pagina's" },
-  { label: 'Portfolio',   desc: "Projecten & live demo's",      href: '/portfolio',   Icon: Building2, cat: "Pagina's" },
-  { label: 'Oplossingen', desc: 'Oplossingen op maat',          href: '/oplossingen', Icon: Zap,       cat: "Pagina's" },
-  { label: 'Over ons',    desc: 'Wie is IntrICT?',              href: '/over',        Icon: UserIcon,  cat: "Pagina's" },
-  { label: 'Visie',       desc: 'Missie & waarden',             href: '/visie',       Icon: Eye,       cat: "Pagina's" },
-  { label: 'Contact',     desc: 'Neem contact op',              href: '/contact',     Icon: Mail,      cat: "Pagina's" },
-];
+// Blog search items are language-agnostic (titles stay in original language)
 const SEARCH_BLOGS = blogPosts.map((post) => ({
   label: post.title,
   desc:  post.excerpt.length > 70 ? post.excerpt.slice(0, 70) + '…' : post.excerpt,
@@ -84,24 +65,11 @@ const SEARCH_BLOGS = blogPosts.map((post) => ({
   cat:   'Blog',
   tags:  post.tags,
 }));
-const SEARCH_DASHBOARD = [
-  { label: 'Dashboard',  desc: 'Jouw persoonlijk dashboard', href: '/dashboard',           Icon: LayoutDashboard, cat: 'Dashboard', auth: true },
-  { label: 'Pakketten',  desc: 'Diensten & prijzen',         href: '/dashboard/pakketten', Icon: Package,         cat: 'Dashboard', auth: true },
-  { label: 'Berichten',  desc: 'Jouw gesprekken',            href: '/dashboard/messages',  Icon: MessageSquare,   cat: 'Dashboard', auth: true },
-  { label: 'Aanvragen',  desc: 'Pakketaanvragen',            href: '/dashboard/aanvragen', Icon: ClipboardList,   cat: 'Dashboard', auth: true },
-];
-const SEARCH_ACTIONS = [
-  { label: 'Gratis offerte aanvragen', desc: 'Vraag een offerte aan voor jouw project', href: '/contact',   Icon: ArrowRight, cat: 'Acties' },
-  { label: "Demo's bekijken",          desc: "Live project demo's van IntrICT",          href: '/portfolio', Icon: Eye,        cat: 'Acties' },
-];
-
-const STATUS_LABELS: Record<string, string> = {
-  pending: 'Nieuw', contacted: 'Gecontacteerd', accepted: 'Geaccepteerd', rejected: 'Afgewezen',
-};
 
 // ─── Command palette ──────────────────────────────────────────────────────────
 
-function CommandPalette({ isLoggedIn, onClose, isMac }: { isLoggedIn: boolean; onClose: () => void; isMac: boolean }) {
+function CommandPalette({ isLoggedIn, onClose, isMac, lang }: { isLoggedIn: boolean; onClose: () => void; isMac: boolean; lang: Lang }) {
+  const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [cursor, setCursor] = useState(0);
   const router = useRouter();
@@ -109,9 +77,30 @@ function CommandPalette({ isLoggedIn, onClose, isMac }: { isLoggedIn: boolean; o
 
   useEffect(() => { inputRef.current?.focus(); }, []);
 
+  const s = t.search;
+  const SEARCH_PAGES = [
+    { label: s.home,      desc: s.homeDesc,         href: '/',            Icon: Globe,     cat: s.pages },
+    { label: t.nav.portfolio, desc: s.portfolioDesc, href: '/portfolio',  Icon: Building2, cat: s.pages },
+    { label: t.nav.oplossingen, desc: s.oplossingenDesc, href: '/oplossingen', Icon: Zap, cat: s.pages },
+    { label: t.nav.overIntrict, desc: s.overDesc,   href: '/over',        Icon: UserIcon,  cat: s.pages },
+    { label: t.nav.onzeVisie, desc: s.visieDesc,    href: '/visie',       Icon: Eye,       cat: s.pages },
+    { label: t.nav.contact, desc: s.contactDesc,    href: '/contact',     Icon: Mail,      cat: s.pages },
+  ];
+  const SEARCH_DASHBOARD = [
+    { label: 'Dashboard',      desc: s.dashboardDesc, href: '/dashboard',           Icon: LayoutDashboard, cat: s.dashboard, auth: true },
+    { label: 'Pakketten',      desc: s.packagesDesc,  href: '/dashboard/pakketten', Icon: Package,         cat: s.dashboard, auth: true },
+    { label: t.header.messages, desc: s.messagesDesc, href: '/dashboard/messages',  Icon: MessageSquare,   cat: s.dashboard, auth: true },
+    { label: t.header.requests, desc: s.requestsDesc, href: '/dashboard/aanvragen', Icon: ClipboardList,   cat: s.dashboard, auth: true },
+  ];
+  const SEARCH_ACTIONS = [
+    { label: s.quoteAction,  desc: s.quoteActionDesc, href: '/contact',   Icon: ArrowRight, cat: s.actions },
+    { label: s.demosAction,  desc: s.demosActionDesc, href: '/portfolio', Icon: Eye,        cat: s.actions },
+  ];
+  const searchBlogs = SEARCH_BLOGS.map(b => ({ ...b, cat: s.blog }));
+
   const allItems = [
     ...SEARCH_PAGES,
-    ...SEARCH_BLOGS,
+    ...searchBlogs,
     ...(isLoggedIn ? SEARCH_DASHBOARD : []),
     ...SEARCH_ACTIONS,
   ];
@@ -170,7 +159,7 @@ function CommandPalette({ isLoggedIn, onClose, isMac }: { isLoggedIn: boolean; o
             ref={inputRef}
             value={query}
             onChange={e => setQuery(e.target.value)}
-            placeholder="Zoek pagina's, dashboard, acties..."
+            placeholder={t.header.searchPlaceholder}
             className="flex-1 text-sm bg-transparent outline-none text-slate-800 placeholder:text-slate-400"
           />
           <kbd className="px-1.5 py-0.5 text-[10px] font-bold text-slate-400 bg-slate-100 rounded border border-slate-200 shrink-0">ESC</kbd>
@@ -181,7 +170,7 @@ function CommandPalette({ isLoggedIn, onClose, isMac }: { isLoggedIn: boolean; o
           {filtered.length === 0 ? (
             <div className="py-12 text-center">
               <Search size={24} className="mx-auto mb-2 text-slate-200" />
-              <p className="text-sm text-slate-400">Geen resultaten voor &ldquo;{query}&rdquo;</p>
+              <p className="text-sm text-slate-400">{t.header.noResults} &ldquo;{query}&rdquo;</p>
             </div>
           ) : (
             Object.entries(groups).map(([cat, items]) => (
@@ -219,13 +208,13 @@ function CommandPalette({ isLoggedIn, onClose, isMac }: { isLoggedIn: boolean; o
           <span className="flex items-center gap-1">
             <kbd className="px-1 py-0.5 bg-white border border-slate-200 rounded text-[9px] font-bold">↑</kbd>
             <kbd className="px-1 py-0.5 bg-white border border-slate-200 rounded text-[9px] font-bold">↓</kbd>
-            Navigeren
+            {t.header.navigate}
           </span>
           <span className="flex items-center gap-1">
             <kbd className="px-1 py-0.5 bg-white border border-slate-200 rounded text-[9px] font-bold">↵</kbd>
-            Openen
+            {t.header.open}
           </span>
-          <span className="ml-auto">{isMac ? '⌘K' : 'Ctrl+K'} om te zoeken</span>
+          <span className="ml-auto">{isMac ? '⌘K' : 'Ctrl+K'} {t.header.searchShortcut}</span>
         </div>
       </motion.div>
     </motion.div>
@@ -238,7 +227,7 @@ interface PackageReqMini { id: string; package_name: string; status: string }
 
 function NotificationsPanel({
   conversations, unreadCount, messagesLoading, packageRequests,
-  onClose, onDismissRequest, onClearAllRequests,
+  onClose, onDismissRequest, onClearAllRequests, statusLabels,
 }: {
   conversations: ReturnType<typeof useMessages>['conversations'];
   unreadCount: number;
@@ -247,8 +236,10 @@ function NotificationsPanel({
   onClose: () => void;
   onDismissRequest: (id: string) => void;
   onClearAllRequests: () => void;
+  statusLabels: Record<string, string>;
 }) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [tab, setTab] = useState<'messages' | 'requests'>('messages');
 
   const go = (href: string) => { router.push(href); onClose(); };
@@ -264,8 +255,8 @@ function NotificationsPanel({
       {/* Tabs */}
       <div className="flex border-b border-slate-100">
         {[
-          { id: 'messages' as const, label: 'Berichten', Icon: MessageSquare, count: unreadCount },
-          ...(packageRequests.length > 0 ? [{ id: 'requests' as const, label: 'Aanvragen', Icon: Package, count: packageRequests.length }] : []),
+          { id: 'messages' as const, label: t.header.messages, Icon: MessageSquare, count: unreadCount },
+          ...(packageRequests.length > 0 ? [{ id: 'requests' as const, label: t.header.requests, Icon: Package, count: packageRequests.length }] : []),
         ].map(t => (
           <button
             key={t.id}
@@ -290,15 +281,15 @@ function NotificationsPanel({
       {tab === 'messages' ? (
         <>
           <div className="flex items-center justify-between px-4 py-2.5">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Gesprekken</span>
-            <button onClick={() => go('/dashboard/messages')} className="text-xs font-semibold text-blue-500 hover:text-blue-600">Alles →</button>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t.header.conversations}</span>
+            <button onClick={() => go('/dashboard/messages')} className="text-xs font-semibold text-blue-500 hover:text-blue-600">All →</button>
           </div>
           {messagesLoading ? (
-            <div className="py-8 text-sm text-center text-slate-400">Laden...</div>
+            <div className="py-8 text-sm text-center text-slate-400">{t.header.loading}</div>
           ) : conversations.length === 0 ? (
             <div className="py-10 text-center">
               <MessageSquare size={24} className="mx-auto mb-2 text-slate-200" />
-              <p className="text-sm text-slate-400">Geen berichten</p>
+              <p className="text-sm text-slate-400">{t.header.noMessages}</p>
             </div>
           ) : (
             <ul className="overflow-y-auto divide-y divide-slate-100 max-h-64">
@@ -332,11 +323,11 @@ function NotificationsPanel({
       ) : (
         <>
           <div className="flex items-center justify-between px-4 py-2.5">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Pakketaanvragen</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t.header.packageRequests}</span>
             <div className="flex items-center gap-2">
               {packageRequests.length > 0 && (
                 <button onClick={onClearAllRequests} className="text-xs font-semibold text-slate-400 hover:text-slate-600">
-                  Wis alles
+                  {t.header.clearAll}
                 </button>
               )}
               <button onClick={() => go('/dashboard/aanvragen')} className="text-xs font-semibold text-blue-500 hover:text-blue-600">Alles →</button>
@@ -345,7 +336,7 @@ function NotificationsPanel({
           {packageRequests.length === 0 ? (
             <div className="py-10 text-center">
               <Package size={24} className="mx-auto mb-2 text-slate-200" />
-              <p className="text-sm text-slate-400">Geen aanvragen</p>
+              <p className="text-sm text-slate-400">{t.header.noRequests}</p>
             </div>
           ) : (
             <ul className="overflow-y-auto divide-y divide-slate-100 max-h-64">
@@ -364,7 +355,7 @@ function NotificationsPanel({
                   </div>
                   <div className="flex-1 min-w-0 cursor-pointer" onClick={() => go('/dashboard/aanvragen')}>
                     <p className="text-sm font-semibold truncate text-slate-800">{req.package_name}</p>
-                    <p className="text-xs text-slate-400">{STATUS_LABELS[req.status] ?? req.status}</p>
+                    <p className="text-xs text-slate-400">{statusLabels[req.status] ?? req.status}</p>
                   </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); onDismissRequest(req.id); }}
@@ -413,13 +404,15 @@ function MegaDropdown({ items }: { items: NavItem[] }) {
 
 function MobileDrawer({
   isOpen, onClose, user, avatarLabel, profilePicture, userRole, unreadCount,
-  onLogout, onOpenSearch, pathname, isMac,
+  onLogout, onOpenSearch, pathname, isMac, nav,
 }: {
   isOpen: boolean; onClose: () => void; user: User | null;
   avatarLabel: string; profilePicture: string | null; userRole: string;
   unreadCount: number; onLogout: () => void; onOpenSearch: () => void; pathname: string; isMac: boolean;
+  nav: NavGroup[];
 }) {
   const router = useRouter();
+  const { t, lang, setLang } = useLanguage();
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const go = (href: string) => { router.push(href); onClose(); };
@@ -455,14 +448,14 @@ function MobileDrawer({
                 className="flex items-center gap-2.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-400 hover:bg-slate-100 transition-all text-left"
               >
                 <Search size={15} />
-                Zoek pagina&apos;s, acties...
+                {t.header.searchPages}
                 <kbd className="ml-auto px-1.5 py-0.5 text-[9px] font-bold bg-white border border-slate-200 rounded">{isMac ? '⌘K' : 'Ctrl+K'}</kbd>
               </button>
             </div>
 
             {/* Nav */}
             <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-0.5">
-              {NAV.map(group => {
+              {nav.map(group => {
                 if (group.href) {
                   return (
                     <Link key={group.href} href={group.href} onClick={onClose}
@@ -513,6 +506,23 @@ function MobileDrawer({
               })}
             </nav>
 
+            {/* Language switcher (mobile) */}
+            <div className="px-4 py-3 border-t border-slate-100 shrink-0">
+              <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100">
+                {(['nl', 'en'] as Lang[]).map((l) => (
+                  <button
+                    key={l}
+                    onClick={() => setLang(l)}
+                    className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all uppercase tracking-widest ${
+                      lang === l ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                    }`}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* User section */}
             <div className="px-4 pt-4 pb-8 space-y-2 border-t border-slate-100 shrink-0">
               {user ? (
@@ -531,7 +541,7 @@ function MobileDrawer({
                       <span className={`inline-block text-xs px-1.5 py-0.5 rounded-full font-semibold ${
                         userRole === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'
                       }`}>
-                        {userRole === 'admin' ? 'Administrator' : 'Gebruiker'}
+                        {userRole === 'admin' ? t.header.administrator : t.header.user}
                       </span>
                     </div>
                   </div>
@@ -546,27 +556,27 @@ function MobileDrawer({
                   <div className="grid grid-cols-2 gap-2">
                     <button onClick={() => go('/dashboard/profile')}
                       className="flex items-center justify-center gap-1.5 py-2.5 text-sm font-semibold text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
-                      <UserIcon size={14} /> Profiel
+                      <UserIcon size={14} /> {t.header.profile}
                     </button>
                     <button onClick={() => go('/dashboard/settings')}
                       className="flex items-center justify-center gap-1.5 py-2.5 text-sm font-semibold text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
-                      <Settings size={14} /> Instellingen
+                      <Settings size={14} /> {t.header.settings}
                     </button>
                   </div>
                   <button onClick={() => { onLogout(); onClose(); }}
                     className="flex items-center justify-center w-full gap-2 py-2.5 text-sm font-semibold text-red-600 border border-red-200 rounded-xl hover:bg-red-50 transition-all">
-                    <LogOut size={15} /> Uitloggen
+                    <LogOut size={15} /> {t.header.logout}
                   </button>
                 </>
               ) : (
                 <>
                   <Link href="/contact" onClick={onClose}
                     className="flex items-center justify-center w-full gap-2 py-3 text-sm font-semibold text-white transition-all rounded-xl bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
-                    Gratis offerte aanvragen <ArrowRight size={14} />
+                    {t.header.freeQuoteLong} <ArrowRight size={14} />
                   </Link>
                   <button onClick={() => { router.push('/login'); onClose(); }}
                     className="w-full py-2.5 text-sm font-semibold text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
-                    Log in
+                    {t.header.login}
                   </button>
                 </>
               )}
@@ -583,6 +593,7 @@ function MobileDrawer({
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
+  const { t, lang, setLang } = useLanguage();
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -718,6 +729,28 @@ export default function Header() {
   };
 
   const visibleRequests = packageRequests.filter((r) => !dismissedReqIds.has(r.id));
+  const STATUS_LABELS = lang === 'en' ? STATUS_LABELS_EN : STATUS_LABELS_NL;
+
+  const NAV: NavGroup[] = [
+    {
+      label: t.nav.diensten,
+      items: [
+        { href: '/#services',   Icon: Building2, label: t.nav.watWeDoen,  desc: t.nav.watWeDoenDesc },
+        { href: '/oplossingen', Icon: Zap,        label: t.nav.oplossingen, desc: t.nav.oplossingenDesc },
+        { href: '/#workflow',   Icon: ArrowRight, label: t.nav.onsProces,  desc: t.nav.onsProcesDesc },
+      ],
+    },
+    { label: t.nav.portfolio, href: '/portfolio' },
+    { label: t.nav.blog,      href: '/blog' },
+    {
+      label: t.nav.over,
+      items: [
+        { href: '/over',  Icon: UserIcon, label: t.nav.overIntrict, desc: t.nav.overIntrictDesc },
+        { href: '/visie', Icon: Eye,      label: t.nav.onzeVisie,   desc: t.nav.onzeVisieDesc },
+      ],
+    },
+    { label: t.nav.contact, href: '/contact' },
+  ];
 
   const avatarLabel = userName?.[0]?.toUpperCase() ?? user?.email?.[0]?.toUpperCase() ?? '?';
   const navText = isScrolled ? 'text-slate-600 hover:text-slate-900' : 'text-slate-200 hover:text-white';
@@ -746,7 +779,7 @@ export default function Header() {
 
             {/* Desktop nav */}
             <nav className="hidden md:flex items-center gap-0.5 flex-1">
-              {NAV.map(group => {
+              {NAV.map((group) => {
                 const active = group.href ? pathname === group.href : group.items?.some(i => pathname === i.href);
                 if (group.href) {
                   return (
@@ -786,13 +819,30 @@ export default function Header() {
                 className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition-all duration-200 ${
                   isScrolled ? 'text-slate-500 hover:bg-slate-100' : 'text-slate-200 hover:bg-white/10'
                 }`}
-                aria-label={`Zoeken (${isMac ? '⌘K' : 'Ctrl+K'})`}
+                aria-label={`${t.header.search} (${isMac ? '⌘K' : 'Ctrl+K'})`}
               >
                 <Search size={16} />
                 <kbd className={`text-[10px] px-1.5 py-0.5 rounded border font-bold ${
                   isScrolled ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-white/10 border-white/20 text-white/60'
                 }`}>{isMac ? '⌘K' : 'Ctrl+K'}</kbd>
               </motion.button>
+
+              {/* Language switcher */}
+              <div className={`flex items-center gap-0.5 p-0.5 rounded-lg ${isScrolled ? 'bg-slate-100' : 'bg-white/10'}`}>
+                {(['nl', 'en'] as Lang[]).map((l) => (
+                  <button
+                    key={l}
+                    onClick={() => setLang(l)}
+                    className={`px-2.5 py-1 text-[11px] font-bold rounded-md uppercase tracking-widest transition-all ${
+                      lang === l
+                        ? isScrolled ? 'bg-white text-slate-900 shadow-sm' : 'bg-white/20 text-white'
+                        : isScrolled ? 'text-slate-500 hover:text-slate-700' : 'text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
 
               {!authLoading && user && (
                 <>
@@ -804,7 +854,7 @@ export default function Header() {
                       className={`relative p-2 rounded-xl transition-all duration-200 ${
                         isScrolled ? 'text-slate-500 hover:bg-slate-100' : 'text-slate-200 hover:bg-white/10'
                       }`}
-                      aria-label="Meldingen"
+                      aria-label={t.header.notifications}
                     >
                       <Bell size={18} />
                       {totalNotifs > 0 && (
@@ -823,6 +873,7 @@ export default function Header() {
                           onClose={() => setShowNotifications(false)}
                           onDismissRequest={handleDismissRequest}
                           onClearAllRequests={handleClearAllRequests}
+                          statusLabels={STATUS_LABELS}
                         />
                       )}
                     </AnimatePresence>
@@ -877,7 +928,7 @@ export default function Header() {
                                 <span className={`inline-block mt-0.5 text-[10px] px-2 py-0.5 rounded-full font-bold ${
                                   userRole === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
                                 }`}>
-                                  {userRole === 'admin' ? 'Administrator' : 'Gebruiker'}
+                                  {userRole === 'admin' ? t.header.administrator : t.header.user}
                                 </span>
                               </div>
                             </div>
@@ -886,10 +937,10 @@ export default function Header() {
                           <div className="py-1.5">
                             {[
                               { href: '/dashboard', Icon: LayoutDashboard, label: 'Dashboard' },
-                              { href: '/dashboard/pakketten', Icon: Package, label: 'Pakketten' },
-                              { href: '/dashboard/messages', Icon: MessageSquare, label: 'Berichten', count: unreadCount },
-                              { href: '/dashboard/profile', Icon: UserIcon, label: 'Profiel' },
-                              { href: '/dashboard/settings', Icon: Settings, label: 'Instellingen' },
+                              { href: '/dashboard/pakketten', Icon: Package, label: lang === 'en' ? 'Packages' : 'Pakketten' },
+                              { href: '/dashboard/messages', Icon: MessageSquare, label: t.header.messages, count: unreadCount },
+                              { href: '/dashboard/profile', Icon: UserIcon, label: t.header.profile },
+                              { href: '/dashboard/settings', Icon: Settings, label: t.header.settings },
                             ].map(item => (
                               <Link key={item.href} href={item.href}
                                 onClick={() => setShowUserMenu(false)}
@@ -909,7 +960,7 @@ export default function Header() {
                             <button onClick={handleLogout}
                               className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
                               <LogOut size={15} className="shrink-0" />
-                              Uitloggen
+                              {t.header.logout}
                             </button>
                           </div>
                         </motion.div>
@@ -927,12 +978,12 @@ export default function Header() {
                     className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
                       isScrolled ? 'text-slate-600 hover:bg-slate-100' : 'text-white/80 hover:text-white hover:bg-white/10'
                     }`}>
-                    Log in
+                    {t.header.login}
                   </motion.button>
                   <motion.a href="/contact"
                     whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                     className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-white bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-md shadow-blue-500/20 transition-all duration-300">
-                    Gratis offerte
+                    {t.header.freeQuote}
                     <ArrowRight size={13} />
                   </motion.a>
                 </div>
@@ -946,7 +997,7 @@ export default function Header() {
               className={`md:hidden p-2 rounded-xl transition-colors ${
                 isScrolled ? 'text-slate-700 hover:bg-slate-100' : 'text-white hover:bg-white/10'
               }`}
-              aria-label="Menu openen"
+              aria-label={t.header.menuOpen}
             >
               <Menu size={22} />
             </motion.button>
@@ -957,7 +1008,7 @@ export default function Header() {
       {/* Command palette */}
       <AnimatePresence>
         {showSearch && (
-          <CommandPalette isLoggedIn={!!user} onClose={() => setShowSearch(false)} isMac={isMac} />
+          <CommandPalette isLoggedIn={!!user} onClose={() => setShowSearch(false)} isMac={isMac} lang={lang} />
         )}
       </AnimatePresence>
 
@@ -974,6 +1025,7 @@ export default function Header() {
         onOpenSearch={() => setShowSearch(true)}
         pathname={pathname}
         isMac={isMac}
+        nav={NAV}
       />
     </>
   );

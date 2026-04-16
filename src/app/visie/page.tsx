@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Visie() {
   useEffect(() => {
@@ -15,33 +16,9 @@ export default function Visie() {
     requestAnimationFrame(raf);
   }, []);
 
-  const waarden = [
-    { icon: '💬', title: 'Duidelijke communicatie', desc: 'Geen technisch jargon, maar heldere uitleg in gewone taal.' },
-    { icon: '⚡', title: 'Snelle resultaten',        desc: 'Geen maanden wachten, maar concrete voortgang in duidelijke stappen.' },
-    { icon: '🔧', title: 'Praktische oplossingen',   desc: 'Slimme oplossingen die gewoon werken, geen over-engineered systemen.' },
-    { icon: '📚', title: 'Leren door doen',           desc: 'Elk project leert me iets nieuws en maakt me beter in wat ik doe.' },
-  ];
-
-  const werkwijze = [
-    {
-      nr: '01',
-      title: 'Luisteren',
-      body: 'Ik begin altijd met goed luisteren naar jouw verhaal. Wat wil je bereiken? Wat zijn je uitdagingen? Alleen door jouw situatie te begrijpen kan ik de juiste oplossing maken.',
-      detail: 'Je doelgroep, je huidige uitdagingen, je budget en tijdlijn, en wat je al hebt geprobeerd.',
-    },
-    {
-      nr: '02',
-      title: 'Oplossen',
-      body: 'Geen over-engineered systemen, maar slimme oplossingen die gewoon werken. Ik kies de technologie die het beste past bij jouw behoeften en budget.',
-      detail: 'Eenvoudige, bewezen technologieën die betrouwbaar zijn. Geen experimenten op jouw kosten.',
-    },
-    {
-      nr: '03',
-      title: 'Samenwerken',
-      body: 'Ik werk graag samen met je tijdens het hele proces. Regelmatige updates, feedback en aanpassingen zorgen ervoor dat het eindresultaat precies is wat je wilde.',
-      detail: 'Wekelijkse updates, tussentijdse feedbackmomenten, en de mogelijkheid om bij te sturen.',
-    },
-  ];
+  const { t } = useLanguage();
+  const waarden = t.vision.waarden;
+  const werkwijze = t.vision.werkwijze;
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -66,16 +43,16 @@ export default function Visie() {
               className="max-w-3xl mx-auto text-center"
             >
               <span className="inline-block px-4 py-1.5 mb-6 text-xs font-bold tracking-widest text-blue-300 uppercase border border-blue-500/30 rounded-full bg-blue-500/10">
-                Mijn aanpak
+                {t.vision.badge}
               </span>
               <h1 className="mb-6 text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
-                Mijn{' '}
+                {t.vision.heading}{' '}
                 <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">
-                  Visie
+                  {t.vision.headingHighlight}
                 </span>
               </h1>
               <p className="max-w-2xl mx-auto text-xl leading-relaxed text-slate-200">
-                Hoe ik technologie gebruik om jouw doelen te bereiken en problemen op te lossen
+                {t.vision.subtitle}
               </p>
             </motion.div>
           </div>
@@ -92,20 +69,16 @@ export default function Visie() {
               className="max-w-4xl mx-auto text-center"
             >
               <h2 className="mb-6 text-4xl font-bold leading-tight text-slate-800 md:text-5xl">
-                Mijn visie op{' '}
+                {t.vision.introHeading}{' '}
                 <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">
-                  web development
+                  {t.vision.introHighlight}
                 </span>
               </h2>
               <p className="mb-6 text-xl leading-relaxed text-slate-600">
-                Het gaat niet om de nieuwste technologie of de mooiste code. Het gaat om het resultaat
-                dat jij wilt bereiken en hoe ik je daarbij kan helpen. Simpel, effectief en menselijk —
-                dat is mijn aanpak.
+                {t.vision.introP1}
               </p>
               <p className="text-lg leading-relaxed text-slate-500">
-                Ik zie elke website als een kans om iemands dag beter te maken. Of het nu gaat om een
-                eenvoudige contactpagina of een complexe webapplicatie — het eindresultaat moet altijd
-                waarde toevoegen aan het leven van de mensen die het gebruiken.
+                {t.vision.introP2}
               </p>
             </motion.div>
           </div>
@@ -115,20 +88,7 @@ export default function Visie() {
         <section className="py-20 bg-linear-to-br from-slate-50 to-blue-50">
           <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div className="grid gap-8 lg:grid-cols-2">
-              {[
-                {
-                  icon: '🎯',
-                  title: 'Resultaat over techniek',
-                  body: 'Jij wilt een website die werkt en je helpt je doelen te bereiken. Ik focus op wat jij nodig hebt, niet op wat technisch mogelijk is. Praktisch en effectief, dat is wat telt.',
-                  detail: 'Ik kies bewust voor bewezen technologieën die betrouwbaar zijn, in plaats van de nieuwste hype. Een website die vandaag werkt, moet ook over vijf jaar nog steeds goed functioneren.',
-                },
-                {
-                  icon: '🤝',
-                  title: 'Echte samenwerking',
-                  body: 'Ik geloof in echte samenwerking. Jij kent je bedrijf en doelen, ik ken de techniek. Samen maken we iets dat jij zelf niet had kunnen maken, maar precies is wat je nodig hebt.',
-                  detail: 'Regelmatige updates, feedback en aanpassingen zorgen ervoor dat het eindresultaat precies is wat je wilde. Ik zie mezelf niet als een externe leverancier, maar als onderdeel van jouw team.',
-                },
-              ].map((card, i) => (
+              {t.vision.cards.map((card, i) => (
                 <motion.div
                   key={card.title}
                   initial={{ opacity: 0, y: 30 }}
@@ -160,18 +120,14 @@ export default function Visie() {
               className="mb-14 text-center"
             >
               <h2 className="text-4xl font-bold text-slate-800 md:text-5xl">
-                Waarom ik{' '}
+                {t.vision.whyHeading}{' '}
                 <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">
-                  anders werk
+                  {t.vision.whyHighlight}
                 </span>
               </h2>
             </motion.div>
             <div className="grid gap-8 md:grid-cols-3">
-              {[
-                { icon: '👂', title: 'Eerst luisteren', desc: 'Ik begin niet meteen met oplossingen bedenken. Eerst luister ik naar jouw verhaal, je uitdagingen en je doelen. Alleen door jouw situatie echt te begrijpen, kan ik de juiste oplossing maken.' },
-                { icon: '💡', title: 'Focus op waarde',  desc: 'Elke functie die ik toevoeg, elke keuze die ik maak, moet écht waarde toevoegen voor jouw gebruikers. Geen overbodige features, geen complexiteit waar het niet nodig is.' },
-                { icon: '🔄', title: 'Iteratief werken', desc: 'Ik werk in kleine stappen en test regelmatig. Zo kunnen we tussentijds bijsturen en zorgen we ervoor dat het eindresultaat precies is wat je wilde.' },
-              ].map((item, i) => (
+              {t.vision.whyItems.map((item, i) => (
                 <motion.div
                   key={item.title}
                   initial={{ opacity: 0, y: 20 }}
@@ -202,9 +158,9 @@ export default function Visie() {
               className="mb-14 text-center"
             >
               <h2 className="text-4xl font-bold text-slate-800 md:text-5xl">
-                Hoe ik{' '}
+                {t.vision.werkwijzeTitle}{' '}
                 <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">
-                  te werk ga
+                  {t.vision.werkwijzeHighlight}
                 </span>
               </h2>
             </motion.div>
@@ -230,7 +186,7 @@ export default function Visie() {
                     <h4 className="mb-2 text-xl font-bold text-slate-800">{step.title}</h4>
                     <p className="mb-3 leading-relaxed text-slate-600">{step.body}</p>
                     <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                      <p className="text-sm text-slate-500"><strong>In de praktijk:</strong> {step.detail}</p>
+                      <p className="text-sm text-slate-500"><strong>{t.vision.inPractice}</strong> {step.detail}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -259,7 +215,7 @@ export default function Visie() {
                               <h4 className="mb-3 text-xl font-bold text-slate-800">{step.title}</h4>
                               <p className="mb-3 leading-relaxed text-slate-600">{step.body}</p>
                               <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                                <p className="text-sm text-slate-500"><strong>In de praktijk:</strong> {step.detail}</p>
+                                <p className="text-sm text-slate-500"><strong>{t.vision.inPractice}</strong> {step.detail}</p>
                               </div>
                             </div>
                           </div>
@@ -279,7 +235,7 @@ export default function Visie() {
                               <h4 className="mb-3 text-xl font-bold text-slate-800">{step.title}</h4>
                               <p className="mb-3 leading-relaxed text-slate-600">{step.body}</p>
                               <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                                <p className="text-sm text-slate-500"><strong>In de praktijk:</strong> {step.detail}</p>
+                                <p className="text-sm text-slate-500"><strong>{t.vision.inPractice}</strong> {step.detail}</p>
                               </div>
                             </div>
                           </div>
@@ -304,9 +260,9 @@ export default function Visie() {
               className="mb-14 text-center"
             >
               <h2 className="text-4xl font-bold text-slate-800 md:text-5xl">
-                Mijn{' '}
+                {t.vision.waardenHeading}{' '}
                 <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">
-                  waarden
+                  {t.vision.waardenHighlight}
                 </span>
               </h2>
             </motion.div>
@@ -342,19 +298,14 @@ export default function Visie() {
               className="mb-14 text-center"
             >
               <h2 className="text-4xl font-bold text-slate-800 md:text-5xl">
-                Wat maakt mij{' '}
+                {t.vision.differentHeading}{' '}
                 <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">
-                  anders
+                  {t.vision.differentHighlight}
                 </span>
               </h2>
             </motion.div>
             <div className="grid gap-8 lg:grid-cols-2">
-              {[
-                { title: 'Geen technisch jargon',   body: 'Ik spreek gewoon Nederlands. Geen moeilijke termen, geen verwarrende uitleg. Als ik iets uitleg, begrijp je het meteen. Dat is belangrijk voor een goede samenwerking.' },
-                { title: 'Transparantie in alles',  body: 'Je weet altijd waar je aan toe bent. Duidelijke prijzen, realistische tijdlijnen, en eerlijke communicatie over wat wel en niet mogelijk is. Geen verrassingen.' },
-                { title: 'Focus op jouw succes',    body: 'Mijn succes is jouw succes. Als jouw website goed presteert, ben ik tevreden. Ik investeer in lange termijn relaties, niet in snelle projecten.' },
-                { title: 'Praktische ervaring',     body: 'Ik heb zelf websites gebouwd en onderhouden. Ik weet wat er mis kan gaan, wat gebruikers echt willen, en hoe je problemen voorkomt voordat ze ontstaan.' },
-              ].map((item, i) => (
+              {t.vision.differentItems.map((item, i) => (
                 <motion.div
                   key={item.title}
                   initial={{ opacity: 0, y: 20 }}
@@ -384,14 +335,13 @@ export default function Visie() {
               viewport={{ once: true }}
             >
               <h2 className="mb-6 text-4xl font-bold text-white md:text-5xl">
-                Klaar om samen te{' '}
+                {t.vision.ctaHeading}{' '}
                 <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">
-                  werken?
+                  {t.vision.ctaHighlight}
                 </span>
               </h2>
               <p className="max-w-3xl mx-auto mb-8 text-xl leading-relaxed text-slate-200">
-                Als mijn visie en aanpak je aanspreken, zou ik graag kennismaken.
-                Laten we een gesprek inplannen en kijken hoe ik je kan helpen.
+                {t.vision.ctaSubtitle}
               </p>
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <motion.a
@@ -400,7 +350,7 @@ export default function Visie() {
                   whileTap={{ scale: 0.95 }}
                   className="inline-flex items-center gap-2 px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
                 >
-                  Laten we kennismaken →
+                  {t.vision.ctaBtn1}
                 </motion.a>
                 <motion.a
                   href="/over"
@@ -408,7 +358,7 @@ export default function Visie() {
                   whileTap={{ scale: 0.95 }}
                   className="inline-flex items-center gap-2 px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10"
                 >
-                  Meer over mij
+                  {t.vision.ctaBtn2}
                 </motion.a>
               </div>
             </motion.div>

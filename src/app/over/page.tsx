@@ -8,8 +8,10 @@ import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
 import Link from 'next/link';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Over() {
+  const { t } = useLanguage();
   useEffect(() => {
     const lenis = new Lenis();
     const raf = (time: number) => { lenis.raf(time); requestAnimationFrame(raf); };
@@ -26,28 +28,7 @@ export default function Over() {
     { name: 'SEO & Performance', level: 92, color: 'from-orange-500 to-red-500' },
   ];
 
-  const values = [
-    {
-      icon: '🎯',
-      title: 'Focus op Kwaliteit',
-      description: 'Elk project krijgt mijn volledige aandacht voor de beste resultaten.'
-    },
-    {
-      icon: '🚀',
-      title: 'Innovatie',
-      description: 'Altijd op zoek naar de nieuwste technologieën en best practices.'
-    },
-    {
-      icon: '🤝',
-      title: 'Samenwerking',
-      description: 'Ik werk graag samen met mijn klanten om hun visie te realiseren.'
-    },
-    {
-      icon: '⚡',
-      title: 'Performance',
-      description: 'Snelle, geoptimaliseerde websites die perfect werken op alle apparaten.'
-    }
-  ];
+  const values = t.about.values;
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -71,11 +52,10 @@ export default function Over() {
                 className="text-center lg:text-left"
               >
                 <h1 className="mb-6 text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
-                  Over <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">Mij</span>
+                  {t.about.heading} <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">{t.about.headingHighlight}</span>
                 </h1>
                 <p className="max-w-2xl mb-8 text-xl leading-relaxed text-slate-200">
-                  Ik ben een gepassioneerde web developer die digitale ervaringen creëert die écht impact hebben. 
-                  Met een achtergrond in zowel techniek als design, help ik bedrijven hun online aanwezigheid naar het volgende niveau te tillen.
+                  {t.about.subtitle}
                 </p>
                 <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
                   <Link href="/portfolio">
@@ -84,7 +64,7 @@ export default function Over() {
                       whileTap={{ scale: 0.95 }}
                       className="inline-block px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
                     >
-                      Bekijk Mijn Portfolio
+                      {t.about.cta2}
                     </motion.span>
                   </Link>
                   <Link href="/contact">
@@ -93,7 +73,7 @@ export default function Over() {
                       whileTap={{ scale: 0.95 }}
                       className="inline-block px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10 backdrop-blur-sm"
                     >
-                      Neem Contact Op
+                      {t.about.cta1}
                     </motion.span>
                   </Link>
                 </div>
@@ -133,10 +113,10 @@ export default function Over() {
               className="mb-16 text-center"
             >
               <h2 className="mb-6 text-4xl font-bold md:text-5xl text-slate-800">
-                Mijn <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">Verhaal</span>
+                <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">{t.about.storyHeading}</span>
               </h2>
               <p className="max-w-3xl mx-auto text-xl leading-relaxed text-slate-600">
-                Van nieuwsgierigheid naar code tot het creëren van digitale meesterwerken
+                {t.about.storySubtitle}
               </p>
             </motion.div>
 
@@ -149,20 +129,12 @@ export default function Over() {
                 className="space-y-6"
               >
                 <div className="p-8 border border-blue-100 bg-linear-to-r from-blue-50 to-purple-50 rounded-2xl">
-                  <h3 className="mb-4 text-2xl font-bold text-slate-800">Het Begin</h3>
-                  <p className="leading-relaxed text-slate-600">
-                    Mijn reis begon met een simpele vraag: &quot;Hoe werken websites eigenlijk?&quot; 
-                    Die nieuwsgierigheid leidde tot uren van experimenteren met HTML en CSS, 
-                    en uiteindelijk tot een diepe passie voor code en web development.
-                  </p>
+                  <h3 className="mb-4 text-2xl font-bold text-slate-800">{t.about.storyCard1Title}</h3>
+                  <p className="leading-relaxed text-slate-600">{t.about.storyCard1Body}</p>
                 </div>
                 <div className="p-8 border border-purple-100 bg-linear-to-r from-purple-50 to-pink-50 rounded-2xl">
-                  <h3 className="mb-4 text-2xl font-bold text-slate-800">De Groei</h3>
-                  <p className="leading-relaxed text-slate-600">
-                    Door de jaren heen heb ik me gespecialiseerd in moderne technologieën zoals React, 
-                    Next.js en TypeScript. Maar wat me echt onderscheidt is mijn focus op gebruikerservaring 
-                    en performance.
-                  </p>
+                  <h3 className="mb-4 text-2xl font-bold text-slate-800">{t.about.storyCard2Title}</h3>
+                  <p className="leading-relaxed text-slate-600">{t.about.storyCard2Body}</p>
                 </div>
               </motion.div>
 
@@ -177,19 +149,19 @@ export default function Over() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center">
                       <div className="mb-2 text-3xl font-bold text-blue-600">5+</div>
-                      <div className="text-sm text-slate-600">Jaar Ervaring</div>
+                      <div className="text-sm text-slate-600">{t.about.statYears}</div>
                     </div>
                     <div className="text-center">
                       <div className="mb-2 text-3xl font-bold text-purple-600">1+</div>
-                      <div className="text-sm text-slate-600">Projecten</div>
+                      <div className="text-sm text-slate-600">{t.about.statProjects}</div>
                     </div>
                     <div className="text-center">
                       <div className="mb-2 text-3xl font-bold text-green-600">100%</div>
-                      <div className="text-sm text-slate-600">Tevreden Klanten</div>
+                      <div className="text-sm text-slate-600">{t.about.statClients}</div>
                     </div>
                     <div className="text-center">
                       <div className="mb-2 text-3xl font-bold text-orange-600">24/7</div>
-                      <div className="text-sm text-slate-600">Support</div>
+                      <div className="text-sm text-slate-600">{t.about.statSupport}</div>
                     </div>
                   </div>
                 </div>
@@ -209,10 +181,10 @@ export default function Over() {
               className="mb-16 text-center"
             >
               <h2 className="mb-6 text-4xl font-bold md:text-5xl text-slate-800">
-                Mijn <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">Expertise</span>
+                <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">{t.about.skillsHeading}</span>
               </h2>
               <p className="max-w-3xl mx-auto text-xl leading-relaxed text-slate-600">
-                Moderne technologieën en best practices voor de beste resultaten
+                {t.about.skillsSubtitle}
               </p>
             </motion.div>
 
@@ -256,10 +228,10 @@ export default function Over() {
               className="mb-16 text-center"
             >
               <h2 className="mb-6 text-4xl font-bold md:text-5xl text-slate-800">
-                Mijn <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">Waarden</span>
+                <span className="text-transparent bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text">{t.about.valuesHeading}</span>
               </h2>
               <p className="max-w-3xl mx-auto text-xl leading-relaxed text-slate-600">
-                De principes die mijn werk en aanpak sturen
+                {t.about.subtitle.split('.')[0]}.
               </p>
             </motion.div>
 
@@ -292,11 +264,10 @@ export default function Over() {
               viewport={{ once: true }}
             >
               <h2 className="mb-6 text-4xl font-bold text-white md:text-5xl">
-                Laten We Samen <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">Werken</span>
+                <span className="text-transparent bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text">{t.about.ctaHeading}</span>
               </h2>
               <p className="max-w-3xl mx-auto mb-8 text-xl leading-relaxed text-slate-200">
-                Klaar om je project naar het volgende niveau te tillen? Laten we kennismaken en 
-                bespreken hoe ik je kan helpen met jouw digitale ambities.
+                {t.about.ctaSubtitle}
               </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
                 <motion.a
@@ -305,7 +276,7 @@ export default function Over() {
                   whileTap={{ scale: 0.95 }}
                   className="inline-block px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
                 >
-                  Start Je Project
+                  {t.about.ctaBtn1}
                 </motion.a>
                 <motion.a
                   href="/portfolio"
@@ -313,7 +284,7 @@ export default function Over() {
                   whileTap={{ scale: 0.95 }}
                   className="inline-block px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10 backdrop-blur-sm"
                 >
-                  Bekijk Portfolio
+                  {t.about.ctaBtn2}
                 </motion.a>
               </div>
             </motion.div>

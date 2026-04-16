@@ -1,57 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Pricing() {
-  const pricingPlans = [
-    {
-      name: "Basis Website",
-      price: "€500",
-      period: "eenmalig",
-      description: "Perfect voor een eerste website",
-      features: [
-        "Eenvoudige website (3-5 pagina's)",
-        "Responsive design",
-        "Contact formulier",
-        "Hosting setup",
-        "2 weken ondersteuning"
-      ],
-      popular: false,
-      cta: "Start project"
-    },
-    {
-      name: "Complete Website",
-      price: "€800",
-      period: "eenmalig",
-      description: "Meer functionaliteiten en pagina's",
-      features: [
-        "Website tot 8 pagina's",
-        "Modern design",
-        "Contact formulier",
-        "Social media integratie",
-        "Logo & branding",
-        "1 maand ondersteuning"
-      ],
-      popular: true,
-      cta: "Meest gekozen"
-    },
-    {
-      name: "Custom Project",
-      price: "€1.200",
-      period: "eenmalig",
-      description: "Voor speciale wensen en functionaliteiten",
-      features: [
-        "Website tot 15 pagina's",
-        "Custom contact formulieren",
-        "Social media integratie",
-        "Google Analytics setup",
-        "Hosting & domein configuratie",
-        "2 maanden ondersteuning"
-      ],
-      popular: false,
-      cta: "Bespreek wensen"
-    }
-  ];
+  const { t } = useLanguage();
+  const { plans, support } = t.pricing;
+
+  const prices = ['€500', '€800', '€1.200'];
+  const popular = [false, true, false];
 
   return (
     <section id="pricing" className="py-20 bg-slate-50">
@@ -63,15 +20,15 @@ export default function Pricing() {
           className="mb-16 text-center"
         >
           <h2 className="mb-6 text-5xl font-bold md:text-6xl text-slate-800">
-            Mijn Tarieven
+            {t.pricing.heading}
           </h2>
           <p className="max-w-3xl mx-auto text-xl leading-relaxed text-slate-600">
-            Eerlijke prijzen voor kwaliteitswerk. Geen verborgen kosten, gewoon duidelijke afspraken.
+            {t.pricing.subtitle}
           </p>
         </motion.div>
 
         <div className="grid gap-8 md:grid-cols-3">
-          {pricingPlans.map((plan, index) => (
+          {plans.map((plan, index) => (
             <motion.div
               key={plan.name}
               initial={{ opacity: 0, y: 30 }}
@@ -79,22 +36,22 @@ export default function Pricing() {
               transition={{ duration: 0.8, delay: index * 0.2 }}
               whileHover={{ y: -10 }}
               className={`relative bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 ${
-                plan.popular ? 'ring-2 ring-slate-800 scale-105' : 'hover:shadow-2xl'
+                popular[index] ? 'ring-2 ring-slate-800 scale-105' : 'hover:shadow-2xl'
               }`}
             >
-              {plan.popular && (
+              {popular[index] && (
                 <div className="absolute top-0 left-0 right-0 py-2 text-sm font-semibold text-center text-white bg-slate-800">
-                  Meest Gekozen
+                  {t.pricing.mostChosen}
                 </div>
               )}
-              
-              <div className={`p-8 ${plan.popular ? 'pt-16' : ''}`}>
+
+              <div className={`p-8 ${popular[index] ? 'pt-16' : ''}`}>
                 <div className="mb-8 text-center">
                   <h3 className="mb-2 text-2xl font-bold text-slate-800">{plan.name}</h3>
                   <p className="mb-4 text-slate-600">{plan.description}</p>
                   <div className="mb-6">
-                    <span className="text-5xl font-bold text-slate-800">{plan.price}</span>
-                    <span className="ml-2 text-slate-600">{plan.period}</span>
+                    <span className="text-5xl font-bold text-slate-800">{prices[index]}</span>
+                    <span className="ml-2 text-slate-600">{t.pricing.period}</span>
                   </div>
                 </div>
 
@@ -113,12 +70,12 @@ export default function Pricing() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-300 ${
-                    plan.popular
+                    popular[index]
                       ? 'bg-slate-800 text-white hover:bg-slate-700'
                       : 'bg-slate-100 text-slate-800 hover:bg-slate-200'
                   }`}
                 >
-                  {plan.cta}
+                  {popular[index] ? t.pricing.mostChosen : index === 0 ? t.pricing.startProject : t.pricing.talkWishes}
                 </motion.button>
               </div>
             </motion.div>
@@ -138,90 +95,47 @@ export default function Pricing() {
             className="mb-12 text-center"
           >
             <h3 className="mb-4 text-4xl font-bold text-slate-800">
-              Extra Ondersteuning
+              {support.heading}
             </h3>
             <p className="max-w-3xl mx-auto text-xl leading-relaxed text-slate-600">
-              Na de ondersteuningsperiode kun je extra uren bij mij afnemen voor updates, 
-              aanpassingen of nieuwe functionaliteiten.
+              {support.subtitle}
             </p>
           </motion.div>
 
           <div className="grid gap-8 md:grid-cols-3">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.9 }}
-              whileHover={{ y: -10 }}
-              className="p-8 transition-all duration-300 bg-white shadow-lg rounded-2xl hover:shadow-2xl"
-            >
-              <div className="text-center">
-                <div className="mb-4 text-5xl font-bold text-slate-800">€75</div>
-                <div className="mb-6 text-xl text-slate-600">per uur</div>
-                <h4 className="mb-4 text-xl font-bold text-slate-800">Standaard Tarief</h4>
-                <p className="mb-6 text-slate-600">
-                  Voor kleine aanpassingen en updates
-                </p>
-                <ul className="space-y-2 text-left text-slate-600">
-                  <li>• Kleine aanpassingen</li>
-                  <li>• Bug fixes</li>
-                  <li>• Content updates</li>
-                  <li>• Eenvoudige wijzigingen</li>
-                </ul>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.0 }}
-              whileHover={{ y: -10 }}
-              className="p-8 transition-all duration-300 scale-105 bg-white shadow-lg rounded-2xl hover:shadow-2xl ring-2 ring-slate-800"
-            >
-              <div className="absolute transform -translate-x-1/2 -top-4 left-1/2">
-                <span className="px-4 py-2 text-sm font-semibold text-white rounded-full bg-slate-800">
-                  Meest Gekozen
-                </span>
-              </div>
-              <div className="pt-4 text-center">
-                <div className="mb-4 text-5xl font-bold text-slate-800">€60</div>
-                <div className="mb-6 text-xl text-slate-600">per uur</div>
-                <h4 className="mb-4 text-xl font-bold text-slate-800">Bij 5+ Uren</h4>
-                <p className="mb-6 text-slate-600">
-                  Korting bij 5 of meer uren per maand
-                </p>
-                <ul className="space-y-2 text-left text-slate-600">
-                  <li>• Alle standaard werkzaamheden</li>
-                  <li>• Nieuwe functionaliteiten</li>
-                  <li>• Design aanpassingen</li>
-                  <li>• Performance optimalisatie</li>
-                </ul>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.1 }}
-              whileHover={{ y: -10 }}
-              className="p-8 transition-all duration-300 bg-white shadow-lg rounded-2xl hover:shadow-2xl"
-            >
-              <div className="text-center">
-                <div className="mb-4 text-5xl font-bold text-slate-800">€50</div>
-                <div className="mb-6 text-xl text-slate-600">per uur</div>
-                <h4 className="mb-4 text-xl font-bold text-slate-800">Bij 10+ Uren</h4>
-                <p className="mb-6 text-slate-600">
-                  Beste prijs bij 10 of meer uren per maand
-                </p>
-                <ul className="space-y-2 text-left text-slate-600">
-                  <li>• Alle voorgaande werkzaamheden</li>
-                  <li>• Complexe projecten</li>
-                  <li>• Integraties</li>
-                  <li>• Volledige ondersteuning</li>
-                </ul>
-              </div>
-            </motion.div>
+            {support.tiers.map((tier, i) => (
+              <motion.div
+                key={tier.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.9 + i * 0.1 }}
+                whileHover={{ y: -10 }}
+                className={`p-8 transition-all duration-300 bg-white shadow-lg rounded-2xl hover:shadow-2xl ${
+                  i === 1 ? 'relative scale-105 ring-2 ring-slate-800' : ''
+                }`}
+              >
+                {i === 1 && (
+                  <div className="absolute transform -translate-x-1/2 -top-4 left-1/2">
+                    <span className="px-4 py-2 text-sm font-semibold text-white rounded-full bg-slate-800">
+                      {support.mostChosen}
+                    </span>
+                  </div>
+                )}
+                <div className={`text-center ${i === 1 ? 'pt-4' : ''}`}>
+                  <div className="mb-4 text-5xl font-bold text-slate-800">{tier.price}</div>
+                  <div className="mb-6 text-xl text-slate-600">{t.pricing.perHour}</div>
+                  <h4 className="mb-4 text-xl font-bold text-slate-800">{tier.title}</h4>
+                  <p className="mb-6 text-slate-600">{tier.desc}</p>
+                  <ul className="space-y-2 text-left text-slate-600">
+                    {tier.items.map((item) => (
+                      <li key={item}>• {item}</li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+            ))}
           </div>
-          
+
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -229,14 +143,14 @@ export default function Pricing() {
             className="mt-12 text-center"
           >
             <p className="mb-4 text-slate-600">
-              Alle prijzen zijn exclusief BTW. Heb je andere wensen? 
+              {support.vatNote}
             </p>
             <motion.a
               href="#contact"
               whileHover={{ scale: 1.05 }}
               className="font-semibold transition-colors duration-300 text-slate-800 hover:text-slate-600"
             >
-              Laten we even praten →
+              {support.talkLink}
             </motion.a>
           </motion.div>
         </motion.div>

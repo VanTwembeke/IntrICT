@@ -3,35 +3,21 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+const SERVICE_IMAGES = [
+  { image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", href: "/blog/website-ontwikkeling", reverse: false },
+  { image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", href: "/blog/logo-en-branding", reverse: true },
+  { image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", href: "/blog/digitale-strategie", reverse: false },
+];
 
 export default function Services() {
-  const services = [
-    {
-      title: "Website Ontwikkeling",
-      description: "Moderne, responsive websites die perfect werken op alle apparaten. Van eenvoudige landing pages tot complexe webapplicaties met de nieuwste technologieën.",
-      image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      alt: "Website ontwikkeling - Moderne web development",
-      href: "/blog/website-ontwikkeling",
-      buttonText: "Meer over website ontwikkeling"
-    },
-    {
-      title: "Logo & Branding",
-      description: "Een uniek logo en sterke visuele identiteit die je bedrijf onderscheidt. Van concept tot definitieve ontwerpen die perfect passen bij je merk en doelgroep.",
-      image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      alt: "Logo & Branding - Visuele identiteit",
-      href: "/blog/logo-en-branding",
-      buttonText: "Meer over logo & branding",
-      reverse: true
-    },
-    {
-      title: "Digitale Strategie",
-      description: "Een complete digitale aanpak die je online aanwezigheid optimaliseert. Van SEO en analytics tot content strategie en gebruikerservaring.",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      alt: "Digitale strategie - Data en analytics",
-      href: "/blog/digitale-strategie",
-      buttonText: "Meer over digitale strategie"
-    }
-  ];
+  const { t } = useLanguage();
+  const services = t.services.items.map((item, i) => ({
+    ...item,
+    ...SERVICE_IMAGES[i],
+    alt: item.title,
+  }));
 
   return (
     <section id="services" className="py-20">
@@ -43,7 +29,7 @@ export default function Services() {
           transition={{ duration: 0.8 }}
           className="mb-16 text-5xl font-bold text-center md:text-6xl text-slate-800"
         >
-          Mijn diensten
+          {t.services.heading}
         </motion.h2>
         
         <div className="space-y-20">

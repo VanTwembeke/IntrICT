@@ -2,25 +2,11 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Process() {
-  const steps = [
-    { 
-      step: "1", 
-      title: "Consultatie & Planning", 
-      desc: "We bespreken je wensen, doelgroep en doelen. Samen maken we een plan dat perfect aansluit bij jouw behoeften."
-    },
-    { 
-      step: "2", 
-      title: "Ontwikkeling & Design", 
-      desc: "Ik bouw je website met moderne technologieën en best practices. Regelmatige updates houden je op de hoogte van de voortgang."
-    },
-    { 
-      step: "3", 
-      title: "Launch & Ondersteuning", 
-      desc: "Je website gaat live en ik blijf beschikbaar voor ondersteuning, updates en verdere ontwikkeling."
-    }
-  ];
+  const { t } = useLanguage();
+  const steps = t.process.steps.map((s, i) => ({ step: String(i + 1), ...s }));
 
   return (
     <section id="workflow" className="relative py-20">
@@ -44,7 +30,7 @@ export default function Process() {
               transition={{ duration: 0.6 }}
               className="mb-4 text-3xl font-bold text-white sm:text-4xl md:text-6xl"
             >
-              Het ontwikkelproces
+              {t.process.heading}
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 30 }}
@@ -53,7 +39,7 @@ export default function Process() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="max-w-2xl mx-auto text-base leading-relaxed md:text-xl text-slate-200"
             >
-              Een gestructureerde aanpak die zorgt voor een website die perfect aansluit bij jouw behoeften
+              {t.process.subtitle}
             </motion.p>
           </div>
         </div>

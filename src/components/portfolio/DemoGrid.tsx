@@ -3,10 +3,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { DemoMeta } from '@/app/api/demos/route';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // ─── Live iframe preview ──────────────────────────────────────────────────────
 
-function DemoPreview({ slug, title }: { slug: string; title: string }) {
+function DemoPreview({ slug, title, loadingLabel, unavailableLabel }: { slug: string; title: string; loadingLabel: string; unavailableLabel: string }) {
   const [inView, setInView] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
@@ -36,7 +37,7 @@ function DemoPreview({ slug, title }: { slug: string; title: string }) {
           {inView ? (
             <>
               <div className="w-7 h-7 border-2 border-slate-300 border-t-blue-400 rounded-full animate-spin" />
-              <span className="text-xs font-medium text-slate-400">Preview laden…</span>
+              <span className="text-xs font-medium text-slate-400">{loadingLabel}</span>
             </>
           ) : (
             <span className="text-xs font-medium text-slate-400">{title}</span>
@@ -49,7 +50,7 @@ function DemoPreview({ slug, title }: { slug: string; title: string }) {
         <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
           <div className="text-center">
             <div className="text-3xl mb-2">🖥️</div>
-            <span className="text-sm text-slate-400">Preview niet beschikbaar</span>
+            <span className="text-sm text-slate-400">{unavailableLabel}</span>
           </div>
         </div>
       )}
@@ -82,7 +83,14 @@ function DemoPreview({ slug, title }: { slug: string; title: string }) {
 
 // ─── Individual demo card ─────────────────────────────────────────────────────
 
-function DemoCard({ demo, index }: { demo: DemoMeta; index: number }) {
+interface DemoCardLabels {
+  previewLoading: string;
+  previewUnavailable: string;
+  viewLiveDemo: string;
+  viewDemo: string;
+}
+
+function DemoCard({ demo, index, labels }: { demo: DemoMeta; index: number; labels: DemoCardLabels }) {
   const accent = demo.accent ?? '#3b82f6';
 
   return (
@@ -95,7 +103,12 @@ function DemoCard({ demo, index }: { demo: DemoMeta; index: number }) {
     >
       {/* Preview window */}
       <div className="relative">
-        <DemoPreview slug={demo.slug} title={demo.title} />
+        <DemoPreview
+          slug={demo.slug}
+          title={demo.title}
+          loadingLabel={labels.previewLoading}
+          unavailableLabel={labels.previewUnavailable}
+        />
 
         {/* Top-right category badge */}
         <div className="absolute top-3 right-3 z-10">
@@ -113,7 +126,7 @@ function DemoCard({ demo, index }: { demo: DemoMeta; index: number }) {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
             </svg>
-            Bekijk live demo
+            {labels.viewLiveDemo}
           </span>
         </div>
       </div>
@@ -152,7 +165,7 @@ function DemoCard({ demo, index }: { demo: DemoMeta; index: number }) {
           className="mt-auto flex items-center justify-center gap-2 py-3 px-6 rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 hover:shadow-md active:scale-95"
           style={{ backgroundColor: accent }}
         >
-          Bekijk Demo
+          {labels.viewDemo}
           <svg className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
           </svg>
@@ -189,13 +202,15 @@ function CategoryFilter({
   demos,
   activeCategory,
   onCategoryChange,
+  allLabel,
 }: {
   demos: DemoMeta[];
   activeCategory: string;
   onCategoryChange: (c: string) => void;
+  allLabel: string;
 }) {
   const categories = [
-    { id: 'all', name: 'Alle projecten' },
+    { id: 'all', name: allLabel },
     ...Array.from(new Set(demos.map((d) => d.category))).map((c) => ({
       id: c,
       name: c.charAt(0).toUpperCase() + c.slice(1),
@@ -238,8 +253,17 @@ interface Props {
 }
 
 export default function DemoGrid({ demos, loading, activeCategory, onCategoryChange }: Props) {
+  const { t } = useLanguage();
+  const p = t.portfolio;
   const filtered =
     activeCategory === 'all' ? demos : demos.filter((d) => d.category === activeCategory);
+
+  const cardLabels = {
+    previewLoading:     p.previewLoading,
+    previewUnavailable: p.previewUnavailable,
+    viewLiveDemo:       p.viewLiveDemo,
+    viewDemo:           p.viewDemo,
+  };
 
   return (
     <section className="py-24 bg-linear-to-b from-white to-slate-50">
@@ -253,13 +277,13 @@ export default function DemoGrid({ demos, loading, activeCategory, onCategoryCha
           className="mb-14 text-center"
         >
           <p className="text-sm font-semibold uppercase tracking-widest text-blue-500 mb-3">
-            Live demo&apos;s
+            {p.demoLabel}
           </p>
           <h2 className="text-4xl font-bold text-slate-800 md:text-5xl mb-4">
-            Projecten die we voor je kunnen bouwen
+            {p.demoHeading}
           </h2>
           <p className="max-w-2xl mx-auto text-lg text-slate-500">
-            Klik op een project om de volledige demo te bekijken — gebouwd en gehost door IntrICT.
+            {p.demoSubtitle}
           </p>
         </motion.div>
 
@@ -269,6 +293,7 @@ export default function DemoGrid({ demos, loading, activeCategory, onCategoryCha
             demos={demos}
             activeCategory={activeCategory}
             onCategoryChange={onCategoryChange}
+            allLabel={p.allProjects}
           />
         )}
 
@@ -284,7 +309,7 @@ export default function DemoGrid({ demos, loading, activeCategory, onCategoryCha
             className="py-24 text-center"
           >
             <div className="text-5xl mb-4">🗂️</div>
-            <p className="text-lg text-slate-500">Geen projecten in deze categorie.</p>
+            <p className="text-lg text-slate-500">{p.noProjects}</p>
           </motion.div>
         ) : (
           <AnimatePresence mode="wait">
@@ -297,7 +322,7 @@ export default function DemoGrid({ demos, loading, activeCategory, onCategoryCha
               className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
             >
               {filtered.map((demo, i) => (
-                <DemoCard key={demo.slug} demo={demo} index={i} />
+                <DemoCard key={demo.slug} demo={demo} index={i} labels={cardLabels} />
               ))}
             </motion.div>
           </AnimatePresence>
@@ -313,11 +338,11 @@ export default function DemoGrid({ demos, loading, activeCategory, onCategoryCha
             className="mt-16 text-center"
           >
             <p className="text-sm text-slate-400">
-              Meer demo&apos;s zijn onderweg.{' '}
+              {p.moreDemosPre}{' '}
               <a href="/contact" className="text-blue-500 font-medium hover:underline">
-                Neem contact op
+                {p.contactUs}
               </a>{' '}
-              voor een demo op maat.
+              {p.contactPost}
             </p>
           </motion.div>
         )}

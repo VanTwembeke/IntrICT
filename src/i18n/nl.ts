@@ -210,10 +210,30 @@ const nl = {
 
   // ── Portfolio page ───────────────────────────────────────────────────────────
   portfolio: {
-    heading:     'Mijn Portfolio',
-    subtitle:    'Een selectie van mijn recente web development projecten. Van moderne websites tot complexe webapplicaties.',
+    heading:      'Mijn Portfolio',
+    subtitle:     'Een selectie van mijn recente web development projecten. Van moderne websites tot complexe webapplicaties.',
     viewProjects: 'Bekijk alle projecten',
     startProject: 'Start je project',
+    demoLabel:    "Live demo's",
+    demoHeading:  'Projecten die we voor je kunnen bouwen',
+    demoSubtitle: 'Klik op een project om de volledige demo te bekijken \u2014 gebouwd en gehost door IntrICT.',
+    allProjects:  'Alle projecten',
+    previewLoading:     'Preview laden\u2026',
+    previewUnavailable: 'Preview niet beschikbaar',
+    viewLiveDemo: 'Bekijk live demo',
+    viewDemo:     'Bekijk Demo',
+    noProjects:   'Geen projecten in deze categorie.',
+    moreDemosPre: "Meer demo's zijn onderweg.",
+    contactUs:    'Neem contact op',
+    contactPost:  'voor een demo op maat.',
+    featured:     'Uitgelicht',
+    viewLive:     'Bekijk live',
+    moreInfo:     'Meer info',
+    requestQuote: 'Vraag offerte',
+    noProjectsFound: 'Geen projecten gevonden in deze categorie.',
+    categoriesHeading:  'Project Categorie\u00ebn',
+    categoriesSubtitle: 'Filter mijn projecten op type om precies te vinden wat je zoekt',
+    catAll:       'Alle Projecten',
   },
 
   // ── Blog page ────────────────────────────────────────────────────────────────

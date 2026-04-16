@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Props {
   activeCategory: string;
@@ -8,11 +9,12 @@ interface Props {
 }
 
 export default function ProjectCategories({ activeCategory, onCategoryChange }: Props) {
+  const { t } = useLanguage();
   const categories = [
-    { id: 'all', name: 'Alle Projecten', count: 7 },
-    { id: 'websites', name: 'Websites', count: 4 },
-    { id: 'webapps', name: 'Web Apps', count: 2 },
-    { id: 'ecommerce', name: 'E-commerce', count: 1 },
+    { id: 'all',       name: t.portfolio.catAll,    count: 7 },
+    { id: 'websites',  name: 'Websites',             count: 4 },
+    { id: 'webapps',   name: 'Web Apps',             count: 2 },
+    { id: 'ecommerce', name: 'E-commerce',           count: 1 },
   ];
 
   return (
@@ -25,10 +27,10 @@ export default function ProjectCategories({ activeCategory, onCategoryChange }: 
           className="mb-12 text-center"
         >
           <h2 className="mb-6 text-4xl font-bold md:text-5xl text-slate-800">
-            Project Categorieën
+            {t.portfolio.categoriesHeading}
           </h2>
           <p className="max-w-2xl mx-auto text-lg text-slate-600">
-            Filter mijn projecten op type om precies te vinden wat je zoekt
+            {t.portfolio.categoriesSubtitle}
           </p>
         </motion.div>
 

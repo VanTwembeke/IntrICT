@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Props {
   activeCategory: string;
@@ -95,6 +96,7 @@ const projects = [
 ];
 
 export default function ProjectGrid({ activeCategory }: Props) {
+  const { t } = useLanguage();
   const filtered =
     activeCategory === 'all'
       ? projects
@@ -134,7 +136,7 @@ export default function ProjectGrid({ activeCategory }: Props) {
                   <div className="absolute top-4 right-4 flex gap-2">
                     {project.featured && (
                       <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-blue-500 text-white shadow">
-                        Uitgelicht
+                        {t.portfolio.featured}
                       </span>
                     )}
                     <span className="px-3 py-1 text-sm font-semibold rounded-full bg-white/90 text-slate-800 capitalize">
@@ -167,7 +169,7 @@ export default function ProjectGrid({ activeCategory }: Props) {
                       whileTap={{ scale: 0.96 }}
                       className="flex-1 px-4 py-2.5 font-semibold text-center text-white text-sm transition-colors duration-300 rounded-xl bg-slate-800 hover:bg-slate-700"
                     >
-                      {project.liveUrl.startsWith('http') ? 'Bekijk live' : 'Meer info'}
+                      {project.liveUrl.startsWith('http') ? t.portfolio.viewLive : t.portfolio.moreInfo}
                     </motion.a>
                     {project.githubUrl ? (
                       <motion.a
@@ -187,7 +189,7 @@ export default function ProjectGrid({ activeCategory }: Props) {
                         whileTap={{ scale: 0.96 }}
                         className="flex-1 px-4 py-2.5 font-semibold text-center text-sm transition-colors duration-300 border rounded-xl border-slate-300 text-slate-700 hover:bg-slate-50"
                       >
-                        Vraag offerte
+                        {t.portfolio.requestQuote}
                       </motion.a>
                     )}
                   </div>
@@ -203,7 +205,7 @@ export default function ProjectGrid({ activeCategory }: Props) {
             animate={{ opacity: 1 }}
             className="py-16 text-center"
           >
-            <p className="text-lg text-slate-500">Geen projecten gevonden in deze categorie.</p>
+            <p className="text-lg text-slate-500">{t.portfolio.noProjectsFound}</p>
           </motion.div>
         )}
       </div>

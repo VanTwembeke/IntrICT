@@ -7,7 +7,7 @@ export default function Pricing() {
   const { t } = useLanguage();
   const { plans, support } = t.pricing;
 
-  const prices = ['€500', '€800', '€1.200'];
+  const prices = ['€99', '€199', '€399'];
   const popular = [false, true, false];
 
   return (

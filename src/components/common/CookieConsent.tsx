@@ -2,266 +2,267 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { X, Settings, Shield, Cookie, Eye } from 'lucide-react';
+import { X, Settings, Shield, Cookie, Eye, Check } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+
+type Prefs = {
+  essential: boolean;
+  analytics: boolean;
+  functional: boolean;
+  marketing: boolean;
+};
+
+const STORAGE_KEY = 'cookie-consent';
+
+function Toggle({
+  enabled,
+  disabled,
+  onChange,
+}: {
+  enabled: boolean;
+  disabled?: boolean;
+  onChange?: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={enabled}
+      disabled={disabled}
+      onClick={onChange}
+      className={`relative w-10 h-5 rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+        disabled
+          ? 'cursor-not-allowed bg-green-400 opacity-70'
+          : enabled
+          ? 'cursor-pointer bg-blue-500'
+          : 'cursor-pointer bg-slate-300'
+      }`}
+    >
+      <span
+        className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200 ${
+          enabled ? 'translate-x-5' : 'translate-x-0'
+        }`}
+      />
+    </button>
+  );
+}
 
 export default function CookieConsent() {
   const { t } = useLanguage();
   const [isVisible, setIsVisible] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [preferences, setPreferences] = useState({
+  const [prefs, setPrefs] = useState<Prefs>({
     essential: true,
     analytics: false,
     functional: false,
-    marketing: false
+    marketing: false,
   });
 
   useEffect(() => {
-    const consent = localStorage.getItem('cookie-consent');
-    if (!consent) {
-      setTimeout(() => setIsVisible(true), 2000); // Show after 2 seconds
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) {
+      const timer = setTimeout(() => setIsVisible(true), 1500);
+      return () => clearTimeout(timer);
     }
   }, []);
 
-  const handleAcceptAll = () => {
-    localStorage.setItem('cookie-consent', JSON.stringify({
-      essential: true,
-      analytics: true,
-      functional: true,
-      marketing: true,
-      timestamp: new Date().toISOString()
-    }));
+  // Allow cookie page to re-open the banner
+  useEffect(() => {
+    const onReset = () => {
+      setPrefs({ essential: true, analytics: false, functional: false, marketing: false });
+      setShowSettings(false);
+      setIsVisible(true);
+    };
+    window.addEventListener('cookie-consent-reset', onReset);
+    return () => window.removeEventListener('cookie-consent-reset', onReset);
+  }, []);
+
+  const save = (p: Prefs) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...p, timestamp: new Date().toISOString() }));
     setIsVisible(false);
-  };
-
-  const handleAcceptSelected = () => {
-    localStorage.setItem('cookie-consent', JSON.stringify({
-      ...preferences,
-      timestamp: new Date().toISOString()
-    }));
-    setIsVisible(false);
-  };
-
-  const handleRejectAll = () => {
-    localStorage.setItem('cookie-consent', JSON.stringify({
-      essential: true,
-      analytics: false,
-      functional: false,
-      marketing: false,
-      timestamp: new Date().toISOString()
-    }));
-    setIsVisible(false);
-  };
-
-  const openSettings = () => {
-    setShowSettings(true);
-  };
-
-  const closeSettings = () => {
     setShowSettings(false);
   };
 
-  if (!isVisible && !showSettings) return null;
+  const acceptAll = () => save({ essential: true, analytics: true, functional: true, marketing: true });
+  const rejectAll = () => save({ essential: true, analytics: false, functional: false, marketing: false });
+  const saveSelected = () => save(prefs);
+
+  const toggle = (key: keyof Prefs) =>
+    setPrefs((p) => ({ ...p, [key]: !p[key] }));
+
+  if (!isVisible) return null;
+
+  const categories = [
+    {
+      key: 'essential' as const,
+      label: t.cookies.essential,
+      desc: t.cookies.essentialDesc,
+      locked: true,
+    },
+    {
+      key: 'analytics' as const,
+      label: t.cookies.analytics,
+      desc: t.cookies.analyticsDesc,
+      locked: false,
+    },
+    {
+      key: 'functional' as const,
+      label: t.cookies.functional,
+      desc: t.cookies.functionalDesc,
+      locked: false,
+    },
+    {
+      key: 'marketing' as const,
+      label: t.cookies.marketing,
+      desc: t.cookies.marketingDesc,
+      locked: false,
+    },
+  ];
 
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 100, opacity: 0 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="fixed bottom-0 left-0 right-0 z-50"
-      >
-        <div className="max-w-4xl mx-4 mb-20 border-t shadow-lg bg-white/95 backdrop-blur-xl border-slate-200/50 rounded-xl">
-          <div className="px-4 py-2">
-          {!showSettings ? (
-            <div className="flex items-center justify-between">
-              {/* Left side - Info */}
-              <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-linear-to-r from-blue-500 to-purple-500">
-                    <Cookie className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-800">{t.cookies.heading}</h3>
-                    <p className="text-xs text-slate-600">{t.cookies.subtitle}</p>
-                  </div>
-                </div>
-                
-                <div className="items-center hidden space-x-4 text-xs md:flex text-slate-600">
-                  <div className="flex items-center space-x-1">
-                    <Shield className="w-3 h-3 text-green-500" />
-                    <span>{t.cookies.safe}</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Eye className="w-3 h-3 text-blue-500" />
-                    <span>{t.cookies.transparent}</span>
-                  </div>
-                </div>
-              </div>
+      <div className="fixed inset-0 z-50 flex items-end justify-center px-4 pb-6 pointer-events-none">
+        <motion.div
+          key="cookie-banner"
+          initial={{ y: 40, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 40, opacity: 0 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+          className="w-full max-w-2xl pointer-events-auto"
+        >
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden">
 
-              {/* Right side - Actions */}
-              <div className="flex items-center space-x-3">
-                <div className="flex space-x-1">
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleAcceptAll}
-                    className="bg-linear-to-r from-slate-800 to-slate-700 text-white px-3 py-1.5 rounded text-xs font-semibold hover:from-slate-700 hover:to-slate-600 transition-all duration-300"
+            {!showSettings ? (
+              /* ── Compact banner ── */
+              <div className="px-5 py-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-slate-800 shrink-0 mt-0.5">
+                      <Cookie className="w-4 h-4 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">{t.cookies.heading}</p>
+                      <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
+                        {t.cookies.message}{' '}
+                        <a href="/cookies" className="underline hover:text-slate-700">
+                          Meer info
+                        </a>
+                      </p>
+                      <div className="flex items-center gap-3 mt-2 text-xs text-slate-500">
+                        <span className="flex items-center gap-1">
+                          <Shield className="w-3 h-3 text-green-500" />
+                          {t.cookies.safe}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Eye className="w-3 h-3 text-blue-500" />
+                          {t.cookies.transparent}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={rejectAll}
+                    className="p-1 text-slate-400 hover:text-slate-600 shrink-0"
+                    aria-label="Sluit"
                   >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap gap-2 mt-4">
+                  <button
+                    onClick={acceptAll}
+                    className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors"
+                  >
+                    <Check className="w-3.5 h-3.5" />
                     {t.cookies.accept}
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={openSettings}
-                    className="bg-slate-100 text-slate-700 px-3 py-1.5 rounded text-xs font-semibold hover:bg-slate-200 transition-all duration-300 flex items-center space-x-1"
+                  </button>
+                  <button
+                    onClick={() => setShowSettings(true)}
+                    className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-slate-700 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors"
                   >
-                    <Settings className="w-3 h-3" />
-                    <span>{t.cookies.settings}</span>
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleRejectAll}
-                    className="border border-slate-300 text-slate-700 px-3 py-1.5 rounded text-xs font-semibold hover:bg-slate-50 transition-all duration-300"
+                    <Settings className="w-3.5 h-3.5" />
+                    {t.cookies.settings}
+                  </button>
+                  <button
+                    onClick={rejectAll}
+                    className="px-4 py-2 text-xs font-semibold text-slate-600 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
                   >
                     {t.cookies.essentialOnly}
-                  </motion.button>
+                  </button>
                 </div>
-                
-                <button
-                  onClick={() => setIsVisible(false)}
-                  className="p-1 transition-colors text-slate-400 hover:text-slate-600"
-                >
-                  <X className="w-4 h-4" />
-                </button>
               </div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {/* Settings Header */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-linear-to-r from-blue-500 to-purple-500">
-                    <Settings className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-800">{t.cookies.settingsHeading}</h3>
-                    <p className="text-xs text-slate-600">{t.cookies.settingsSubtitle}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={closeSettings}
-                  className="p-1 transition-colors text-slate-400 hover:text-slate-600"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Cookie Categories */}
-              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-                {/* Essential Cookies */}
-                <div className="p-3 rounded-lg bg-slate-50">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xs font-semibold text-slate-800">{t.cookies.essential}</h4>
-                    <div className="relative w-8 h-4 rounded-full opacity-50 cursor-not-allowed bg-slate-300">
-                      <div className="w-3 h-3 bg-white rounded-full absolute top-0.5 left-0.5"></div>
+            ) : (
+              /* ── Settings panel ── */
+              <div>
+                <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-slate-800 shrink-0">
+                      <Settings className="w-4 h-4 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">{t.cookies.settingsHeading}</p>
+                      <p className="text-xs text-slate-500">{t.cookies.settingsSubtitle}</p>
                     </div>
                   </div>
-                  <p className="text-xs leading-relaxed text-slate-600">
-                    {t.cookies.essentialDesc}
-                  </p>
+                  <button
+                    onClick={() => setShowSettings(false)}
+                    className="p-1 text-slate-400 hover:text-slate-600"
+                    aria-label="Terug"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
 
-                {/* Analytics Cookies */}
-                <div className="p-3 rounded-lg bg-slate-50">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xs font-semibold text-slate-800">{t.cookies.analytics}</h4>
-                    <div 
-                      className={`w-8 h-4 rounded-full relative cursor-pointer transition-colors ${
-                        preferences.analytics ? 'bg-blue-500' : 'bg-slate-300'
-                      }`}
-                      onClick={() => setPreferences(prev => ({ ...prev, analytics: !prev.analytics }))}
+                <div className="px-5 py-4 space-y-3">
+                  {categories.map((cat) => (
+                    <div
+                      key={cat.key}
+                      className="flex items-start justify-between gap-4 p-3 rounded-xl bg-slate-50"
                     >
-                      <div className={`w-3 h-3 bg-white rounded-full absolute top-0.5 transition-transform ${
-                        preferences.analytics ? 'translate-x-4' : 'translate-x-0.5'
-                      }`}></div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-slate-800">{cat.label}</p>
+                        <p className="mt-0.5 text-xs text-slate-500 leading-relaxed">{cat.desc}</p>
+                      </div>
+                      <div className="shrink-0 mt-0.5">
+                        <Toggle
+                          enabled={prefs[cat.key]}
+                          disabled={cat.locked}
+                          onChange={cat.locked ? undefined : () => toggle(cat.key)}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-xs leading-relaxed text-slate-600">
-                    {t.cookies.analyticsDesc}
-                  </p>
+                  ))}
                 </div>
 
-                {/* Functional Cookies */}
-                <div className="p-3 rounded-lg bg-slate-50">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xs font-semibold text-slate-800">{t.cookies.functional}</h4>
-                    <div 
-                      className={`w-8 h-4 rounded-full relative cursor-pointer transition-colors ${
-                        preferences.functional ? 'bg-blue-500' : 'bg-slate-300'
-                      }`}
-                      onClick={() => setPreferences(prev => ({ ...prev, functional: !prev.functional }))}
+                <div className="flex items-center justify-between gap-2 px-5 py-4 border-t border-slate-100">
+                  <button
+                    onClick={rejectAll}
+                    className="text-xs text-slate-500 underline hover:text-slate-700"
+                  >
+                    {t.cookies.essentialOnly}
+                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setShowSettings(false)}
+                      className="px-4 py-2 text-xs font-semibold text-slate-600 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
                     >
-                      <div className={`w-3 h-3 bg-white rounded-full absolute top-0.5 transition-transform ${
-                        preferences.functional ? 'translate-x-4' : 'translate-x-0.5'
-                      }`}></div>
-                    </div>
-                  </div>
-                  <p className="text-xs leading-relaxed text-slate-600">
-                    {t.cookies.functionalDesc}
-                  </p>
-                </div>
-
-                {/* Marketing Cookies */}
-                <div className="p-3 rounded-lg bg-slate-50">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xs font-semibold text-slate-800">{t.cookies.marketing}</h4>
-                    <div 
-                      className={`w-8 h-4 rounded-full relative cursor-pointer transition-colors ${
-                        preferences.marketing ? 'bg-blue-500' : 'bg-slate-300'
-                      }`}
-                      onClick={() => setPreferences(prev => ({ ...prev, marketing: !prev.marketing }))}
+                      {t.cookies.cancel}
+                    </button>
+                    <button
+                      onClick={saveSelected}
+                      className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors"
                     >
-                      <div className={`w-3 h-3 bg-white rounded-full absolute top-0.5 transition-transform ${
-                        preferences.marketing ? 'translate-x-4' : 'translate-x-0.5'
-                      }`}></div>
-                    </div>
+                      <Check className="w-3.5 h-3.5" />
+                      {t.cookies.save}
+                    </button>
                   </div>
-                  <p className="text-xs leading-relaxed text-slate-600">
-                    {t.cookies.marketingDesc}
-                  </p>
                 </div>
               </div>
-
-              {/* Settings Actions */}
-              <div className="flex justify-center space-x-2">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleAcceptSelected}
-                  className="bg-linear-to-r from-slate-800 to-slate-700 text-white px-4 py-1.5 rounded text-xs font-semibold hover:from-slate-700 hover:to-slate-600 transition-all duration-300"
-                >
-                  {t.cookies.save}
-                </motion.button>
-
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={closeSettings}
-                  className="border border-slate-300 text-slate-700 px-4 py-1.5 rounded text-xs font-semibold hover:bg-slate-50 transition-all duration-300"
-                >
-                  {t.cookies.cancel}
-                </motion.button>
-              </div>
-            </div>
-          )}
+            )}
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </AnimatePresence>
   );
 }

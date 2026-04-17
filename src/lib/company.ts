@@ -4,10 +4,10 @@
 
 export const COMPANY = {
   name:       'IntrICT',
-  legal_form: 'BV',                              // BV / NV / eenmanszaak …
-  address:    'Adres 1',                         // straat + nr
-  postal:     '0000',
-  city:       'Stad',
+  legal_form: 'Eenmanszaak',                      // BV / NV / eenmanszaak …
+  address:    'Adres',                         // straat + nr
+  postal:     '9850',
+  city:       'Nevele',
   country:    'België',
   vat:        'BE 0000.000.000',                 // BTW-nummer
   kbo:        '0000.000.000',                    // KBO/BCE ondernemingsnummer

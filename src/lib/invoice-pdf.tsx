@@ -18,6 +18,88 @@ const BG     = '#f8fafc';
 const GREEN  = '#15803d';
 const RED    = '#dc2626';
 
+// ─── Translations ─────────────────────────────────────────────────────────────
+const T = {
+  nl: {
+    tagline:          'IT-diensten & weboplossingen',
+    invoiceTitle:     'FACTUUR',
+    clientLabel:      'Klant',
+    invoiceDetails:   'Factuurgegevens',
+    issueDateLabel:   'Factuurdatum',
+    dueDateLabel:     'Vervaldatum',
+    referenceLabel:   'Referentie',
+    typeLabel:        'Type',
+    recurringLabel:   'Terugkerend',
+    monthly:          '(maandelijks)',
+    quarterly:        '(kwartaal)',
+    yearly:           '(jaarlijks)',
+    colDesc:          'Omschrijving',
+    colQty:           'Aantal',
+    colPrice:         'Eenheidsprijs',
+    colTotal:         'Totaal (excl. BTW)',
+    subtotalLabel:    'Subtotaal (excl. BTW)',
+    vatLabel:         'BTW',
+    totalDue:         'TOTAAL VERSCHULDIGD',
+    paymentTitle:     'Betalingsinstructies',
+    beneficiary:      'Begunstigde:',
+    iban:             'IBAN:',
+    bic:              'BIC:',
+    communication:    'Mededeling:',
+    paymentNote: (days: number, dueDate: string | null) =>
+      `Gelieve te betalen binnen ${days} dagen${dueDate ? ` (voor ${dueDate})` : ' na factuurdatum'}. Bij laattijdige betaling is van rechtswege en zonder ingebrekestelling een intrest van 10% per jaar verschuldigd.`,
+    notesLabel:       'Opmerkingen',
+    termsLabel:       'Algemene voorwaarden:',
+    vatPrefix:        'BTW:',
+    kboPrefix:        'KBO:',
+    buildRef: (n: string) => `Factuur ${n}`,
+    docSubject:       'Factuur',
+    statuses: {
+      draft: 'CONCEPT', sent: 'VERZONDEN', paid: 'BETAALD',
+      overdue: 'VERVALLEN', cancelled: 'GEANNULEERD',
+    },
+    dateLocale: 'nl-BE',
+  },
+  en: {
+    tagline:          'IT services & web solutions',
+    invoiceTitle:     'INVOICE',
+    clientLabel:      'Client',
+    invoiceDetails:   'Invoice details',
+    issueDateLabel:   'Issue date',
+    dueDateLabel:     'Due date',
+    referenceLabel:   'Reference',
+    typeLabel:        'Type',
+    recurringLabel:   'Recurring',
+    monthly:          '(monthly)',
+    quarterly:        '(quarterly)',
+    yearly:           '(yearly)',
+    colDesc:          'Description',
+    colQty:           'Qty',
+    colPrice:         'Unit price',
+    colTotal:         'Total (excl. VAT)',
+    subtotalLabel:    'Subtotal (excl. VAT)',
+    vatLabel:         'VAT',
+    totalDue:         'TOTAL DUE',
+    paymentTitle:     'Payment instructions',
+    beneficiary:      'Beneficiary:',
+    iban:             'IBAN:',
+    bic:              'BIC:',
+    communication:    'Reference:',
+    paymentNote: (days: number, dueDate: string | null) =>
+      `Please pay within ${days} days${dueDate ? ` (before ${dueDate})` : ' after invoice date'}. In case of late payment, interest of 10% per year is due by operation of law without prior notice.`,
+    notesLabel:       'Notes',
+    termsLabel:       'Terms & conditions:',
+    vatPrefix:        'VAT:',
+    kboPrefix:        'Company nr:',
+    buildRef: (n: string) => `Invoice ${n}`,
+    docSubject:       'Invoice',
+    statuses: {
+      draft: 'DRAFT', sent: 'SENT', paid: 'PAID',
+      overdue: 'OVERDUE', cancelled: 'CANCELLED',
+    },
+    dateLocale: 'en-GB',
+  },
+};
+
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
   page: {
@@ -30,19 +112,24 @@ const s = StyleSheet.create({
     lineHeight:        1.4,
   },
 
+  // Header + title wrapper (kept together)
+  topBlock: {
+    marginBottom: 14,
+  },
+
   // Header band
   headerBand: {
     flexDirection:  'row',
     justifyContent: 'space-between',
     alignItems:     'flex-start',
-    marginBottom:   16,
-    paddingBottom:  14,
+    marginBottom:   14,
+    paddingBottom:  12,
     borderBottom:   `1.5 solid ${BLUE}`,
   },
   companyName: {
-    fontSize:    20,
-    fontFamily:  'Helvetica-Bold',
-    color:       BLUE,
+    fontSize:      20,
+    fontFamily:    'Helvetica-Bold',
+    color:         BLUE,
     letterSpacing: 1,
   },
   companyTagline: {
@@ -61,25 +148,25 @@ const s = StyleSheet.create({
   titleRow: {
     flexDirection:  'row',
     justifyContent: 'space-between',
-    alignItems:     'flex-end',
-    marginBottom:   14,
+    alignItems:     'center',
+    marginBottom:   12,
   },
-  invoiceTitle: {
-    fontSize:      18,
+  invoiceTitleText: {
+    fontSize:      20,
     fontFamily:    'Helvetica-Bold',
     color:         DARK,
-    letterSpacing: 0.5,
-    marginBottom:  4,
+    letterSpacing: 1,
   },
   invoiceNumber: {
     fontSize:      9,
     fontFamily:    'Helvetica-Bold',
     color:         BLUE,
     letterSpacing: 0.3,
+    marginTop:     2,
   },
   statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical:   3,
+    paddingHorizontal: 10,
+    paddingVertical:   4,
     borderRadius:      4,
     fontSize:          8,
     fontFamily:        'Helvetica-Bold',
@@ -89,14 +176,14 @@ const s = StyleSheet.create({
   infoRow: {
     flexDirection: 'row',
     gap:           12,
-    marginBottom:  16,
+    marginBottom:  14,
   },
   infoBox: {
-    flex:            1,
-    backgroundColor: BG,
-    padding:         10,
-    borderRadius:    4,
-    border:          `1 solid ${BORDER}`,
+    flex:             1,
+    backgroundColor:  BG,
+    padding:          10,
+    borderRadius:     4,
+    border:           `1 solid ${BORDER}`,
   },
   infoLabel: {
     fontSize:      7,
@@ -104,12 +191,12 @@ const s = StyleSheet.create({
     color:         BLUE,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
-    marginBottom:  4,
+    marginBottom:  5,
   },
   infoName: {
-    fontSize:   9.5,
-    fontFamily: 'Helvetica-Bold',
-    color:      DARK,
+    fontSize:     9.5,
+    fontFamily:   'Helvetica-Bold',
+    color:        DARK,
     marginBottom: 1,
   },
   infoLine: {
@@ -146,29 +233,29 @@ const s = StyleSheet.create({
     marginBottom: 12,
   },
   tableHeader: {
-    flexDirection:   'row',
-    backgroundColor: BLUE,
-    paddingVertical:  6,
+    flexDirection:     'row',
+    backgroundColor:   BLUE,
+    paddingVertical:   6,
     paddingHorizontal: 10,
-    borderRadius:     4,
-    marginBottom:     1,
+    borderRadius:      4,
+    marginBottom:      1,
   },
   tableRow: {
-    flexDirection:    'row',
-    paddingVertical:  5,
+    flexDirection:     'row',
+    paddingVertical:   5,
     paddingHorizontal: 10,
-    borderBottom:     `1 solid ${BORDER}`,
+    borderBottom:      `1 solid ${BORDER}`,
   },
   tableRowAlt: {
-    flexDirection:    'row',
-    paddingVertical:  5,
+    flexDirection:     'row',
+    paddingVertical:   5,
     paddingHorizontal: 10,
-    backgroundColor:  BG,
-    borderBottom:     `1 solid ${BORDER}`,
+    backgroundColor:   BG,
+    borderBottom:      `1 solid ${BORDER}`,
   },
   cellDesc:  { flex: 5, fontSize: 8.5, color: DARK },
-  cellQty:   { flex: 1, fontSize: 8.5, color: MID,  textAlign: 'center' },
-  cellPrice: { flex: 2, fontSize: 8.5, color: MID,  textAlign: 'right' },
+  cellQty:   { flex: 1, fontSize: 8.5, color: MID, textAlign: 'center' },
+  cellPrice: { flex: 2, fontSize: 8.5, color: MID, textAlign: 'right' },
   cellTotal: { flex: 2, fontSize: 8.5, fontFamily: 'Helvetica-Bold', color: DARK, textAlign: 'right' },
 
   cellDescH:  { flex: 5, fontSize: 7, fontFamily: 'Helvetica-Bold', color: '#ffffff' },
@@ -192,13 +279,13 @@ const s = StyleSheet.create({
     borderBottom:   `1 solid ${BORDER}`,
   },
   totalLineGrand: {
-    flexDirection:    'row',
-    justifyContent:   'space-between',
-    paddingVertical:  6,
-    backgroundColor:  BLUE,
+    flexDirection:     'row',
+    justifyContent:    'space-between',
+    paddingVertical:   6,
+    backgroundColor:   BLUE,
     paddingHorizontal: 10,
-    borderRadius:     4,
-    marginTop:        4,
+    borderRadius:      4,
+    marginTop:         4,
   },
   totalLabel: {
     fontSize: 8,
@@ -222,11 +309,11 @@ const s = StyleSheet.create({
 
   // Payment section
   paymentBox: {
-    marginTop:       14,
-    padding:         10,
-    backgroundColor: '#eff6ff',
-    border:          `1 solid #bfdbfe`,
-    borderRadius:    4,
+    marginTop:        12,
+    padding:          10,
+    backgroundColor:  '#eff6ff',
+    border:           `1 solid #bfdbfe`,
+    borderRadius:     4,
   },
   paymentTitle: {
     fontSize:      7.5,
@@ -237,8 +324,8 @@ const s = StyleSheet.create({
     letterSpacing: 0.5,
   },
   paymentGrid: {
-    flexDirection:  'row',
-    flexWrap:       'wrap',
+    flexDirection: 'row',
+    flexWrap:      'wrap',
   },
   paymentRow: {
     flexDirection: 'row',
@@ -257,9 +344,9 @@ const s = StyleSheet.create({
     flex:       1,
   },
   paymentRef: {
-    fontSize:   7,
-    color:      MID,
-    marginTop:  5,
+    fontSize:  7,
+    color:     MID,
+    marginTop: 5,
   },
 
   // Notes
@@ -312,12 +399,12 @@ const s = StyleSheet.create({
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function fmtEur(n: number) {
-  return `\u20ac ${n.toLocaleString('nl-BE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+function fmtEur(n: number, locale: string) {
+  return `\u20ac ${n.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString('nl-BE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+function fmtDate(iso: string, locale: string) {
+  return new Date(iso).toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 function statusColor(status: string): { bg: string; fg: string } {
@@ -330,21 +417,13 @@ function statusColor(status: string): { bg: string; fg: string } {
   }
 }
 
-function statusLabel(status: string) {
-  const map: Record<string, string> = {
-    draft: 'CONCEPT', sent: 'VERZONDEN', paid: 'BETAALD',
-    overdue: 'VERVALLEN', cancelled: 'GEANNULEERD',
-  };
-  return map[status] ?? status.toUpperCase();
-}
-
-function buildRef(invoiceNumber: string) {
-  return `Factuur ${invoiceNumber}`;
-}
-
 // ─── PDF Document ─────────────────────────────────────────────────────────────
 
 export function InvoicePDF({ invoice }: { invoice: Invoice }) {
+  const lang   = invoice.language ?? 'nl';
+  const t      = T[lang];
+  const locale = t.dateLocale;
+
   const items    = invoice.items ?? [];
   const subtotal = invoice.subtotal ?? 0;
   const vatAmt   = invoice.vat_amount ?? 0;
@@ -361,83 +440,84 @@ export function InvoicePDF({ invoice }: { invoice: Invoice }) {
   const clientCompany = invoice.profile?.company;
   const clientVat     = invoice.profile?.vat_number;
   const clientAddr    = invoice.profile?.address
-    ? `${invoice.profile.address}, ${invoice.profile.postal_code ?? ''} ${invoice.profile.city ?? ''}`
+    ? `${invoice.profile.address}, ${invoice.profile.postal_code ?? ''} ${invoice.profile.city ?? ''}`.trim()
     : null;
+
+  const ref = t.buildRef(invoice.invoice_number);
 
   return (
     <Document
-      title={`Factuur ${invoice.invoice_number}`}
+      title={t.buildRef(invoice.invoice_number)}
       author={COMPANY.name}
-      subject="Factuur"
+      subject={t.docSubject}
       creator={COMPANY.name}
     >
       <Page size="A4" style={s.page}>
 
-        {/* ── Header band ── */}
-        <View style={s.headerBand} wrap={false}>
-          <View>
-            <Text style={s.companyName}>{COMPANY.name}</Text>
-            <Text style={s.companyTagline}>IT-diensten {'&'} weboplossingen</Text>
+        {/* ── Header band + title row (never split across pages) ── */}
+        <View style={s.topBlock} wrap={false}>
+          <View style={s.headerBand}>
+            <View>
+              <Text style={s.companyName}>{COMPANY.name}</Text>
+              <Text style={s.companyTagline}>{t.tagline}</Text>
+            </View>
+            <View>
+              <Text style={s.companyDetails}>
+                {`${COMPANY.name} ${COMPANY.legal_form}\n${COMPANY.address}\n${COMPANY.postal} ${COMPANY.city}\n${t.vatPrefix} ${COMPANY.vat}   ${t.kboPrefix} ${COMPANY.kbo}\n${COMPANY.email}`}
+              </Text>
+            </View>
           </View>
-          <View>
-            <Text style={s.companyDetails}>
-              {`${COMPANY.name} ${COMPANY.legal_form}\n${COMPANY.address}\n${COMPANY.postal} ${COMPANY.city}\nBTW: ${COMPANY.vat}   KBO: ${COMPANY.kbo}\n${COMPANY.email}`}
-            </Text>
-          </View>
-        </View>
 
-        {/* ── Title row ── */}
-        <View style={s.titleRow} wrap={false}>
-          <View>
-            <Text style={s.invoiceTitle}>FACTUUR</Text>
-            <Text style={s.invoiceNumber}>{invoice.invoice_number}</Text>
-          </View>
-          <View style={[s.statusBadge, { backgroundColor: sc.bg }]}>
-            <Text style={{ color: sc.fg, fontFamily: 'Helvetica-Bold', fontSize: 8 }}>
-              {statusLabel(invoice.status)}
-            </Text>
+          <View style={s.titleRow}>
+            <View>
+              <Text style={s.invoiceTitleText}>{t.invoiceTitle}</Text>
+              <Text style={s.invoiceNumber}>{invoice.invoice_number}</Text>
+            </View>
+            <View style={[s.statusBadge, { backgroundColor: sc.bg }]}>
+              <Text style={{ color: sc.fg, fontFamily: 'Helvetica-Bold', fontSize: 8 }}>
+                {t.statuses[invoice.status as keyof typeof t.statuses] ?? invoice.status.toUpperCase()}
+              </Text>
+            </View>
           </View>
         </View>
 
         {/* ── Info row: client (left) + dates (right) ── */}
-        <View style={s.infoRow}>
+        <View style={s.infoRow} wrap={false}>
           {/* Client */}
           <View style={s.infoBox}>
-            <Text style={s.infoLabel}>Klant</Text>
+            <Text style={s.infoLabel}>{t.clientLabel}</Text>
             {clientCompany && <Text style={s.infoName}>{clientCompany}</Text>}
             <Text style={clientCompany ? s.infoLine : s.infoName}>{clientName}</Text>
             {clientAddr && <Text style={s.infoLine}>{clientAddr}</Text>}
-            {clientVat  && <Text style={s.infoLine}>BTW: {clientVat}</Text>}
+            {clientVat  && <Text style={s.infoLine}>{t.vatPrefix} {clientVat}</Text>}
             <Text style={s.infoLine}>{invoice.profile?.email}</Text>
           </View>
 
           {/* Dates */}
           <View style={s.infoBox}>
-            <Text style={s.infoLabel}>Factuurgegevens</Text>
+            <Text style={s.infoLabel}>{t.invoiceDetails}</Text>
             <View style={s.dateRow}>
-              <Text style={s.dateLabel}>Factuurdatum</Text>
-              <Text style={s.dateValue}>{fmtDate(issueDate)}</Text>
+              <Text style={s.dateLabel}>{t.issueDateLabel}</Text>
+              <Text style={s.dateValue}>{fmtDate(issueDate, locale)}</Text>
             </View>
             <View style={s.dateRow}>
-              <Text style={s.dateLabel}>Vervaldatum</Text>
+              <Text style={s.dateLabel}>{t.dueDateLabel}</Text>
               <Text style={isOverdue ? s.dateValueRed : s.dateValue}>
-                {dueDate ? fmtDate(dueDate) : `${COMPANY.payment_days} dagen na factuurdatum`}
+                {dueDate ? fmtDate(dueDate, locale) : `${COMPANY.payment_days} ${lang === 'en' ? 'days after invoice date' : 'dagen na factuurdatum'}`}
               </Text>
             </View>
             <View style={s.dateRow}>
-              <Text style={s.dateLabel}>Referentie</Text>
-              <Text style={s.dateValue}>{buildRef(invoice.invoice_number)}</Text>
+              <Text style={s.dateLabel}>{t.referenceLabel}</Text>
+              <Text style={s.dateValue}>{ref}</Text>
             </View>
             {invoice.is_recurring && (
               <View style={s.dateRow}>
-                <Text style={s.dateLabel}>Type</Text>
+                <Text style={s.dateLabel}>{t.typeLabel}</Text>
                 <Text style={[s.dateValue, { color: '#7c3aed' }]}>
-                  {'Terugkerend '}
-                  {invoice.recurring_interval === 'monthly'
-                    ? '(maandelijks)'
-                    : invoice.recurring_interval === 'quarterly'
-                    ? '(kwartaal)'
-                    : '(jaarlijks)'}
+                  {t.recurringLabel}{' '}
+                  {invoice.recurring_interval === 'monthly' ? t.monthly
+                    : invoice.recurring_interval === 'quarterly' ? t.quarterly
+                    : t.yearly}
                 </Text>
               </View>
             )}
@@ -446,86 +526,85 @@ export function InvoicePDF({ invoice }: { invoice: Invoice }) {
 
         {/* ── Items table ── */}
         <View style={s.table}>
-          <View style={s.tableHeader}>
-            <Text style={s.cellDescH}>Omschrijving</Text>
-            <Text style={s.cellQtyH}>Aantal</Text>
-            <Text style={s.cellPriceH}>Eenheidsprijs</Text>
-            <Text style={s.cellTotalH}>Totaal (excl. BTW)</Text>
+          <View style={s.tableHeader} wrap={false}>
+            <Text style={s.cellDescH}>{t.colDesc}</Text>
+            <Text style={s.cellQtyH}>{t.colQty}</Text>
+            <Text style={s.cellPriceH}>{t.colPrice}</Text>
+            <Text style={s.cellTotalH}>{t.colTotal}</Text>
           </View>
 
           {items.map((item, i) => (
-            <View key={item.id} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
+            <View key={item.id} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt} wrap={false}>
               <Text style={s.cellDesc}>{item.description}</Text>
               <Text style={s.cellQty}>{item.quantity}</Text>
-              <Text style={s.cellPrice}>{fmtEur(item.unit_price)}</Text>
-              <Text style={s.cellTotal}>{fmtEur(item.total ?? item.quantity * item.unit_price)}</Text>
+              <Text style={s.cellPrice}>{fmtEur(item.unit_price, locale)}</Text>
+              <Text style={s.cellTotal}>{fmtEur(item.total ?? item.quantity * item.unit_price, locale)}</Text>
             </View>
           ))}
         </View>
 
         {/* ── Totals ── */}
-        <View style={s.totalsRow}>
+        <View style={s.totalsRow} wrap={false}>
           <View style={s.totalsBlock}>
             <View style={s.totalLine}>
-              <Text style={s.totalLabel}>Subtotaal (excl. BTW)</Text>
-              <Text style={s.totalValue}>{fmtEur(subtotal)}</Text>
+              <Text style={s.totalLabel}>{t.subtotalLabel}</Text>
+              <Text style={s.totalValue}>{fmtEur(subtotal, locale)}</Text>
             </View>
             <View style={s.totalLine}>
-              <Text style={s.totalLabel}>BTW {vatRate}%</Text>
-              <Text style={s.totalValue}>{fmtEur(vatAmt)}</Text>
+              <Text style={s.totalLabel}>{t.vatLabel} {vatRate}%</Text>
+              <Text style={s.totalValue}>{fmtEur(vatAmt, locale)}</Text>
             </View>
             <View style={s.totalLineGrand}>
-              <Text style={s.totalLabelGrand}>TOTAAL VERSCHULDIGD</Text>
-              <Text style={s.totalValueGrand}>{fmtEur(total)}</Text>
+              <Text style={s.totalLabelGrand}>{t.totalDue}</Text>
+              <Text style={s.totalValueGrand}>{fmtEur(total, locale)}</Text>
             </View>
           </View>
         </View>
 
         {/* ── Payment instructions ── */}
-        <View style={s.paymentBox}>
-          <Text style={s.paymentTitle}>Betalingsinstructies</Text>
+        <View style={s.paymentBox} wrap={false}>
+          <Text style={s.paymentTitle}>{t.paymentTitle}</Text>
           <View style={s.paymentGrid}>
             <View style={s.paymentRow}>
-              <Text style={s.paymentLabel}>Begunstigde:</Text>
+              <Text style={s.paymentLabel}>{t.beneficiary}</Text>
               <Text style={s.paymentValue}>{COMPANY.name} {COMPANY.legal_form}</Text>
             </View>
             <View style={s.paymentRow}>
-              <Text style={s.paymentLabel}>IBAN:</Text>
+              <Text style={s.paymentLabel}>{t.iban}</Text>
               <Text style={s.paymentValue}>{COMPANY.iban}</Text>
             </View>
             <View style={s.paymentRow}>
-              <Text style={s.paymentLabel}>BIC:</Text>
+              <Text style={s.paymentLabel}>{t.bic}</Text>
               <Text style={s.paymentValue}>{COMPANY.bic}</Text>
             </View>
             <View style={s.paymentRow}>
-              <Text style={s.paymentLabel}>Mededeling:</Text>
-              <Text style={s.paymentValue}>{buildRef(invoice.invoice_number)}</Text>
+              <Text style={s.paymentLabel}>{t.communication}</Text>
+              <Text style={s.paymentValue}>{ref}</Text>
             </View>
           </View>
           <Text style={s.paymentRef}>
-            {'Gelieve te betalen binnen '}
-            {dueDate
-              ? `${COMPANY.payment_days} dagen (voor ${fmtDate(dueDate)})`
-              : `${COMPANY.payment_days} dagen na factuurdatum`}
-            {'. Bij laattijdige betaling is van rechtswege en zonder ingebrekestelling een intrest van 10% per jaar verschuldigd.'}
+            {t.paymentNote(
+              COMPANY.payment_days,
+              dueDate ? fmtDate(dueDate, locale) : null,
+            )}
           </Text>
         </View>
 
         {/* ── Notes ── */}
         {invoice.notes && (
-          <View style={s.notesBox}>
-            <Text style={s.notesLabel}>Opmerkingen</Text>
+          <View style={s.notesBox} wrap={false}>
+            <Text style={s.notesLabel}>{t.notesLabel}</Text>
             <Text style={s.notesText}>{invoice.notes}</Text>
           </View>
         )}
 
-        {/* ── Footer ── */}
+        {/* ── Footer (every page) ── */}
         <View style={s.footer} fixed>
           <Text style={s.footerLeft}>
-            {`${COMPANY.name} ${COMPANY.legal_form} \u00b7 BTW ${COMPANY.vat} \u00b7 KBO ${COMPANY.kbo}`}
+            {`${COMPANY.name} ${COMPANY.legal_form} \u00b7 ${t.vatPrefix} ${COMPANY.vat} \u00b7 ${t.kboPrefix} ${COMPANY.kbo}`}
           </Text>
           <View style={{ flexDirection: 'row', gap: 3 }}>
-            <Text style={s.footerRight}>Algemene voorwaarden: </Text>
+            <Text style={s.footerRight}>{t.termsLabel} </Text>
             <Link src={COMPANY.terms_url} style={s.footerLink}>{COMPANY.terms_url}</Link>
           </View>
         </View>

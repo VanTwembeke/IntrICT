@@ -47,6 +47,7 @@ export async function POST(request: Request) {
   const {
     profile_id, dossier_id, due_date, notes,
     vat_rate = 21, is_recurring = false, recurring_interval = null,
+    language = 'nl',
     items = [],
   } = body;
 
@@ -79,6 +80,7 @@ export async function POST(request: Request) {
       due_date: due_date ?? new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
       subtotal, vat_rate, vat_amount, total,
       notes: notes ?? null,
+      language,
       is_recurring, recurring_interval,
     })
     .select()

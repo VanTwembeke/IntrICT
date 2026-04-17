@@ -33,7 +33,7 @@ export async function PUT(request: Request, { params }: Params) {
   if (profile?.role !== 'admin') return NextResponse.json({ error: 'Geen toegang.' }, { status: 403 });
 
   const body = await request.json();
-  const allowed = ['status', 'notes', 'due_date', 'is_recurring', 'recurring_interval'];
+  const allowed = ['status', 'notes', 'due_date', 'is_recurring', 'recurring_interval', 'language'];
   const updates: Record<string, unknown> = {};
   for (const k of allowed) if (body[k] !== undefined) updates[k] = body[k];
 

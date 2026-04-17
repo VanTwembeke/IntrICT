@@ -166,6 +166,7 @@ export interface Invoice {
   vat_amount: number;
   total: number;
   notes: string | null;
+  language: 'nl' | 'en';
   is_recurring: boolean;
   recurring_interval: 'monthly' | 'quarterly' | 'yearly' | null;
   created_at: string;

@@ -63,6 +63,7 @@ export default function NieuweFactuurClient({
   const [notes, setNotes] = useState('');
   const [isRecurring, setIsRecurring] = useState(false);
   const [recurringInterval, setRecurringInterval] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
+  const [language, setLanguage] = useState<'nl' | 'en'>('nl');
   const [showPreview, setShowPreview] = useState(false);
 
   // Line items
@@ -105,6 +106,7 @@ export default function NieuweFactuurClient({
           due_date: dueDate || null,
           vat_rate: vatRate,
           notes: notes || null,
+          language,
           is_recurring: isRecurring,
           recurring_interval: isRecurring ? recurringInterval : null,
           items: items
@@ -230,6 +232,27 @@ export default function NieuweFactuurClient({
                   <option value={12}>12%</option>
                   <option value={21}>21%</option>
                 </select>
+              </div>
+            </div>
+
+            {/* Language */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 mb-1.5">Taal PDF</label>
+              <div className="inline-flex items-center gap-0.5 px-1 py-1 bg-slate-100 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => setLanguage('nl')}
+                  className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${language === 'nl' ? 'bg-white shadow text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}
+                >
+                  NL
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLanguage('en')}
+                  className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${language === 'en' ? 'bg-white shadow text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}
+                >
+                  EN
+                </button>
               </div>
             </div>
 

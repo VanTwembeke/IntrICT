@@ -40,6 +40,16 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
   const [deleting, setDeleting] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
+  const [pdfLang, setPdfLang] = useState<'nl' | 'en'>(initial.language ?? 'nl');
+
+  const handlePdfLangChange = async (lang: 'nl' | 'en') => {
+    setPdfLang(lang);
+    await fetch(`/api/invoices/${invoice.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ language: lang }),
+    });
+  };
 
   const cfg = STATUS_CONFIG[invoice.status];
   const nextStatuses = NEXT_STATUSES[invoice.status];
@@ -149,6 +159,24 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
               </div>
             </>
           )}
+        </div>
+
+        {/* PDF language toggle */}
+        <div className="flex items-center gap-0.5 px-1 py-1 bg-slate-100 rounded-xl">
+          <button
+            onClick={() => handlePdfLangChange('nl')}
+            title="PDF in het Nederlands"
+            className={`px-2.5 py-1.5 text-xs font-bold rounded-lg transition-all ${pdfLang === 'nl' ? 'bg-white shadow text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            NL
+          </button>
+          <button
+            onClick={() => handlePdfLangChange('en')}
+            title="PDF in English"
+            className={`px-2.5 py-1.5 text-xs font-bold rounded-lg transition-all ${pdfLang === 'en' ? 'bg-white shadow text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            EN
+          </button>
         </div>
 
         <button

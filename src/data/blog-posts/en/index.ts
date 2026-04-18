@@ -34,8 +34,20 @@
  */
 
 import type { BlogPost } from '@/lib/blog-api';
+import { blogPost as post1En } from './website-development';
+import { blogPost as post2En } from './logo-and-branding';
+import { blogPost as post3En } from './digital-strategy';
+import { blogPost as post4En } from './technical-support';
+import { blogPost as post5En } from './AI-in-2026';
+import { blogPost as post6En } from './why-wordpress-is-outdated';
 import { blogPost as post7En } from './local-designer-vs-large-agency';
 
 export const blogPostsEn: BlogPost[] = [
+  post1En,
+  post2En,
+  post3En,
+  post4En,
+  post5En,
+  post6En,
   post7En,
 ];

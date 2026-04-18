@@ -188,5 +188,7 @@ Wie vandaag investeert in AI, bouwt aan de fundamenten van morgen.`,
   tags: ['Responsive Design', 'Performance', 'CSS', 'UX', 'Frontend'],
   image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80',
   slug: 'AI-in-2026',
-  readTime: 12
+  readTime: 12,
+  lang: 'nl',
+  translationSlug: 'ai-in-2026',
 };

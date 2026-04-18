@@ -164,5 +164,7 @@ Een goed onderhouden digitale infrastructuur voorkomt problemen en zorgt ervoor 
   tags: ['Hosting', 'Security', 'Performance', 'DevOps', 'Infrastructuur'],
   image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80',
   slug: 'technische-ondersteuning',
-  readTime: 10
+  readTime: 10,
+  lang: 'nl',
+  translationSlug: 'technical-support',
 };

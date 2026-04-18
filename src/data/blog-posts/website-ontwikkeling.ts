@@ -184,5 +184,7 @@ Of het nu gaat om een eenvoudige landing page of een complexe webapplicatie, de 
   tags: ['Responsive Design', 'Performance', 'CSS', 'UX', 'Frontend'],
   image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80',
   slug: 'website-ontwikkeling',
-  readTime: 12
+  readTime: 12,
+  lang: 'nl',
+  translationSlug: 'website-development',
 };

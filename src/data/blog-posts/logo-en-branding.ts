@@ -153,5 +153,7 @@ Door te investeren in strategie, design en consistentie creëer je een merk dat 
   tags: ['Branding', 'Logo Design', 'Identiteit', 'Design', 'Marketing'],
   image: 'https://images.unsplash.com/photo-1523726491678-bf852e717f6a?auto=format&fit=crop&w=1200&q=80',
   slug: 'logo-en-branding',
-  readTime: 10
+  readTime: 10,
+  lang: 'nl',
+  translationSlug: 'logo-and-branding',
 };

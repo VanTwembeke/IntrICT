@@ -157,5 +157,7 @@ Bedrijven die investeren in een doordachte digitale strategie hebben een duideli
   tags: ['Strategie', 'SEO', 'Analytics', 'UX', 'Marketing'],
   image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
   slug: 'digitale-strategie',
-  readTime: 11
+  readTime: 11,
+  lang: 'nl',
+  translationSlug: 'digital-strategy',
 };

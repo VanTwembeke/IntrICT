@@ -177,5 +177,7 @@ Wie vandaag bouwt voor morgen, kijkt verder dan WordPress.`,
   tags: ['WordPress', 'Performance', 'Web Development', 'Frontend', 'CMS'],
   image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80',
   slug: 'waarom-wordpress-verouderd-is',
-  readTime: 10
+  readTime: 10,
+  lang: 'nl',
+  translationSlug: 'why-wordpress-is-outdated',
 };

@@ -34,7 +34,59 @@ export default function Oplossingen() {
     requestAnimationFrame(raf);
   }, []);
 
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'What specialised web development services does IntrICT offer?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'IntrICT offers specialised solutions including Crypto & Blockchain consulting, Mini App development, technical consulting, digital training, system optimization, security audits, GDPR compliance support, and custom API development.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Does IntrICT offer crypto and blockchain consulting?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. IntrICT provides practical advice on cryptocurrency, blockchain technology, and digital assets. This includes technology evaluation and investment guidance — without jargon.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What is a mini app and when does it make sense?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'A mini app is a small, focused application that solves one specific business problem. Examples include automation tools, data processing scripts, integrations, and workflow optimisations. They are fast to develop and easy to maintain.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Does IntrICT help with GDPR compliance?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. IntrICT offers GDPR compliance support including privacy audits, cookie consent implementation, and documentation to ensure your website meets Belgian and European privacy regulations.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Are there affordable options for small businesses or startups?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. IntrICT offers a free initial consultation and flexible rates for small websites and projects. Every collaboration starts with a no-obligation conversation to discuss your needs and budget.',
+        },
+      },
+    ],
+  };
+
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, '\\u003c') }}
+      />
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Header />
 
@@ -207,5 +259,6 @@ export default function Oplossingen() {
       <Footer />
       <BackToTop />
     </div>
+    </>
   );
 }

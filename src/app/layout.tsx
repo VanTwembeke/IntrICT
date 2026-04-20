@@ -65,6 +65,7 @@ export const metadata: Metadata = {
     canonical: "/",
     languages: {
       "nl-BE": "/",
+      "en": "/",
     },
   },
 
@@ -174,11 +175,46 @@ const organizationJsonLd = {
     "https://github.com/VanTwembeke",
   ],
   priceRange: "€€",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", "h2", ".excerpt", "meta[name='description']"],
+  },
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",
     dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
     opens: "09:00",
     closes: "18:00",
+  },
+};
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  '@id': `${SITE_URL}/#founder`,
+  name: 'Jonas Van Twembeke',
+  url: `${SITE_URL}/over`,
+  image: `${SITE_URL}/images/Profiel.png`,
+  jobTitle: 'Web Developer & Digital Strategist',
+  worksFor: { '@id': `${SITE_URL}/#organization` },
+  sameAs: [
+    'https://www.linkedin.com/in/VanTwembeke',
+    'https://github.com/VanTwembeke',
+  ],
+  knowsAbout: [
+    'Next.js',
+    'React',
+    'TypeScript',
+    'UI/UX Design',
+    'SEO Optimization',
+    'Digital Strategy',
+    'Web Development',
+  ],
+  knowsLanguage: ['Dutch', 'English'],
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Gent',
+    addressRegion: 'Oost-Vlaanderen',
+    addressCountry: 'BE',
   },
 };
 
@@ -205,7 +241,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="nl">
+    <html lang="nl-BE">
       <body className={`${geistMono.variable} font-mono antialiased`}>
         <Providers>
         <script
@@ -218,6 +254,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(websiteJsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(personJsonLd).replace(/</g, "\\u003c"),
           }}
         />
 

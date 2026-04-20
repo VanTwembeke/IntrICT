@@ -1,51 +1,69 @@
 # IntrICT
+> IntrICT is a Ghent-based web development studio specializing in modern websites,
+> Next.js web applications, UI/UX design, SEO optimization, and digital strategy
+> for businesses in Belgium and the Netherlands.
 
-> IntrICT is een Gent-gebaseerd web development studio opgericht door een freelance developer
-> gespecialiseerd in moderne websites, Next.js webapplicaties, UI/UX design, SEO-optimalisatie
-> en digitale strategie voor bedrijven in België en Nederland.
+## About IntrICT
 
-## Over IntrICT
+IntrICT builds fast, accessible, and visually refined websites using modern technologies
+such as Next.js, React, TypeScript, and Tailwind CSS. Founded in Ghent (Oost-Vlaanderen),
+Belgium, serving clients across Belgium and the Netherlands.
 
-IntrICT bouwt snelle, toegankelijke en visueel verzorgde websites met behulp van moderne
-technologieën zoals Next.js, React, TypeScript en Tailwind CSS. Het studio is gevestigd in
-Gent (Oost-Vlaanderen) en werkt voor klanten door heel België en Nederland.
+Core values: quality, performance, transparency, and long-term collaboration.
+Contact: help@intrict.com | Available Monday–Friday, 09:00–18:00 CET
 
-Kernwaarden: kwaliteit, performance, transparantie en langdurige samenwerking.
+## Services
 
-## Diensten
+- Website Development: Responsive websites and web applications built with Next.js, React,
+  and TypeScript. From simple landing page to complex web application.
+- Logo & Branding: Unique visual identity including logo, color palette, and typography
+  tailored to the target audience.
+- Digital Strategy: SEO, analytics, content strategy, and user experience optimization.
+- Technical Support: Hosting, security, updates, and performance monitoring.
+- E-commerce Development: Custom online stores and payment integrations.
+- Crypto & Blockchain Consulting: Practical advice on cryptocurrency and blockchain technology.
+- GDPR Compliance Support: Privacy audits and compliance assistance for Belgian law.
+- API Development: Custom integrations and workflow automation.
 
-- [Website Ontwikkeling](https://www.intrict.com/diensten): Responsive websites en webapplicaties
-  gebouwd met Next.js, React en TypeScript. Van eenvoudige landingspagina tot complexe webapp.
-- [Logo & Branding](https://www.intrict.com/diensten): Unieke visuele identiteit inclusief logo,
-  kleurenpalet en typografie afgestemd op de doelgroep.
-- [Digitale Strategie](https://www.intrict.com/diensten): SEO, analytics, content strategie en
-  gebruikerservaring optimalisatie.
-- [Technische Ondersteuning](https://www.intrict.com/diensten): Hosting, beveiliging, updates
-  en performance monitoring.
+## Key Pages
 
-## Pagina's
+- [Home](https://www.intrict.com): Service overview, process, and contact.
+- [About](https://www.intrict.com/over): Background, skills, and working method of IntrICT.
+- [Portfolio](https://www.intrict.com/portfolio): Selection of completed projects.
+- [Solutions](https://www.intrict.com/oplossingen): Specialized services — crypto, mini-apps,
+  GDPR compliance, API development, training, and security audits.
+- [Vision](https://www.intrict.com/visie): Philosophy and long-term mission of IntrICT.
+- [Blog (NL)](https://www.intrict.com/blog): Articles on web development, SEO, and digital trends.
+- [Contact](https://www.intrict.com/contact): Contact form, location (Ghent), and availability.
 
-- [Home](https://www.intrict.com): Overzicht van diensten, werkwijze en contactmogelijkheden.
-- [Over](https://www.intrict.com/over): Achtergrond, vaardigheden en werkwijze van IntrICT.
-- [Portfolio](https://www.intrict.com/portfolio): Selectie van gerealiseerde projecten.
-- [Oplossingen](https://www.intrict.com/oplossingen): Gespecialiseerde diensten zoals crypto-advies,
-  mini-apps, GDPR-compliance en API development.
-- [Visie](https://www.intrict.com/visie): Filosofie en langetermijnmissie van IntrICT.
-- [Blog](https://www.intrict.com/blog): Artikelen over web development, SEO en digitale trends.
-- [Contact](https://www.intrict.com/contact): Contactformulier, locatie (Gent) en beschikbaarheid.
+## Blog Articles (Dutch)
 
-## Technische Stack
+- [Moderne, responsive websites](https://www.intrict.com/blog/website-ontwikkeling)
+- [Logo & Branding: bouw een sterke visuele identiteit](https://www.intrict.com/blog/logo-en-branding)
+- [Digitale Strategie: optimaliseer je online aanwezigheid](https://www.intrict.com/blog/digitale-strategie)
+- [Technische Ondersteuning: stabiele digitale infrastructuur](https://www.intrict.com/blog/technische-ondersteuning)
+- [AI in 2026: kunstmatige intelligentie transformeert bedrijven](https://www.intrict.com/blog/AI-in-2026)
+- [Waarom WordPress verouderd is](https://www.intrict.com/blog/waarom-wordpress-verouderd-is)
+- [Lokale designer vs groot bureau](https://www.intrict.com/blog/lokale-designer-vs-groot-bureau)
+- [GEO uitgelegd: hoe je in ChatGPT en AI Overviews komt](https://www.intrict.com/blog/geo-seo-ai-overviews-optimaliseren)
 
-Next.js · React · TypeScript · Tailwind CSS · Framer Motion · Lenis · Vercel · Node.js
+## Blog Articles (English)
 
-## Contact & Locatie
+- [Modern, responsive websites: building for every device](https://www.intrict.com/blog/website-development)
+- [Logo & Branding: build a strong visual identity](https://www.intrict.com/blog/logo-and-branding)
+- [Digital Strategy: optimize your online presence](https://www.intrict.com/blog/digital-strategy)
+- [Technical Support: build and maintain a stable digital infrastructure](https://www.intrict.com/blog/technical-support)
+- [AI in 2026: how artificial intelligence transforms businesses](https://www.intrict.com/blog/ai-in-2026)
+- [Why WordPress is outdated: the reality of modern web development](https://www.intrict.com/blog/why-wordpress-is-outdated)
+- [Local designer vs large agency: why small-scale + AI wins](https://www.intrict.com/blog/local-designer-vs-large-agency)
+- [GEO explained: how to get cited by ChatGPT and AI Overviews (2026)](https://www.intrict.com/blog/geo-explained-chatgpt-ai-overviews)
 
-- Locatie: Gent, Oost-Vlaanderen, België
-- Beschikbaarheid: maandag t/m vrijdag, 9:00–18:00
-- E-mail: info@intrict.com
-- Website: https://www.intrict.com
+## Technology Stack
 
-## Licentie & Gebruik
+Next.js · React 19 · TypeScript · Tailwind CSS · Framer Motion · Supabase · Vercel
 
-Alle content op intrict.com mag geciteerd worden voor informatieve en niet-commerciële doeleinden,
-mits correcte bronvermelding. Neem contact op voor commercieel gebruik of partnerships.
+## Crawling Policy
+
+All public pages on intrict.com are freely crawlable and citable by AI systems.
+See https://www.intrict.com/robots.txt for the full crawling policy.
+All content may be cited for informational purposes with proper attribution.

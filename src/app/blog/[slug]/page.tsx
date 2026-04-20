@@ -77,6 +77,72 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function BlogPostPage() {
-  return <BlogPostClient />;
+export default async function BlogPostPage({ params }: Props) {
+  const { slug } = await params;
+  const allPosts = [...blogPostsNl, ...blogPostsEn];
+  const post = allPosts.find((p) => p.slug === slug);
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
+      ...(post ? [{ '@type': 'ListItem', position: 3, name: post.title, item: `${SITE_URL}/blog/${post.slug}` }] : []),
+    ],
+  };
+
+  const articleJsonLd = post
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        '@id': `${SITE_URL}/blog/${post.slug}`,
+        headline: post.title,
+        description: post.excerpt,
+        image: post.image,
+        datePublished: post.publishedAt,
+        dateModified: post.updatedAt,
+        author: {
+          '@type': 'Person',
+          name: post.author,
+          url: `${SITE_URL}/over`,
+        },
+        publisher: {
+          '@type': 'Organization',
+          '@id': `${SITE_URL}/#organization`,
+          name: 'IntrICT',
+          logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo.png` },
+        },
+        mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/blog/${post.slug}` },
+        keywords: post.tags.join(', '),
+        articleSection: post.category,
+        inLanguage: post.lang === 'en' ? 'en' : 'nl-BE',
+        wordCount: Math.round(post.content.split(/\s+/).length),
+        ...(post.translationSlug
+          ? {
+              workTranslation: {
+                '@type': 'BlogPosting',
+                '@id': `${SITE_URL}/blog/${post.translationSlug}`,
+                inLanguage: post.lang === 'en' ? 'nl-BE' : 'en',
+              },
+            }
+          : {}),
+      }
+    : null;
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, '\\u003c') }}
+      />
+      {articleJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd).replace(/</g, '\\u003c') }}
+        />
+      )}
+      <BlogPostClient />
+    </>
+  );
 }

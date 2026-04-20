@@ -110,7 +110,67 @@ export default function Contact() {
 
   const onderwerpOpties = t.contactPage.onderwerpOpties;
 
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'How long does it take to build a website?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'The timeline depends on the complexity of the project. A simple website is typically ready within 2–3 weeks. A more extensive project with custom features can take 4–8 weeks. During our first conversation I will give you a realistic estimate.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What does it cost to have a website built?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Every project is unique, so I always work on a custom, quote-based approach. For ongoing support I offer monthly retainer packages starting from €99/month. After an introductory call you will receive a detailed quote with no hidden costs.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Do you offer maintenance and support after delivery?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Absolutely. I offer flexible maintenance contracts covering updates, security, and technical support. This keeps your website always up-to-date and secure. Details are discussed and tailored to your needs.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Can I update my website myself after delivery?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Definitely possible. I can set up a user-friendly CMS so you can update text, images, and pages yourself. I also provide a short training so you can work independently.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Which regions do you serve?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'I am based in Ghent but work for clients throughout Belgium and the Netherlands. Most collaboration happens online, but I am also available for in-person meetings in and around Ghent.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What does working together look like step by step?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'We start with a free introductory call. You will then receive a quote and timeline. After approval, the design and development phase begins with regular updates and feedback rounds. On delivery you receive a working, optimised website plus a short user guide.',
+        },
+      },
+    ],
+  };
+
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, '\\u003c') }}
+      />
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Header />
 
@@ -620,5 +680,6 @@ export default function Contact() {
       <Footer />
       <BackToTop />
     </div>
+    </>
   );
 }

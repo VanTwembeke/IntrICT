@@ -41,6 +41,7 @@ import { blogPost as post4En } from './technical-support';
 import { blogPost as post5En } from './AI-in-2026';
 import { blogPost as post6En } from './why-wordpress-is-outdated';
 import { blogPost as post7En } from './local-designer-vs-large-agency';
+import { blogPost as post8En } from './geo-explained-chatgpt-ai-overviews';
 
 export const blogPostsEn: BlogPost[] = [
   post1En,
@@ -50,4 +51,5 @@ export const blogPostsEn: BlogPost[] = [
   post5En,
   post6En,
   post7En,
+  post8En,
 ];

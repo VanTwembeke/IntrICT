@@ -141,20 +141,6 @@ GEO rewards clarity, specialism, and regional expertise — exactly where Belgia
 
 Large players are slow to adapt their content. This is the moment when agile SMEs can reclaim visibility before saturation sets in.
 
-## An IntrICT case: from invisible to cited
-
-At the end of 2025 we noticed at IntrICT that our organic traffic stagnated despite good Google rankings. We tested in ChatGPT and Perplexity with queries like "web development agency West Flanders" and "Next.js development Belgium". Result: no mention.
-
-We ran a 90-day GEO programme on our own site:
-
-- All service pages rewritten with question H2s and 40–60 word definitions
-- FAQ sections added with FAQPage schema
-- Author profiles built with full E-E-A-T signals
-- Cases published with concrete KPIs (load times, conversion improvements)
-- Weekly LinkedIn content and Reddit answers around our niche
-
-After 90 days we were consistently mentioned in ChatGPT answers about modern web development in Belgium, including in comparison tables. The first AI-referral leads followed shortly after.
-
 ## Common GEO mistakes
 
 Within GEO we see the same pitfalls recurring:

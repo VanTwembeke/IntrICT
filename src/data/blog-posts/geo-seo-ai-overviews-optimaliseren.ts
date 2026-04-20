@@ -141,20 +141,6 @@ GEO beloont helderheid, specialisme en regionale expertise — precies waar Belg
 
 Grote spelers zijn traag in het aanpassen van hun content. Dit is het moment waarop wendbare KMO’s zichtbaarheid kunnen heroveren voordat de verzadiging intreedt.
 
-## Een IntrICT case: van onzichtbaar naar geciteerd
-
-Eind 2025 merkten we bij IntrICT dat ons organische verkeer stagneerde ondanks goede Google-rankings. We testten in ChatGPT en Perplexity met queries zoals “web development bureau West-Vlaanderen” en “Next.js development België”. Resultaat: geen vermelding.
-
-We voerden een 90-dagen GEO-traject uit op onze eigen site:
-
-- Alle dienstenpagina’s herschreven met vraag-H2’s en 40-60 woorden definities
-- FAQ-secties toegevoegd met FAQPage-schema
-- Auteurprofielen opgebouwd met volledige E-E-A-T-signalen
-- Cases gepubliceerd met concrete KPI’s (laadtijden, conversieverbeteringen)
-- Wekelijkse LinkedIn-content en Reddit-antwoorden rond onze niche
-
-Na 90 dagen werden we consistent vermeld in ChatGPT-antwoorden over moderne webdevelopment in België, inclusief in vergelijkingstabellen. De eerste AI-referral leads volgden kort daarna.
-
 ## Veelgemaakte GEO-fouten
 
 Ook binnen GEO zien we dezelfde valkuilen terugkomen:

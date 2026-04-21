@@ -163,4 +163,5 @@ Wil je weten wat jouw specifiek project kost? Neem contact op voor een vrijblijv
   slug: 'wat-kost-een-website-belgie',
   readTime: 9,
   lang: 'nl',
+  translationSlug: 'how-much-does-a-website-cost-in-belgium',
 };

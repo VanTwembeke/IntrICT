@@ -206,7 +206,11 @@ export default function KalenderClient({
   };
 
   const handleApptUpdated = (updated: Appointment) => {
-    setAppointments((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
+    if (updated.status === 'cancelled') {
+      setAppointments((prev) => prev.filter((a) => a.id !== updated.id));
+    } else {
+      setAppointments((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
+    }
     setSelectedAppt(null);
   };
 
@@ -227,12 +231,13 @@ export default function KalenderClient({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Group appointments by day index
+  // Group appointments by day index — exclude cancelled from the grid
+  const visibleAppointments = appointments.filter((a) => a.status !== 'cancelled');
   const apptsByDay = weekDays.map((day) =>
-    appointments.filter((a) => isSameDay(new Date(a.starts_at), day))
+    visibleAppointments.filter((a) => isSameDay(new Date(a.starts_at), day))
   );
 
-  const activeAppts = appointments.filter((a) => a.status !== 'cancelled');
+  const activeAppts = visibleAppointments;
 
   return (
     <>

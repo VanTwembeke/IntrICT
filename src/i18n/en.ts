@@ -265,7 +265,7 @@ const en: Translations = {
       ctaStart:             'Start Your Project',
       ctaPortfolio:         'View Portfolio',
       translationBanner:    'This article is also available in ',
-      translationLinkLabel: 'Dutch',
+      translationLinkLabel: 'English',
     },
   },
 

@@ -36,6 +36,7 @@ export interface Appointment {
   admin_notes: string | null;
   meeting_link: string | null;
   location: string | null;
+  cancellation_reason: string | null;
   color: string;
   created_at: string;
   updated_at: string;

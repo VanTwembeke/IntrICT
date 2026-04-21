@@ -28,6 +28,7 @@ import {
 import { createClient } from '@/lib/supabase/client';
 import { useMessages } from '@/hooks/useMessages';
 import { usePendingRequestsCount } from '@/hooks/usePendingRequestsCount';
+import { usePendingAppointmentsCount } from '@/hooks/usePendingAppointmentsCount';
 import { useViewMode, type ViewMode } from './DashboardShell';
 import type { Profile, UserRole } from '@/lib/types';
 
@@ -38,7 +39,7 @@ interface NavItem {
   href: string;
   icon: React.ReactNode;
   roles: UserRole[];
-  badge?: 'unread' | 'pending';
+  badge?: 'unread' | 'pending' | 'pending_appt';
   exact?: boolean; // if false, active for all sub-routes too
 }
 
@@ -46,7 +47,7 @@ const mainNavItems: NavItem[] = [
   { label: 'Dashboard',       href: '/dashboard',            icon: <LayoutDashboard size={18} />, roles: ['admin', 'user'], exact: true },
   { label: 'Berichten',       href: '/dashboard/messages',   icon: <Mail size={18} />,            roles: ['admin', 'user'], badge: 'unread' },
   { label: 'Pakketten',       href: '/dashboard/pakketten',  icon: <Package size={18} />,         roles: ['admin', 'user'] },
-  { label: 'Kalender',        href: '/dashboard/kalender',   icon: <CalendarDays size={18} />,    roles: ['admin', 'user'], exact: false },
+  { label: 'Kalender',        href: '/dashboard/kalender',   icon: <CalendarDays size={18} />,    roles: ['admin', 'user'], exact: false, badge: 'pending_appt' },
   { label: 'Aanvragen',       href: '/dashboard/aanvragen',  icon: <ClipboardList size={18} />,   roles: ['admin'],         badge: 'pending' },
   { label: 'Klanten',         href: '/dashboard/klanten',    icon: <FolderOpen size={18} />,      roles: ['admin'],         exact: false },
   { label: 'Facturen',        href: '/dashboard/facturen',   icon: <Receipt size={18} />,         roles: ['admin'],         exact: false },
@@ -67,15 +68,20 @@ function NavLink({
   isActive,
   unread,
   pending,
+  pendingAppt,
   onClick,
 }: {
   item: NavItem;
   isActive: boolean;
   unread: number;
   pending: number;
+  pendingAppt: number;
   onClick?: () => void;
 }) {
-  const badgeCount = item.badge === 'unread' ? unread : item.badge === 'pending' ? pending : 0;
+  const badgeCount =
+    item.badge === 'unread' ? unread :
+    item.badge === 'pending' ? pending :
+    item.badge === 'pending_appt' ? pendingAppt : 0;
 
   return (
     <Link
@@ -119,6 +125,7 @@ function SidebarContent({
   const { viewAs, setViewAs } = useViewMode();
   const isAdmin = profile.role === 'admin';
   const pendingCount = usePendingRequestsCount(isAdmin);
+  const pendingApptCount = usePendingAppointmentsCount(isAdmin);
 
   // When in user-preview mode, only show user-role nav items
   const effectiveRole: UserRole = (isAdmin && viewAs === 'user') ? 'user' : profile.role;
@@ -193,6 +200,7 @@ function SidebarContent({
                 isActive={item.exact === false ? pathname.startsWith(item.href) : pathname === item.href}
                 unread={unreadCount}
                 pending={pendingCount}
+                pendingAppt={pendingApptCount}
                 onClick={onLinkClick}
               />
             ))}
@@ -209,6 +217,7 @@ function SidebarContent({
                 isActive={pathname === item.href}
                 unread={unreadCount}
                 pending={pendingCount}
+                pendingAppt={pendingApptCount}
                 onClick={onLinkClick}
               />
             ))}

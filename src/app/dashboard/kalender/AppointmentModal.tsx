@@ -29,10 +29,11 @@ export default function AppointmentModal({ appointment, isAdmin, onUpdated, onDe
   const [adminNotes, setAdminNotes] = useState(appointment.admin_notes ?? '');
   const [meetingLink, setMeetingLink] = useState(appointment.meeting_link ?? '');
   const [location, setLocation]     = useState(appointment.location ?? '');
-  const [saving, setSaving]         = useState(false);
-  const [deleting, setDeleting]     = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
-  const [error, setError]           = useState<string | null>(null);
+  const [saving, setSaving]             = useState(false);
+  const [cancelling, setCancelling]     = useState(false);
+  const [showCancelPanel, setShowCancelPanel] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  const [error, setError]               = useState<string | null>(null);
 
   const start = new Date(appointment.starts_at);
   const end   = new Date(appointment.ends_at);
@@ -83,13 +84,29 @@ export default function AppointmentModal({ appointment, isAdmin, onUpdated, onDe
     }
   };
 
-  const handleDelete = async () => {
-    setDeleting(true);
+  const handleCancelWithReason = async () => {
+    if (!cancelReason.trim()) return;
+    setCancelling(true);
+    setError(null);
     try {
-      const res = await fetch(`/api/appointments/${appointment.id}`, { method: 'DELETE' });
-      if (res.ok) onDeleted(appointment.id);
+      const res = await fetch(`/api/appointments/${appointment.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: 'cancelled',
+          cancellation_reason: cancelReason.trim(),
+        }),
+      });
+      if (res.ok) {
+        onDeleted(appointment.id);
+      } else {
+        const data = await res.json();
+        setError(data.error ?? 'Fout bij annuleren.');
+      }
+    } catch {
+      setError('Netwerkfout. Probeer opnieuw.');
     } finally {
-      setDeleting(false);
+      setCancelling(false);
     }
   };
 
@@ -256,41 +273,64 @@ export default function AppointmentModal({ appointment, isAdmin, onUpdated, onDe
                 </div>
               )}
 
-              <div className="flex gap-3">
-                {/* Delete */}
-                {confirmDelete ? (
+              {/* Cancel with reason panel */}
+              {showCancelPanel ? (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-xl space-y-3">
+                  <p className="text-sm font-semibold text-red-700">Afspraak annuleren</p>
+                  <p className="text-xs text-red-600">
+                    De klant ontvangt een e-mail met de reden. De afspraak verdwijnt uit de agenda.
+                  </p>
+                  <textarea
+                    value={cancelReason}
+                    onChange={(e) => setCancelReason(e.target.value)}
+                    rows={3}
+                    placeholder="Geef een reden op voor de klant..."
+                    className="w-full px-3 py-2 border border-red-200 bg-white rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-red-400 resize-none placeholder:text-slate-400 transition-all"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => { setShowCancelPanel(false); setCancelReason(''); }}
+                      className="flex-1 px-3 py-2 text-sm font-semibold text-slate-600 border border-slate-200 bg-white rounded-xl hover:bg-slate-50 transition-all"
+                    >
+                      Terug
+                    </button>
+                    <button
+                      onClick={handleCancelWithReason}
+                      disabled={cancelling || !cancelReason.trim()}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-600 text-white text-sm font-semibold rounded-xl hover:bg-red-700 disabled:opacity-50 transition-all"
+                    >
+                      {cancelling
+                        ? <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                        : <Trash2 size={14} />}
+                      Bevestig annulering
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-3">
                   <button
-                    onClick={handleDelete}
-                    disabled={deleting}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white text-sm font-semibold rounded-xl hover:bg-red-700 disabled:opacity-70 transition-all"
-                  >
-                    {deleting ? <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> : <Trash2 size={14} />}
-                    Zeker verwijderen
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setConfirmDelete(true)}
+                    onClick={() => setShowCancelPanel(true)}
                     className="p-2.5 text-slate-400 border border-slate-200 rounded-xl hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all"
+                    title="Afspraak annuleren"
                   >
                     <Trash2 size={15} />
                   </button>
-                )}
-
-                <button
-                  onClick={onClose}
-                  className="flex-1 px-4 py-2.5 text-sm font-semibold text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all"
-                >
-                  Annuleren
-                </button>
-                <button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 disabled:opacity-70 transition-all"
-                >
-                  {saving ? <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> : <CheckCircle size={14} />}
-                  Opslaan
-                </button>
-              </div>
+                  <button
+                    onClick={onClose}
+                    className="flex-1 px-4 py-2.5 text-sm font-semibold text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all"
+                  >
+                    Sluiten
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 disabled:opacity-70 transition-all"
+                  >
+                    {saving ? <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> : <CheckCircle size={14} />}
+                    Opslaan
+                  </button>
+                </div>
+              )}
             </>
           ) : (
             /* User: only cancel if pending */

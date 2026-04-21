@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { useParams, notFound } from 'next/navigation';
+import { useParams, useRouter, notFound } from 'next/navigation';
 import Lenis from 'lenis';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -95,6 +95,7 @@ const extractYouTubeVideoId = (url: string): string | null => {
 export default function BlogPostClient() {
   const params = useParams();
   const slug = params.slug as string;
+  const router = useRouter();
   const { t, lang } = useLanguage();
   const p = t.blog.post;
 
@@ -109,6 +110,15 @@ export default function BlogPostClient() {
     requestAnimationFrame(raf);
     return () => lenis.destroy();
   }, []);
+
+  // Auto-navigate to translated post when language is switched
+  useEffect(() => {
+    if (!blogPost) return;
+    const postLang = blogPost.lang ?? 'nl';
+    if (postLang !== lang && blogPost.translationSlug) {
+      router.push(`/blog/${blogPost.translationSlug}`);
+    }
+  }, [lang, blogPost, router]);
 
   // Load static blog data
   useEffect(() => {

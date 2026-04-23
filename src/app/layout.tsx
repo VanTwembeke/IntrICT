@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     canonical: "/",
     languages: {
       "nl-BE": "/",
-      "en": "/",
+      "x-default": "/",
     },
   },
 
@@ -146,8 +146,8 @@ const organizationJsonLd = {
   },
   geo: {
     "@type": "GeoCoordinates",
-    latitude: 51.2093,
-    longitude: 3.2247,
+    latitude: 51.0543,
+    longitude: 3.7174,
   },
   areaServed: [
     { "@type": "Country", name: "België" },
@@ -177,7 +177,7 @@ const organizationJsonLd = {
   priceRange: "€€",
   speakable: {
     "@type": "SpeakableSpecification",
-    cssSelector: ["h1", "h2", ".excerpt", "meta[name='description']"],
+    cssSelector: ["h1", "h2", ".excerpt", "article p:first-of-type"],
   },
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",
@@ -229,10 +229,7 @@ const websiteJsonLd = {
   inLanguage: "nl-BE",
   potentialAction: {
     "@type": "SearchAction",
-    target: {
-      "@type": "EntryPoint",
-      urlTemplate: `${SITE_URL}/?q={search_term_string}`,
-    },
+    target: `${SITE_URL}/?q={search_term_string}`,
     "query-input": "required name=search_term_string",
   },
 };

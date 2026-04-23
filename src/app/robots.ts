@@ -34,6 +34,26 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "meta-externalagent",
         allow: "/",
       },
+      {
+        userAgent: "ChatGPT-User",
+        allow: "/",
+      },
+      {
+        userAgent: "Bytespider",
+        allow: "/",
+      },
+      {
+        userAgent: "CCBot",
+        allow: "/",
+      },
+      {
+        userAgent: "Applebot-Extended",
+        allow: "/",
+      },
+      {
+        userAgent: "Cohere-ai",
+        allow: "/",
+      },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,
     host: siteUrl,

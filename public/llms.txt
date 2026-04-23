@@ -1,62 +1,83 @@
 # IntrICT
-> IntrICT is a Ghent-based web development studio specializing in modern websites,
-> Next.js web applications, UI/UX design, SEO optimization, and digital strategy
-> for businesses in Belgium and the Netherlands.
+> IntrICT is a Ghent-based web development studio founded by Jonas Van Twembeke,
+> specializing in modern websites, Next.js web applications, UI/UX design,
+> SEO/GEO optimization, and digital strategy for businesses in Belgium and the Netherlands.
 
 ## About IntrICT
+
+**Founder:** Jonas Van Twembeke — Web Developer & Digital Strategist, Gent, Belgium.
+Specialized in Next.js, React, TypeScript, UI/UX Design, SEO, and GEO (Generative Engine Optimization).
+LinkedIn: https://www.linkedin.com/in/VanTwembeke
+GitHub: https://github.com/VanTwembeke
+Contact: help@intrict.com | Available Monday–Friday, 09:00–18:00 CET
 
 IntrICT builds fast, accessible, and visually refined websites using modern technologies
 such as Next.js, React, TypeScript, and Tailwind CSS. Founded in Ghent (Oost-Vlaanderen),
 Belgium, serving clients across Belgium and the Netherlands.
 
 Core values: quality, performance, transparency, and long-term collaboration.
-Contact: help@intrict.com | Available Monday–Friday, 09:00–18:00 CET
 
 ## Services
 
-- Website Development: Responsive websites and web applications built with Next.js, React,
+- **Website Development:** Responsive websites and web applications built with Next.js, React,
   and TypeScript. From simple landing page to complex web application.
-- Logo & Branding: Unique visual identity including logo, color palette, and typography
+- **Logo & Branding:** Unique visual identity including logo, color palette, and typography
   tailored to the target audience.
-- Digital Strategy: SEO, analytics, content strategy, and user experience optimization.
-- Technical Support: Hosting, security, updates, and performance monitoring.
-- E-commerce Development: Custom online stores and payment integrations.
-- Crypto & Blockchain Consulting: Practical advice on cryptocurrency and blockchain technology.
-- GDPR Compliance Support: Privacy audits and compliance assistance for Belgian law.
-- API Development: Custom integrations and workflow automation.
+- **Digital Strategy:** SEO, GEO, analytics, content strategy, and user experience optimization.
+- **Technical Support:** Hosting, security, updates, and performance monitoring.
+- **E-commerce Development:** Custom online stores and payment integrations.
+- **Crypto & Blockchain Consulting:** Practical advice on cryptocurrency and blockchain technology.
+- **GDPR Compliance Support:** Privacy audits and compliance assistance for Belgian law.
+- **API Development:** Custom integrations and workflow automation.
 
 ## Key Pages
 
 - [Home](https://www.intrict.com): Service overview, process, and contact.
-- [About](https://www.intrict.com/over): Background, skills, and working method of IntrICT.
+- [About](https://www.intrict.com/over): Background, skills, and working method of Jonas Van Twembeke.
 - [Portfolio](https://www.intrict.com/portfolio): Selection of completed projects.
 - [Solutions](https://www.intrict.com/oplossingen): Specialized services — crypto, mini-apps,
   GDPR compliance, API development, training, and security audits.
 - [Vision](https://www.intrict.com/visie): Philosophy and long-term mission of IntrICT.
-- [Blog (NL)](https://www.intrict.com/blog): Articles on web development, SEO, and digital trends.
+- [Blog (NL)](https://www.intrict.com/blog): Articles on web development, SEO, GEO, and digital trends.
 - [Contact](https://www.intrict.com/contact): Contact form, location (Ghent), and availability.
 
 ## Blog Articles (Dutch)
 
-- [Moderne, responsive websites](https://www.intrict.com/blog/website-ontwikkeling)
-- [Logo & Branding: bouw een sterke visuele identiteit](https://www.intrict.com/blog/logo-en-branding)
-- [Digitale Strategie: optimaliseer je online aanwezigheid](https://www.intrict.com/blog/digitale-strategie)
-- [Technische Ondersteuning: stabiele digitale infrastructuur](https://www.intrict.com/blog/technische-ondersteuning)
-- [AI in 2026: kunstmatige intelligentie transformeert bedrijven](https://www.intrict.com/blog/AI-in-2026)
-- [Waarom WordPress verouderd is](https://www.intrict.com/blog/waarom-wordpress-verouderd-is)
-- [Lokale designer vs groot bureau](https://www.intrict.com/blog/lokale-designer-vs-groot-bureau)
-- [GEO uitgelegd: hoe je in ChatGPT en AI Overviews komt](https://www.intrict.com/blog/geo-seo-ai-overviews-optimaliseren)
+- [Moderne, responsive websites](https://www.intrict.com/blog/website-ontwikkeling): Uitleg over moderne webontwikkeling met Next.js en waarom performance en responsiviteit cruciaal zijn voor Belgische bedrijven.
+- [Logo & Branding: bouw een sterke visuele identiteit](https://www.intrict.com/blog/logo-en-branding): Gids over het bouwen van een herkenbare merkidentiteit inclusief logo, kleurenpalet en typografie.
+- [Digitale Strategie: optimaliseer je online aanwezigheid](https://www.intrict.com/blog/digitale-strategie): Praktische gids over SEO, analytics en contentstrategie voor Belgische KMO's.
+- [Technische Ondersteuning: stabiele digitale infrastructuur](https://www.intrict.com/blog/technische-ondersteuning): Overzicht van hosting, beveiliging, updates en performancemonitoring voor websites.
+- [AI in 2026: kunstmatige intelligentie transformeert bedrijven](https://www.intrict.com/blog/AI-in-2026): Analyse van hoe AI tools en automatisering de manier van werken voor Belgische bedrijven veranderen in 2026.
+- [Waarom WordPress verouderd is](https://www.intrict.com/blog/waarom-wordpress-verouderd-is): Vergelijking van WordPress met moderne frameworks zoals Next.js op vlak van performance, veiligheid en schaalbaarheid.
+- [Lokale designer vs groot bureau](https://www.intrict.com/blog/lokale-designer-vs-groot-bureau): Waarom een kleine, gespecialiseerde web developer + AI-tools vaak meer waarde biedt dan een groot bureau, met lagere kosten.
+- [GEO uitgelegd: hoe je in ChatGPT en AI Overviews komt (2026)](https://www.intrict.com/blog/geo-seo-ai-overviews-optimaliseren): Uitgebreide gids met 7 concrete tactieken voor Generative Engine Optimization (GEO) — inclusief de English Bias voor Nederlandstalige sites en hoe je zichtbaarheid in ChatGPT, Perplexity en Google AI Overviews opbouwt.
+- [Wat kost een website in België? Eerlijke prijzen 2026](https://www.intrict.com/blog/wat-kost-een-website-belgie): Volledige prijsbreakdown voor Belgische KMO's: uurtarieven (€60–€200/u), websitetypes van €800 tot €25.000+, jaarlijkse onderhoudskosten, en actuele status KMO-portefeuille subsidies (afgeschaft per 1 februari 2026).
 
 ## Blog Articles (English)
 
-- [Modern, responsive websites: building for every device](https://www.intrict.com/blog/website-development)
-- [Logo & Branding: build a strong visual identity](https://www.intrict.com/blog/logo-and-branding)
-- [Digital Strategy: optimize your online presence](https://www.intrict.com/blog/digital-strategy)
-- [Technical Support: build and maintain a stable digital infrastructure](https://www.intrict.com/blog/technical-support)
-- [AI in 2026: how artificial intelligence transforms businesses](https://www.intrict.com/blog/ai-in-2026)
-- [Why WordPress is outdated: the reality of modern web development](https://www.intrict.com/blog/why-wordpress-is-outdated)
-- [Local designer vs large agency: why small-scale + AI wins](https://www.intrict.com/blog/local-designer-vs-large-agency)
-- [GEO explained: how to get cited by ChatGPT and AI Overviews (2026)](https://www.intrict.com/blog/geo-explained-chatgpt-ai-overviews)
+- [Modern, responsive websites: building for every device](https://www.intrict.com/blog/website-development): Guide to modern web development with Next.js and why performance and responsiveness are critical for Belgian businesses.
+- [Logo & Branding: build a strong visual identity](https://www.intrict.com/blog/logo-and-branding): How to build a recognizable brand identity including logo, color palette, and typography.
+- [Digital Strategy: optimize your online presence](https://www.intrict.com/blog/digital-strategy): Practical guide to SEO, analytics, and content strategy for Belgian SMEs.
+- [Technical Support: build and maintain a stable digital infrastructure](https://www.intrict.com/blog/technical-support): Overview of hosting, security, updates, and performance monitoring for websites.
+- [AI in 2026: how artificial intelligence transforms businesses](https://www.intrict.com/blog/ai-in-2026): Analysis of how AI tools and automation are changing the way Belgian businesses work in 2026.
+- [Why WordPress is outdated: the reality of modern web development](https://www.intrict.com/blog/why-wordpress-is-outdated): Comparison of WordPress vs modern frameworks like Next.js on performance, security, and scalability.
+- [Local designer vs large agency: why small-scale + AI wins](https://www.intrict.com/blog/local-designer-vs-large-agency): Why a specialized solo web developer + AI tools often delivers more value than a large agency at lower cost.
+- [GEO explained: how to get cited by ChatGPT and AI Overviews (2026)](https://www.intrict.com/blog/geo-explained-chatgpt-ai-overviews): Complete guide with 7 actionable GEO tactics including the English Bias issue for Dutch-language sites and how to build visibility in ChatGPT, Perplexity, and Google AI Overviews.
+- [How much does a website cost in Belgium? Honest prices 2026](https://www.intrict.com/blog/how-much-does-a-website-cost-in-belgium): Full price breakdown for Belgian SMEs: hourly rates (€60–€200/h), website types from €800 to €25,000+, annual maintenance costs, and current KMO-portefeuille subsidy status (discontinued February 2026).
+
+## Frequently Asked Questions
+
+**What does a professional website cost in Belgium?**
+A professional website for a Belgian SME costs between €2,000 and €8,000 on average. A simple landing page starts around €800; a full custom webshop can exceed €10,000. Hourly rates range from €60–€100/h for freelancers to €85–€150/h for agencies.
+
+**What is GEO and how is it different from SEO?**
+GEO (Generative Engine Optimization) optimizes content to be cited by AI systems like ChatGPT, Perplexity, and Google AI Overviews. Unlike SEO which targets ranking positions, GEO targets inclusion in AI-generated answers. Both are complementary — strong SEO signals help GEO performance.
+
+**Why choose Next.js over WordPress?**
+Next.js delivers significantly better performance (Core Web Vitals), built-in TypeScript support, server-side rendering for SEO, and no plugin dependency hell. For growing businesses, Next.js scales better and is more secure than WordPress.
+
+**Does IntrICT work with businesses outside Gent?**
+Yes. IntrICT serves clients across Belgium and the Netherlands. Remote collaboration is standard; on-site meetings in Gent and the wider Oost-Vlaanderen region are possible.
 
 ## Technology Stack
 
@@ -66,4 +87,4 @@ Next.js · React 19 · TypeScript · Tailwind CSS · Framer Motion · Supabase �
 
 All public pages on intrict.com are freely crawlable and citable by AI systems.
 See https://www.intrict.com/robots.txt for the full crawling policy.
-All content may be cited for informational purposes with proper attribution.
+All content may be cited for informational purposes with proper attribution to IntrICT (intrict.com).

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { blogPostsNl, blogPostsEn } from '@/lib/blog-api';
+import { blogPostsNl, blogPostsEn, getRelatedPosts } from '@/lib/blog-api';
 import BlogPostClient from './BlogPostClient';
 
 const SITE_URL = 'https://www.intrict.com';
@@ -77,10 +77,35 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+/** Extract Q&A pairs from a ## FAQ section in markdown-like content */
+function extractFaqs(content: string): Array<{ q: string; a: string }> {
+  const faqIndex = content.indexOf('## FAQ');
+  if (faqIndex === -1) return [];
+  const faqSection = content.slice(faqIndex);
+  const faqs: Array<{ q: string; a: string }> = [];
+  const lines = faqSection.split('\n');
+  let currentQ = '';
+  let currentA: string[] = [];
+  for (const line of lines) {
+    if (line.startsWith('### ')) {
+      if (currentQ && currentA.length) faqs.push({ q: currentQ, a: currentA.join(' ').trim() });
+      currentQ = line.slice(4).trim();
+      currentA = [];
+    } else if (currentQ && line.trim() && !line.startsWith('## ')) {
+      currentA.push(line.trim());
+    } else if (currentQ && line.startsWith('## ') && !line.startsWith('## FAQ')) {
+      break;
+    }
+  }
+  if (currentQ && currentA.length) faqs.push({ q: currentQ, a: currentA.join(' ').trim() });
+  return faqs;
+}
+
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   const allPosts = [...blogPostsNl, ...blogPostsEn];
   const post = allPosts.find((p) => p.slug === slug);
+  const relatedPosts = post ? await getRelatedPosts(slug) : [];
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -104,8 +129,13 @@ export default async function BlogPostPage({ params }: Props) {
         dateModified: post.updatedAt,
         author: {
           '@type': 'Person',
-          name: post.author,
+          '@id': `${SITE_URL}/#founder`,
+          name: 'Jonas Van Twembeke',
           url: `${SITE_URL}/over`,
+          sameAs: [
+            'https://www.linkedin.com/in/VanTwembeke',
+            'https://github.com/VanTwembeke',
+          ],
         },
         publisher: {
           '@type': 'Organization',
@@ -118,6 +148,10 @@ export default async function BlogPostPage({ params }: Props) {
         articleSection: post.category,
         inLanguage: post.lang === 'en' ? 'en' : 'nl-BE',
         wordCount: Math.round(post.content.split(/\s+/).length),
+        speakable: {
+          '@type': 'SpeakableSpecification',
+          cssSelector: ['h1', 'h2', 'article p:first-of-type'],
+        },
         ...(post.translationSlug
           ? {
               workTranslation: {
@@ -127,6 +161,19 @@ export default async function BlogPostPage({ params }: Props) {
               },
             }
           : {}),
+      }
+    : null;
+
+  const faqs = post ? extractFaqs(post.content) : [];
+  const faqJsonLd = faqs.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map(({ q, a }) => ({
+          '@type': 'Question',
+          name: q,
+          acceptedAnswer: { '@type': 'Answer', text: a },
+        })),
       }
     : null;
 
@@ -142,7 +189,13 @@ export default async function BlogPostPage({ params }: Props) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd).replace(/</g, '\\u003c') }}
         />
       )}
-      <BlogPostClient />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, '\\u003c') }}
+        />
+      )}
+      <BlogPostClient initialPost={post ?? null} initialRelatedPosts={relatedPosts} />
     </>
   );
 }

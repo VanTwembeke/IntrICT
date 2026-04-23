@@ -3,72 +3,71 @@ import { blogPosts } from '@/data/blog-posts';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl = 'https://www.intrict.com';
-  const now = new Date();
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: siteUrl,
-      lastModified: now,
+      lastModified: new Date('2026-04-23'),
       changeFrequency: 'weekly',
       priority: 1.0,
     },
     {
       url: `${siteUrl}/over`,
-      lastModified: now,
+      lastModified: new Date('2026-04-15'),
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${siteUrl}/portfolio`,
-      lastModified: now,
+      lastModified: new Date('2026-04-15'),
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
       url: `${siteUrl}/oplossingen`,
-      lastModified: now,
+      lastModified: new Date('2026-04-15'),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${siteUrl}/visie`,
-      lastModified: now,
+      lastModified: new Date('2026-04-15'),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${siteUrl}/blog`,
-      lastModified: now,
+      lastModified: new Date('2026-04-23'),
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
       url: `${siteUrl}/contact`,
-      lastModified: now,
+      lastModified: new Date('2026-04-15'),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${siteUrl}/privacy`,
-      lastModified: now,
+      lastModified: new Date('2026-03-27'),
       changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
       url: `${siteUrl}/voorwaarden`,
-      lastModified: now,
+      lastModified: new Date('2026-03-27'),
       changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
       url: `${siteUrl}/cookies`,
-      lastModified: now,
+      lastModified: new Date('2026-03-27'),
       changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
       url: `${siteUrl}/gdpr`,
-      lastModified: now,
+      lastModified: new Date('2026-03-27'),
       changeFrequency: 'yearly',
       priority: 0.3,
     },

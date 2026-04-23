@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { useParams, useRouter, notFound } from 'next/navigation';
+import { useRouter, notFound } from 'next/navigation';
 import Lenis from 'lenis';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
-import { getBlogPostBySlug, getRelatedPosts, BlogPost, BlogPostMeta } from '@/lib/blog-api';
+import { BlogPost, BlogPostMeta } from '@/lib/blog-api';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 // CodeBlock Component
@@ -92,16 +92,19 @@ const extractYouTubeVideoId = (url: string): string | null => {
   return match ? match[1] : null;
 };
 
-export default function BlogPostClient() {
-  const params = useParams();
-  const slug = params.slug as string;
+interface BlogPostClientProps {
+  initialPost: BlogPost | null;
+  initialRelatedPosts: BlogPostMeta[];
+}
+
+export default function BlogPostClient({ initialPost, initialRelatedPosts }: BlogPostClientProps) {
   const router = useRouter();
   const { t, lang } = useLanguage();
   const p = t.blog.post;
 
-  const [blogPost, setBlogPost] = useState<BlogPost | null>(null);
-  const [relatedPosts, setRelatedPosts] = useState<BlogPostMeta[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [blogPost] = useState<BlogPost | null>(initialPost);
+  const [relatedPosts] = useState<BlogPostMeta[]>(initialRelatedPosts);
+  const loading = false;
 
   // Smooth scroll — isolated with cleanup to prevent memory leaks
   useEffect(() => {
@@ -119,27 +122,6 @@ export default function BlogPostClient() {
       router.push(`/blog/${blogPost.translationSlug}`);
     }
   }, [lang, blogPost, router]);
-
-  // Load static blog data
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      try {
-        const post = await getBlogPostBySlug(slug);
-        if (cancelled) return;
-        if (!post) { notFound(); return; }
-        setBlogPost(post);
-        const related = await getRelatedPosts(slug);
-        if (!cancelled) setRelatedPosts(related);
-      } catch {
-        if (!cancelled) notFound();
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-    load();
-    return () => { cancelled = true; };
-  }, [slug]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString(lang === 'en' ? 'en-GB' : 'nl-BE', {
@@ -386,6 +368,38 @@ export default function BlogPostClient() {
                       #{tag}
                     </span>
                   ))}
+                </div>
+              </div>
+
+              {/* Author Bio */}
+              <div className="pt-6 mt-8 border-t border-slate-200">
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-slate-50">
+                  <div className="flex-shrink-0 w-12 h-12 overflow-hidden rounded-full bg-slate-200">
+                    <img
+                      src="/images/Profiel.png"
+                      alt="Jonas Van Twembeke"
+                      width={48}
+                      height={48}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">
+                      <a href="/over" className="hover:text-blue-600 transition-colors">Jonas Van Twembeke</a>
+                    </p>
+                    <p className="text-sm text-slate-500 mb-1">Web Developer &amp; Digital Strategist — IntrICT, Gent</p>
+                    <p className="text-sm leading-relaxed text-slate-600">
+                      Gespecialiseerd in moderne websites (Next.js, React), SEO en GEO voor Belgische bedrijven.{' '}
+                      <a
+                        href="https://www.linkedin.com/in/VanTwembeke"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        LinkedIn
+                      </a>
+                    </p>
+                  </div>
                 </div>
               </div>
             </motion.div>

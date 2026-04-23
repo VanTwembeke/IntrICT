@@ -5,7 +5,7 @@ import Services from '@/components/home/Services';
 import Process from '@/components/home/Process';
 // import Pricing from '@/components/home/Pricing'; // Component behouden voor later gebruik
 import Contact from '@/components/home/Contact';
-import LatestPost from '@/components/home/LatestPost';
+import BlogPostNotification from '@/components/home/BlogPostNotification';
 import BackToTop from '@/components/common/BackToTop';
 import HomeEffects from './HomeEffects';
 import { blogPosts } from '@/data/blog-posts';
@@ -26,7 +26,7 @@ export default function Home() {
       <Services />
       <Process />
       {/* <Pricing /> */} {/* Component behouden voor later gebruik */}
-      <LatestPost post={latestPostMeta} />
+      <BlogPostNotification post={latestPostMeta} />
       <Contact />
       <Footer />
       <BackToTop />

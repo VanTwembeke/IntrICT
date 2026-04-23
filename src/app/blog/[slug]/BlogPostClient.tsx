@@ -189,6 +189,43 @@ export default function BlogPostClient({ initialPost, initialRelatedPosts }: Blo
               </div>
             );
           }
+        } else if (line.startsWith('|') && i + 1 < lines.length && /^\|[\s|:-]+\|/.test(lines[i + 1])) {
+          // Markdown table: current line = header, next line = separator, then body rows
+          const parseRow = (l: string) => l.split('|').slice(1, -1).map(c => c.trim());
+          const headers = parseRow(line);
+          i += 2; // skip separator row
+          const rows: string[][] = [];
+          while (i < lines.length && lines[i].startsWith('|')) {
+            rows.push(parseRow(lines[i]));
+            i++;
+          }
+          i--; // compensate for outer i++
+          elements.push(
+            <div key={`table-${i}`} className="overflow-x-auto my-6">
+              <table className="w-full border-collapse text-sm">
+                <thead>
+                  <tr>
+                    {headers.map((h, j) => (
+                      <th key={j} className="border border-slate-200 bg-slate-100 px-4 py-2 text-left font-semibold text-slate-800">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row, ri) => (
+                    <tr key={ri} className={ri % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+                      {row.map((cell, ci) => (
+                        <td key={ci} className="border border-slate-200 px-4 py-2 text-slate-700">
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
         } else if (line.startsWith('- ')) {
           elements.push(
             <li key={i} className="mb-1 ml-4 leading-relaxed list-disc text-slate-700">

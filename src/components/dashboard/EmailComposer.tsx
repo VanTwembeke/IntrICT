@@ -83,7 +83,7 @@ export default function EmailComposer({
         className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
       >
         {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between p-6 text-white border-b-0 bg-linear-to-r from-blue-500 to-purple-500">
+        <div className="sticky top-0 z-10 flex items-center justify-between p-6 text-white border-b-0 bg-blue-600">
           <div className="flex items-center gap-3">
             <Mail className="w-6 h-6" />
             <div>
@@ -200,7 +200,7 @@ export default function EmailComposer({
             disabled={sending || !subject.trim() || !message.trim()}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="flex items-center justify-center flex-1 gap-2 px-4 py-3 font-semibold text-white transition-all shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center justify-center flex-1 gap-2 px-4 py-3 font-semibold text-white transition-all shadow-sm bg-blue-600 rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send className="w-4 h-4" />
             {sending ? 'Versturen...' : 'Email Versturen'}

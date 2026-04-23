@@ -290,7 +290,7 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
                       className="p-4 transition-all bg-white border shadow-sm border-slate-200 rounded-2xl hover:shadow-md group"
                     >
                       <div className="flex items-start gap-3 mb-3">
-                        <div className="flex items-center justify-center text-xs font-bold text-white w-9 h-9 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 shrink-0">
+                        <div className="flex items-center justify-center text-xs font-bold text-white w-9 h-9 rounded-xl bg-blue-600 shrink-0">
                           {initials(d.profile?.full_name ?? null, d.profile?.email ?? '?')}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -374,7 +374,7 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
                 <tr key={d.id} className="transition-colors hover:bg-slate-50">
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-8 h-8 text-xs font-bold text-white rounded-lg bg-linear-to-br from-blue-500 to-indigo-600 shrink-0">
+                      <div className="flex items-center justify-center w-8 h-8 text-xs font-bold text-white rounded-lg bg-blue-600 shrink-0">
                         {initials(d.profile?.full_name ?? null, d.profile?.email ?? '?')}
                       </div>
                       <div>

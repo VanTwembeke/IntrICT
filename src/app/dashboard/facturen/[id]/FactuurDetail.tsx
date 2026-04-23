@@ -201,7 +201,7 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
       {/* Invoice preview card */}
       <div className="overflow-hidden bg-white border shadow-sm rounded-2xl border-slate-200">
         {/* Blue top band */}
-        <div className="h-1.5 bg-linear-to-r from-blue-600 to-indigo-600" />
+        <div className="h-1.5 bg-blue-600" />
 
         <div className="p-8 md:p-10">
           {/* Top: company vs client */}

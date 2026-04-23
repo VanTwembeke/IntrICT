@@ -162,7 +162,7 @@ export default function SettingsClient({ profile }: { profile: Profile }) {
         </h2>
         <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center gap-4">
           <div className="flex items-center gap-4 flex-1">
-            <div className="w-14 h-14 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-xl shrink-0">
+            <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xl shrink-0">
               {(profile.full_name ?? profile.email)[0].toUpperCase()}
             </div>
             <div>
@@ -177,7 +177,7 @@ export default function SettingsClient({ profile }: { profile: Profile }) {
           </div>
           <Link
             href="/dashboard/profile"
-            className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all shadow-sm hover:shadow-md shrink-0"
+            className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-all shadow-sm shrink-0"
           >
             Profiel bewerken
           </Link>

@@ -89,7 +89,7 @@ function NavLink({
       onClick={onClick}
       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
         isActive
-          ? 'bg-linear-to-r from-blue-600 to-indigo-600 text-white shadow-sm shadow-blue-200'
+          ? 'bg-blue-600 text-white shadow-sm'
           : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
       }`}
     >
@@ -176,7 +176,7 @@ function SidebarContent({
       {/* User card */}
       <div className="px-4 py-3 border-b border-slate-100 shrink-0">
         <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-slate-50">
-          <div className="flex items-center justify-center w-8 h-8 text-xs font-bold text-white rounded-full bg-linear-to-br from-blue-500 to-purple-500 shrink-0">
+          <div className="flex items-center justify-center w-8 h-8 text-xs font-bold text-white rounded-full bg-blue-600 shrink-0">
             {initials}
           </div>
           <div className="overflow-hidden min-w-0">

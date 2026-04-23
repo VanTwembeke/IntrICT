@@ -141,7 +141,7 @@ export default function DossierClient({
           {/* Profile card */}
           <div className="p-5 bg-white border shadow-sm border-slate-200 rounded-2xl">
             <div className="flex items-center gap-3 pb-4 mb-4 border-b border-slate-100">
-              <div className="flex items-center justify-center w-12 h-12 text-lg font-bold text-white rounded-2xl bg-linear-to-br from-blue-500 to-indigo-600">
+              <div className="flex items-center justify-center w-12 h-12 text-lg font-bold text-white rounded-2xl bg-blue-600">
                 {(profile?.full_name ?? profile?.email ?? '?').slice(0, 2).toUpperCase()}
               </div>
               <div>

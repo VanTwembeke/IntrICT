@@ -25,7 +25,7 @@ export default async function DashboardLayout({
   if (!profile) redirect('/login');
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/40 to-indigo-50/30">
+    <div className="min-h-screen bg-slate-50">
       <DashboardShell profile={profile}>
         {children}
       </DashboardShell>

@@ -418,7 +418,7 @@ export default function ProfilePage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="inline-flex items-center justify-center w-full gap-2 px-6 py-4 font-semibold text-white transition-all duration-300 bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 disabled:opacity-70"
+                  className="inline-flex items-center justify-center w-full gap-2 px-6 py-4 font-semibold text-white transition-all duration-300 bg-blue-600 rounded-xl hover:bg-blue-700 disabled:opacity-70"
                 >
                   {saved ? 'Opgeslagen!' : saving ? 'Opslaan...' : 'Wijzigingen opslaan'}
                 </button>

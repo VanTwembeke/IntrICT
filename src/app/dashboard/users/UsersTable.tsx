@@ -131,9 +131,9 @@ function CreateUserModal({
         className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-linear-to-r from-blue-50 to-indigo-50">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-xl">
+            <div className="p-2 bg-blue-50 rounded-xl">
               <UserPlus size={18} className="text-blue-600" />
             </div>
             <h2 className="text-base font-bold text-slate-800">Nieuwe gebruiker</h2>
@@ -241,7 +241,7 @@ function CreateUserModal({
                   Annuleren
                 </button>
                 <button type="submit" disabled={loading}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-semibold text-white bg-linear-to-r from-blue-500 to-indigo-600 rounded-xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-60 transition-all">
+                  className="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 disabled:opacity-60 transition-all">
                   {loading ? <Loader2 size={15} className="animate-spin" /> : <UserPlus size={15} />}
                   {loading ? 'Bezig...' : mode === 'invite' ? 'Uitnodiging sturen' : 'Aanmaken'}
                 </button>
@@ -459,9 +459,9 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
               transition={{ duration: 0.2 }}
               className="w-full max-w-md overflow-hidden bg-white shadow-2xl rounded-3xl"
             >
-              <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-linear-to-r from-blue-50 to-purple-50">
+              <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-10 h-10 font-bold text-white rounded-full bg-linear-to-br from-blue-500 to-purple-500">
+                  <div className="flex items-center justify-center w-10 h-10 font-bold text-white rounded-full bg-blue-600">
                     {(editUser.full_name ?? editUser.email)[0].toUpperCase()}
                   </div>
                   <div>
@@ -550,7 +550,7 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
                       </button>
                       <motion.button whileHover={{ scale: editSaving ? 1 : 1.02 }} whileTap={{ scale: 0.98 }}
                         onClick={handleSaveEdit} disabled={editSaving}
-                        className="flex items-center justify-center flex-1 gap-2 py-3 text-sm font-semibold text-white transition-all shadow-md bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 disabled:opacity-60 disabled:cursor-not-allowed">
+                        className="flex items-center justify-center flex-1 gap-2 py-3 text-sm font-semibold text-white transition-all bg-blue-600 rounded-xl hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed">
                         <Save size={14} />
                         {editSaving ? 'Opslaan...' : 'Opslaan'}
                       </motion.button>
@@ -619,7 +619,7 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
                   {/* User */}
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center text-sm font-bold text-white rounded-full w-9 h-9 bg-linear-to-br from-blue-500 to-purple-500 shrink-0">
+                      <div className="flex items-center justify-center text-sm font-bold text-white rounded-full w-9 h-9 bg-blue-600 shrink-0">
                         {(u.full_name ?? u.email)[0].toUpperCase()}
                       </div>
                       <div>

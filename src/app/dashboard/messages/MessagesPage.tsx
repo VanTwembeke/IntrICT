@@ -287,7 +287,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -335,7 +335,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                       className={`p-3 transition-all duration-200 rounded-xl shadow-lg ${
                         showNewConversation
                           ? 'bg-slate-200 text-slate-600'
-                          : 'text-white bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600'
+                          : 'text-white bg-blue-600 hover:bg-blue-700'
                       }`}
                       title={showNewConversation ? 'Annuleren' : 'Nieuw gesprek'}
                     >
@@ -522,7 +522,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                           disabled={!newRecipient || !newConversationMessage.trim()}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className="flex-1 px-4 py-2 font-semibold text-white transition-all duration-200 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex-1 px-4 py-2 font-semibold text-white transition-all duration-200 bg-blue-600 rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Start Gesprek
                         </motion.button>
@@ -621,7 +621,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                             <div
                               className={`p-4 rounded-2xl shadow-sm ${
                                 message.sender_id === profile.id
-                                  ? 'bg-linear-to-r from-blue-500 to-purple-500 text-white'
+                                  ? 'bg-blue-600 text-white'
                                   : 'bg-white border border-slate-200 text-slate-800'
                               }`}
                             >
@@ -781,7 +781,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                             }
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="p-3 text-white transition-all duration-200 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="p-3 text-white transition-all duration-200 bg-blue-600 rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <Send className="w-5 h-5" />
                           </motion.button>

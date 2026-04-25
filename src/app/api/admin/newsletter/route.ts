@@ -7,7 +7,7 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID ?? '';
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://intrict.be';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://intrict.com';
 
 // ─── Auth guard ───────────────────────────────────────────────────────────────
 
@@ -105,7 +105,7 @@ function buildNewsletterHtml(data: {
               <tr>
                 <td>
                   <p style="margin:0 0 6px;font-size:11px;color:#94a3b8;">Je ontvangt deze e-mail omdat je ingeschreven bent voor de IntrICT nieuwsbrief.</p>
-                  <p style="margin:0;font-size:11px;color:#94a3b8;"><a href="{{unsubscribeUrl}}" style="color:#64748b;text-decoration:underline;">Uitschrijven</a>&nbsp;&middot;&nbsp;<a href="${SITE_URL}" style="color:#64748b;text-decoration:underline;">intrict.be</a></p>
+                  <p style="margin:0;font-size:11px;color:#94a3b8;"><a href="{{unsubscribeUrl}}" style="color:#64748b;text-decoration:underline;">Uitschrijven</a>&nbsp;&middot;&nbsp;<a href="${SITE_URL}" style="color:#64748b;text-decoration:underline;">intrict.com</a></p>
                 </td>
                 <td align="right" style="vertical-align:top;">
                   <p style="margin:0;font-size:10px;color:#cbd5e1;font-weight:700;letter-spacing:0.5px;">INTRICT BV</p>
@@ -184,7 +184,7 @@ export async function POST(request: Request) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: broadcast, error: broadcastErr } = await (resend.broadcasts as any).create({
     audienceId: AUDIENCE_ID,
-    from: 'IntrICT <hello@intrict.be>',
+    from: 'IntrICT <hello@intrict.com>',
     name: body.subject,
     subject: body.subject,
     previewText: body.preheader ?? '',

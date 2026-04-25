@@ -315,11 +315,11 @@ export default function Cookies() {
               </div>
               <p className="text-xs text-slate-500">{s.rechten.p2}</p>
               <p>
-                {s.rechten.p3.split('info@intrict.be')[0]}
-                <a href="mailto:info@intrict.be" className="text-blue-600 underline hover:text-blue-700">
-                  info@intrict.be
+                {s.rechten.p3.split('info@intrict.com')[0]}
+                <a href="mailto:info@intrict.com" className="text-blue-600 underline hover:text-blue-700">
+                  info@intrict.com
                 </a>
-                {s.rechten.p3.split('info@intrict.be')[1].split(s.rechten.privacyLink)[0]}
+                {s.rechten.p3.split('info@intrict.com')[1].split(s.rechten.privacyLink)[0]}
                 <a href="/gdpr" className="text-blue-600 underline hover:text-blue-700">
                   {s.rechten.privacyLink}
                 </a>
@@ -332,8 +332,8 @@ export default function Cookies() {
               <div className="grid gap-2 sm:grid-cols-2">
                 <div className="p-4 rounded-lg bg-slate-50 border border-slate-100">
                   <p className="text-xs font-semibold text-slate-800 mb-1">{s.contact.emailLabel}</p>
-                  <a href="mailto:info@intrict.be" className="text-xs text-blue-600 underline hover:text-blue-700">
-                    info@intrict.be
+                  <a href="mailto:info@intrict.com" className="text-xs text-blue-600 underline hover:text-blue-700">
+                    info@intrict.com
                   </a>
                 </div>
                 <div className="p-4 rounded-lg bg-slate-50 border border-slate-100">

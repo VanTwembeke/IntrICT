@@ -152,14 +152,14 @@ export default function GDPR() {
                 <span className="font-medium">Handelsnaam</span><span>IntrICT</span>
                 <span className="font-medium">Rechtsvorm</span><span>Eenmanszaak (bijberoep)</span>
                 <span className="font-medium">Vestigingsplaats</span><span>Gent, België</span>
-                <span className="font-medium">E-mail</span><span>info@intrict.be</span>
-                <span className="font-medium">Website</span><span>https://intrict.be</span>
+                <span className="font-medium">E-mail</span><span>info@intrict.com</span>
+                <span className="font-medium">Website</span><span>https://intrict.com</span>
               </div>
               <p>
                 IntrICT heeft geen wettelijke verplichting tot aanstelling van een
                 Functionaris voor Gegevensbescherming (DPO), gelet op de omvang en aard van de
                 verwerkingen. Voor privacygerelateerde vragen kunt u ons rechtstreeks contacteren
-                via info@intrict.be.
+                via info@intrict.com.
               </p>
             </SectionBlock>
 
@@ -320,8 +320,8 @@ export default function GDPR() {
               </div>
               <p>
                 Verzoeken kunnen worden ingediend via{' '}
-                <a href="mailto:info@intrict.be" className="text-blue-600 underline hover:text-blue-700">
-                  info@intrict.be
+                <a href="mailto:info@intrict.com" className="text-blue-600 underline hover:text-blue-700">
+                  info@intrict.com
                 </a>
                 . Wij reageren binnen 30 kalenderdagen na ontvangst van uw verzoek. Bij complexe of
                 meervoudige verzoeken kan deze termijn met maximaal 60 dagen worden verlengd, mits kennisgeving.
@@ -453,8 +453,8 @@ export default function GDPR() {
               <p>
                 Heeft u vragen of klachten over de wijze waarop IntrICT uw persoonsgegevens verwerkt?
                 Neem dan eerst contact op via{' '}
-                <a href="mailto:info@intrict.be" className="text-blue-600 underline hover:text-blue-700">
-                  info@intrict.be
+                <a href="mailto:info@intrict.com" className="text-blue-600 underline hover:text-blue-700">
+                  info@intrict.com
                 </a>
                 . Wij streven ernaar uw vraag of klacht binnen 30 dagen te beantwoorden.
               </p>
@@ -480,8 +480,8 @@ export default function GDPR() {
               <p>
                 IntrICT behoudt zich het recht voor dit privacybeleid te allen tijde te wijzigen. De
                 meest recente versie is steeds raadpleegbaar op{' '}
-                <a href="https://intrict.be/gdpr" className="text-blue-600 underline hover:text-blue-700">
-                  https://intrict.be/gdpr
+                <a href="https://intrict.com/gdpr" className="text-blue-600 underline hover:text-blue-700">
+                  https://intrict.com/gdpr
                 </a>
                 . Wezenlijke wijzigingen worden bekendgemaakt via de website of per e-mail aan
                 geregistreerde gebruikers.
@@ -491,8 +491,8 @@ export default function GDPR() {
             <div className="p-6 mt-4 text-sm rounded-xl bg-slate-800 text-slate-300">
               <p className="mb-1 font-semibold text-white">{ui.contactTitle}</p>
               <p>{ui.contactFooter}{' '}
-                <a href="mailto:info@intrict.be" className="text-blue-400 underline hover:text-blue-300">
-                  info@intrict.be
+                <a href="mailto:info@intrict.com" className="text-blue-400 underline hover:text-blue-300">
+                  info@intrict.com
                 </a>
               </p>
               <p className="mt-3 text-xs text-slate-400">{ui.footerMeta}</p>

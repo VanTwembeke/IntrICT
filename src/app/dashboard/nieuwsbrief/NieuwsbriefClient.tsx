@@ -144,7 +144,7 @@ function PreviewModal({ form, onClose }: { form: FormState; onClose: () => void 
             <div className="px-10 py-5 bg-slate-50 border-t border-slate-100">
               <p className="text-xs text-slate-400">Je ontvangt dit omdat je ingeschreven bent voor de IntrICT nieuwsbrief.</p>
               <p className="text-xs text-slate-400 mt-1">
-                <span className="underline text-slate-500">Uitschrijven</span> · <span className="underline text-slate-500">intrict.be</span>
+                <span className="underline text-slate-500">Uitschrijven</span> · <span className="underline text-slate-500">intrict.com</span>
               </p>
             </div>
           </div>
@@ -370,7 +370,7 @@ function Composer({ onSent }: { onSent: (n: NewsletterRecord) => void }) {
               </div>
               <div>
                 <label className={labelClass}>URL</label>
-                <input type="url" value={form.cta_url} onChange={set('cta_url')} placeholder="https://intrict.be/blog/…" className={inputClass} />
+                <input type="url" value={form.cta_url} onChange={set('cta_url')} placeholder="https://intrict.com/blog/…" className={inputClass} />
               </div>
             </div>
           </div>

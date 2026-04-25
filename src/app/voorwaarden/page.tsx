@@ -251,7 +251,7 @@ export default function Voorwaarden() {
 
             <div className="p-6 mt-4 text-sm rounded-xl bg-slate-800 text-slate-300">
               <p className="mb-1 font-semibold text-white">{sh.contactFooterTitle}</p>
-              <p>{s.footer} <a href="mailto:info@intrict.be" className="text-blue-400 underline hover:text-blue-300">info@intrict.be</a></p>
+              <p>{s.footer} <a href="mailto:info@intrict.com" className="text-blue-400 underline hover:text-blue-300">info@intrict.com</a></p>
               <p className="mt-3 text-xs text-slate-400">{s.footerMeta}</p>
             </div>
           </div>

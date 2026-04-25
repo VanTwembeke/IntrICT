@@ -13,9 +13,9 @@ export const COMPANY = {
   kbo:        '0000.000.000',                    // KBO/BCE ondernemingsnummer
   iban:       'BE00 0000 0000 0000',
   bic:        'GEBABEBB',
-  email:      'info@intrict.be',
+  email:      'info@intrict.com',
   phone:      '+32 000 00 00 00',
-  website:    'https://intrict.be',
-  terms_url:  'https://intrict.be/algemene-voorwaarden',   // update when live
+  website:    'https://intrict.com',
+  terms_url:  'https://intrict.com/algemene-voorwaarden',   // update when live
   payment_days: 30,                              // standaard betaaltermijn
 };

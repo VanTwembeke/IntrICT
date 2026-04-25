@@ -40,7 +40,7 @@ export async function POST(request: Request) {
   }
 
   // 4. Invite via Supabase auth (sends magic-link / set-password email)
-  const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://intrict.be'}/dashboard`;
+  const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://intrict.com'}/dashboard`;
   const { data: invite, error: inviteErr } = await admin.auth.admin.inviteUserByEmail(email, {
     redirectTo,
     data: {

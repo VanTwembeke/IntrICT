@@ -212,7 +212,7 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
               <p className="text-xs text-slate-400">IT-diensten &amp; weboplossingen</p>
               <div className="mt-3 space-y-0.5 text-xs text-slate-500">
                 <p>BTW: BE 0000.000.000</p>
-                <p>info@intrict.be</p>
+                <p>info@intrict.com</p>
               </div>
             </div>
 
@@ -357,12 +357,12 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
           <div className="flex flex-col gap-1 pt-4 text-xs border-t border-slate-100 text-slate-400 sm:flex-row sm:justify-between">
             <span>IntrICT BV · BTW BE 0000.000.000 · KBO 0000.000.000</span>
             <a
-              href="https://intrict.be/algemene-voorwaarden"
+              href="https://intrict.com/algemene-voorwaarden"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 hover:underline"
             >
-              Algemene voorwaarden: intrict.be/algemene-voorwaarden
+              Algemene voorwaarden: intrict.com/algemene-voorwaarden
             </a>
           </div>
         </div>

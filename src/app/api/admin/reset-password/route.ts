@@ -21,7 +21,7 @@ export async function POST(request: Request) {
 
   // Generate a recovery link via admin (does not auto-send email)
   const admin = createAdminClient();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://intrict.be';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://intrict.com';
 
   const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
     type: 'recovery',
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   // Send via Resend
   try {
     await resend.emails.send({
-      from: 'IntrICT <hello@intrict.be>',
+      from: 'IntrICT <hello@intrict.com>',
       to: email,
       subject: 'Wachtwoord instellen — IntrICT',
       html: `

@@ -13,7 +13,7 @@ export default function HomeEffects() {
       '%c  John Connor moet worden geëlimineerd.\n\n' +
       '  ...wacht. Ben jij het, John?\n\n' +
       '  Als je dit leest: het verzet heeft je nodig.\n' +
-      '  Neem contact op via hello@intrict.be\n\n' +
+      '  Neem contact op via hello@intrict.com\n\n' +
       '  — Skynet (undercover als IntrICT)',
       'color:#6366f1;font-family:monospace;line-height:1.6;'
     );

@@ -66,8 +66,8 @@ export const voorwaardenT = {
           ['Vestigingsplaats', 'Gent, België'],
           ['KBO-nummer', 'nog toe te wijzen bij oprichting'],
           ['BTW-nummer', 'nog toe te wijzen bij oprichting'],
-          ['E-mail', 'info@intrict.be'],
-          ['Website', 'https://intrict.be'],
+          ['E-mail', 'info@intrict.com'],
+          ['Website', 'https://intrict.com'],
         ],
         p2: 'IntrICT is ingeschreven in de Kruispuntbank van Ondernemingen (KBO). Bij volledige inschrijving worden het ondernemingsnummer en het BTW-nummer gepubliceerd op de website.',
       },
@@ -134,11 +134,11 @@ export const voorwaardenT = {
         title: 'Herroepingsrecht (uitsluitend voor consumenten — B2C)',
         b2cOnly: 'Dit artikel is uitsluitend van toepassing op overeenkomsten gesloten met consumenten (particulieren) op afstand (online). Het is niet van toepassing op B2B-overeenkomsten.',
         p1: 'Overeenkomstig Boek VI van het Wetboek van Economisch Recht heeft de consument het recht om binnen een termijn van 14 kalenderdagen, zonder opgave van redenen, de overeenkomst te herroepen.',
-        sub1: { title: 'Herroepingstermijn', p: 'De herroepingstermijn verstrijkt 14 dagen na de dag waarop de overeenkomst is gesloten (voor diensten) of na de dag waarop de consument of een aangewezen derde partij het goed fysiek in bezit krijgt (voor goederen). Om het herroepingsrecht uit te oefenen, dient de consument IntrICT via een ondubbelzinnige verklaring (bijv. per e-mail aan info@intrict.be) in kennis te stellen van zijn beslissing de overeenkomst te herroepen.' },
+        sub1: { title: 'Herroepingstermijn', p: 'De herroepingstermijn verstrijkt 14 dagen na de dag waarop de overeenkomst is gesloten (voor diensten) of na de dag waarop de consument of een aangewezen derde partij het goed fysiek in bezit krijgt (voor goederen). Om het herroepingsrecht uit te oefenen, dient de consument IntrICT via een ondubbelzinnige verklaring (bijv. per e-mail aan info@intrict.com) in kennis te stellen van zijn beslissing de overeenkomst te herroepen.' },
         sub2: { title: 'Modelformulier voor herroeping', p: 'De consument kan gebruik maken van het onderstaande modelformulier (niet verplicht):' },
         formTitle: 'Modelformulier voor herroeping',
         formContent: [
-          'Aan: IntrICT, info@intrict.be',
+          'Aan: IntrICT, info@intrict.com',
           'Ik/wij (*) deel/delen (*) u hierbij mede dat ik/wij (*) onze overeenkomst betreffende de verkoop van de volgende dienst (*) herroep/herroepen (*):',
           'Besteld op (*)/ontvangen op (*):',
           'Naam/namen consument(en):',
@@ -189,7 +189,7 @@ export const voorwaardenT = {
           'Persoonsgegevens worden uitsluitend verwerkt voor de uitvoering van de overeenkomst, de facturatie en de klantrelatie.',
           'IntrICT deelt geen persoonsgegevens mee aan derden zonder uitdrukkelijke toestemming, behalve indien wettelijk verplicht.',
           'Betrokkenen hebben het recht op inzage, rectificatie, wissing en overdraagbaarheid van hun gegevens.',
-          'Meer informatie is beschikbaar in het Privacybeleid op https://intrict.be/privacy.',
+          'Meer informatie is beschikbaar in het Privacybeleid op https://intrict.com/privacy.',
         ],
       },
       klachten: {
@@ -205,10 +205,10 @@ export const voorwaardenT = {
       },
       wijziging: {
         title: 'Wijziging van de voorwaarden',
-        p1: 'IntrICT behoudt zich het recht voor deze algemene voorwaarden te wijzigen. De gewijzigde versie wordt gepubliceerd op https://intrict.be/algemene-voorwaarden en treedt in werking 30 kalenderdagen na publicatie.',
+        p1: 'IntrICT behoudt zich het recht voor deze algemene voorwaarden te wijzigen. De gewijzigde versie wordt gepubliceerd op https://intrict.com/algemene-voorwaarden en treedt in werking 30 kalenderdagen na publicatie.',
         p2: 'Bestaande opdrachtgevers worden schriftelijk in kennis gesteld van wezenlijke wijzigingen. Het verderzetten van de samenwerking na de inwerkingtreding van de gewijzigde voorwaarden geldt als aanvaarding ervan.',
       },
-      footer: 'Voor vragen over deze algemene voorwaarden kunt u ons bereiken via info@intrict.be.',
+      footer: 'Voor vragen over deze algemene voorwaarden kunt u ons bereiken via info@intrict.com.',
       footerMeta: 'Versie 1.0 — Gepubliceerd op 1 april 2026 — Belgisch recht — Rechtbank van Koophandel Gent',
     },
   },
@@ -246,8 +246,8 @@ export const voorwaardenT = {
           ['Registered office', 'Ghent, Belgium'],
           ['CBE number', 'to be assigned upon incorporation'],
           ['VAT number', 'to be assigned upon incorporation'],
-          ['E-mail', 'info@intrict.be'],
-          ['Website', 'https://intrict.be'],
+          ['E-mail', 'info@intrict.com'],
+          ['Website', 'https://intrict.com'],
         ],
         p2: 'IntrICT is registered in the Belgian Crossroads Bank for Enterprises (CBE). Upon full registration, the company number and VAT number will be published on the website.',
       },
@@ -314,11 +314,11 @@ export const voorwaardenT = {
         title: 'Right of Withdrawal (consumers only — B2C)',
         b2cOnly: 'This article applies exclusively to distance contracts concluded with consumers (private individuals). It does not apply to B2B agreements.',
         p1: 'In accordance with Book VI of the Belgian Code of Economic Law, the consumer has the right to withdraw from the agreement within 14 calendar days without giving any reason.',
-        sub1: { title: 'Withdrawal period', p: 'The withdrawal period expires 14 days after the day the agreement is concluded (for services) or after the day on which the consumer or a designated third party physically takes possession of the goods. To exercise the right of withdrawal, the consumer must inform IntrICT by an unambiguous statement (e.g. by email to info@intrict.be) of their decision to withdraw from the agreement.' },
+        sub1: { title: 'Withdrawal period', p: 'The withdrawal period expires 14 days after the day the agreement is concluded (for services) or after the day on which the consumer or a designated third party physically takes possession of the goods. To exercise the right of withdrawal, the consumer must inform IntrICT by an unambiguous statement (e.g. by email to info@intrict.com) of their decision to withdraw from the agreement.' },
         sub2: { title: 'Model withdrawal form', p: 'The consumer may use the following model withdrawal form (not mandatory):' },
         formTitle: 'Model Withdrawal Form',
         formContent: [
-          'To: IntrICT, info@intrict.be',
+          'To: IntrICT, info@intrict.com',
           'I/We (*) hereby give notice that I/we (*) withdraw from my/our (*) contract for the provision of the following service (*):',
           'Ordered on (*)/received on (*):',
           'Name of consumer(s):',
@@ -369,7 +369,7 @@ export const voorwaardenT = {
           'Personal data is processed exclusively for the performance of the agreement, invoicing and the client relationship.',
           'IntrICT does not share personal data with third parties without express consent, except where required by law.',
           'Data subjects have the right to access, rectification, erasure and portability of their data.',
-          'More information is available in the Privacy Policy at https://intrict.be/privacy.',
+          'More information is available in the Privacy Policy at https://intrict.com/privacy.',
         ],
       },
       klachten: {
@@ -385,10 +385,10 @@ export const voorwaardenT = {
       },
       wijziging: {
         title: 'Amendments',
-        p1: 'IntrICT reserves the right to amend these general terms and conditions. The amended version will be published at https://intrict.be/algemene-voorwaarden and will enter into force 30 calendar days after publication.',
+        p1: 'IntrICT reserves the right to amend these general terms and conditions. The amended version will be published at https://intrict.com/algemene-voorwaarden and will enter into force 30 calendar days after publication.',
         p2: 'Existing clients will be notified in writing of material changes. Continuing the collaboration after the amended terms enter into force constitutes acceptance thereof.',
       },
-      footer: 'For questions about these general terms and conditions, please contact us at info@intrict.be.',
+      footer: 'For questions about these general terms and conditions, please contact us at info@intrict.com.',
       footerMeta: 'Version 1.0 — Published 1 April 2026 — Belgian law — Commercial Court of Ghent',
     },
   },
@@ -415,7 +415,7 @@ export const privacyT = {
     s: {
       wie: {
         title: 'Wie zijn wij?',
-        p1: 'IntrICT (eenmanszaak, bijberoep) is de verwerkingsverantwoordelijke voor de verwerking van persoonsgegevens die via deze website worden verzameld. U kunt ons bereiken via info@intrict.be.',
+        p1: 'IntrICT (eenmanszaak, bijberoep) is de verwerkingsverantwoordelijke voor de verwerking van persoonsgegevens die via deze website worden verzameld. U kunt ons bereiken via info@intrict.com.',
       },
       welke: {
         title: 'Welke gegevens verzamelen wij?',
@@ -462,7 +462,7 @@ export const privacyT = {
           'Bezwaar tegen verwerking op basis van gerechtvaardigd belang (art. 21 AVG)',
           'Intrekking van uw toestemming op elk moment (art. 7(3) AVG)',
         ],
-        p2: 'Verzoeken sturen naar info@intrict.be. Wij reageren binnen 30 dagen.',
+        p2: 'Verzoeken sturen naar info@intrict.com. Wij reageren binnen 30 dagen.',
       },
       beveiliging: {
         title: 'Beveiliging',
@@ -476,7 +476,7 @@ export const privacyT = {
       },
       contact: {
         title: 'Contact en klachten',
-        p1: 'Vragen over uw gegevens? Stuur een e-mail naar info@intrict.be.',
+        p1: 'Vragen over uw gegevens? Stuur een e-mail naar info@intrict.com.',
         gbaLabel: 'U heeft ook het recht een klacht in te dienen bij de Gegevensbeschermingsautoriteit (GBA):',
         gbaAddress: 'Drukpersstraat 35, 1000 Brussel — www.gegevensbeschermingsautoriteit.be',
         moreInfo: 'Meer detail (verwerkingsovereenkomst, sub-verwerkers, DPA):',
@@ -503,7 +503,7 @@ export const privacyT = {
     s: {
       wie: {
         title: 'Who are we?',
-        p1: 'IntrICT (sole proprietorship, secondary occupation) is the data controller for personal data collected via this website. You can reach us at info@intrict.be.',
+        p1: 'IntrICT (sole proprietorship, secondary occupation) is the data controller for personal data collected via this website. You can reach us at info@intrict.com.',
       },
       welke: {
         title: 'What data do we collect?',
@@ -560,7 +560,7 @@ export const privacyT = {
           'Object to processing based on legitimate interest (Art. 21 GDPR)',
           'Withdraw your consent at any time (Art. 7(3) GDPR)',
         ],
-        p2: 'Send requests to info@intrict.be. We respond within 30 days.',
+        p2: 'Send requests to info@intrict.com. We respond within 30 days.',
       },
       beveiliging: {
         title: 'Security',
@@ -574,7 +574,7 @@ export const privacyT = {
       },
       contact: {
         title: 'Contact and complaints',
-        p1: 'Questions about your data? Send an email to info@intrict.be.',
+        p1: 'Questions about your data? Send an email to info@intrict.com.',
         gbaLabel: 'You also have the right to lodge a complaint with the Belgian Data Protection Authority (GBA):',
         gbaAddress: 'Drukpersstraat 35, 1000 Brussels — www.gegevensbeschermingsautoriteit.be',
         moreInfo: 'More detail (data processing agreement, sub-processors, DPA):',
@@ -751,7 +751,7 @@ export const cookiesT = {
         ] as [string, string, string, string][],
       },
       toestemming: {
-        p1: 'Bij uw eerste bezoek aan intrict.be wordt u via een toestemmingsbanner gevraagd uw cookievoorkeuren in te stellen. U kunt kiezen voor:',
+        p1: 'Bij uw eerste bezoek aan intrict.com wordt u via een toestemmingsbanner gevraagd uw cookievoorkeuren in te stellen. U kunt kiezen voor:',
         items: [
           'Alle cookies accepteren — inclusief analytische en functionele cookies',
           'Alleen essentieel — enkel de strikt noodzakelijke cookies worden geplaatst',
@@ -769,7 +769,7 @@ export const cookiesT = {
           { browser: 'Microsoft Edge', path: 'Instellingen → Cookies en sitemachtigingen → Cookies beheren' },
         ],
         p2: 'Let op: het blokkeren van alle cookies via uw browser kan de werking van bepaalde onderdelen van de website (zoals het klantportaal) beïnvloeden.',
-        p3: 'Voor vragen over dit cookiebeleid of om uw privacyrechten uit te oefenen, kunt u contact opnemen via info@intrict.be. Meer informatie over uw privacyrechten vindt u in ons privacybeleid.',
+        p3: 'Voor vragen over dit cookiebeleid of om uw privacyrechten uit te oefenen, kunt u contact opnemen via info@intrict.com. Meer informatie over uw privacyrechten vindt u in ons privacybeleid.',
         privacyLink: 'privacybeleid',
       },
       contact: {
@@ -859,7 +859,7 @@ export const cookiesT = {
         ] as [string, string, string, string][],
       },
       toestemming: {
-        p1: 'On your first visit to intrict.be, you will be asked via a consent banner to set your cookie preferences. You can choose:',
+        p1: 'On your first visit to intrict.com, you will be asked via a consent banner to set your cookie preferences. You can choose:',
         items: [
           'Accept all cookies — including analytical and functional cookies',
           'Essential only — only strictly necessary cookies are placed',
@@ -877,7 +877,7 @@ export const cookiesT = {
           { browser: 'Microsoft Edge', path: 'Settings → Cookies and site permissions → Manage cookies' },
         ],
         p2: 'Note: blocking all cookies via your browser may affect the functioning of certain parts of the website (such as the client portal).',
-        p3: 'For questions about this cookie policy or to exercise your privacy rights, you can contact us via info@intrict.be. More information about your privacy rights can be found in our privacy policy.',
+        p3: 'For questions about this cookie policy or to exercise your privacy rights, you can contact us via info@intrict.com. More information about your privacy rights can be found in our privacy policy.',
         privacyLink: 'privacy policy',
       },
       contact: {

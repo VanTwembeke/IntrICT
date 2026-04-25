@@ -9,7 +9,7 @@
 Specialized in Next.js, React, TypeScript, UI/UX Design, SEO, and GEO (Generative Engine Optimization).
 LinkedIn: https://www.linkedin.com/in/VanTwembeke
 GitHub: https://github.com/VanTwembeke
-Contact: help@intrict.com | Available Monday–Friday, 09:00–18:00 CET
+Contact: info@intrict.com | Available Monday–Friday, 09:00–18:00 CET
 
 IntrICT builds fast, accessible, and visually refined websites using modern technologies
 such as Next.js, React, TypeScript, and Tailwind CSS. Founded in Ghent (Oost-Vlaanderen),
@@ -26,9 +26,9 @@ Core values: quality, performance, transparency, and long-term collaboration.
 - **Digital Strategy:** SEO, GEO, analytics, content strategy, and user experience optimization.
 - **Technical Support:** Hosting, security, updates, and performance monitoring.
 - **E-commerce Development:** Custom online stores and payment integrations.
-- **Crypto & Blockchain Consulting:** Practical advice on cryptocurrency and blockchain technology.
 - **GDPR Compliance Support:** Privacy audits and compliance assistance for Belgian law.
 - **API Development:** Custom integrations and workflow automation.
+- **AI Training & Workshops:** Practical AI sessions tailored to your sector (2–4 hours, up to 15 participants).
 
 ## Pricing
 
@@ -53,9 +53,9 @@ All prices excl. 21% VAT. Custom projects available on request.
 
 - [Home](https://www.intrict.com): Service overview, process, and contact.
 - [About](https://www.intrict.com/over): Background, skills, and working method of Jonas Van Twembeke.
-- [Portfolio](https://www.intrict.com/portfolio): Selection of completed projects.
-- [Solutions](https://www.intrict.com/oplossingen): Specialized services — crypto, mini-apps,
-  GDPR compliance, API development, training, and security audits.
+- [Portfolio](https://www.intrict.com/portfolio): IntrICT is a new studio — first client projects will be listed as they go live. Currently showcases intrict.com itself as a full-stack reference project.
+- [Solutions](https://www.intrict.com/oplossingen): Specialized services — mini-apps,
+  GDPR compliance, API development, AI training sessions, and strategic ICT advice.
 - [Vision](https://www.intrict.com/visie): Philosophy and long-term mission of IntrICT.
 - [Blog (NL)](https://www.intrict.com/blog): Articles on web development, SEO, GEO, and digital trends.
 - [Contact](https://www.intrict.com/contact): Contact form, location (Ghent), and availability.

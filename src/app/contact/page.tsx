@@ -118,7 +118,7 @@ export default function Contact() {
         name: 'How long does it take to build a website?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'The timeline depends on the complexity of the project. A simple website is typically ready within 2–3 weeks. A more extensive project with custom features can take 4–8 weeks. During our first conversation I will give you a realistic estimate.',
+          text: 'The timeline depends on the complexity of the project. A simple website is typically ready within 2–3 weeks. A more extensive project with custom features can take 4–8 weeks. During my first conversation with you I will give a realistic estimate.',
         },
       },
       {
@@ -126,7 +126,7 @@ export default function Contact() {
         name: 'What does it cost to have a website built?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Every project is unique, so I always work on a custom, quote-based approach. For ongoing support I offer monthly retainer packages starting from €99/month. After an introductory call you will receive a detailed quote with no hidden costs.',
+          text: 'Every project is unique, so I always work on a custom, quote-based approach. For ongoing support I offer monthly retainer packages starting from €99/month (8 hours/month). For a one-time website launch I charge €749. After a free introductory call you will receive a detailed quote with no hidden costs.',
         },
       },
       {
@@ -134,7 +134,7 @@ export default function Contact() {
         name: 'Do you offer maintenance and support after delivery?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Absolutely. I offer flexible maintenance contracts covering updates, security, and technical support. This keeps your website always up-to-date and secure. Details are discussed and tailored to your needs.',
+          text: 'Yes. I offer flexible monthly retainer packages (Basic €99/month, Standard €199/month, Premium €399/month) covering updates, security, and technical support. Details are tailored to your needs.',
         },
       },
       {
@@ -150,7 +150,7 @@ export default function Contact() {
         name: 'Which regions do you serve?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'I am based in Ghent but work for clients throughout Belgium and the Netherlands. Most collaboration happens online, but I am also available for in-person meetings in and around Ghent.',
+          text: 'I am based in Ghent (Oost-Vlaanderen) but work for clients throughout Belgium and the Netherlands. Most collaboration happens online, but I am also available for in-person meetings in and around Ghent.',
         },
       },
       {
@@ -158,7 +158,7 @@ export default function Contact() {
         name: 'What does working together look like step by step?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'We start with a free introductory call. You will then receive a quote and timeline. After approval, the design and development phase begins with regular updates and feedback rounds. On delivery you receive a working, optimised website plus a short user guide.',
+          text: 'I start with a free 30-minute introductory call. You then receive a quote and timeline. After approval, the design and development phase begins with regular updates and feedback rounds. On delivery you receive a working, optimised website plus a short user guide.',
         },
       },
     ],

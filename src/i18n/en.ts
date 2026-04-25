@@ -455,7 +455,7 @@ const en: Translations = {
     ctaBtn2:          'View portfolio',
     introHeading:     'Specialised Solutions',
     introP1:          'For complex digital challenges I offer specialised solutions that go beyond standard web development.',
-    introP2:          'From crypto advice to mini-apps, from technical explanation to security audits — I help with the digital challenges other developers don\'t tackle.',
+    introP2:          'From mini-apps to AI training sessions, from technical explanation to security audits — I help with the digital challenges other developers don\'t tackle.',
     cryptoHeading:    'Crypto & Blockchain Advice',
     cryptoP1:         'Practical advice about cryptocurrency, blockchain technology and digital assets. No technical jargon, but clear explanation of what it can mean for your business.',
     cryptoP2:         "From wallet setup to smart contracts, from NFTs to DeFi \u2014 I help you understand what is possible and what the risks are.",
@@ -465,7 +465,7 @@ const en: Translations = {
     specialHeading:   'Specialised Services',
     specialSubtitle:  'In addition to standard websites I also offer specialised technical services',
     services: [
-      { title: 'Technology Explanation', desc: 'Complex technologies explained in plain language. From AI to blockchain, from cloud computing to cybersecurity.' },
+      { title: 'Technology Explanation', desc: 'Complex technologies explained in plain language. From AI to cloud computing, from cybersecurity to digital automation.' },
       { title: 'Training & Workshops',   desc: 'Practical training in digital tools and applications. From beginner to advanced, tailored for your team.' },
       { title: 'Optimisations',          desc: 'Optimise existing systems for better performance, usability and efficiency.' },
       { title: 'Security & Safety',      desc: 'Security audits, security advice and implementation of best practices for your digital environment.' },

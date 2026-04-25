@@ -468,7 +468,7 @@ const nl = {
     ctaBtn2:          'Bekijk portfolio',
     introHeading:     'Gespecialiseerde Oplossingen',
     introP1:          'Voor complexe digitale uitdagingen bied ik gespecialiseerde oplossingen die verder gaan dan standaard web development.',
-    introP2:          "Van crypto-advies tot mini-apps, van technologische uitleg tot veiligheidsaudits \u2014 ik help je met de digitale uitdagingen waar andere developers niet aan toekomen.",
+    introP2:          "Van mini-apps tot AI-infosessies, van technologische uitleg tot veiligheidsaudits \u2014 ik help je met de digitale uitdagingen waar andere developers niet aan toekomen.",
     cryptoHeading:    'Crypto & Blockchain Advies',
     cryptoP1:         'Praktisch advies over cryptocurrency, blockchain technologie en digitale assets. Geen technisch jargon, maar heldere uitleg over wat het voor jouw bedrijf kan betekenen.',
     cryptoP2:         "Van wallet setup tot smart contracts, van NFT's tot DeFi \u2014 ik help je begrijpen wat er mogelijk is en wat de risico's zijn.",
@@ -478,7 +478,7 @@ const nl = {
     specialHeading:   'Gespecialiseerde Diensten',
     specialSubtitle:  'Naast standaard websites bied ik ook gespecialiseerde technische diensten aan',
     services: [
-      { title: 'Technologische Uitleg', desc: 'Complexe technologie\u00ebn uitgelegd in gewone taal. Van AI tot blockchain, van cloud computing tot cybersecurity.' },
+      { title: 'Technologische Uitleg', desc: 'Complexe technologie\u00ebn uitgelegd in gewone taal. Van AI tot cloud computing, van cybersecurity tot digitale automatisering.' },
       { title: 'Trainingen & Workshops', desc: 'Praktische trainingen in digitale tools en applicaties. Van basis tot gevorderd, op maat voor jouw team.' },
       { title: 'Optimalisaties', desc: 'Bestaande systemen optimaliseren voor betere prestaties, gebruiksvriendelijkheid en effici\u00ebntie.' },
       { title: 'Veiligheid & Security', desc: 'Security audits, beveiligingsadvies en implementatie van best practices voor jouw digitale omgeving.' },

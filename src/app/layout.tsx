@@ -168,7 +168,7 @@ const organizationJsonLd = {
     "@type": "ContactPoint",
     contactType: "customer service",
     availableLanguage: ["Dutch", "English"],
-    email: "help@intrict.com",
+    email: "info@intrict.com",
   },
   sameAs: [
     "https://www.linkedin.com/in/VanTwembeke",

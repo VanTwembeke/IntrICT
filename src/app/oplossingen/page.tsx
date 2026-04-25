@@ -42,7 +42,7 @@ export default function Oplossingen() {
         name: 'What specialised web development services does IntrICT offer?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'IntrICT offers specialised solutions including Crypto & Blockchain consulting, Mini App development, technical consulting, digital training, system optimization, security audits, GDPR compliance support, and custom API development.',
+          text: 'IntrICT offers specialised solutions including Mini App development, technical consulting, AI training sessions, system optimization, security audits, GDPR compliance support, and custom API development.',
         },
       },
       {

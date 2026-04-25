@@ -103,6 +103,7 @@ export default function Contact() {
 
   const contactInfo = [
     { icon: '📧', title: t.contactPage.info[0].title, value: 'info@intrict.com',  href: 'mailto:info@intrict.com' },
+    { icon: '📱', title: t.contactPage.info[1].title, value: '0470 63 14 75',     href: 'tel:+32470631475' },
     { icon: '📍', title: t.contactPage.info[2].title, value: t.contactPage.locationValue, href: '#' },
     { icon: '🕐', title: t.contactPage.info[3].title, value: availability, href: '#' },
   ];
@@ -115,50 +116,50 @@ export default function Contact() {
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'How long does it take to build a website?',
+        name: 'Hoe lang duurt het om een website te bouwen?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'The timeline depends on the complexity of the project. A simple website is typically ready within 2–3 weeks. A more extensive project with custom features can take 4–8 weeks. During my first conversation with you I will give a realistic estimate.',
+          text: 'De doorlooptijd hangt af van de complexiteit van het project. Een eenvoudige website is doorgaans klaar binnen 2 à 3 weken. Een uitgebreider project met maatwerk functionaliteiten kan 4 tot 8 weken in beslag nemen. Tijdens ons eerste gesprek geef ik je een realistische inschatting.',
         },
       },
       {
         '@type': 'Question',
-        name: 'What does it cost to have a website built?',
+        name: 'Wat kost het laten maken van een website?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Every project is unique, so I always work on a custom, quote-based approach. For ongoing support I offer monthly retainer packages starting from €99/month (8 hours/month). For a one-time website launch I charge €749. After a free introductory call you will receive a detailed quote with no hidden costs.',
+          text: 'Elke opdracht is uniek, dus ik werk altijd op maat en op offerte-basis. Voor terugkerende ondersteuning bied ik maandelijkse retainer-pakketten aan vanaf \u20ac99/maand. Na een gratis kennismakingsgesprek ontvang je een gedetailleerde offerte zonder verborgen kosten.',
         },
       },
       {
         '@type': 'Question',
-        name: 'Do you offer maintenance and support after delivery?',
+        name: 'Bied je ook onderhoud en support na oplevering?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Yes. I offer flexible monthly retainer packages (Basic €99/month, Standard €199/month, Premium €399/month) covering updates, security, and technical support. Details are tailored to your needs.',
+          text: 'Absoluut. Ik bied flexibele onderhoudscontracten aan waarbij ik zorg voor updates, beveiliging en technische ondersteuning. Zo blijft jouw website altijd up-to-date en veilig. Dit wordt apart besproken en afgestemd op jouw behoeften.',
         },
       },
       {
         '@type': 'Question',
-        name: 'Can I update my website myself after delivery?',
+        name: 'Kan ik mijn website zelf aanpassen na oplevering?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Definitely possible. I can set up a user-friendly CMS so you can update text, images, and pages yourself. I also provide a short training so you can work independently.',
+          text: "Dat is zeker mogelijk. Ik kan een gebruiksvriendelijk CMS instellen zodat je zelf teksten, afbeeldingen en pagina's kunt aanpassen. Ik geef ook een korte training zodat je zelfstandig aan de slag kunt.",
         },
       },
       {
         '@type': 'Question',
-        name: 'Which regions do you serve?',
+        name: 'In welke regio werk je?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'I am based in Ghent (Oost-Vlaanderen) but work for clients throughout Belgium and the Netherlands. Most collaboration happens online, but I am also available for in-person meetings in and around Ghent.',
+          text: 'Ik ben gevestigd in Gent (Oost-Vlaanderen) maar werk voor klanten door heel Belgi\u00eb en Nederland. De meeste samenwerking verloopt online, maar voor een persoonlijk gesprek ben ik ook beschikbaar in de regio Gent en omgeving.',
         },
       },
       {
         '@type': 'Question',
-        name: 'What does working together look like step by step?',
+        name: 'Hoe verloopt een samenwerking stap voor stap?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'I start with a free 30-minute introductory call. You then receive a quote and timeline. After approval, the design and development phase begins with regular updates and feedback rounds. On delivery you receive a working, optimised website plus a short user guide.',
+          text: 'We starten met een gratis kennismakingsgesprek van 30 minuten. Daarna ontvang je een offerte en planning. Na akkoord start de ontwerp- en ontwikkelfase, met regelmatige updates en feedbackmomenten. Bij oplevering krijg je een werkende, geoptimaliseerde website plus een korte handleiding.',
         },
       },
     ],
@@ -212,7 +213,7 @@ export default function Contact() {
         {/* Contact info cards */}
         <section className="py-16 bg-white">
           <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {contactInfo.map((item, index) => (
                 <motion.a
                   key={item.title}
@@ -360,7 +361,7 @@ export default function Contact() {
                             id="telefoon"
                             type="tel"
                             name="telefoon"
-                            placeholder="+32 4xx xx xx xx"
+                            placeholder="+32 9xx xx xx xx"
                             className="w-full px-4 py-3 transition-all duration-200 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
                           />
                         </div>
@@ -406,7 +407,7 @@ export default function Contact() {
                       </AnimatePresence>
 
                       {/* Message textarea — hidden in appointment mode */}
-                      <AnimatePresence>
+                      <AnimatePresence initial={false}>
                         {!isApptMode && (
                           <motion.div
                             key="message-field"

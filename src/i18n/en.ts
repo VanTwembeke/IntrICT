@@ -340,7 +340,7 @@ const en: Translations = {
   about: {
     heading:    'About',
     headingHighlight: 'Me',
-    subtitle:   'I am a passionate web developer creating digital experiences that make a real impact. With a background in both technology and design, I help businesses take their online presence to the next level.',
+    subtitle:   'I am Jonas Van Twembeke, a passionate web developer creating digital experiences that make a real impact. With a background in both technology and design, I help businesses take their online presence to the next level.',
     cta1:       'Get in touch',
     cta2:       'View my work',
     skillsHeading: 'My Expertise',

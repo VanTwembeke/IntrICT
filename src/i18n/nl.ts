@@ -351,7 +351,7 @@ const nl = {
   about: {
     heading:    'Over',
     headingHighlight: 'Mij',
-    subtitle:   'Ik ben een gepassioneerde web developer die digitale ervaringen creëert die écht impact hebben. Met een achtergrond in zowel techniek als design, help ik bedrijven hun online aanwezigheid naar het volgende niveau te tillen.',
+    subtitle:   'Ik ben Jonas Van Twembeke, een gepassioneerde web developer die digitale ervaringen creëert die écht impact hebben. Met een achtergrond in zowel techniek als design, help ik bedrijven hun online aanwezigheid naar het volgende niveau te tillen.',
     cta1:       'Neem contact op',
     cta2:       'Bekijk mijn werk',
     skillsHeading: 'Mijn Expertise',

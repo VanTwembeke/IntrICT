@@ -64,15 +64,20 @@ export interface TimeLog {
 
 export interface PackageRequest {
   id: string;
-  user_id: string;
+  user_id: string | null;
   package_name: string;
   package_price: number;
   status: 'pending' | 'contacted' | 'accepted' | 'rejected';
   notes: string | null;
   admin_notes: string | null;
+  // guest fields (unauthenticated leads)
+  guest_name: string | null;
+  guest_email: string | null;
+  guest_phone: string | null;
+  guest_company: string | null;
   created_at: string;
   updated_at: string;
-  // joined
+  // joined (authenticated users only)
   profile?: {
     full_name: string | null;
     email: string;

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import type { Package } from '@/lib/types';
+import PackageRequestModal, { type PackageInfo } from './PackageRequestModal';
 
 // ─── Icon mapping per package name ───────────────────────────────────────────
 
@@ -47,10 +48,12 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
   const { t } = useLanguage();
   const p = t.pricing;
   const [tab, setTab] = useState<'monthly' | 'onetime'>('monthly');
+  const [activePkg, setActivePkg] = useState<PackageInfo | null>(null);
 
   if (monthlyPackages.length === 0 && oneTimePackages.length === 0) return null;
 
   return (
+    <>
     <section id="pricing" className="py-20 bg-white">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
 
@@ -192,9 +195,9 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
                           ))}
                         </ul>
 
-                        <Link
-                          href="#contact"
-                          className={`flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                        <button
+                          onClick={() => setActivePkg({ name: pkg.name, price: pkg.price, billing_interval: 'monthly' })}
+                          className={`w-full flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl text-sm font-semibold transition-all duration-200 ${
                             pkg.highlight
                               ? 'bg-white text-blue-700 hover:bg-blue-50'
                               : 'bg-slate-900 text-white hover:bg-slate-700'
@@ -202,7 +205,7 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
                         >
                           {p.cta}
                           <ArrowRight size={14} />
-                        </Link>
+                        </button>
                       </div>
                     </motion.div>
                   );
@@ -263,13 +266,13 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
                         ))}
                       </ul>
 
-                      <Link
-                        href="#contact"
-                        className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold bg-slate-900 text-white hover:bg-slate-700 transition-colors duration-200"
+                      <button
+                        onClick={() => setActivePkg({ name: pkg.name, price: pkg.price, billing_interval: 'one_time' })}
+                        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold bg-slate-900 text-white hover:bg-slate-700 transition-colors duration-200"
                       >
                         {p.cta}
                         <ArrowRight size={14} />
-                      </Link>
+                      </button>
                     </motion.div>
                   );
                 })}
@@ -304,5 +307,11 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
 
       </div>
     </section>
+
+    <PackageRequestModal
+      pkg={activePkg}
+      onClose={() => setActivePkg(null)}
+    />
+    </>
   );
 }

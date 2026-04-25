@@ -62,7 +62,14 @@ function RequestCard({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="font-semibold text-slate-900">{profile?.full_name ?? 'Onbekend'}</p>
+            <p className="font-semibold text-slate-900">
+              {profile?.full_name ?? req.guest_name ?? 'Onbekend'}
+            </p>
+            {!req.user_id && (
+              <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-violet-100 text-violet-700">
+                Lead
+              </span>
+            )}
             <span className={`px-2 py-0.5 text-xs font-bold rounded-full ${cfg.color}`}>
               {cfg.label}
             </span>
@@ -91,20 +98,15 @@ function RequestCard({
             <div className="px-5 pb-5 border-t border-slate-100 pt-4 space-y-4">
               {/* Contact info */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Authenticated user */}
                 {profile?.email && (
-                  <a
-                    href={`mailto:${profile.email}`}
-                    className="flex items-center gap-2 text-sm text-blue-600 hover:underline"
-                  >
+                  <a href={`mailto:${profile.email}`} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
                     <Mail size={14} className="shrink-0" />
                     {profile.email}
                   </a>
                 )}
                 {profile?.phone && (
-                  <a
-                    href={`tel:${profile.phone}`}
-                    className="flex items-center gap-2 text-sm text-slate-600"
-                  >
+                  <a href={`tel:${profile.phone}`} className="flex items-center gap-2 text-sm text-slate-600">
                     <Phone size={14} className="shrink-0" />
                     {profile.phone}
                   </a>
@@ -113,6 +115,31 @@ function RequestCard({
                   <div className="flex items-center gap-2 text-sm text-slate-600">
                     <Building2 size={14} className="shrink-0" />
                     {profile.company}
+                  </div>
+                )}
+                {/* Guest lead */}
+                {!req.user_id && req.guest_email && (
+                  <a href={`mailto:${req.guest_email}`} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
+                    <Mail size={14} className="shrink-0" />
+                    {req.guest_email}
+                  </a>
+                )}
+                {!req.user_id && req.guest_phone && (
+                  <a href={`tel:${req.guest_phone}`} className="flex items-center gap-2 text-sm text-slate-600">
+                    <Phone size={14} className="shrink-0" />
+                    {req.guest_phone}
+                  </a>
+                )}
+                {!req.user_id && req.guest_company && (
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <Building2 size={14} className="shrink-0" />
+                    {req.guest_company}
+                  </div>
+                )}
+                {!req.user_id && req.guest_name && (
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <User size={14} className="shrink-0" />
+                    {req.guest_name}
                   </div>
                 )}
                 <div className="flex items-center gap-2 text-sm text-slate-600">

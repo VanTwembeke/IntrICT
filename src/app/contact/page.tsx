@@ -17,7 +17,7 @@ export default function Contact() {
   const { t, lang } = useLanguage();
   const [state, formAction, pending] = useActionState(sendContactForm, initialState);
   const [openFaq, setOpenFaq]        = useState<number | null>(null);
-  const [availability, setAvailability] = useState('Ma – Zo, 9:00 – 18:00');
+  const [availability, setAvailability] = useState('Ma – Vr, 9:00 – 18:00');
   const APPOINTMENT_SUBJECT = t.contactPage.onderwerpOpties[0];
 
   // Form state
@@ -103,7 +103,6 @@ export default function Contact() {
 
   const contactInfo = [
     { icon: '📧', title: t.contactPage.info[0].title, value: 'info@intrict.com',  href: 'mailto:info@intrict.com' },
-    { icon: '📱', title: t.contactPage.info[1].title, value: '+32 470 00 00 00',  href: 'tel:+32470000000' },
     { icon: '📍', title: t.contactPage.info[2].title, value: t.contactPage.locationValue, href: '#' },
     { icon: '🕐', title: t.contactPage.info[3].title, value: availability, href: '#' },
   ];
@@ -213,7 +212,7 @@ export default function Contact() {
         {/* Contact info cards */}
         <section className="py-16 bg-white">
           <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
               {contactInfo.map((item, index) => (
                 <motion.a
                   key={item.title}
@@ -361,7 +360,7 @@ export default function Contact() {
                             id="telefoon"
                             type="tel"
                             name="telefoon"
-                            placeholder="+32 470 00 00 00"
+                            placeholder="+32 4xx xx xx xx"
                             className="w-full px-4 py-3 transition-all duration-200 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
                           />
                         </div>
@@ -662,14 +661,6 @@ export default function Contact() {
                   className="px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg bg-linear-to-r from-blue-500 to-purple-500 rounded-xl hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
                 >
                   {t.contactPage.ctaEmail}
-                </motion.a>
-                <motion.a
-                  href="tel:+32470000000"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 font-semibold text-white transition-all duration-300 border-2 border-white/30 rounded-xl hover:bg-white/10 backdrop-blur-sm"
-                >
-                  {t.contactPage.ctaCall}
                 </motion.a>
               </div>
             </motion.div>

@@ -109,9 +109,15 @@ export type ActivityType  = 'appointment_created' | 'package_request' | 'invoice
 
 export interface ClientDossier {
   id: string;
-  profile_id: string;
+  profile_id: string | null;
   status: DossierStatus;
   notes: string | null;
+  // guest lead fields (no Supabase account)
+  guest_name: string | null;
+  guest_email: string | null;
+  guest_phone: string | null;
+  guest_company: string | null;
+  source: 'manual' | 'package_request' | null;
   created_at: string;
   updated_at: string;
   // joined

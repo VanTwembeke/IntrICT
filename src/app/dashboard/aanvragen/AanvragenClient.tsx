@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Clock, Phone, Mail, Building2, CheckCircle, XCircle, MessageSquare,
-  ChevronDown, Euro, User, Filter,
+  ChevronDown, Euro, User, Filter, Trash2,
 } from 'lucide-react';
 import type { PackageRequest } from '@/lib/types';
 
@@ -24,9 +24,11 @@ type Status = keyof typeof STATUS;
 function RequestCard({
   req,
   onStatusChange,
+  onDelete,
 }: {
   req: PackageRequest;
   onStatusChange: (id: string, status: Status, adminNotes: string) => Promise<void>;
+  onDelete: (id: string) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [status, setStatus] = useState<Status>(req.status as Status);
@@ -79,6 +81,15 @@ function RequestCard({
           </p>
         </div>
 
+        {status === 'rejected' && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onDelete(req.id); }}
+            className="p-1.5 rounded-lg text-slate-300 hover:text-red-400 hover:bg-red-50 transition-colors shrink-0"
+            title="Verwijderen"
+          >
+            <Trash2 size={14} />
+          </button>
+        )}
         <ChevronDown
           size={16}
           className={`text-slate-400 shrink-0 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
@@ -238,6 +249,11 @@ export default function AanvragenClient({ initialRequests }: Props) {
   const [requests, setRequests] = useState<PackageRequest[]>(initialRequests);
   const [filter, setFilter] = useState<Status | 'all'>('all');
 
+  const handleDelete = async (id: string) => {
+    const res = await fetch(`/api/package-requests/${id}`, { method: 'DELETE' });
+    if (res.ok) setRequests((prev) => prev.filter((r) => r.id !== id));
+  };
+
   const filtered = filter === 'all' ? requests : requests.filter((r) => r.status === filter);
 
   const counts: Record<Status | 'all', number> = {
@@ -312,6 +328,7 @@ export default function AanvragenClient({ initialRequests }: Props) {
               key={req.id}
               req={req}
               onStatusChange={handleStatusChange}
+              onDelete={handleDelete}
             />
           ))}
         </AnimatePresence>

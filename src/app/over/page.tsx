@@ -145,25 +145,18 @@ export default function Over() {
                 viewport={{ once: true }}
                 className="relative"
               >
-                <div className="p-8 bg-linear-to-br from-slate-100 to-slate-200 rounded-2xl">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center">
-                      <div className="mb-2 text-3xl font-bold text-blue-600">5+</div>
-                      <div className="text-sm text-slate-600">{t.about.statYears}</div>
+                <div className="p-8 bg-linear-to-br from-slate-100 to-slate-200 rounded-2xl space-y-4">
+                  {[
+                    { icon: '⚡', label: 'Antwoord binnen 24u op werkdagen' },
+                    { icon: '🎯', label: 'Één vaste contactpersoon — altijd Jonas' },
+                    { icon: '🔓', label: 'Gratis vrijblijvend kennismakingsgesprek' },
+                    { icon: '🛠️', label: 'Moderne technologieën: Next.js, React, TypeScript' },
+                  ].map((item) => (
+                    <div key={item.label} className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm">
+                      <span className="text-xl">{item.icon}</span>
+                      <span className="text-sm font-medium text-slate-700">{item.label}</span>
                     </div>
-                    <div className="text-center">
-                      <div className="mb-2 text-3xl font-bold text-purple-600">1+</div>
-                      <div className="text-sm text-slate-600">{t.about.statProjects}</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="mb-2 text-3xl font-bold text-green-600">100%</div>
-                      <div className="text-sm text-slate-600">{t.about.statClients}</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="mb-2 text-3xl font-bold text-orange-600">24/7</div>
-                      <div className="text-sm text-slate-600">{t.about.statSupport}</div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </motion.div>
             </div>

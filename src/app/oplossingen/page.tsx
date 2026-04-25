@@ -6,7 +6,6 @@ import Lenis from 'lenis';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
-  Coins,
   Smartphone,
   BookOpen,
   GraduationCap,
@@ -44,14 +43,6 @@ export default function Oplossingen() {
         acceptedAnswer: {
           '@type': 'Answer',
           text: 'IntrICT offers specialised solutions including Crypto & Blockchain consulting, Mini App development, technical consulting, digital training, system optimization, security audits, GDPR compliance support, and custom API development.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Does IntrICT offer crypto and blockchain consulting?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Yes. IntrICT provides practical advice on cryptocurrency, blockchain technology, and digital assets. This includes technology evaluation and investment guidance — without jargon.',
         },
       },
       {
@@ -140,15 +131,6 @@ export default function Oplossingen() {
             transition={{ duration: 0.8 }}
             className="grid gap-12 mb-20 lg:grid-cols-2"
           >
-            <div className="p-10 border bg-slate-50 border-slate-200 rounded-2xl">
-              <div className="flex items-center justify-center w-12 h-12 mb-6 rounded-lg bg-slate-100">
-                <Coins className="w-6 h-6 text-slate-600" />
-              </div>
-              <h3 className="mb-4 text-2xl font-bold text-slate-800">{s.cryptoHeading}</h3>
-              <p className="mb-4 text-lg leading-relaxed text-slate-600">{s.cryptoP1}</p>
-              <p className="leading-relaxed text-slate-500">{s.cryptoP2}</p>
-            </div>
-
             <div className="p-10 border bg-slate-50 border-slate-200 rounded-2xl">
               <div className="flex items-center justify-center w-12 h-12 mb-6 rounded-lg bg-slate-100">
                 <Smartphone className="w-6 h-6 text-slate-600" />

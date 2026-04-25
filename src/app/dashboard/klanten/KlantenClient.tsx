@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Plus, Search, LayoutGrid, List, ArrowRight, Building2, X, Mail, CheckCircle } from 'lucide-react';
+import { Users, Plus, Search, LayoutGrid, List, ArrowRight, Building2, X, Mail, CheckCircle, Trash2, AlertTriangle } from 'lucide-react';
 import type { ClientDossier, DossierStatus } from '@/lib/types';
 
 const STAGES: { key: DossierStatus; label: string; color: string; bg: string; dot: string }[] = [
@@ -20,9 +20,52 @@ const STATUS_BADGE: Record<DossierStatus, string> = {
   completed: 'bg-purple-100 text-purple-700',
 };
 
-function initials(name: string | null, email: string) {
-  const s = name ?? email;
+function initials(name: string | null, email: string | null) {
+  const s = name ?? email ?? '?';
   return s.slice(0, 2).toUpperCase();
+}
+
+function displayName(d: ClientDossier) {
+  return d.profile?.full_name ?? d.guest_name ?? d.profile?.email ?? d.guest_email ?? 'Onbekend';
+}
+function displayEmail(d: ClientDossier) {
+  return d.profile?.email ?? d.guest_email ?? null;
+}
+function displayCompany(d: ClientDossier) {
+  return d.profile?.company ?? d.guest_company ?? null;
+}
+
+// ─── Delete confirm modal ─────────────────────────────────────────────────────
+
+function DeleteConfirmModal({ name, onConfirm, onClose, loading }: {
+  name: string; onConfirm: () => void; onClose: () => void; loading: boolean;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <motion.div initial={{ opacity: 0, scale: 0.96, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, y: 10 }}
+        className="relative z-10 w-full max-w-sm p-6 bg-white shadow-2xl rounded-2xl">
+        <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full">
+          <AlertTriangle size={22} className="text-red-500" />
+        </div>
+        <h2 className="mb-1 text-base font-bold text-center text-slate-900">Klant verwijderen?</h2>
+        <p className="mb-5 text-sm text-center text-slate-500">
+          <strong>{name}</strong> en alle bijbehorende dossierdata worden permanent verwijderd.
+        </p>
+        <div className="flex gap-3">
+          <button onClick={onClose} className="flex-1 py-2.5 text-sm font-semibold border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-colors">
+            Annuleren
+          </button>
+          <button onClick={onConfirm} disabled={loading}
+            className="flex-1 py-2.5 text-sm font-semibold bg-red-500 text-white rounded-xl hover:bg-red-600 disabled:opacity-60 transition-colors">
+            {loading ? 'Verwijderen…' : 'Verwijderen'}
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
 }
 
 // ─── Invite modal ─────────────────────────────────────────────────────────────
@@ -178,14 +221,25 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
   const [search, setSearch] = useState('');
   const [showInvite, setShowInvite] = useState(false);
   const [invitedEmail, setInvitedEmail] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ClientDossier | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const filtered = dossiers.filter((d) => {
     const q = search.toLowerCase();
     return !q ||
-      d.profile?.full_name?.toLowerCase().includes(q) ||
-      d.profile?.email?.toLowerCase().includes(q) ||
-      d.profile?.company?.toLowerCase().includes(q);
+      displayName(d).toLowerCase().includes(q) ||
+      displayEmail(d)?.toLowerCase().includes(q) ||
+      displayCompany(d)?.toLowerCase().includes(q);
   });
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    const res = await fetch(`/api/dossiers/${deleteTarget.id}`, { method: 'DELETE' });
+    if (res.ok) setDossiers((prev) => prev.filter((d) => d.id !== deleteTarget.id));
+    setDeleting(false);
+    setDeleteTarget(null);
+  };
 
   const byStage = (status: DossierStatus) => filtered.filter((d) => d.status === status);
 
@@ -213,6 +267,14 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
         )}
         {invitedEmail && (
           <InviteSuccessModal email={invitedEmail} onClose={() => setInvitedEmail(null)} />
+        )}
+        {deleteTarget && (
+          <DeleteConfirmModal
+            name={displayName(deleteTarget)}
+            onConfirm={handleDelete}
+            onClose={() => setDeleteTarget(null)}
+            loading={deleting}
+          />
         )}
       </AnimatePresence>
 
@@ -291,18 +353,30 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
                     >
                       <div className="flex items-start gap-3 mb-3">
                         <div className="flex items-center justify-center text-xs font-bold text-white w-9 h-9 rounded-xl bg-blue-600 shrink-0">
-                          {initials(d.profile?.full_name ?? null, d.profile?.email ?? '?')}
+                          {initials(displayName(d), displayEmail(d))}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold truncate text-slate-900">
-                            {d.profile?.full_name ?? d.profile?.email ?? 'Onbekend'}
-                          </p>
-                          {d.profile?.company && (
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <p className="text-sm font-semibold truncate text-slate-900">
+                              {displayName(d)}
+                            </p>
+                            {!d.profile_id && (
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-violet-100 text-violet-600">Lead</span>
+                            )}
+                          </div>
+                          {displayCompany(d) && (
                             <p className="flex items-center gap-1 text-xs truncate text-slate-400">
-                              <Building2 size={10} />{d.profile.company}
+                              <Building2 size={10} />{displayCompany(d)}
                             </p>
                           )}
                         </div>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setDeleteTarget(d); }}
+                          className="p-1 rounded-lg text-slate-300 hover:text-red-400 hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100"
+                          title="Verwijderen"
+                        >
+                          <Trash2 size={13} />
+                        </button>
                       </div>
 
                       {/* Packages */}
@@ -334,12 +408,21 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
                             <option key={s.key} value={s.key}>{s.label}</option>
                           ))}
                         </select>
-                        <Link
-                          href={`/dashboard/klanten/${d.id}`}
-                          className="flex items-center gap-1 text-[11px] font-semibold text-blue-600 hover:text-blue-700 transition-colors opacity-0 group-hover:opacity-100"
-                        >
-                          Dossier <ArrowRight size={11} />
-                        </Link>
+                        {d.profile_id ? (
+                          <Link
+                            href={`/dashboard/klanten/${d.id}`}
+                            className="flex items-center gap-1 text-[11px] font-semibold text-blue-600 hover:text-blue-700 transition-colors opacity-0 group-hover:opacity-100"
+                          >
+                            Dossier <ArrowRight size={11} />
+                          </Link>
+                        ) : displayEmail(d) ? (
+                          <a
+                            href={`mailto:${displayEmail(d)}`}
+                            className="flex items-center gap-1 text-[11px] font-semibold text-blue-600 hover:text-blue-700 transition-colors opacity-0 group-hover:opacity-100"
+                          >
+                            Contact <ArrowRight size={11} />
+                          </a>
+                        ) : null}
                       </div>
                     </motion.div>
                   ))}
@@ -375,16 +458,21 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center justify-center w-8 h-8 text-xs font-bold text-white rounded-lg bg-blue-600 shrink-0">
-                        {initials(d.profile?.full_name ?? null, d.profile?.email ?? '?')}
+                        {initials(displayName(d), displayEmail(d))}
                       </div>
                       <div>
-                        <p className="font-semibold text-slate-900">{d.profile?.full_name ?? '—'}</p>
-                        <p className="text-xs text-slate-400">{d.profile?.email}</p>
+                        <div className="flex items-center gap-1.5">
+                          <p className="font-semibold text-slate-900">{displayName(d)}</p>
+                          {!d.profile_id && (
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-violet-100 text-violet-600">Lead</span>
+                          )}
+                        </div>
+                        <p className="text-xs text-slate-400">{displayEmail(d) ?? '—'}</p>
                       </div>
                     </div>
                   </td>
                   <td className="px-5 py-3.5 hidden md:table-cell text-slate-600">
-                    {d.profile?.company ?? <span className="text-slate-300">—</span>}
+                    {displayCompany(d) ?? <span className="text-slate-300">—</span>}
                   </td>
                   <td className="px-5 py-3.5">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${STATUS_BADGE[d.status]}`}>
@@ -403,12 +491,28 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
                     </div>
                   </td>
                   <td className="px-5 py-3.5 text-right">
-                    <Link
-                      href={`/dashboard/klanten/${d.id}`}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 transition-colors hover:text-blue-700"
-                    >
-                      Dossier <ArrowRight size={12} />
-                    </Link>
+                    <div className="flex items-center justify-end gap-3">
+                      <button
+                        onClick={() => setDeleteTarget(d)}
+                        className="p-1.5 rounded-lg text-slate-300 hover:text-red-400 hover:bg-red-50 transition-colors"
+                        title="Verwijderen"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                      {d.profile_id ? (
+                        <Link
+                          href={`/dashboard/klanten/${d.id}`}
+                          className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 transition-colors hover:text-blue-700"
+                        >
+                          Dossier <ArrowRight size={12} />
+                        </Link>
+                      ) : displayEmail(d) ? (
+                        <a href={`mailto:${displayEmail(d)}`}
+                          className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 transition-colors hover:text-blue-700">
+                          Contact <ArrowRight size={12} />
+                        </a>
+                      ) : null}
+                    </div>
                   </td>
                 </tr>
               ))}

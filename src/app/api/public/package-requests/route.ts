@@ -38,6 +38,19 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) throw error;
+
+    // Auto-create a guest lead dossier for pipeline tracking
+    await supabase.from('client_dossiers').insert({
+      profile_id:    null,
+      status:        'lead',
+      guest_name:    parsed.data.guest_name,
+      guest_email:   parsed.data.guest_email,
+      guest_phone:   parsed.data.guest_phone ?? null,
+      guest_company: parsed.data.guest_company ?? null,
+      notes:         `Pakketaanvraag: ${parsed.data.package_name} (€${parsed.data.package_price})${parsed.data.notes ? `\n\n${parsed.data.notes}` : ''}`,
+      source:        'package_request',
+    });
+
     return NextResponse.json(data, { status: 201 });
   } catch (err) {
     console.error('[public/package-requests]', err);

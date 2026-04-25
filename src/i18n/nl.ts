@@ -122,74 +122,22 @@ const nl = {
 
   // ── Pricing ──────────────────────────────────────────────────────────────────
   pricing: {
-    heading: 'Mijn Tarieven',
-    subtitle: 'Voorspelbare, maandelijkse samenwerking. Geen verborgen kosten, gewoon duidelijke afspraken.',
-    period:  'per maand',
-    startProject: 'Start project',
-    mostChosen:   'Meest gekozen',
-    talkWishes:   'Bespreek wensen',
-    perHour:      'per uur',
-    plans: [
-      {
-        name:        'Basic Retainer',
-        description: '8 uur per maand',
-        features: [
-          '8 uur ondersteuning per maand',
-          'Website-onderhoud & updates',
-          'Bug fixes en kleine aanpassingen',
-          'Maandelijkse rapportage',
-          'E-mail support',
-        ],
-      },
-      {
-        name:        'Standard Retainer',
-        description: '16 uur per maand',
-        features: [
-          '16 uur ondersteuning per maand',
-          'Alle Basic voordelen',
-          'Nieuwe functionaliteiten',
-          'Performance & SEO-optimalisatie',
-          'Prioritaire opvolging',
-          'Maandelijks overleg',
-        ],
-      },
-      {
-        name:        'Premium Retainer',
-        description: '32 uur per maand',
-        features: [
-          '32 uur ondersteuning per maand',
-          'Alle Standard voordelen',
-          'Complexe ontwikkelingen & integraties',
-          'Volledige technische verantwoordelijkheid',
-          'Strategisch ICT-advies',
-          'Dedicated beschikbaarheid',
-        ],
-      },
-    ],
-    support: {
-      heading:    'Uurtarieven',
-      subtitle:   'Losse prestaties of extra uren bovenop je retainer-pakket worden afzonderlijk gefactureerd.',
-      mostChosen: 'Meest Gekozen',
-      vatNote:    'Alle prijzen zijn exclusief BTW. Projectopdrachten op offerte-basis. Heb je andere wensen?',
-      talkLink:   'Laten we even praten \u2192',
-      tiers: [
-        {
-          price: '\u20ac85', title: 'Extra uren Basic',
-          desc:  'Extra uren bovenop het Basic-pakket',
-          items: ['Kleine aanpassingen', 'Bug fixes', 'Content updates', 'Eenvoudige wijzigingen'],
-        },
-        {
-          price: '\u20ac75', title: 'Extra uren Standard',
-          desc:  'Extra uren bovenop het Standard-pakket',
-          items: ['Alle standaard werkzaamheden', 'Nieuwe functionaliteiten', 'Design aanpassingen', 'Performance optimalisatie'],
-        },
-        {
-          price: '\u20ac65', title: 'Extra uren Premium',
-          desc:  'Extra uren bovenop het Premium-pakket',
-          items: ['Alle voorgaande werkzaamheden', 'Complexe projecten', 'Integraties', 'Volledige ondersteuning'],
-        },
-      ],
-    },
+    badge:           'Transparante tarieven',
+    heading:         'Eerlijke prijzen voor elke ondernemer',
+    subtitle:        'Geen verborgen kosten, geen kleine lettertjes. Professionele digitale ondersteuning aan een prijs die past bij jouw onderneming.',
+    tabMonthly:      'Maandelijkse ondersteuning',
+    tabOneTime:      'Eenmalige diensten',
+    perMonth:        '/ maand',
+    oneTime:         'eenmalig',
+    popular:         'Populairste keuze',
+    cta:             'Aanvragen',
+    contactHeading:  'Specifieke noden of project op maat?',
+    contactSubtitle: 'Geen enkel pakket past perfect? We stellen een voorstel op volledig afgestemd op jouw situatie en budget.',
+    contactCta:      'Neem contact op',
+    vatNote:         'Alle prijzen zijn exclusief btw. Maatwerkopdrachten op offerte-basis.',
+    monthlySubtitle: 'Vaste maandelijkse uren voor een voorspelbare kost — efficiënter dan een interne IT-medewerker, flexibeler dan een groot bureau.',
+    oneTimeSubtitle: 'Gerichte diensten zonder langetermijnverbintenis — ideaal voor specifieke noden of om onze aanpak te leren kennen.',
+    trust: ['Geen verborgen kosten', 'Belgisch bedrijf', 'Persoonlijke aanpak', 'Flexibel & snel'],
   },
 
   // ── Contact section (home) ────────────────────────────────────────────────────

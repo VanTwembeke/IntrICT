@@ -143,92 +143,126 @@ export default async function PakkettenPage() {
         )}
       </div>
 
-      {/* Packages grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
-        {packages.map((pkg) => {
-          const c = colorConfig[safeColor(pkg.color)];
-          const isHighlight = pkg.highlight;
-
-          return (
-            <div
-              key={pkg.id}
-              className={`relative rounded-2xl flex flex-col overflow-hidden border ${
-                isHighlight
-                  ? 'bg-linear-to-br from-purple-600 to-indigo-700 border-purple-500 shadow-xl shadow-purple-200/50'
-                  : 'bg-white border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200'
-              }`}
-            >
-              {isHighlight && (
-                <div className="h-1 bg-linear-to-r from-yellow-400 to-orange-400 w-full" />
-              )}
-
-              <div className="p-6 flex-1">
-                <div className={`inline-flex p-2.5 rounded-xl mb-4 ${c.iconBg}`}>
-                  <Check size={18} />
-                </div>
-
-                {isHighlight && (
-                  <div className="mb-3">
-                    <span className="inline-block px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider bg-yellow-400 text-yellow-900 rounded-full">
-                      Populairste keuze
-                    </span>
-                  </div>
-                )}
-
-                <h2
-                  className={`text-xl font-bold mb-1 ${
-                    isHighlight ? 'text-white' : 'text-slate-900'
-                  }`}
-                >
-                  {pkg.name}
-                </h2>
-
+      {/* ── Maandelijkse ondersteuning ────────────────────────────────── */}
+      {packages.some((p) => p.billing_interval === 'monthly') && (
+        <div className="mb-10">
+          <div className="mb-5">
+            <h2 className="text-base font-bold text-slate-900">Maandelijkse ondersteuning</h2>
+            <p className="text-sm text-slate-500 mt-0.5">
+              Vaste uren per maand voor een voorspelbare kost — zonder de overhead van een interne IT-medewerker.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
+            {packages.filter((p) => p.billing_interval === 'monthly').map((pkg) => {
+              const c = colorConfig[safeColor(pkg.color)];
+              const isHighlight = pkg.highlight;
+              return (
                 <div
-                  className={`flex items-baseline gap-1 mb-3 ${
-                    isHighlight ? 'text-white' : 'text-slate-900'
+                  key={pkg.id}
+                  className={`relative rounded-2xl flex flex-col overflow-hidden border ${
+                    isHighlight
+                      ? 'bg-linear-to-br from-blue-600 to-indigo-700 border-blue-500 shadow-xl shadow-blue-200/40 md:scale-[1.03]'
+                      : 'bg-white border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200'
                   }`}
                 >
-                  <span className="text-3xl font-bold">€{pkg.price.toLocaleString('nl-BE')}</span>
-                  <span className={`text-sm ${isHighlight ? 'text-purple-200' : 'text-slate-400'}`}>
-                    {pkg.billing_interval === 'monthly' ? '/ maand' : pkg.billing_interval === 'yearly' ? '/ jaar' : 'eenmalig'}
-                  </span>
-                </div>
-
-                <p
-                  className={`text-sm mb-5 leading-relaxed ${
-                    isHighlight ? 'text-purple-100' : 'text-slate-500'
-                  }`}
-                >
-                  {pkg.description}
-                </p>
-
-                <ul className="space-y-2.5">
-                  {pkg.features.map((f, i) => (
-                    <li
-                      key={i}
-                      className={`flex items-start gap-2 text-sm ${
-                        isHighlight ? 'text-purple-100' : 'text-slate-600'
+                  {isHighlight && <div className="h-1 bg-linear-to-r from-yellow-400 to-orange-400 w-full" />}
+                  <div className="p-6 flex-1">
+                    {isHighlight && (
+                      <div className="mb-3">
+                        <span className="inline-block px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider bg-yellow-400 text-yellow-900 rounded-full">
+                          Populairste keuze
+                        </span>
+                      </div>
+                    )}
+                    <div className={`inline-flex p-2.5 rounded-xl mb-4 ${isHighlight ? 'bg-white/20 text-white' : c.iconBg}`}>
+                      <Check size={18} />
+                    </div>
+                    <h2 className={`text-xl font-bold mb-1 ${isHighlight ? 'text-white' : 'text-slate-900'}`}>
+                      {pkg.name}
+                    </h2>
+                    <div className={`flex items-baseline gap-1 mb-3 ${isHighlight ? 'text-white' : 'text-slate-900'}`}>
+                      <span className="text-3xl font-bold">€{pkg.price.toLocaleString('nl-BE')}</span>
+                      <span className={`text-sm ${isHighlight ? 'text-blue-200' : 'text-slate-400'}`}>/ maand</span>
+                    </div>
+                    <p className={`text-sm mb-5 leading-relaxed ${isHighlight ? 'text-blue-100' : 'text-slate-500'}`}>
+                      {pkg.description}
+                    </p>
+                    <ul className="space-y-2.5">
+                      {pkg.features.map((f, i) => (
+                        <li key={i} className={`flex items-start gap-2 text-sm ${isHighlight ? 'text-blue-100' : 'text-slate-600'}`}>
+                          <Check size={14} className={`shrink-0 mt-0.5 ${isHighlight ? 'text-blue-300' : c.check}`} />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="p-6 pt-0">
+                    <PackageRequestButton
+                      packageName={pkg.name}
+                      packagePrice={pkg.price}
+                      isHighlight={isHighlight}
+                      className={`flex items-center justify-center gap-2 w-full py-3 px-5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                        isHighlight ? 'bg-white text-blue-700 hover:bg-blue-50' : c.btn
                       }`}
-                    >
-                      <Check size={14} className={`shrink-0 mt-0.5 ${c.check}`} />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
-              <div className="p-6 pt-0">
-                <PackageRequestButton
-                  packageName={pkg.name}
-                  packagePrice={pkg.price}
-                  isHighlight={isHighlight}
-                  className={`flex items-center justify-center gap-2 w-full py-3 px-5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${c.btn}`}
-                />
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      {/* ── Eenmalige diensten ────────────────────────────────────────── */}
+      {packages.some((p) => p.billing_interval === 'one_time') && (
+        <div className="mb-8">
+          <div className="mb-5">
+            <h2 className="text-base font-bold text-slate-900">Eenmalige diensten</h2>
+            <p className="text-sm text-slate-500 mt-0.5">
+              Gerichte interventies voor specifieke noden — zonder langetermijnverbintenis.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {packages.filter((p) => p.billing_interval === 'one_time').map((pkg) => {
+              const c = colorConfig[safeColor(pkg.color)];
+              return (
+                <div
+                  key={pkg.id}
+                  className="relative rounded-2xl flex flex-col overflow-hidden border bg-white border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200"
+                >
+                  <div className="p-6 flex-1">
+                    <div className={`inline-flex p-2.5 rounded-xl mb-4 ${c.iconBg}`}>
+                      <Check size={18} />
+                    </div>
+                    <h2 className="text-lg font-bold mb-1 text-slate-900">{pkg.name}</h2>
+                    <div className="flex items-baseline gap-1 mb-3 text-slate-900">
+                      <span className="text-3xl font-bold">€{pkg.price.toLocaleString('nl-BE')}</span>
+                      <span className="text-sm text-slate-400">eenmalig</span>
+                    </div>
+                    <p className="text-sm mb-5 leading-relaxed text-slate-500">{pkg.description}</p>
+                    <ul className="space-y-2.5">
+                      {pkg.features.map((f, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
+                          <Check size={14} className={`shrink-0 mt-0.5 ${c.check}`} />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="p-6 pt-0">
+                    <PackageRequestButton
+                      packageName={pkg.name}
+                      packagePrice={pkg.price}
+                      isHighlight={false}
+                      className={`flex items-center justify-center gap-2 w-full py-3 px-5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${c.btn}`}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Custom project callout */}
       <div className="bg-slate-900 rounded-2xl p-6 md:p-8 text-white flex flex-col md:flex-row md:items-center md:justify-between gap-4">

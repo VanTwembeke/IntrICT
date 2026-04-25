@@ -1,159 +1,307 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import {
+  Check, ArrowRight, Clock, Zap, Star,
+  Globe, Lightbulb, Sparkles, GraduationCap,
+} from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { Package } from '@/lib/types';
 
-export default function Pricing() {
+// ─── Icon mapping per package name ───────────────────────────────────────────
+
+const ICON: Record<string, React.ReactNode> = {
+  'Basic':                  <Clock size={20} />,
+  'Standard':               <Zap size={20} />,
+  'Premium':                <Star size={20} />,
+  'Website Lancering':      <Globe size={20} />,
+  'Strategisch ICT-Advies': <Lightbulb size={20} />,
+  'AI-Infosessie':          <Sparkles size={20} />,
+  'ICT-Workshop':           <GraduationCap size={20} />,
+};
+
+// ─── Color palette ────────────────────────────────────────────────────────────
+
+const COLORS: Record<string, { iconBg: string; check: string; accent: string }> = {
+  blue:   { iconBg: 'bg-blue-100 text-blue-600',   check: 'text-blue-500',   accent: 'text-blue-600' },
+  purple: { iconBg: 'bg-purple-100 text-purple-600', check: 'text-purple-500', accent: 'text-purple-600' },
+  indigo: { iconBg: 'bg-indigo-100 text-indigo-600', check: 'text-indigo-500', accent: 'text-indigo-600' },
+  green:  { iconBg: 'bg-green-100 text-green-600',  check: 'text-green-500',  accent: 'text-green-600' },
+  orange: { iconBg: 'bg-orange-100 text-orange-600', check: 'text-orange-500', accent: 'text-orange-600' },
+};
+
+const safeColor = (c: string) => COLORS[c] ?? COLORS.blue;
+
+// ─── Props ────────────────────────────────────────────────────────────────────
+
+interface PricingProps {
+  monthlyPackages: Package[];
+  oneTimePackages: Package[];
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export default function Pricing({ monthlyPackages, oneTimePackages }: PricingProps) {
   const { t } = useLanguage();
-  const { plans, support } = t.pricing;
+  const p = t.pricing;
+  const [tab, setTab] = useState<'monthly' | 'onetime'>('monthly');
 
-  const prices = ['€99', '€199', '€399'];
-  const popular = [false, true, false];
+  if (monthlyPackages.length === 0 && oneTimePackages.length === 0) return null;
 
   return (
-    <section id="pricing" className="py-20 bg-slate-50">
-      <div className="px-4 mx-auto max-w-7xl">
+    <section id="pricing" className="py-20 bg-white">
+      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+
+        {/* ── Header ──────────────────────────────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="mb-16 text-center"
+          viewport={{ once: true }}
+          transition={{ duration: 0.55 }}
+          className="text-center mb-10"
         >
-          <h2 className="mb-6 text-5xl font-bold md:text-6xl text-slate-800">
-            {t.pricing.heading}
+          <span className="inline-block mb-4 px-4 py-1.5 bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-widest rounded-full">
+            {p.badge}
+          </span>
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
+            {p.heading}
           </h2>
-          <p className="max-w-3xl mx-auto text-xl leading-relaxed text-slate-600">
-            {t.pricing.subtitle}
+          <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
+            {p.subtitle}
           </p>
         </motion.div>
 
-        <div className="grid gap-8 md:grid-cols-3">
-          {plans.map((plan, index) => (
-            <motion.div
-              key={plan.name}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.2 }}
-              whileHover={{ y: -10 }}
-              className={`relative bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 ${
-                popular[index] ? 'ring-2 ring-slate-800 scale-105' : 'hover:shadow-2xl'
+        {/* ── Trust badges ────────────────────────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.15 }}
+          className="flex flex-wrap justify-center gap-2.5 mb-10"
+        >
+          {p.trust.map((badge) => (
+            <span
+              key={badge}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-50 border border-slate-200 text-slate-600 text-sm font-medium rounded-full"
+            >
+              <Check size={13} className="text-green-500 shrink-0" />
+              {badge}
+            </span>
+          ))}
+        </motion.div>
+
+        {/* ── Tab toggle ──────────────────────────────────────────────────── */}
+        <div className="flex justify-center mb-10">
+          <div className="inline-flex items-center bg-slate-100 rounded-full p-1 gap-1">
+            <button
+              onClick={() => setTab('monthly')}
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
+                tab === 'monthly'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
               }`}
             >
-              {popular[index] && (
-                <div className="absolute top-0 left-0 right-0 py-2 text-sm font-semibold text-center text-white bg-slate-800">
-                  {t.pricing.mostChosen}
-                </div>
-              )}
-
-              <div className={`p-8 ${popular[index] ? 'pt-16' : ''}`}>
-                <div className="mb-8 text-center">
-                  <h3 className="mb-2 text-2xl font-bold text-slate-800">{plan.name}</h3>
-                  <p className="mb-4 text-slate-600">{plan.description}</p>
-                  <div className="mb-6">
-                    <span className="text-5xl font-bold text-slate-800">{prices[index]}</span>
-                    <span className="ml-2 text-slate-600">{t.pricing.period}</span>
-                  </div>
-                </div>
-
-                <ul className="mb-8 space-y-4">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center">
-                      <svg className="w-5 h-5 mr-3 text-green-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-slate-700">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-300 ${
-                    popular[index]
-                      ? 'bg-slate-800 text-white hover:bg-slate-700'
-                      : 'bg-slate-100 text-slate-800 hover:bg-slate-200'
-                  }`}
-                >
-                  {popular[index] ? t.pricing.mostChosen : index === 0 ? t.pricing.startProject : t.pricing.talkWishes}
-                </motion.button>
-              </div>
-            </motion.div>
-          ))}
+              {p.tabMonthly}
+            </button>
+            <button
+              onClick={() => setTab('onetime')}
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
+                tab === 'onetime'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              {p.tabOneTime}
+            </button>
+          </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-12"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="mb-12 text-center"
-          >
-            <h3 className="mb-4 text-4xl font-bold text-slate-800">
-              {support.heading}
-            </h3>
-            <p className="max-w-3xl mx-auto text-xl leading-relaxed text-slate-600">
-              {support.subtitle}
-            </p>
-          </motion.div>
+        {/* ── Package grids ───────────────────────────────────────────────── */}
+        <AnimatePresence mode="wait">
 
-          <div className="grid gap-8 md:grid-cols-3">
-            {support.tiers.map((tier, i) => (
-              <motion.div
-                key={tier.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.9 + i * 0.1 }}
-                whileHover={{ y: -10 }}
-                className={`p-8 transition-all duration-300 bg-white shadow-lg rounded-2xl hover:shadow-2xl ${
-                  i === 1 ? 'relative scale-105 ring-2 ring-slate-800' : ''
-                }`}
-              >
-                {i === 1 && (
-                  <div className="absolute transform -translate-x-1/2 -top-4 left-1/2">
-                    <span className="px-4 py-2 text-sm font-semibold text-white rounded-full bg-slate-800">
-                      {support.mostChosen}
-                    </span>
-                  </div>
-                )}
-                <div className={`text-center ${i === 1 ? 'pt-4' : ''}`}>
-                  <div className="mb-4 text-5xl font-bold text-slate-800">{tier.price}</div>
-                  <div className="mb-6 text-xl text-slate-600">{t.pricing.perHour}</div>
-                  <h4 className="mb-4 text-xl font-bold text-slate-800">{tier.title}</h4>
-                  <p className="mb-6 text-slate-600">{tier.desc}</p>
-                  <ul className="space-y-2 text-left text-slate-600">
-                    {tier.items.map((item) => (
-                      <li key={item}>• {item}</li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
-            className="mt-12 text-center"
-          >
-            <p className="mb-4 text-slate-600">
-              {support.vatNote}
-            </p>
-            <motion.a
-              href="#contact"
-              whileHover={{ scale: 1.05 }}
-              className="font-semibold transition-colors duration-300 text-slate-800 hover:text-slate-600"
+          {/* Monthly */}
+          {tab === 'monthly' && (
+            <motion.div
+              key="monthly"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.22 }}
             >
-              {support.talkLink}
-            </motion.a>
-          </motion.div>
+              <p className="text-center text-slate-500 text-sm mb-8 max-w-xl mx-auto">
+                {p.monthlySubtitle}
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+                {monthlyPackages.map((pkg, i) => {
+                  const c = safeColor(pkg.color);
+                  const icon = ICON[pkg.name] ?? <Clock size={20} />;
+
+                  return (
+                    <motion.div
+                      key={pkg.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.08 }}
+                      className={`relative rounded-2xl flex flex-col ${
+                        pkg.highlight
+                          ? 'bg-linear-to-br from-blue-600 to-indigo-700 text-white shadow-xl shadow-blue-200/50 md:scale-[1.04]'
+                          : 'bg-white border border-slate-200 shadow-sm'
+                      }`}
+                    >
+                      {pkg.highlight && (
+                        <div className="h-1 bg-linear-to-r from-yellow-400 to-orange-400 w-full rounded-t-2xl" />
+                      )}
+
+                      <div className="p-7 flex-1 flex flex-col">
+                        {pkg.highlight && (
+                          <span className="inline-block mb-3 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider bg-yellow-400 text-yellow-900 rounded-full w-fit">
+                            {p.popular}
+                          </span>
+                        )}
+
+                        <div className={`inline-flex p-2.5 rounded-xl mb-4 w-fit ${
+                          pkg.highlight ? 'bg-white/20 text-white' : c.iconBg
+                        }`}>
+                          {icon}
+                        </div>
+
+                        <h3 className={`text-xl font-bold mb-1 ${pkg.highlight ? 'text-white' : 'text-slate-900'}`}>
+                          {pkg.name}
+                        </h3>
+
+                        <div className={`flex items-baseline gap-1 mb-3 ${pkg.highlight ? 'text-white' : 'text-slate-900'}`}>
+                          <span className="text-4xl font-bold">€{pkg.price.toLocaleString('nl-BE')}</span>
+                          <span className={`text-sm ${pkg.highlight ? 'text-blue-200' : 'text-slate-400'}`}>
+                            {p.perMonth}
+                          </span>
+                        </div>
+
+                        <p className={`text-sm leading-relaxed mb-5 ${pkg.highlight ? 'text-blue-100' : 'text-slate-500'}`}>
+                          {pkg.description}
+                        </p>
+
+                        <ul className="space-y-2.5 flex-1 mb-7">
+                          {pkg.features.map((f) => (
+                            <li key={f} className={`flex items-start gap-2 text-sm ${pkg.highlight ? 'text-blue-50' : 'text-slate-600'}`}>
+                              <Check size={14} className={`shrink-0 mt-0.5 ${pkg.highlight ? 'text-blue-200' : c.check}`} />
+                              {f}
+                            </li>
+                          ))}
+                        </ul>
+
+                        <Link
+                          href="#contact"
+                          className={`flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                            pkg.highlight
+                              ? 'bg-white text-blue-700 hover:bg-blue-50'
+                              : 'bg-slate-900 text-white hover:bg-slate-700'
+                          }`}
+                        >
+                          {p.cta}
+                          <ArrowRight size={14} />
+                        </Link>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+
+          {/* One-time */}
+          {tab === 'onetime' && (
+            <motion.div
+              key="onetime"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.22 }}
+            >
+              <p className="text-center text-slate-500 text-sm mb-8 max-w-xl mx-auto">
+                {p.oneTimeSubtitle}
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                {oneTimePackages.map((pkg, i) => {
+                  const c = safeColor(pkg.color);
+                  const icon = ICON[pkg.name] ?? <Globe size={20} />;
+
+                  return (
+                    <motion.div
+                      key={pkg.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.08 }}
+                      className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 flex flex-col hover:shadow-md transition-shadow duration-200"
+                    >
+                      <div className={`inline-flex p-2.5 rounded-xl mb-4 w-fit ${c.iconBg}`}>
+                        {icon}
+                      </div>
+
+                      <h3 className="text-lg font-bold text-slate-900 mb-1">{pkg.name}</h3>
+
+                      <div className="flex items-baseline gap-1 mb-3">
+                        <span className="text-3xl font-bold text-slate-900">
+                          €{pkg.price.toLocaleString('nl-BE')}
+                        </span>
+                        <span className="text-sm text-slate-400">{p.oneTime}</span>
+                      </div>
+
+                      <p className="text-sm text-slate-500 leading-relaxed mb-5 flex-1">
+                        {pkg.description}
+                      </p>
+
+                      <ul className="space-y-2 mb-6">
+                        {pkg.features.map((f) => (
+                          <li key={f} className="flex items-start gap-2 text-sm text-slate-600">
+                            <Check size={13} className={`shrink-0 mt-0.5 ${c.check}`} />
+                            {f}
+                          </li>
+                        ))}
+                      </ul>
+
+                      <Link
+                        href="#contact"
+                        className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold bg-slate-900 text-white hover:bg-slate-700 transition-colors duration-200"
+                      >
+                        {p.cta}
+                        <ArrowRight size={14} />
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ── Bottom CTA ──────────────────────────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mt-14 bg-slate-900 rounded-2xl p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6"
+        >
+          <div>
+            <h3 className="text-white font-bold text-xl mb-1">{p.contactHeading}</h3>
+            <p className="text-slate-400 text-sm leading-relaxed max-w-md">{p.contactSubtitle}</p>
+          </div>
+          <div className="flex flex-col items-start md:items-end gap-3 shrink-0">
+            <Link
+              href="#contact"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-400 transition-colors text-sm whitespace-nowrap"
+            >
+              {p.contactCta}
+              <ArrowRight size={14} />
+            </Link>
+            <p className="text-xs text-slate-500">{p.vatNote}</p>
+          </div>
         </motion.div>
+
       </div>
     </section>
   );

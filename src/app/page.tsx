@@ -3,14 +3,31 @@ import Footer from '@/components/common/Footer';
 import Hero from '@/components/home/Hero';
 import Services from '@/components/home/Services';
 import Process from '@/components/home/Process';
-// import Pricing from '@/components/home/Pricing'; // Component behouden voor later gebruik
+import Pricing from '@/components/home/Pricing';
 import Contact from '@/components/home/Contact';
 import BlogPostNotification from '@/components/home/BlogPostNotification';
 import BackToTop from '@/components/common/BackToTop';
 import HomeEffects from './HomeEffects';
 import { blogPosts } from '@/data/blog-posts';
+import { createClient } from '@/lib/supabase/server';
+import type { Package } from '@/lib/types';
 
-export default function Home() {
+export default async function Home() {
+  // Fetch packages for the pricing section
+  let monthlyPackages: Package[] = [];
+  let oneTimePackages: Package[] = [];
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from('packages')
+      .select('*')
+      .eq('active', true)
+      .order('sort_order', { ascending: true });
+    const all = (data ?? []) as Package[];
+    monthlyPackages = all.filter((p) => p.billing_interval === 'monthly');
+    oneTimePackages = all.filter((p) => p.billing_interval === 'one_time');
+  } catch { /* packages not accessible — section hidden */ }
+
   const latestPost = [...blogPosts].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   )[0];
@@ -25,7 +42,7 @@ export default function Home() {
       <Hero />
       <Services />
       <Process />
-      {/* <Pricing /> */} {/* Component behouden voor later gebruik */}
+      <Pricing monthlyPackages={monthlyPackages} oneTimePackages={oneTimePackages} />
       <BlogPostNotification post={latestPostMeta} />
       <Contact />
       <Footer />

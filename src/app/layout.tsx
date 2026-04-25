@@ -218,6 +218,113 @@ const personJsonLd = {
   },
 };
 
+const offerCatalogJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "OfferCatalog",
+  "@id": `${SITE_URL}/#services`,
+  name: "IntrICT Dienstenaanbod",
+  provider: { "@id": `${SITE_URL}/#organization` },
+  itemListElement: [
+    {
+      "@type": "Offer",
+      "@id": `${SITE_URL}/#offer-basic`,
+      name: "Basic Retainer",
+      description: "8 uren/maand inbegrepen, flexibele inzet, webontwikkeling & onderhoud, persoonlijke begeleiding, maandelijkse voortgangsrapportage. Extra uren aan €85/uur.",
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: 99,
+        priceCurrency: "EUR",
+        unitCode: "MON",
+        unitText: "per maand",
+      },
+      availability: "https://schema.org/InStock",
+      seller: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "Offer",
+      "@id": `${SITE_URL}/#offer-standard`,
+      name: "Standard Retainer",
+      description: "16 uren/maand inbegrepen, prioritaire ondersteuning, strategisch ICT-advies, maandelijkse voortgangsrapportage. Extra uren aan €75/uur. Meest gekozen formule.",
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: 199,
+        priceCurrency: "EUR",
+        unitCode: "MON",
+        unitText: "per maand",
+      },
+      availability: "https://schema.org/InStock",
+      seller: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "Offer",
+      "@id": `${SITE_URL}/#offer-premium`,
+      name: "Premium Retainer",
+      description: "32 uren/maand inbegrepen, volledige maandelijkse beschikbaarheid, prioritaire ondersteuning, strategisch ICT-advies, dedicated persoonlijke begeleiding. Extra uren aan €65/uur.",
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: 399,
+        priceCurrency: "EUR",
+        unitCode: "MON",
+        unitText: "per maand",
+      },
+      availability: "https://schema.org/InStock",
+      seller: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "Offer",
+      "@id": `${SITE_URL}/#offer-website`,
+      name: "Website Lancering",
+      description: "End-to-end ontwerp & ontwikkeling, tot 6 pagina's op maat, responsief design, contactformulier, SSL, Google Analytics, deployment & domeinconfiguratie, 30 dagen nazorg.",
+      priceSpecification: {
+        "@type": "PriceSpecification",
+        price: 749,
+        priceCurrency: "EUR",
+      },
+      availability: "https://schema.org/InStock",
+      seller: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "Offer",
+      "@id": `${SITE_URL}/#offer-advies`,
+      name: "Strategisch ICT-Advies",
+      description: "Analyse van huidige ICT-situatie, gepersonaliseerde digitale roadmap, technologieselectie & aanbevelingen, 2 uur sessie (online of ter plaatse), schriftelijk rapport, 2 weken opvolgingssupport.",
+      priceSpecification: {
+        "@type": "PriceSpecification",
+        price: 195,
+        priceCurrency: "EUR",
+      },
+      availability: "https://schema.org/InStock",
+      seller: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "Offer",
+      "@id": `${SITE_URL}/#offer-ai`,
+      name: "AI-Infosessie",
+      description: "Presentatie van 2 tot 3 uur, aangepast aan jouw sector, live demo van praktische AI-tools, interactieve Q&A, samenvatting & bronnenlijst achteraf, tot 15 deelnemers inbegrepen.",
+      priceSpecification: {
+        "@type": "PriceSpecification",
+        price: 295,
+        priceCurrency: "EUR",
+      },
+      availability: "https://schema.org/InStock",
+      seller: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "Offer",
+      "@id": `${SITE_URL}/#offer-workshop`,
+      name: "ICT-Workshop",
+      description: "Workshop van 3 tot 4 uur, volledig op maat van jouw team, hands-on oefeningen & praktijkcases, documentatie & handleidingen inbegrepen, follow-up via e-mail (1 maand), tot 10 deelnemers.",
+      priceSpecification: {
+        "@type": "PriceSpecification",
+        price: 395,
+        priceCurrency: "EUR",
+      },
+      availability: "https://schema.org/InStock",
+      seller: { "@id": `${SITE_URL}/#organization` },
+    },
+  ],
+};
+
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
@@ -257,6 +364,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(personJsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(offerCatalogJsonLd).replace(/</g, "\\u003c"),
           }}
         />
 

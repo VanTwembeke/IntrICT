@@ -30,6 +30,25 @@ Core values: quality, performance, transparency, and long-term collaboration.
 - **GDPR Compliance Support:** Privacy audits and compliance assistance for Belgian law.
 - **API Development:** Custom integrations and workflow automation.
 
+## Pricing
+
+IntrICT offers transparent, fixed pricing — no hidden costs.
+
+### Monthly Retainers (ongoing support & development)
+
+- **Basic Retainer — €99/maand:** 8 hours/month included, flexible use, web development & maintenance, personal guidance, monthly progress report. Extra hours at €85/hour.
+- **Standard Retainer — €199/maand (most popular):** 16 hours/month included, priority support, strategic ICT advice, monthly progress report. Extra hours at €75/hour.
+- **Premium Retainer — €399/maand:** 32 hours/month included, full monthly availability, priority support, strategic ICT advice, dedicated personal guidance. Extra hours at €65/hour.
+
+### One-Time Services
+
+- **Website Lancering — €749 (one-time):** End-to-end design & development, up to 6 custom pages, responsive design, contact form, SSL, Google Analytics, deployment & domain configuration, 30 days aftercare.
+- **Strategisch ICT-Advies — €195 (one-time):** Analysis of current ICT situation, personalized digital roadmap, technology selection & recommendations, 2-hour session (online or on-site), written report, 2 weeks follow-up support.
+- **AI-Infosessie — €295 (one-time):** 2–3 hour presentation tailored to your sector, live demo of practical AI tools, interactive Q&A, summary & source list afterwards, up to 15 participants included.
+- **ICT-Workshop — €395 (one-time):** 3–4 hour workshop fully tailored to your team, hands-on exercises & practical cases, documentation & manuals included, email follow-up (1 month), up to 10 participants.
+
+All prices excl. 21% VAT. Custom projects available on request.
+
 ## Key Pages
 
 - [Home](https://www.intrict.com): Service overview, process, and contact.
@@ -68,7 +87,7 @@ Core values: quality, performance, transparency, and long-term collaboration.
 ## Frequently Asked Questions
 
 **What does a professional website cost in Belgium?**
-A professional website for a Belgian SME costs between €2,000 and €8,000 on average. A simple landing page starts around €800; a full custom webshop can exceed €10,000. Hourly rates range from €60–€100/h for freelancers to €85–€150/h for agencies.
+At IntrICT, a complete website launch (up to 6 pages, responsive design, SSL, Google Analytics, 30 days aftercare) is €749 one-time. For ongoing support, monthly retainers start at €99/maand (8 hours/month) up to €399/maand (32 hours/month). Market rates in Belgium generally range from €60–€200/hour depending on the provider; IntrICT retainer clients get extra hours at €65–€85/hour.
 
 **What is GEO and how is it different from SEO?**
 GEO (Generative Engine Optimization) optimizes content to be cited by AI systems like ChatGPT, Perplexity, and Google AI Overviews. Unlike SEO which targets ranking positions, GEO targets inclusion in AI-generated answers. Both are complementary — strong SEO signals help GEO performance.

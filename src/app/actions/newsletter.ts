@@ -82,8 +82,8 @@ export async function subscribeNewsletter(
             Bezoek IntrICT →
           </a>
           <p style="margin-top: 32px; font-size: 12px; color: #94a3b8;">
-            Uitschrijven? 
-            <a href="{{unsubscribeUrl}}" style="color: #64748b;">Klik hier</a>.
+            Uitschrijven?
+            <a href="https://intrict.com/uitschrijven?email=${trimmed}" style="color: #64748b;">Klik hier</a>.
           </p>
         </div>
       `,

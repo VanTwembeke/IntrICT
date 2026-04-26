@@ -105,7 +105,7 @@ function buildNewsletterHtml(data: {
               <tr>
                 <td>
                   <p style="margin:0 0 6px;font-size:11px;color:#94a3b8;">Je ontvangt deze e-mail omdat je ingeschreven bent voor de IntrICT nieuwsbrief.</p>
-                  <p style="margin:0;font-size:11px;color:#94a3b8;"><a href="{{unsubscribeUrl}}" style="color:#64748b;text-decoration:underline;">Uitschrijven</a>&nbsp;&middot;&nbsp;<a href="${SITE_URL}" style="color:#64748b;text-decoration:underline;">intrict.com</a></p>
+                  <p style="margin:0;font-size:11px;color:#94a3b8;"><a href="${SITE_URL}/uitschrijven?email={{email}}" style="color:#64748b;text-decoration:underline;">Uitschrijven</a>&nbsp;&middot;&nbsp;<a href="${SITE_URL}" style="color:#64748b;text-decoration:underline;">intrict.com</a></p>
                 </td>
                 <td align="right" style="vertical-align:top;">
                   <p style="margin:0;font-size:10px;color:#cbd5e1;font-weight:700;letter-spacing:0.5px;">INTRICT BV</p>

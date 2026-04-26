@@ -758,6 +758,14 @@ export default function Header() {
 
   return (
     <>
+      {/* Skip navigation — visible on focus for keyboard users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:px-4 focus:py-2 focus:bg-white focus:text-slate-900 focus:font-semibold focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        Ga naar hoofdinhoud
+      </a>
+
       <motion.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}

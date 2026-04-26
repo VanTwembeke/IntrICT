@@ -170,6 +170,7 @@ export default function Footer() {
                           type="email"
                           name="email"
                           required
+                          aria-label={t.footer.newsletter.placeholder}
                           placeholder={t.footer.newsletter.placeholder}
                           className="w-full py-3 pl-10 pr-4 text-sm text-white transition-all duration-300 border placeholder-slate-500 bg-slate-800 rounded-xl border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 hover:border-slate-600"
                         />

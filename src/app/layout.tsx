@@ -16,9 +16,8 @@ const geistMono = Geist_Mono({
 const SITE_URL = "https://www.intrict.com";
 const SITE_NAME = "IntrICT";
 const SITE_DESCRIPTION =
-  "IntrICT — Gent-gebaseerde web developer gespecialiseerd in moderne websites, " +
-  "Next.js webapplicaties, UI/UX design, SEO-optimalisatie en digitale strategie " +
-  "voor bedrijven in België en Nederland.";
+  "IntrICT — web developer in Gent. Moderne websites, Next.js apps, UI/UX design " +
+  "en SEO-optimalisatie voor bedrijven in België en Nederland.";
 const OG_IMAGE = `${SITE_URL}/og-image.jpg`; // place a 1200×630 image here
 
 export const viewport: Viewport = {

@@ -39,12 +39,14 @@ export default async function Home() {
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
       <HomeEffects />
       <Header />
-      <Hero />
-      <Services />
-      <Process />
-      <Pricing monthlyPackages={monthlyPackages} oneTimePackages={oneTimePackages} />
-      <BlogPostNotification post={latestPostMeta} />
-      <Contact />
+      <main id="main-content">
+        <Hero />
+        <Services />
+        <Process />
+        <Pricing monthlyPackages={monthlyPackages} oneTimePackages={oneTimePackages} />
+        <BlogPostNotification post={latestPostMeta} />
+        <Contact />
+      </main>
       <Footer />
       <BackToTop />
     </div>

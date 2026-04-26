@@ -1,13 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
 
 export default function Login() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -27,8 +26,9 @@ export default function Login() {
       return;
     }
 
-    // SSO: als er een ?next= parameter is van tools.intrict.com, redirect daarheen
-    const next = searchParams.get('next');
+    // SSO: lees ?next= direct uit window.location (useSearchParams vereist Suspense)
+    const params = new URLSearchParams(window.location.search);
+    const next = params.get('next');
     if (next && next.startsWith('https://tools.intrict.com')) {
       window.location.href = next;
       return;

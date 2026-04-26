@@ -1,30 +1,8 @@
-import { createServerClient } from '@supabase/ssr';
-import { NextResponse, type NextRequest } from 'next/server';
+import { type NextRequest } from 'next/server';
+import { updateSession } from './src/lib/supabase/proxy';
 
 export async function middleware(request: NextRequest) {
-const response = NextResponse.next();
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            response.cookies.set(name, value)
-          );
-        },
-      },
-    }
-  );
-
-  // 🔥 critical: refresh session
-  await supabase.auth.getUser();
-
-  return response;
+  return await updateSession(request);
 }
 
 export const config = {

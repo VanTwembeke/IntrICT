@@ -6,9 +6,11 @@ import Process from '@/components/home/Process';
 import Pricing from '@/components/home/Pricing';
 import Contact from '@/components/home/Contact';
 import BlogPostNotification from '@/components/home/BlogPostNotification';
+import LatestNews from '@/components/home/LatestNews';
 import BackToTop from '@/components/common/BackToTop';
 import HomeEffects from './HomeEffects';
 import { blogPosts } from '@/data/blog-posts';
+import { blogPostsEn } from '@/data/blog-posts/en';
 import { createClient } from '@/lib/supabase/server';
 import type { Package } from '@/lib/types';
 
@@ -28,12 +30,18 @@ export default async function Home() {
     oneTimePackages = all.filter((p) => p.billing_interval === 'one_time');
   } catch { /* packages not accessible — section hidden */ }
 
-  const latestPost = [...blogPosts].sort(
-    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-  )[0];
+  const sortedNl = [...blogPosts]
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+  const sortedEn = [...blogPostsEn]
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
+  const latestPost = sortedNl[0];
 
   // Strip content field — only pass meta to the client component
   const { content: _content, ...latestPostMeta } = latestPost;
+
+  const newsPostsNl = sortedNl.slice(0, 4).map(({ content: _c, ...meta }) => meta);
+  const newsPostsEn = sortedEn.slice(0, 4).map(({ content: _c, ...meta }) => meta);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -41,6 +49,7 @@ export default async function Home() {
       <Header />
       <main id="main-content">
         <Hero />
+        <LatestNews postsNl={newsPostsNl} postsEn={newsPostsEn} />
         <Services />
         <Process />
         <Pricing monthlyPackages={monthlyPackages} oneTimePackages={oneTimePackages} />

@@ -436,11 +436,13 @@ export function InvoicePDF({ invoice }: { invoice: Invoice }) {
   const sc = statusColor(invoice.status);
   const isOverdue = invoice.status === 'overdue';
 
-  const clientName    = invoice.profile?.full_name ?? invoice.profile?.email ?? '\u2014';
-  const clientCompany = invoice.profile?.company;
-  const clientVat     = invoice.profile?.vat_number;
-  const clientAddr    = invoice.profile?.address
-    ? `${invoice.profile.address}, ${invoice.profile.postal_code ?? ''} ${invoice.profile.city ?? ''}`.trim()
+  // Client data: prefer profile (linked Supabase account), fall back to guest fields
+  const clientName    = invoice.profile?.full_name ?? invoice.guest_name    ?? invoice.profile?.email ?? invoice.guest_email ?? '\u2014';
+  const clientCompany = invoice.profile?.company   ?? invoice.guest_company ?? null;
+  const clientVat     = invoice.profile?.vat_number ?? invoice.guest_vat_number ?? null;
+  const clientEmail   = invoice.profile?.email     ?? invoice.guest_email   ?? null;
+  const clientAddr    = (invoice.profile?.address ?? invoice.guest_address)
+    ? `${invoice.profile?.address ?? invoice.guest_address}, ${invoice.profile?.postal_code ?? invoice.guest_postal_code ?? ''} ${invoice.profile?.city ?? invoice.guest_city ?? ''}`.trim()
     : null;
 
   const ref = t.buildRef(invoice.invoice_number);
@@ -488,9 +490,9 @@ export function InvoicePDF({ invoice }: { invoice: Invoice }) {
             <Text style={s.infoLabel}>{t.clientLabel}</Text>
             {clientCompany && <Text style={s.infoName}>{clientCompany}</Text>}
             <Text style={clientCompany ? s.infoLine : s.infoName}>{clientName}</Text>
-            {clientAddr && <Text style={s.infoLine}>{clientAddr}</Text>}
-            {clientVat  && <Text style={s.infoLine}>{t.vatPrefix} {clientVat}</Text>}
-            <Text style={s.infoLine}>{invoice.profile?.email}</Text>
+            {clientAddr   && <Text style={s.infoLine}>{clientAddr}</Text>}
+            {clientVat    && <Text style={s.infoLine}>{t.vatPrefix} {clientVat}</Text>}
+            {clientEmail  && <Text style={s.infoLine}>{clientEmail}</Text>}
           </View>
 
           {/* Dates */}

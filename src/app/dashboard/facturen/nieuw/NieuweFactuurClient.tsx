@@ -5,8 +5,11 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft, Plus, Trash2, RefreshCw, Save, Eye, EyeOff, Package,
+  Users, UserPlus,
 } from 'lucide-react';
 import type { ClientDossier } from '@/lib/types';
+
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 interface LineItem {
   id: string;
@@ -23,6 +26,19 @@ interface AvailablePackage {
   color: string;
 }
 
+/** Manual client data entered by the admin for a new/unknown client. */
+interface GuestClientData {
+  name: string;
+  email: string;
+  company: string;
+  vat_number: string;
+  address: string;
+  postal_code: string;
+  city: string;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
 function newItem(): LineItem {
   return { id: crypto.randomUUID(), description: '', quantity: 1, unit_price: 0 };
 }
@@ -30,6 +46,12 @@ function newItem(): LineItem {
 function fmt(n: number) {
   return `€${n.toLocaleString('nl-BE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
+
+function emptyGuest(): GuestClientData {
+  return { name: '', email: '', company: '', vat_number: '', address: '', postal_code: '', city: '' };
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
 
 export default function NieuweFactuurClient({
   dossiers,
@@ -44,19 +66,26 @@ export default function NieuweFactuurClient({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
-  // Client selection
+  // ── Client mode ───────────────────────────────────────────────────────────
+  /** 'existing' = select from dossier list; 'new' = manually fill in client data */
+  const [clientMode, setClientMode] = useState<'existing' | 'new'>('existing');
   const [dossierId, setDossierId] = useState('');
+  const [guest, setGuest] = useState<GuestClientData>(emptyGuest());
+
   const selectedDossier = dossiers.find((d) => d.id === dossierId) ?? null;
 
-  // Pre-select if coming from dossier page
+  // Pre-select if navigating from a dossier page
   useEffect(() => {
     if (preselectedClientId) {
       const match = dossiers.find((d) => d.id === preselectedClientId);
-      if (match) setDossierId(match.id);
+      if (match) { setDossierId(match.id); setClientMode('existing'); }
     }
   }, [preselectedClientId, dossiers]);
 
-  // Invoice fields
+  const setGuestField = (field: keyof GuestClientData, value: string) =>
+    setGuest((prev) => ({ ...prev, [field]: value }));
+
+  // ── Invoice fields ────────────────────────────────────────────────────────
   const [issueDate, setIssueDate] = useState(new Date().toISOString().split('T')[0]);
   const [dueDate, setDueDate] = useState('');
   const [vatRate, setVatRate] = useState(21);
@@ -66,59 +95,96 @@ export default function NieuweFactuurClient({
   const [language, setLanguage] = useState<'nl' | 'en'>('nl');
   const [showPreview, setShowPreview] = useState(false);
 
-  // Line items
+  // ── Line items ────────────────────────────────────────────────────────────
   const [items, setItems] = useState<LineItem[]>([newItem()]);
 
-  const updateItem = (id: string, field: keyof LineItem, value: string | number) => {
+  const updateItem = (id: string, field: keyof LineItem, value: string | number) =>
     setItems((prev) => prev.map((it) => it.id === id ? { ...it, [field]: value } : it));
-  };
 
-  const removeItem = (id: string) => {
+  const removeItem = (id: string) =>
     setItems((prev) => prev.filter((it) => it.id !== id));
-  };
 
-  const addPackageItem = (pkg: AvailablePackage) => {
+  const addPackageItem = (pkg: AvailablePackage) =>
     setItems((prev) => [
       ...prev,
       { id: crypto.randomUUID(), description: pkg.name, quantity: 1, unit_price: pkg.price, package_id: pkg.id },
     ]);
-  };
 
-  const subtotal = items.reduce((s, it) => s + it.quantity * it.unit_price, 0);
+  // ── Totals ────────────────────────────────────────────────────────────────
+  const subtotal  = items.reduce((s, it) => s + it.quantity * it.unit_price, 0);
   const vatAmount = subtotal * (vatRate / 100);
-  const total = subtotal + vatAmount;
+  const total     = subtotal + vatAmount;
 
+  // ── Derived display values for the preview ────────────────────────────────
+  const previewName    = clientMode === 'existing'
+    ? (selectedDossier?.profile?.full_name ?? selectedDossier?.guest_name ?? '')
+    : guest.name;
+  const previewCompany = clientMode === 'existing'
+    ? (selectedDossier?.profile?.company ?? selectedDossier?.guest_company ?? '')
+    : guest.company;
+  const previewEmail   = clientMode === 'existing'
+    ? (selectedDossier?.profile?.email ?? selectedDossier?.guest_email ?? '')
+    : guest.email;
+  const previewVat     = clientMode === 'existing'
+    ? (selectedDossier?.profile?.vat_number ?? '')
+    : guest.vat_number;
+
+  // ── Submit ────────────────────────────────────────────────────────────────
   const handleSave = async (status: 'draft' | 'sent') => {
-    if (!dossierId) { setError('Selecteer eerst een klant.'); return; }
-    if (items.every((it) => !it.description.trim())) { setError('Voeg minstens één regelpost toe.'); return; }
     setError('');
-    setSaving(true);
 
+    // Validation
+    if (clientMode === 'existing' && !dossierId) {
+      setError('Selecteer een bestaande klant.'); return;
+    }
+    if (clientMode === 'new' && !guest.name.trim() && !guest.email.trim()) {
+      setError('Vul minstens de naam of het e-mailadres van de klant in.'); return;
+    }
+    if (items.every((it) => !it.description.trim())) {
+      setError('Voeg minstens één regelpost toe.'); return;
+    }
+
+    setSaving(true);
     try {
+      const payload: Record<string, unknown> = {
+        status,
+        issue_date:         issueDate,
+        due_date:           dueDate || null,
+        vat_rate:           vatRate,
+        notes:              notes || null,
+        language,
+        is_recurring:       isRecurring,
+        recurring_interval: isRecurring ? recurringInterval : null,
+        items: items
+          .filter((it) => it.description.trim())
+          .map((it) => ({
+            description: it.description,
+            quantity:    it.quantity,
+            unit_price:  it.unit_price,
+            total:       it.quantity * it.unit_price,
+            package_id:  it.package_id ?? null,
+          })),
+      };
+
+      if (clientMode === 'existing') {
+        // Link to existing dossier + profile
+        payload.dossier_id = dossierId;
+        payload.profile_id = selectedDossier?.profile_id ?? null;
+      } else {
+        // Send guest data — the API handles deduplication & dossier creation
+        payload.guest_name        = guest.name.trim()        || null;
+        payload.guest_email       = guest.email.trim()       || null;
+        payload.guest_company     = guest.company.trim()     || null;
+        payload.guest_vat_number  = guest.vat_number.trim()  || null;
+        payload.guest_address     = guest.address.trim()     || null;
+        payload.guest_postal_code = guest.postal_code.trim() || null;
+        payload.guest_city        = guest.city.trim()        || null;
+      }
+
       const res = await fetch('/api/invoices', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          dossier_id: dossierId,
-          profile_id: selectedDossier?.profile_id,
-          status,
-          issue_date: issueDate,
-          due_date: dueDate || null,
-          vat_rate: vatRate,
-          notes: notes || null,
-          language,
-          is_recurring: isRecurring,
-          recurring_interval: isRecurring ? recurringInterval : null,
-          items: items
-            .filter((it) => it.description.trim())
-            .map((it) => ({
-              description: it.description,
-              quantity: it.quantity,
-              unit_price: it.unit_price,
-              total: it.quantity * it.unit_price,
-              package_id: it.package_id ?? null,
-            })),
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -134,6 +200,7 @@ export default function NieuweFactuurClient({
     }
   };
 
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
@@ -146,7 +213,7 @@ export default function NieuweFactuurClient({
         </button>
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Nieuwe factuur</h1>
-          <p className="text-sm text-slate-500">Maak een factuur aan voor een klant</p>
+          <p className="text-sm text-slate-500">Maak een factuur aan voor een bestaande of nieuwe klant</p>
         </div>
         <div className="flex items-center gap-2 ml-auto">
           <button
@@ -166,39 +233,177 @@ export default function NieuweFactuurClient({
             <div className="p-3 text-sm text-red-700 border border-red-200 bg-red-50 rounded-xl">{error}</div>
           )}
 
-          {/* Client */}
+          {/* ── Client card ── */}
           <div className="p-5 space-y-4 bg-white border shadow-sm rounded-2xl border-slate-200">
-            <h2 className="font-bold text-slate-900">Klant</h2>
-            <select
-              value={dossierId}
-              onChange={(e) => setDossierId(e.target.value)}
-              className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800"
-            >
-              <option value="">— Selecteer klant —</option>
-              {dossiers.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.profile?.full_name ?? d.profile?.email ?? d.id}
-                  {d.profile?.company ? ` (${d.profile.company})` : ''}
-                </option>
-              ))}
-            </select>
-
-            {selectedDossier && (
-              <div className="p-3 bg-slate-50 rounded-xl text-sm text-slate-600 space-y-0.5">
-                {selectedDossier.profile?.company && <p className="font-semibold">{selectedDossier.profile.company}</p>}
-                <p>{selectedDossier.profile?.full_name}</p>
-                <p className="text-slate-400">{selectedDossier.profile?.email}</p>
-                {selectedDossier.profile?.vat_number && <p className="text-slate-400">BTW: {selectedDossier.profile.vat_number}</p>}
-                {selectedDossier.profile?.address && (
-                  <p className="text-slate-400">
-                    {selectedDossier.profile.address}, {selectedDossier.profile.postal_code} {selectedDossier.profile.city}
-                  </p>
-                )}
+            <div className="flex items-center justify-between">
+              <h2 className="font-bold text-slate-900">Klant</h2>
+              {/* Toggle: existing vs new */}
+              <div className="inline-flex items-center gap-0.5 px-1 py-1 bg-slate-100 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => setClientMode('existing')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                    clientMode === 'existing' ? 'bg-white shadow text-slate-900' : 'text-slate-400 hover:text-slate-600'
+                  }`}
+                >
+                  <Users size={11} />
+                  Bestaande klant
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setClientMode('new')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                    clientMode === 'new' ? 'bg-white shadow text-slate-900' : 'text-slate-400 hover:text-slate-600'
+                  }`}
+                >
+                  <UserPlus size={11} />
+                  Nieuwe klant
+                </button>
               </div>
-            )}
+            </div>
+
+            <AnimatePresence mode="wait">
+              {clientMode === 'existing' ? (
+                <motion.div
+                  key="existing"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.15 }}
+                  className="space-y-3"
+                >
+                  <select
+                    value={dossierId}
+                    onChange={(e) => setDossierId(e.target.value)}
+                    className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800"
+                  >
+                    <option value="">— Selecteer klant —</option>
+                    {dossiers.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.profile?.full_name ?? d.guest_name ?? d.profile?.email ?? d.guest_email ?? d.id}
+                        {(d.profile?.company ?? d.guest_company) ? ` (${d.profile?.company ?? d.guest_company})` : ''}
+                      </option>
+                    ))}
+                  </select>
+
+                  {selectedDossier && (
+                    <div className="p-3 bg-slate-50 rounded-xl text-sm text-slate-600 space-y-0.5">
+                      {(selectedDossier.profile?.company ?? selectedDossier.guest_company) && (
+                        <p className="font-semibold">{selectedDossier.profile?.company ?? selectedDossier.guest_company}</p>
+                      )}
+                      <p>{selectedDossier.profile?.full_name ?? selectedDossier.guest_name}</p>
+                      <p className="text-slate-400">{selectedDossier.profile?.email ?? selectedDossier.guest_email}</p>
+                      {selectedDossier.profile?.vat_number && (
+                        <p className="text-slate-400">BTW: {selectedDossier.profile.vat_number}</p>
+                      )}
+                      {selectedDossier.profile?.address && (
+                        <p className="text-slate-400">
+                          {selectedDossier.profile.address}, {selectedDossier.profile.postal_code} {selectedDossier.profile.city}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="new"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.15 }}
+                  className="space-y-3"
+                >
+                  {/* Info banner */}
+                  <div className="flex items-start gap-2 p-3 text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded-xl">
+                    <UserPlus size={13} className="mt-0.5 shrink-0" />
+                    <span>
+                      Het systeem controleert automatisch of deze klant al bestaat op basis van e-mail of BTW-nummer.
+                      Zo niet, wordt er automatisch een nieuw klantdossier aangemaakt.
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-500 mb-1.5">
+                        Naam <span className="text-red-400">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={guest.name}
+                        onChange={(e) => setGuestField('name', e.target.value)}
+                        placeholder="Jan Janssen"
+                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 placeholder:text-slate-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-500 mb-1.5">E-mailadres</label>
+                      <input
+                        type="email"
+                        value={guest.email}
+                        onChange={(e) => setGuestField('email', e.target.value)}
+                        placeholder="jan@bedrijf.be"
+                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 placeholder:text-slate-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-500 mb-1.5">Bedrijfsnaam</label>
+                      <input
+                        type="text"
+                        value={guest.company}
+                        onChange={(e) => setGuestField('company', e.target.value)}
+                        placeholder="Bedrijf BV (optioneel)"
+                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 placeholder:text-slate-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-500 mb-1.5">BTW-nummer</label>
+                      <input
+                        type="text"
+                        value={guest.vat_number}
+                        onChange={(e) => setGuestField('vat_number', e.target.value)}
+                        placeholder="BE 0000.000.000"
+                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 placeholder:text-slate-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-500 mb-1.5">Adres</label>
+                      <input
+                        type="text"
+                        value={guest.address}
+                        onChange={(e) => setGuestField('address', e.target.value)}
+                        placeholder="Straat 1"
+                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 placeholder:text-slate-300"
+                      />
+                    </div>
+                    <div className="grid grid-cols-5 gap-2">
+                      <div className="col-span-2">
+                        <label className="block text-xs font-semibold text-slate-500 mb-1.5">Postcode</label>
+                        <input
+                          type="text"
+                          value={guest.postal_code}
+                          onChange={(e) => setGuestField('postal_code', e.target.value)}
+                          placeholder="9000"
+                          className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 placeholder:text-slate-300"
+                        />
+                      </div>
+                      <div className="col-span-3">
+                        <label className="block text-xs font-semibold text-slate-500 mb-1.5">Gemeente</label>
+                        <input
+                          type="text"
+                          value={guest.city}
+                          onChange={(e) => setGuestField('city', e.target.value)}
+                          placeholder="Gent"
+                          className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 placeholder:text-slate-300"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          {/* Dates & VAT */}
+          {/* ── Dates, VAT, language, recurring ── */}
           <div className="p-5 space-y-4 bg-white border shadow-sm rounded-2xl border-slate-200">
             <h2 className="font-bold text-slate-900">Factuurgegevens</h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -239,25 +444,23 @@ export default function NieuweFactuurClient({
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5">Taal PDF</label>
               <div className="inline-flex items-center gap-0.5 px-1 py-1 bg-slate-100 rounded-xl">
-                <button
-                  type="button"
-                  onClick={() => setLanguage('nl')}
-                  className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${language === 'nl' ? 'bg-white shadow text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}
-                >
-                  NL
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLanguage('en')}
-                  className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${language === 'en' ? 'bg-white shadow text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}
-                >
-                  EN
-                </button>
+                {(['nl', 'en'] as const).map((l) => (
+                  <button
+                    key={l}
+                    type="button"
+                    onClick={() => setLanguage(l)}
+                    className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                      language === l ? 'bg-white shadow text-slate-900' : 'text-slate-400 hover:text-slate-600'
+                    }`}
+                  >
+                    {l.toUpperCase()}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Recurring */}
-            <div className="flex items-center gap-3 pt-1">
+            {/* Recurring toggle */}
+            <div className="flex items-center gap-3 pt-1 flex-wrap">
               <button
                 type="button"
                 onClick={() => setIsRecurring((v) => !v)}
@@ -275,31 +478,40 @@ export default function NieuweFactuurClient({
               </span>
               <AnimatePresence>
                 {isRecurring && (
-                  <motion.select
+                  <motion.div
                     initial={{ opacity: 0, width: 0 }}
                     animate={{ opacity: 1, width: 'auto' }}
                     exit={{ opacity: 0, width: 0 }}
-                    value={recurringInterval}
-                    onChange={(e) => setRecurringInterval(e.target.value as 'monthly' | 'quarterly' | 'yearly')}
-                    className="px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-300 bg-white text-slate-700"
+                    className="flex items-center gap-2 overflow-hidden"
                   >
-                    <option value="monthly">Maandelijks</option>
-                    <option value="quarterly">Per kwartaal</option>
-                    <option value="yearly">Jaarlijks</option>
-                  </motion.select>
+                    <select
+                      value={recurringInterval}
+                      onChange={(e) => setRecurringInterval(e.target.value as 'monthly' | 'quarterly' | 'yearly')}
+                      className="px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-300 bg-white text-slate-700"
+                    >
+                      <option value="monthly">Maandelijks</option>
+                      <option value="quarterly">Per kwartaal</option>
+                      <option value="yearly">Jaarlijks</option>
+                    </select>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </div>
+            {isRecurring && (
+              <p className="text-xs text-purple-600 bg-purple-50 border border-purple-100 rounded-lg px-3 py-2">
+                De eerste factuur wordt direct aangemaakt. Volgende facturen worden automatisch gegenereerd op basis van het gekozen interval.
+              </p>
+            )}
           </div>
 
-          {/* Line items */}
+          {/* ── Line items ── */}
           <div className="p-5 space-y-4 bg-white border shadow-sm rounded-2xl border-slate-200">
             <div className="flex items-center justify-between">
               <h2 className="font-bold text-slate-900">Regelposten</h2>
             </div>
 
-            {/* Package quick-add */}
-            {selectedDossier && availablePackages.length > 0 && (
+            {/* Package quick-add (only when an existing client is selected) */}
+            {clientMode === 'existing' && selectedDossier && availablePackages.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {availablePackages.map((pkg) => (
                   <button
@@ -316,7 +528,7 @@ export default function NieuweFactuurClient({
               </div>
             )}
 
-            {/* Items list */}
+            {/* Items */}
             <div className="space-y-2">
               {items.map((item, i) => (
                 <div key={item.id} className="grid items-center grid-cols-12 gap-2">
@@ -375,7 +587,7 @@ export default function NieuweFactuurClient({
             </button>
           </div>
 
-          {/* Notes */}
+          {/* ── Notes ── */}
           <div className="p-5 space-y-3 bg-white border shadow-sm rounded-2xl border-slate-200">
             <h2 className="font-bold text-slate-900">Opmerkingen</h2>
             <textarea
@@ -388,9 +600,8 @@ export default function NieuweFactuurClient({
           </div>
         </div>
 
-        {/* Sidebar: totals + actions */}
+        {/* ── Sidebar: totals + actions ── */}
         <div className="space-y-5">
-          {/* Totals */}
           <div className="sticky p-5 space-y-3 bg-white border shadow-sm rounded-2xl border-slate-200 top-6">
             <h2 className="font-bold text-slate-900">Totaal</h2>
             <div className="space-y-2 text-sm">
@@ -429,7 +640,7 @@ export default function NieuweFactuurClient({
         </div>
       </div>
 
-      {/* Preview */}
+      {/* ── Preview ── */}
       <AnimatePresence>
         {showPreview && (
           <motion.div
@@ -443,6 +654,12 @@ export default function NieuweFactuurClient({
                 <h2 className="text-2xl font-bold text-slate-900">FACTUUR</h2>
                 <p className="mt-1 text-sm text-slate-400">Datum: {new Date(issueDate).toLocaleDateString('nl-BE')}</p>
                 {dueDate && <p className="text-sm text-slate-400">Vervaldatum: {new Date(dueDate).toLocaleDateString('nl-BE')}</p>}
+                {isRecurring && (
+                  <p className="text-xs text-purple-600 mt-1 flex items-center gap-1">
+                    <RefreshCw size={10} />
+                    Terugkerend — {recurringInterval === 'monthly' ? 'maandelijks' : recurringInterval === 'quarterly' ? 'per kwartaal' : 'jaarlijks'}
+                  </p>
+                )}
               </div>
               <div className="text-right">
                 <p className="text-xl font-bold text-blue-600">IntrICT</p>
@@ -450,12 +667,13 @@ export default function NieuweFactuurClient({
               </div>
             </div>
 
-            {selectedDossier && (
+            {(previewName || previewCompany || previewEmail) && (
               <div className="p-4 mb-6 text-sm bg-slate-50 rounded-xl">
                 <p className="mb-1 font-semibold text-slate-800">Aan:</p>
-                {selectedDossier.profile?.company && <p className="font-medium">{selectedDossier.profile.company}</p>}
-                <p>{selectedDossier.profile?.full_name}</p>
-                <p className="text-slate-500">{selectedDossier.profile?.email}</p>
+                {previewCompany && <p className="font-medium">{previewCompany}</p>}
+                {previewName    && <p>{previewName}</p>}
+                {previewEmail   && <p className="text-slate-500">{previewEmail}</p>}
+                {previewVat     && <p className="text-slate-500">BTW: {previewVat}</p>}
               </div>
             )}
 

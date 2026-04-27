@@ -212,6 +212,51 @@ export interface InvoiceItem {
   created_at: string;
 }
 
+// ─── Contracts ────────────────────────────────────────────────────────────────
+
+export type ContractServiceType = 'website' | 'hosting' | 'domain' | 'other';
+export type ContractStatus      = 'active' | 'cancelled';
+
+export interface Contract {
+  id: string;
+  contract_number: string;
+  // Client linkage
+  dossier_id: string | null;
+  profile_id: string | null;
+  // Guest client fields
+  guest_name: string | null;
+  guest_email: string | null;
+  guest_company: string | null;
+  guest_vat_number: string | null;
+  guest_address: string | null;
+  guest_postal_code: string | null;
+  guest_city: string | null;
+  // Service
+  service_type: ContractServiceType;
+  service_description: string;
+  // Pricing
+  monthly_price_excl_vat: number;
+  vat_rate: number;
+  // Dates
+  start_date: string;
+  first_invoice_date: string;
+  // Status & cancellation
+  status: ContractStatus;
+  notice_period_months: number;
+  cancellation_date: string | null;
+  cancellation_reason: string | null;
+  // Linked invoice
+  recurring_invoice_id: string | null;
+  // Document
+  contract_text: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined relations
+  profile?: { full_name: string | null; email: string; company: string | null; vat_number: string | null; address: string | null; postal_code: string | null; city: string | null } | null;
+  dossier?: { id: string; guest_name: string | null; guest_email: string | null; guest_company: string | null } | null;
+}
+
 export interface NotificationPreferences {
   email_messages?: boolean;
   email_invoices?: boolean;

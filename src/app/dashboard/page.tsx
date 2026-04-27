@@ -5,9 +5,9 @@ import {
   Users, User, Mail, Package, ArrowRight, Calendar,
   Sparkles, ClipboardList, Clock, CheckCircle,
   MessageSquare, TrendingUp, CalendarCheck, Receipt, FolderOpen,
-  RefreshCw, AlertCircle,
+  RefreshCw, AlertCircle, FileSignature,
 } from 'lucide-react';
-import type { Profile, Appointment, ActivityLog, Invoice } from '@/lib/types';
+import type { Profile, Appointment, ActivityLog, Invoice, PackageRequest } from '@/lib/types';
 import AdminOnly from '@/components/dashboard/AdminOnly';
 
 // ─── Activity feed item ───────────────────────────────────────────────────────
@@ -134,13 +134,15 @@ export default async function DashboardPage() {
 
   // ── User-specific data ───────────────────────────────────────────────────────
   type OpenInvoice = Pick<Invoice, 'id' | 'invoice_number' | 'status' | 'total' | 'due_date'>;
-  type UserAppt = Pick<Appointment, 'id' | 'type_name' | 'starts_at' | 'status' | 'color'>;
+  type UserAppt    = Pick<Appointment, 'id' | 'type_name' | 'starts_at' | 'status' | 'color'>;
+  type UserRequest = Pick<PackageRequest, 'id' | 'package_name' | 'package_price' | 'status' | 'created_at'>;
 
   let userOpenInvoices: OpenInvoice[] = [];
   let userOpenTotal = 0;
   let userPaidTotal = 0;
   let userUpcomingAppointments: UserAppt[] = [];
-  let userRequestCount = 0;
+  let userRequests: UserRequest[] = [];
+  let userActiveContractCount = 0;
 
   if (!isAdmin) {
     try {
@@ -170,102 +172,56 @@ export default async function DashboardPage() {
         .gte('starts_at', now)
         .in('status', ['pending', 'confirmed'])
         .order('starts_at', { ascending: true })
-        .limit(3);
+        .limit(5);
       userUpcomingAppointments = (appts ?? []) as UserAppt[];
     } catch { /* appointments table not yet created */ }
 
     try {
-      const { count } = await supabase
+      const { data: reqs } = await supabase
         .from('package_requests')
+        .select('id, package_name, package_price, status, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(10);
+      userRequests = (reqs ?? []) as UserRequest[];
+    } catch {}
+
+    try {
+      const { count } = await supabase
+        .from('contracts')
         .select('id', { count: 'exact', head: true })
-        .eq('user_id', user.id);
-      userRequestCount = count ?? 0;
+        .eq('profile_id', user.id)
+        .eq('status', 'active');
+      userActiveContractCount = count ?? 0;
     } catch {}
   }
 
-  // ── Activity feed (recent 8 items) ───────────────────────────────────────────
+  // ── Activity feed — admin only ────────────────────────────────────────────────
+  // Users have a dedicated "Mijn aanvragen" card instead of this feed.
   const activity: ActivityItem[] = [];
 
-  try {
-    // Package requests: admin sees all, user sees own
-    const reqQuery = supabase
-      .from('package_requests')
-      .select('id, package_name, package_price, status, created_at, profile:profiles(full_name, email)')
-      .order('created_at', { ascending: false })
-      .limit(5);
-
-    const { data: requests } = isAdmin
-      ? await reqQuery
-      : await reqQuery.eq('user_id', user.id);
-
-    if (requests) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      for (const r of requests as any[]) {
-        activity.push({
-          id: r.id,
-          type: 'request',
-          title: isAdmin
-            ? `${r.profile?.full_name ?? r.profile?.email ?? 'Gebruiker'} — ${r.package_name}`
-            : `Aanvraag ${r.package_name}`,
-          subtitle: `€${r.package_price.toLocaleString('nl-BE')} · ${REQUEST_STATUS_LABELS[r.status] ?? r.status}`,
-          time: r.created_at,
-          status: r.status,
-        });
-      }
-    }
-  } catch { /* table not yet created */ }
-
-  // Invoice + appointment activity for regular users
-  if (!isAdmin) {
-    const INVOICE_STATUS_LABELS: Record<string, string> = {
-      draft: 'Concept', sent: 'Verstuurd', paid: 'Betaald', overdue: 'Vervallen', cancelled: 'Geannuleerd',
-    };
+  if (isAdmin) {
     try {
-      const { data: invoices } = await supabase
-        .from('invoices')
-        .select('id, invoice_number, status, total, created_at')
-        .eq('profile_id', user.id)
+      const { data: requests } = await supabase
+        .from('package_requests')
+        .select('id, package_name, package_price, status, created_at, profile:profiles(full_name, email)')
         .order('created_at', { ascending: false })
         .limit(5);
-      if (invoices) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        for (const inv of invoices as any[]) {
-          activity.push({
-            id: `inv-${inv.id}`,
-            type: 'invoice',
-            title: `Factuur ${inv.invoice_number}`,
-            subtitle: `€${(inv.total as number).toLocaleString('nl-BE')} · ${INVOICE_STATUS_LABELS[inv.status] ?? inv.status}`,
-            time: inv.created_at,
-            status: inv.status,
-          });
-        }
-      }
-    } catch {}
 
-    try {
-      const { data: appts } = await supabase
-        .from('appointments')
-        .select('id, type_name, starts_at, status, created_at')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(3);
-      if (appts) {
+      if (requests) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        for (const appt of appts as any[]) {
-          const d = new Date(appt.starts_at as string);
-          const dateStr = d.toLocaleDateString('nl-BE', { weekday: 'short', day: 'numeric', month: 'short' });
-          const timeStr = d.toLocaleTimeString('nl-BE', { hour: '2-digit', minute: '2-digit' });
+        for (const r of requests as any[]) {
           activity.push({
-            id: `appt-${appt.id}`,
-            type: 'appointment',
-            title: `Afspraak: ${appt.type_name}`,
-            subtitle: `${dateStr} om ${timeStr}`,
-            time: appt.created_at,
-            status: appt.status,
+            id: r.id,
+            type: 'request',
+            title: `${r.profile?.full_name ?? r.profile?.email ?? 'Gebruiker'} — ${r.package_name}`,
+            subtitle: `€${r.package_price.toLocaleString('nl-BE')} · ${REQUEST_STATUS_LABELS[r.status] ?? r.status}`,
+            time: r.created_at,
+            status: r.status,
           });
         }
       }
-    } catch {}
+    } catch { /* table not yet created */ }
   }
 
   // Activity logs (from client system)
@@ -329,7 +285,8 @@ export default async function DashboardPage() {
       {/* User stats grid */}
       {!isAdmin && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-          <Link href="/dashboard/facturen" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 relative">
+          {/* Open invoices → mijn-facturen */}
+          <Link href="/dashboard/mijn-facturen" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 relative">
             {userOpenInvoices.some(i => i.status === 'overdue') && (
               <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-400 text-white text-[10px] font-bold rounded-full flex items-center justify-center">!</span>
             )}
@@ -343,32 +300,35 @@ export default async function DashboardPage() {
             <p className="text-xs font-medium text-slate-400 mt-0.5">Openstaand</p>
           </Link>
 
-          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+          {/* Paid total → mijn-facturen */}
+          <Link href="/dashboard/mijn-facturen" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
             <div className="flex items-center justify-between mb-3">
               <div className="p-2 bg-emerald-50 rounded-xl"><CheckCircle size={18} className="text-emerald-600" /></div>
+              <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-2xl font-bold text-slate-900">
               {userPaidTotal > 0 ? `€${userPaidTotal.toLocaleString('nl-BE')}` : '—'}
             </p>
             <p className="text-xs font-medium text-slate-400 mt-0.5">Betaald totaal</p>
-          </div>
+          </Link>
 
-          <Link href="/dashboard/kalender" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
+          {/* Upcoming appointments — informational, no calendar link */}
+          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <div className="p-2 bg-blue-50 rounded-xl"><CalendarCheck size={18} className="text-blue-600" /></div>
-              <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-2xl font-bold text-slate-900">{userUpcomingAppointments.length}</p>
             <p className="text-xs font-medium text-slate-400 mt-0.5">Komende afspraken</p>
-          </Link>
+          </div>
 
-          <Link href="/dashboard/aanvragen" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
+          {/* Active contracts → mijn-contracten */}
+          <Link href="/dashboard/mijn-contracten" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
             <div className="flex items-center justify-between mb-3">
-              <div className="p-2 bg-indigo-50 rounded-xl"><ClipboardList size={18} className="text-indigo-600" /></div>
+              <div className="p-2 bg-indigo-50 rounded-xl"><FileSignature size={18} className="text-indigo-600" /></div>
               <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
             </div>
-            <p className="text-2xl font-bold text-slate-900">{userRequestCount}</p>
-            <p className="text-xs font-medium text-slate-400 mt-0.5">Aanvragen</p>
+            <p className="text-2xl font-bold text-slate-900">{userActiveContractCount}</p>
+            <p className="text-xs font-medium text-slate-400 mt-0.5">Actieve contracten</p>
           </Link>
         </div>
       )}
@@ -381,7 +341,7 @@ export default async function DashboardPage() {
               <div className="p-2 bg-orange-50 rounded-xl"><Receipt size={18} className="text-orange-600" /></div>
               <h3 className="font-bold text-slate-900">Openstaande facturen</h3>
             </div>
-            <Link href="/dashboard/facturen" className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+            <Link href="/dashboard/mijn-facturen" className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
               Alle facturen →
             </Link>
           </div>
@@ -622,78 +582,125 @@ export default async function DashboardPage() {
             </Link>
           </div>
 
-          {/* Upcoming appointments for regular users */}
+          {/* Upcoming appointments for regular users — no calendar link */}
           {!isAdmin && userUpcomingAppointments.length > 0 && (
             <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
               <div className="flex items-center gap-3 mb-3">
                 <div className="p-2 bg-blue-50 rounded-xl"><CalendarCheck size={18} className="text-blue-600" /></div>
                 <h3 className="font-bold text-slate-900">Komende afspraken</h3>
               </div>
-              <div className="space-y-2.5 mb-4">
+              <div className="space-y-2.5">
                 {userUpcomingAppointments.map(appt => {
                   const d = new Date(appt.starts_at);
+                  const isPending = appt.status === 'pending';
                   return (
-                    <div key={appt.id} className="flex items-center gap-2.5">
-                      <div className="w-1 h-7 rounded-full shrink-0" style={{ backgroundColor: appt.color ?? '#3b82f6' }} />
+                    <div key={appt.id} className="flex items-start gap-2.5">
+                      <div className="w-1 h-8 rounded-full shrink-0 mt-0.5" style={{ backgroundColor: appt.color ?? '#3b82f6' }} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-slate-700 truncate">{appt.type_name}</p>
                         <p className="text-xs text-slate-400">
-                          {d.toLocaleDateString('nl-BE', { weekday: 'short', day: 'numeric', month: 'short' })}
-                          {' '}·{' '}
+                          {d.toLocaleDateString('nl-BE', { weekday: 'long', day: 'numeric', month: 'short' })}
+                          {' '}om{' '}
                           {d.toLocaleTimeString('nl-BE', { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>
+                      {isPending && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded-md shrink-0">
+                          In behandeling
+                        </span>
+                      )}
                     </div>
                   );
                 })}
               </div>
-              <Link href="/dashboard/kalender" className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-                Kalender <ArrowRight size={13} />
-              </Link>
             </div>
           )}
         </div>
 
-        {/* Activity feed */}
+        {/* Activity feed (admin) / Aanvragen opvolging (user) */}
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-            <h2 className="font-bold text-slate-900">Recente activiteit</h2>
-            {isAdmin ? (
-              <AdminOnly>
-                <Link href="/dashboard/aanvragen" className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-                  Alle aanvragen →
-                </Link>
-              </AdminOnly>
-            ) : (
-              <Link href="/dashboard/facturen" className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-                Facturen →
-              </Link>
-            )}
-          </div>
-
-          {recentActivity.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center px-6">
-              <Clock size={28} className="text-slate-200 mb-3" />
-              <p className="text-sm text-slate-400 font-medium">Nog geen activiteit</p>
-              <p className="text-xs text-slate-300 mt-1">
-                Activiteit verschijnt hier zodra je een pakket aanvraagt of een bericht ontvangt.
-              </p>
-            </div>
-          ) : (
-            <div className="divide-y divide-slate-100">
-              {recentActivity.map((item) => (
-                <div key={item.id} className="flex items-center gap-4 px-6 py-3.5">
-                  <div className="p-2 bg-slate-50 rounded-xl shrink-0">
-                    <ActivityIcon type={item.type} status={item.status} activityType={item.activityType} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-slate-800 truncate">{item.title}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{item.subtitle}</p>
-                  </div>
-                  <span className="text-xs text-slate-400 shrink-0">{formatTime(item.time)}</span>
+          {isAdmin ? (
+            <>
+              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                <h2 className="font-bold text-slate-900">Recente activiteit</h2>
+                <AdminOnly>
+                  <Link href="/dashboard/aanvragen" className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+                    Alle aanvragen →
+                  </Link>
+                </AdminOnly>
+              </div>
+              {recentActivity.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 text-center px-6">
+                  <Clock size={28} className="text-slate-200 mb-3" />
+                  <p className="text-sm text-slate-400 font-medium">Nog geen activiteit</p>
                 </div>
-              ))}
-            </div>
+              ) : (
+                <div className="divide-y divide-slate-100">
+                  {recentActivity.map((item) => (
+                    <div key={item.id} className="flex items-center gap-4 px-6 py-3.5">
+                      <div className="p-2 bg-slate-50 rounded-xl shrink-0">
+                        <ActivityIcon type={item.type} status={item.status} activityType={item.activityType} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-slate-800 truncate">{item.title}</p>
+                        <p className="text-xs text-slate-400 mt-0.5">{item.subtitle}</p>
+                      </div>
+                      <span className="text-xs text-slate-400 shrink-0">{formatTime(item.time)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            /* ── User: Mijn aanvragen ── */
+            <>
+              <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-100">
+                <div className="p-2 bg-indigo-50 rounded-xl"><ClipboardList size={18} className="text-indigo-600" /></div>
+                <h2 className="font-bold text-slate-900">Mijn aanvragen</h2>
+              </div>
+              {userRequests.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 text-center px-6">
+                  <ClipboardList size={28} className="text-slate-200 mb-3" />
+                  <p className="text-sm text-slate-400 font-medium">Geen aanvragen gevonden.</p>
+                  <p className="text-xs text-slate-300 mt-1">
+                    Vraag een pakket aan via &apos;Pakketten&apos; in het menu.
+                  </p>
+                </div>
+              ) : (
+                <div className="divide-y divide-slate-100">
+                  {userRequests.map((req) => {
+                    const STATUS_BADGES: Record<string, string> = {
+                      pending:   'bg-amber-100 text-amber-700',
+                      contacted: 'bg-blue-100 text-blue-700',
+                      accepted:  'bg-green-100 text-green-700',
+                      rejected:  'bg-slate-100 text-slate-500',
+                    };
+                    const STATUS_LABELS: Record<string, string> = {
+                      pending:   'In behandeling',
+                      contacted: 'Gecontacteerd',
+                      accepted:  'Geaccepteerd',
+                      rejected:  'Niet weerhouden',
+                    };
+                    return (
+                      <div key={req.id} className="flex items-center gap-4 px-6 py-3.5">
+                        <div className="p-2 bg-slate-50 rounded-xl shrink-0">
+                          <Package size={15} className="text-indigo-500" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-slate-800 truncate">{req.package_name}</p>
+                          <p className="text-xs text-slate-400 mt-0.5">
+                            €{(req.package_price ?? 0).toLocaleString('nl-BE')} · {formatTime(req.created_at)}
+                          </p>
+                        </div>
+                        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 ${STATUS_BADGES[req.status] ?? 'bg-slate-100 text-slate-500'}`}>
+                          {STATUS_LABELS[req.status] ?? req.status}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

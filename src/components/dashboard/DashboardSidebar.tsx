@@ -24,6 +24,7 @@ import {
   FolderOpen,
   Receipt,
   Newspaper,
+  FileSignature,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useMessages } from '@/hooks/useMessages';
@@ -47,10 +48,13 @@ const mainNavItems: NavItem[] = [
   { label: 'Dashboard',       href: '/dashboard',            icon: <LayoutDashboard size={18} />, roles: ['admin', 'user'], exact: true },
   { label: 'Berichten',       href: '/dashboard/messages',   icon: <Mail size={18} />,            roles: ['admin', 'user'], badge: 'unread' },
   { label: 'Pakketten',       href: '/dashboard/pakketten',  icon: <Package size={18} />,         roles: ['admin', 'user'] },
-  { label: 'Kalender',        href: '/dashboard/kalender',   icon: <CalendarDays size={18} />,    roles: ['admin', 'user'], exact: false, badge: 'pending_appt' },
-  { label: 'Aanvragen',       href: '/dashboard/aanvragen',  icon: <ClipboardList size={18} />,   roles: ['admin'],         badge: 'pending' },
-  { label: 'Klanten',         href: '/dashboard/klanten',    icon: <FolderOpen size={18} />,      roles: ['admin'],         exact: false },
-  { label: 'Facturen',        href: '/dashboard/facturen',   icon: <Receipt size={18} />,         roles: ['admin'],         exact: false },
+  { label: 'Kalender',         href: '/dashboard/kalender',        icon: <CalendarDays size={18} />,    roles: ['admin'],         exact: false, badge: 'pending_appt' },
+  { label: 'Aanvragen',        href: '/dashboard/aanvragen',       icon: <ClipboardList size={18} />,   roles: ['admin'],         badge: 'pending' },
+  { label: 'Klanten',          href: '/dashboard/klanten',         icon: <FolderOpen size={18} />,      roles: ['admin'],         exact: false },
+  { label: 'Facturen',         href: '/dashboard/facturen',        icon: <Receipt size={18} />,         roles: ['admin'],         exact: false },
+  { label: 'Contracten',       href: '/dashboard/contracten',      icon: <FileSignature size={18} />,   roles: ['admin'],         exact: false },
+  { label: 'Mijn facturen',    href: '/dashboard/mijn-facturen',   icon: <Receipt size={18} />,         roles: ['user'],          exact: false },
+  { label: 'Mijn contracten',  href: '/dashboard/mijn-contracten', icon: <FileSignature size={18} />,   roles: ['user'],          exact: false },
   { label: 'Gebruikers',      href: '/dashboard/users',      icon: <Users size={18} />,           roles: ['admin'] },
   { label: 'E-mail verzenden',href: '/dashboard/email',          icon: <Send size={18} />,      roles: ['admin'] },
   { label: 'Nieuwsbrief',    href: '/dashboard/nieuwsbrief',    icon: <Newspaper size={18} />, roles: ['admin'], exact: false },

@@ -16,6 +16,56 @@ import { blogPosts } from '@/data/blog-posts';
 import { useLanguage } from '@/contexts/LanguageContext';
 import type { Lang } from '@/i18n';
 
+// ─── Logo ─────────────────────────────────────────────────────────────────────
+
+/**
+ * Inline SVG logo mark — adapts to dark or light backgrounds.
+ * Based on IntrICT brand assets (badge_dark_v2 / badge_light_v2).
+ * No background rectangle: the icon mark and wordmark are rendered
+ * directly in the correct colour for the current header state.
+ *
+ * variant='dark'  → white elements — use on dark/transparent headers
+ * variant='light' → dark elements  — use on white/light headers
+ */
+function IntrICTLogo({ variant, className }: { variant: 'dark' | 'light'; className?: string }) {
+  const fill   = variant === 'dark' ? '#ffffff' : '#2B2F43';
+  const accent = variant === 'dark' ? 'rgba(255,255,255,0.5)' : '#8891A8';
+
+  return (
+    <svg
+      viewBox="24 22 450 135"
+      className={className ?? 'h-9 w-auto'}
+      aria-label="IntrICT"
+      role="img"
+    >
+      {/* i — dot */}
+      <circle cx="44" cy="52" r="17" fill={fill} />
+      {/* i — stem */}
+      <rect x="35" y="75" width="19" height="80" rx="10" fill={fill} />
+      {/* C — top & bottom dots */}
+      <circle cx="84" cy="69" r="10" fill={fill} />
+      <circle cx="84" cy="111" r="10" fill={fill} />
+      {/* / — diagonal bar (I letter) */}
+      <line x1="132" y1="28" x2="116" y2="152" stroke={fill} strokeWidth="18" strokeLinecap="round" />
+      {/* > — chevron bracket */}
+      <path d="M 162 25 L 214 90 L 162 155" fill="none" stroke={accent} strokeWidth="18" strokeLinecap="round" strokeLinejoin="round" />
+      {/* divider */}
+      <line x1="253" y1="40" x2="253" y2="140" stroke={fill} strokeWidth="1" opacity="0.2" />
+      {/* wordmark */}
+      <text
+        x="284" y="108"
+        fontFamily="'SF Pro Display','Segoe UI',Helvetica,Arial,sans-serif"
+        fontSize="52"
+        fontWeight="700"
+        fill={fill}
+        letterSpacing="-1"
+      >
+        IntrICT
+      </text>
+    </svg>
+  );
+}
+
 // ─── Fuzzy search ─────────────────────────────────────────────────────────────
 
 function levenshtein(a: string, b: string): number {
@@ -435,7 +485,9 @@ function MobileDrawer({
           >
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-5 border-b border-slate-100 shrink-0">
-              <Link href="/" onClick={onClose} className="text-xl font-bold text-slate-900">IntrICT</Link>
+              <Link href="/" onClick={onClose} className="shrink-0">
+                <IntrICTLogo variant="light" className="h-8 w-auto" />
+              </Link>
               <button onClick={onClose} className="p-2 transition-all rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100">
                 <X size={20} />
               </button>
@@ -780,9 +832,8 @@ export default function Header() {
           <div className="flex items-center justify-between h-16 gap-4">
 
             {/* Logo */}
-            <motion.a href="/" whileHover={{ scale: 1.04 }}
-              className={`font-bold text-xl shrink-0 transition-colors duration-300 ${isScrolled ? 'text-slate-900' : 'text-white'}`}>
-              IntrICT
+            <motion.a href="/" whileHover={{ scale: 1.04 }} className="shrink-0">
+              <IntrICTLogo variant={isScrolled ? 'light' : 'dark'} />
             </motion.a>
 
             {/* Desktop nav */}

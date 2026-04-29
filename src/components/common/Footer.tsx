@@ -6,6 +6,7 @@ import { useActionState } from 'react';
 import { subscribeNewsletter, type NewsletterState } from '@/app/actions/newsletter';
 import { blogPosts } from '@/data/blog-posts';
 import { useLanguage } from '@/contexts/LanguageContext';
+import IntrICTLogo from './IntrICTLogo';
 
 function shortTitle(title: string, max = 34): string {
   if (title.length <= max) return title;
@@ -238,8 +239,8 @@ export default function Footer() {
               transition={{ duration: 0.6 }}
               className="col-span-2 lg:col-span-1"
             >
-              <a href="#" className="inline-block mb-4 text-xl font-bold tracking-tight text-white transition-colors hover:text-slate-300">
-                IntrICT
+              <a href="/" className="inline-block mb-4">
+                <IntrICTLogo variant="dark" className="h-8 w-auto opacity-90 hover:opacity-100 transition-opacity" />
               </a>
               <p className="mb-5 text-sm leading-relaxed text-slate-500">
                 {t.footer.tagline}

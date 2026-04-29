@@ -31,6 +31,7 @@ import { useMessages } from '@/hooks/useMessages';
 import { usePendingRequestsCount } from '@/hooks/usePendingRequestsCount';
 import { usePendingAppointmentsCount } from '@/hooks/usePendingAppointmentsCount';
 import { useViewMode, type ViewMode } from './DashboardShell';
+import IntrICTLogo from '@/components/common/IntrICTLogo';
 import type { Profile, UserRole } from '@/lib/types';
 
 // ─── Nav definitions ──────────────────────────────────────────────────────────
@@ -150,12 +151,8 @@ function SidebarContent({
       {/* Logo */}
       <div className="px-6 py-5 border-b border-slate-100 shrink-0">
         <div className="flex items-center gap-3 mb-2">
-          <Link
-            href="/dashboard"
-            onClick={onLinkClick}
-            className="text-xl font-bold text-slate-900 hover:text-blue-600 transition-colors"
-          >
-            IntrICT
+          <Link href="/dashboard" onClick={onLinkClick}>
+            <IntrICTLogo variant="light" className="h-7 w-auto" />
           </Link>
           <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
             viewAs === 'user' && isAdmin

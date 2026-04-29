@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
+import IntrICTLogo from '@/components/common/IntrICTLogo';
 
 export default function Register() {
   const router = useRouter();
@@ -45,7 +46,7 @@ export default function Register() {
       >
         <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-10">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-slate-800 mb-2">IntrICT</h1>
+            <IntrICTLogo variant="light" className="h-10 w-auto mx-auto mb-2" />
             <p className="text-slate-500">Maak een account aan</p>
           </div>
 

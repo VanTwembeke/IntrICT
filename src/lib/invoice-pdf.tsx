@@ -3,7 +3,7 @@
 
 import React from 'react';
 import {
-  Document, Page, Text, View, StyleSheet, Link,
+  Document, Page, Text, View, StyleSheet, Link, Svg, Circle, Rect, Line, Path,
 } from '@react-pdf/renderer';
 import { COMPANY } from './company';
 import type { Invoice } from './types';
@@ -397,6 +397,25 @@ const s = StyleSheet.create({
   },
 });
 
+// ─── PDF logo mark ────────────────────────────────────────────────────────────
+// Icon-only variant (no wordmark text) — the company name is rendered as a
+// styled Text element beside it, matching the official brand icon mark.
+
+function PdfLogoMark() {
+  const fill   = BLUE;
+  const accent = '#93c5fd';
+  return (
+    <Svg viewBox="27 22 190 135" width={22} height={16}>
+      <Circle cx={44} cy={52} r={17} fill={fill} />
+      <Rect x={35} y={75} width={19} height={80} rx={10} fill={fill} />
+      <Circle cx={84} cy={69} r={10} fill={fill} />
+      <Circle cx={84} cy={111} r={10} fill={fill} />
+      <Line x1={132} y1={28} x2={116} y2={152} stroke={fill} strokeWidth={18} strokeLinecap="round" />
+      <Path d="M 162 25 L 214 90 L 162 155" stroke={accent} strokeWidth={18} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function fmtEur(n: number, locale: string) {
@@ -459,9 +478,12 @@ export function InvoicePDF({ invoice }: { invoice: Invoice }) {
         {/* ── Header band + title row (never split across pages) ── */}
         <View style={s.topBlock} wrap={false}>
           <View style={s.headerBand}>
-            <View>
-              <Text style={s.companyName}>{COMPANY.name}</Text>
-              <Text style={s.companyTagline}>{t.tagline}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <PdfLogoMark />
+              <View style={{ marginLeft: 7 }}>
+                <Text style={s.companyName}>{COMPANY.name}</Text>
+                <Text style={s.companyTagline}>{t.tagline}</Text>
+              </View>
             </View>
             <View>
               <Text style={s.companyDetails}>

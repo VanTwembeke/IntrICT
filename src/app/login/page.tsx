@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react';
+import IntrICTLogo from '@/components/common/IntrICTLogo';
 
 type Mode = 'login' | 'reset';
 
@@ -99,7 +100,7 @@ export default function Login() {
                 transition={{ duration: 0.2 }}
               >
                 <div className="mb-8 text-center">
-                  <h1 className="mb-2 text-3xl font-bold text-slate-800">IntrICT</h1>
+                  <IntrICTLogo variant="light" className="h-10 w-auto mx-auto mb-2" />
                   <p className="text-slate-500">Meld aan bij je dashboard</p>
                 </div>
 

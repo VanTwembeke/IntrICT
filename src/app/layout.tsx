@@ -131,11 +131,11 @@ const organizationJsonLd = {
   url: SITE_URL,
   logo: {
     "@type": "ImageObject",
-    url: `${SITE_URL}/logo.png`,
-    width: 512,
-    height: 512,
+    url: `${SITE_URL}/brand/badge_light_v2.png`,
+    width: 520,
+    height: 180,
   },
-  image: OG_IMAGE,
+  image: `${SITE_URL}/brand/badge_light_v2.png`,
   description: SITE_DESCRIPTION,
   address: {
     "@type": "PostalAddress",

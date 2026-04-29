@@ -19,7 +19,7 @@ interface IntrICTLogoProps {
 
 export default function IntrICTLogo({ variant, className }: IntrICTLogoProps) {
   const fill   = variant === 'dark' ? '#ffffff' : '#2B2F43';
-  const accent = variant === 'dark' ? 'rgba(255,255,255,0.5)' : '#8891A8';
+  const accent = variant === 'dark' ? 'rgba(255,255,255,0.45)' : '#8891A8';
 
   return (
     <svg

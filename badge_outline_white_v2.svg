@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 180" width="520" height="180">
+  <rect x="2" y="2" width="516" height="176" rx="34" fill="none" stroke="white" stroke-width="4"/>
+  <circle cx="44" cy="52" r="17" fill="white"/>
+  <rect x="35" y="75" width="19" height="80" rx="10" fill="white"/>
+  <circle cx="84" cy="69" r="10" fill="white"/>
+  <circle cx="84" cy="111" r="10" fill="white"/>
+  <line x1="132" y1="28" x2="116" y2="152" stroke="white" stroke-width="18" stroke-linecap="round"/>
+  <path d="M 162 25 L 214 90 L 162 155" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="253" y1="40" x2="253" y2="140" stroke="white" stroke-width="1" opacity="0.2"/>
+  <text x="284" y="108" font-family="'SF Pro Display','Segoe UI',Helvetica,Arial,sans-serif" font-size="52" font-weight="700" fill="white" letter-spacing="-1">IntrICT</text>
+</svg>

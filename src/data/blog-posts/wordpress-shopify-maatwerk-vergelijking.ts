@@ -199,7 +199,7 @@ Twijfel je over de juiste keuze voor jouw project? Bij IntrICT doen we een platf
   updatedAt: '2026-04-23',
   category: 'Web Development',
   tags: ['WordPress', 'Shopify', 'Webflow', 'Maatwerk', 'Platform vergelijking'],
-  image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+  image: 'https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=1200&q=80',
   slug: 'wordpress-shopify-maatwerk-vergelijking',
   readTime: 12,
   lang: 'nl',

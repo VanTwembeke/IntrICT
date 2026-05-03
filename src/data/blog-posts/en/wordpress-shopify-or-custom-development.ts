@@ -187,7 +187,7 @@ Unsure about the right choice for your project? At IntrICT we do a platform-agno
   updatedAt: '2026-04-23',
   category: 'Web Development',
   tags: ['WordPress', 'Shopify', 'Webflow', 'Custom Development', 'Platform comparison'],
-  image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+  image: 'https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=1200&q=80',
   slug: 'wordpress-shopify-or-custom-development',
   readTime: 12,
   lang: 'en',

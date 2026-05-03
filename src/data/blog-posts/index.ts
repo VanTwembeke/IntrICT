@@ -7,6 +7,7 @@ import { blogPost as post6 } from './waarom-wordpress-verouderd-is';
 import { blogPost as post7 } from './lokale-designer-vs-groot-bureau';
 import { blogPost as post8 } from './geo-seo-ai-overviews-optimaliseren';
 import { blogPost as post9 } from './wat-kost-een-website-belgie';
+import { blogPost as post10 } from './wordpress-shopify-maatwerk-vergelijking';
 
 export const blogPosts = [
   post1,
@@ -18,7 +19,8 @@ export const blogPosts = [
   post7,
   post8,
   post9,
+  post10,
 ];
 
 // Export individual posts for easier access
-export { post1, post2, post3, post4, post5, post6, post7, post8, post9 };
+export { post1, post2, post3, post4, post5, post6, post7, post8, post9, post10 };

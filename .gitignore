@@ -86,6 +86,7 @@ coverage.json
 coverage/
 .nyc_output/
 .claude/
+CLAUDE.md
 
 ############################
 # IDEs & Editors

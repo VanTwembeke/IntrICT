@@ -157,9 +157,11 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
 
   useEffect(() => {
     if (selectedConversation) {
-      fetchConversation(selectedConversation);
+      fetchConversation(selectedConversation).then(() => {
+        fetchConversations();
+      });
     }
-  }, [selectedConversation, fetchConversation]);
+  }, [selectedConversation, fetchConversation, fetchConversations]);
 
   const sendMessage = async () => {
     if (!selectedConversation || (!newMessage.trim() && attachments.length === 0)) return;
@@ -545,7 +547,13 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                     conversations.map((conversation) => (
                       <motion.button
                         key={conversation.id}
-                        onClick={() => setSelectedConversation(conversation.id)}
+                        onClick={() => {
+                          setSelectedConversation(conversation.id);
+                          // Optimistisch de badge direct verbergen
+                          setConversations(prev =>
+                            prev.map(c => c.id === conversation.id ? { ...c, unread_count: 0 } : c)
+                          );
+                        }}
                         whileHover={{ backgroundColor: 'rgba(59,130,246,0.05)' }}
                         className={`w-full p-4 text-left border-b border-slate-100 transition-colors ${
                           selectedConversation === conversation.id

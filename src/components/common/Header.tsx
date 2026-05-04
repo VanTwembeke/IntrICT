@@ -296,14 +296,10 @@ function NotificationsPanel({
           ) : (
             <ul className="overflow-y-auto divide-y divide-slate-100 max-h-64">
               {conversations.slice(0, 5).map(conv => (
-                <li key={conv.id}
+                <li key={conv.id} onClick={() => go('/dashboard/messages')}
                   className="flex items-start gap-3 px-4 py-3 transition-colors cursor-pointer hover:bg-slate-50">
-                  <button
-                    title={conv.unread_count > 0 ? 'Markeer als gelezen' : undefined}
-                    onClick={(e) => { e.stopPropagation(); if (conv.unread_count > 0) onMarkAsRead(conv.id); }}
-                    className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 transition-colors ${conv.unread_count > 0 ? 'bg-blue-500 hover:bg-blue-300 cursor-pointer' : 'bg-slate-200 cursor-default'}`}
-                  />
-                  <div className="flex-1 min-w-0" onClick={() => go('/dashboard/messages')}>
+                  <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${conv.unread_count > 0 ? 'bg-blue-500' : 'bg-slate-200'}`} />
+                  <div className="flex-1 min-w-0">
                     <p className={`text-sm truncate ${conv.unread_count > 0 ? 'font-semibold text-slate-800' : 'text-slate-600'}`}>
                       {conv.subject}
                     </p>
@@ -317,9 +313,13 @@ function NotificationsPanel({
                     </p>
                   </div>
                   {conv.unread_count > 0 && (
-                    <span className="min-w-4.5 h-4.5 px-1 flex items-center justify-center bg-blue-500 text-white text-[10px] font-bold rounded-full shrink-0" onClick={() => go('/dashboard/messages')}>
+                    <button
+                      title="Markeer als gelezen"
+                      onClick={(e) => { e.stopPropagation(); onMarkAsRead(conv.id); }}
+                      className="min-w-[1.125rem] h-[1.125rem] px-1 flex items-center justify-center bg-blue-500 hover:bg-slate-300 text-white text-[10px] font-bold rounded-full shrink-0 transition-colors"
+                    >
                       {conv.unread_count}
-                    </span>
+                    </button>
                   )}
                 </li>
               ))}

@@ -68,10 +68,28 @@ export function useMessages() {
     };
   }, [fetchConversations]);
 
+  const markAsRead = useCallback(async (conversationId: string) => {
+    // Optimistic update
+    setConversations(prev =>
+      prev.map(c => c.id === conversationId ? { ...c, unread_count: 0 } : c)
+    );
+    try {
+      await fetch('/api/messages/conversation/mark-read', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId }),
+      });
+    } catch (error) {
+      console.error('Failed to mark as read:', error);
+      fetchConversations(); // herstel bij fout
+    }
+  }, [fetchConversations]);
+
   return {
     conversations,
     loading,
     unreadCount: totalUnreadCount,
-    refetch: fetchConversations
+    refetch: fetchConversations,
+    markAsRead,
   };
 }

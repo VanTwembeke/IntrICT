@@ -42,7 +42,8 @@ export default function Login() {
     // SSO: lees ?next= direct uit window.location (useSearchParams vereist Suspense)
     const params = new URLSearchParams(window.location.search);
     const next = params.get('next');
-    if (next && next.startsWith('https://tools.intrict.com')) {
+    const ALLOWED_SUBDOMAINS = ['https://tools.intrict.com', 'https://socman.intrict.com'];
+    if (next && ALLOWED_SUBDOMAINS.some((origin) => next.startsWith(origin))) {
       window.location.href = next;
       return;
     }

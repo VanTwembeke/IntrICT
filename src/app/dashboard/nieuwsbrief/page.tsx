@@ -17,7 +17,7 @@ export default async function NieuwsbriefPage() {
   try {
     const { data } = await admin
       .from('newsletters')
-      .select('id, subject, headline, status, sent_at, recipient_count, resend_broadcast_id, created_at')
+      .select('id, subject, headline, status, sent_at, recipient_count, created_at')
       .order('created_at', { ascending: false });
     newsletters = (data ?? []) as NewsletterRecord[];
   } catch { /* table may not exist yet */ }
@@ -32,6 +32,5 @@ export interface NewsletterRecord {
   status: 'draft' | 'sent';
   sent_at: string | null;
   recipient_count: number | null;
-  resend_broadcast_id: string | null;
   created_at: string;
 }

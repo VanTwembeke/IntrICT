@@ -746,7 +746,7 @@ export const cookiesT = {
         rows: [
           ['Supabase Inc.', 'Authenticatie klantportaal', 'Essentieel', 'supabase.com/privacy'],
           ['Vercel Inc.', 'Hosting en geanonimiseerde analytics', 'Analytisch', 'vercel.com/legal/privacy-policy'],
-          ['Resend Inc.', 'Transactionele e-mails', 'Essentieel (geen cookie)', 'resend.com/legal/privacy-policy'],
+          ['Microsoft Corporation', 'Transactionele e-mails via Microsoft 365', 'Essentieel (geen cookie)', 'privacy.microsoft.com/nl-nl/privacystatement'],
           ['Unsplash', 'Afbeeldingen (externe CDN)', 'Functioneel', 'unsplash.com/privacy'],
         ] as [string, string, string, string][],
       },
@@ -854,7 +854,7 @@ export const cookiesT = {
         rows: [
           ['Supabase Inc.', 'Client portal authentication', 'Essential', 'supabase.com/privacy'],
           ['Vercel Inc.', 'Hosting and anonymised analytics', 'Analytical', 'vercel.com/legal/privacy-policy'],
-          ['Resend Inc.', 'Transactional emails', 'Essential (no cookie)', 'resend.com/legal/privacy-policy'],
+          ['Microsoft Corporation', 'Transactional emails via Microsoft 365', 'Essential (no cookie)', 'privacy.microsoft.com/en-us/privacystatement'],
           ['Unsplash', 'Images (external CDN)', 'Functional', 'unsplash.com/privacy'],
         ] as [string, string, string, string][],
       },

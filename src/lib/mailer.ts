@@ -4,7 +4,13 @@ import 'server-only';
 // Uses OAuth2 client credentials — no app password required.
 // Required env vars:
 //   MICROSOFT_TENANT_ID, MICROSOFT_CLIENT_ID, MICROSOFT_CLIENT_SECRET
-//   MICROSOFT_EMAIL_USER  (e.g. jonas@intrict.com)
+//   MICROSOFT_EMAIL_USER  (hoofdpostbus: jonas@intrict.com)
+//
+// Beschikbare afzenderaliassen op jonas@intrict.com:
+//   jonas@intrict.com      — standaard, persoonlijk contact
+//   noreply@intrict.com    — bevestigingen, geautomatiseerde berichten
+//   info@intrict.com       — algemene notificaties naar klanten
+//   legal@intrict.com      — juridische correspondentie, DPA, privacy
 
 interface GraphToken {
   access_token: string;

@@ -214,11 +214,7 @@ export default function Footer() {
                       </motion.p>
                     )}
                     <p className="mt-2.5 text-xs text-slate-600">
-                      {t.footer.newsletter.noSpam}{' '}
-                      <a href="https://resend.com" target="_blank" rel="noopener noreferrer" className="underline transition-colors text-slate-500 hover:text-slate-400 underline-offset-2">
-                        Resend
-                      </a>
-                      .
+                      {t.footer.newsletter.noSpam}
                     </p>
                   </motion.form>
                 )}

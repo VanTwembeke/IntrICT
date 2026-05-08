@@ -512,7 +512,7 @@ const nl = {
       loading:      'Bezig…',
       success:      'Je bent ingeschreven!',
       successSub:   'Bedankt — je ontvangt binnenkort nieuws.',
-      noSpam:       'Geen spam. Uitschrijven kan altijd. Powered by',
+      noSpam:       'Geen spam. Uitschrijven kan altijd.',
     },
     nav:          'Navigatie',
     recentPosts:  'Recente artikels',

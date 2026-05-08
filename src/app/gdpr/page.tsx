@@ -152,14 +152,14 @@ export default function GDPR() {
                 <span className="font-medium">Handelsnaam</span><span>IntrICT</span>
                 <span className="font-medium">Rechtsvorm</span><span>Eenmanszaak (bijberoep)</span>
                 <span className="font-medium">Vestigingsplaats</span><span>Gent, België</span>
-                <span className="font-medium">E-mail</span><span>info@intrict.com</span>
+                <span className="font-medium">E-mail</span><span>legal@intrict.com</span>
                 <span className="font-medium">Website</span><span>https://intrict.com</span>
               </div>
               <p>
                 IntrICT heeft geen wettelijke verplichting tot aanstelling van een
                 Functionaris voor Gegevensbescherming (DPO), gelet op de omvang en aard van de
                 verwerkingen. Voor privacygerelateerde vragen kunt u ons rechtstreeks contacteren
-                via info@intrict.com.
+                via legal@intrict.com.
               </p>
             </SectionBlock>
 
@@ -283,7 +283,7 @@ export default function GDPR() {
                     {[
                       ['Supabase Inc.', 'Database en authenticatie (klantportaal)', 'EU (Frankfurt)'],
                       ['Vercel Inc.', 'Hosting en geanonimiseerde analytics', 'EU/VS (SCCs)'],
-                      ['Resend Inc.', 'Transactionele e-mails en nieuwsbrief', 'VS (SCCs)'],
+                      ['Microsoft Corporation', 'Transactionele e-mails en nieuwsbrief (M365)', 'EU/VS (SCCs)'],
                     ].map(([s, d, l], i) => (
                       <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                         <td className="px-3 py-2 border border-slate-200 text-slate-600 font-medium">{s}</td>
@@ -320,8 +320,8 @@ export default function GDPR() {
               </div>
               <p>
                 Verzoeken kunnen worden ingediend via{' '}
-                <a href="mailto:info@intrict.com" className="text-blue-600 underline hover:text-blue-700">
-                  info@intrict.com
+                <a href="mailto:legal@intrict.com" className="text-blue-600 underline hover:text-blue-700">
+                  legal@intrict.com
                 </a>
                 . Wij reageren binnen 30 kalenderdagen na ontvangst van uw verzoek. Bij complexe of
                 meervoudige verzoeken kan deze termijn met maximaal 60 dagen worden verlengd, mits kennisgeving.
@@ -340,7 +340,7 @@ export default function GDPR() {
                 'Toegang tot productiesystemen beperkt via API-sleutels en omgevingsvariabelen',
                 'Regelmatige beveiligingsupdates van gebruikte frameworks en dependencies',
                 'Minimale gegevensverzameling: enkel de gegevens die strikt noodzakelijk zijn voor het doel',
-                'Beveiligde e-mailinfrastructuur via Resend met DKIM/SPF-authenticatie',
+                'Beveiligde e-mailinfrastructuur via Microsoft 365 met DKIM/SPF-authenticatie',
               ]} />
               <p>
                 Bij een inbreuk in verband met persoonsgegevens die een risico inhoudt voor de rechten
@@ -406,7 +406,7 @@ export default function GDPR() {
               <Sub title="Art. DPA-5 — Sub-verwerkers">
                 <p>
                   IntrICT maakt gebruik van de in art. 7 van dit privacybeleid genoemde sub-verwerkers
-                  (Supabase, Vercel, Resend). De opdrachtgever verleent hiervoor een algemene
+                  (Supabase, Vercel, Microsoft). De opdrachtgever verleent hiervoor een algemene
                   voorafgaande toestemming door de dienstverleningsovereenkomst aan te gaan. IntrICT
                   informeert de opdrachtgever vooraf over wijzigingen in de lijst van sub-verwerkers.
                   Alle sub-verwerkers zijn contractueel gebonden aan GDPR-conforme voorwaarden.
@@ -453,8 +453,8 @@ export default function GDPR() {
               <p>
                 Heeft u vragen of klachten over de wijze waarop IntrICT uw persoonsgegevens verwerkt?
                 Neem dan eerst contact op via{' '}
-                <a href="mailto:info@intrict.com" className="text-blue-600 underline hover:text-blue-700">
-                  info@intrict.com
+                <a href="mailto:legal@intrict.com" className="text-blue-600 underline hover:text-blue-700">
+                  legal@intrict.com
                 </a>
                 . Wij streven ernaar uw vraag of klacht binnen 30 dagen te beantwoorden.
               </p>

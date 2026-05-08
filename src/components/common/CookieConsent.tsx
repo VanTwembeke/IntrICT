@@ -63,6 +63,16 @@ export default function CookieConsent() {
     if (!stored) {
       const timer = setTimeout(() => setIsVisible(true), 1500);
       return () => clearTimeout(timer);
+    } else {
+      try {
+        const parsed = JSON.parse(stored) as Prefs & { timestamp?: string };
+        setPrefs({
+          essential: true,
+          analytics: parsed.analytics ?? false,
+          functional: parsed.functional ?? false,
+          marketing: parsed.marketing ?? false,
+        });
+      } catch { /* malformed — ignore */ }
     }
   }, []);
 

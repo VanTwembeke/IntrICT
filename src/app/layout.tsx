@@ -3,9 +3,8 @@ import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import CookieConsent from "@/components/common/CookieConsent";
 import FacebookPixel from "@/components/common/FacebookPixel";
+import ConditionalAnalytics from "@/components/common/ConditionalAnalytics";
 import Providers from "@/components/Providers";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -375,8 +374,7 @@ export default function RootLayout({
         {children}
         <CookieConsent />
         <FacebookPixel />
-        <Analytics />
-        <SpeedInsights />
+        <ConditionalAnalytics />
         </Providers>
       </body>
     </html>

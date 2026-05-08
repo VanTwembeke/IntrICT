@@ -498,7 +498,7 @@ const en: Translations = {
       loading:      'Please wait…',
       success:      "You're subscribed!",
       successSub:   'Thank you — you will receive news shortly.',
-      noSpam:       'No spam. Unsubscribe anytime. Powered by',
+      noSpam:       'No spam. Unsubscribe anytime.',
     },
     nav:          'Navigation',
     recentPosts:  'Recent articles',

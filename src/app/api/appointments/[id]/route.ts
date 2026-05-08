@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { sendMail } from '@/lib/mailer';
 
 export async function GET(
   _request: Request,
@@ -89,8 +90,8 @@ export async function PUT(
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Send cancellation email to client when admin cancels with a reason
-  if (isAdmin && body.status === 'cancelled' && body.cancellation_reason && process.env.RESEND_API_KEY) {
+  // Annuleringsmail naar klant wanneer admin annuleert met reden
+  if (isAdmin && body.status === 'cancelled' && body.cancellation_reason) {
     try {
       const appt = data as {
         type_name: string;
@@ -105,10 +106,8 @@ export async function PUT(
       });
 
       if (recipientEmail) {
-        const { Resend } = await import('resend');
-        const resend = new Resend(process.env.RESEND_API_KEY);
-        await resend.emails.send({
-          from: 'IntrICT <info@intrict.com>',
+        await sendMail({
+          from: 'jonas@intrict.com',
           to: recipientEmail,
           subject: `Afspraak geannuleerd: ${appt.type_name}`,
           html: `
@@ -136,7 +135,7 @@ export async function PUT(
         });
       }
     } catch {
-      // Email failure is non-fatal — the cancellation still succeeds
+      // E-mail mislukken is niet fataal — annulering is al opgeslagen
     }
   }
 

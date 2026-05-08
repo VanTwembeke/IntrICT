@@ -3,9 +3,7 @@ export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { sendMail } from '@/lib/mailer';
 
 export async function POST(request: Request) {
   // Verify caller is admin
@@ -35,10 +33,9 @@ export async function POST(request: Request) {
 
   const actionLink = linkData.properties.action_link;
 
-  // Send via Resend
   try {
-    await resend.emails.send({
-      from: 'IntrICT <hello@intrict.com>',
+    await sendMail({
+      from: 'jonas@intrict.com',
       to: email,
       subject: 'Wachtwoord instellen — IntrICT',
       html: `
@@ -51,7 +48,7 @@ export async function POST(request: Request) {
           <a href="${actionLink}"
              style="display:inline-block;padding:13px 28px;background:#0f172a;color:white;
                     text-decoration:none;border-radius:10px;font-weight:600;font-size:14px;">
-            Wachtwoord instellen →
+            Wachtwoord instellen &rarr;
           </a>
           <p style="margin-top:28px;font-size:12px;color:#94a3b8;">
             Deze link is 24 uur geldig. Heb je deze e-mail niet verwacht? Je kunt hem negeren.
@@ -61,7 +58,7 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ ok: true });
   } catch {
-    // Resend not available — return the link so the admin can share it manually
+    // Mail mislukt — geef de link terug zodat admin hem handmatig kan delen
     return NextResponse.json({ ok: true, link: actionLink });
   }
 }

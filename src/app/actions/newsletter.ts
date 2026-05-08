@@ -1,27 +1,32 @@
 'use server';
 
-import { Resend } from 'resend';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { sendMail } from '@/lib/mailer';
 
 export type NewsletterState = {
   success: boolean;
   error?: string;
 };
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID ?? '';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://intrict.com';
 
 export async function updateNewsletterSubscription(email: string, subscribe: boolean): Promise<NewsletterState> {
-  if (!AUDIENCE_ID) return { success: false, error: 'Nieuwsbrief service niet beschikbaar.' };
   try {
-    const { error } = await resend.contacts.create({
-      email: email.trim().toLowerCase(),
-      audienceId: AUDIENCE_ID,
-      unsubscribed: !subscribe,
-    });
-    if (error && !error.message?.toLowerCase().includes('already exists')) {
-      return { success: false, error: 'Kon nieuwsbrief voorkeur niet opslaan.' };
-    }
+    const admin = createAdminClient();
+    const { error } = await admin
+      .from('newsletter_subscribers')
+      .upsert(
+        {
+          email: email.trim().toLowerCase(),
+          is_active: subscribe,
+          ...(subscribe
+            ? { subscribed_at: new Date().toISOString(), unsubscribed_at: null }
+            : { unsubscribed_at: new Date().toISOString() }),
+        },
+        { onConflict: 'email' }
+      );
+
+    if (error) return { success: false, error: 'Kon nieuwsbrief voorkeur niet opslaan.' };
     return { success: true };
   } catch {
     return { success: false, error: 'Er is iets misgegaan.' };
@@ -39,51 +44,46 @@ export async function subscribeNewsletter(
   }
 
   const trimmed = email.trim().toLowerCase();
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(trimmed)) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
     return { success: false, error: 'Voer een geldig e-mailadres in.' };
   }
 
-  if (!AUDIENCE_ID) {
-    console.error('RESEND_AUDIENCE_ID is not set');
-    return { success: false, error: 'Er is iets misgegaan. Probeer het later opnieuw.' };
-  }
-
   try {
-    const { error } = await resend.contacts.create({
-      email: trimmed,
-      audienceId: AUDIENCE_ID,
-      unsubscribed: false,
-    });
+    const admin = createAdminClient();
+
+    // Upsert — al ingeschreven is geen fout
+    const { error } = await admin
+      .from('newsletter_subscribers')
+      .upsert(
+        { email: trimmed, is_active: true, subscribed_at: new Date().toISOString(), unsubscribed_at: null },
+        { onConflict: 'email' }
+      );
 
     if (error) {
-      if (error.message?.toLowerCase().includes('already exists')) {
-        return { success: true }; 
-      }
-      console.error('Resend contacts error:', error);
+      console.error('Newsletter upsert error:', error);
       return { success: false, error: 'Er is iets misgegaan. Probeer het later opnieuw.' };
     }
 
-    await resend.emails.send({
-      from: 'IntrICT <hello@intrict.com>', // must match a verified Resend sender domain
+    // Welkomstmail
+    await sendMail({
+      from: 'jonas@intrict.com',
       to: trimmed,
-      subject: 'Welkom bij de IntrICT nieuwsbrief 👋',
+      subject: 'Welkom bij de IntrICT nieuwsbrief',
       html: `
         <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; padding: 40px 24px; color: #1e293b;">
           <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Welkom!</h1>
           <p style="color: #475569; line-height: 1.6; margin-bottom: 16px;">
-            Je bent ingeschreven voor de IntrICT nieuwsbrief. Je ontvangt binnenkort tips over 
+            Je bent ingeschreven voor de IntrICT nieuwsbrief. Je ontvangt binnenkort tips over
             webontwikkeling, design en digitale strategie.
           </p>
-          <a href="https://intrict.com" 
-             style="display: inline-block; padding: 12px 24px; background: #0f172a; color: white; 
+          <a href="https://intrict.com"
+             style="display: inline-block; padding: 12px 24px; background: #0f172a; color: white;
                     text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
-            Bezoek IntrICT →
+            Bezoek IntrICT &rarr;
           </a>
           <p style="margin-top: 32px; font-size: 12px; color: #94a3b8;">
             Uitschrijven?
-            <a href="https://intrict.com/uitschrijven?email=${trimmed}" style="color: #64748b;">Klik hier</a>.
+            <a href="${SITE_URL}/uitschrijven?email=${encodeURIComponent(trimmed)}" style="color: #64748b;">Klik hier</a>.
           </p>
         </div>
       `,

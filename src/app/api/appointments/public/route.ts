@@ -2,9 +2,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { sendMail } from '@/lib/mailer';
 
 export async function POST(request: Request) {
   const body: {
@@ -108,10 +106,10 @@ export async function POST(request: Request) {
 
   try {
     await Promise.all([
-      // To the guest
-      resend.emails.send({
-        from: 'IntrICT <noreply@intrict.com>',
-        to:   guest_email.trim(),
+      // Bevestiging aan de bezoeker
+      sendMail({
+        from: 'noreply@intrict.com',
+        to: guest_email.trim(),
         subject: `Afspraakbevestiging – ${apptType.name}`,
         html: `
           <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#1e293b">
@@ -128,10 +126,10 @@ export async function POST(request: Request) {
           </div>
         `,
       }),
-      // To admin
-      resend.emails.send({
-        from: 'IntrICT Website <noreply@intrict.com>',
-        to:   'info@intrict.com',
+      // Notificatie aan admin
+      sendMail({
+        from: 'noreply@intrict.com',
+        to: 'info@intrict.com',
         subject: `Nieuwe afspraak via contactpagina – ${guest_name.trim()}`,
         html: `
           <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#1e293b">
@@ -144,13 +142,13 @@ export async function POST(request: Request) {
               <p style="margin:4px 0"><strong>Tijdstip:</strong> ${timeLabel} – ${endLabel}</p>
               ${notes ? `<p style="margin:4px 0"><strong>Notitie:</strong> ${notes}</p>` : ''}
             </div>
-            <p><a href="${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://intrict.com'}/dashboard/kalender" style="background:#2563eb;color:white;padding:10px 20px;border-radius:8px;text-decoration:none">Bekijk in dashboard →</a></p>
+            <p><a href="${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://intrict.com'}/dashboard/kalender" style="background:#2563eb;color:white;padding:10px 20px;border-radius:8px;text-decoration:none">Bekijk in dashboard &rarr;</a></p>
           </div>
         `,
       }),
     ]);
   } catch {
-    // Emails are best-effort; appointment is already saved
+    // E-mails zijn best-effort; afspraak is al opgeslagen
   }
 
   return NextResponse.json(appointment, { status: 201 });

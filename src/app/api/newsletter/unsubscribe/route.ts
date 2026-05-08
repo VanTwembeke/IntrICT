@@ -1,8 +1,5 @@
 import { NextResponse } from 'next/server';
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID ?? '';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export async function POST(request: Request) {
   const { email } = await request.json() as { email: string };
@@ -11,19 +8,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Ongeldig e-mailadres.' }, { status: 400 });
   }
 
-  if (!AUDIENCE_ID) {
-    return NextResponse.json({ error: 'Service niet beschikbaar.' }, { status: 500 });
-  }
-
   try {
-    const { error } = await resend.contacts.create({
-      email: email.trim().toLowerCase(),
-      audienceId: AUDIENCE_ID,
-      unsubscribed: true,
-    });
+    const admin = createAdminClient();
+    const { error } = await admin
+      .from('newsletter_subscribers')
+      .upsert(
+        {
+          email: email.trim().toLowerCase(),
+          is_active: false,
+          unsubscribed_at: new Date().toISOString(),
+        },
+        { onConflict: 'email' }
+      );
 
-    // "already exists" is fine — we updated the unsubscribed flag
-    if (error && !error.message?.toLowerCase().includes('already exists')) {
+    if (error) {
       return NextResponse.json({ error: 'Uitschrijven mislukt. Probeer opnieuw.' }, { status: 500 });
     }
 

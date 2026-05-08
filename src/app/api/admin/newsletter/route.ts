@@ -3,10 +3,8 @@ export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { Resend } from 'resend';
+import { sendMail } from '@/lib/mailer';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID ?? '';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://intrict.com';
 
 // ─── Auth guard ───────────────────────────────────────────────────────────────
@@ -31,8 +29,10 @@ function buildNewsletterHtml(data: {
   featureBody?: string;
   ctaText?: string;
   ctaUrl?: string;
+  subscriberEmail?: string;
 }): string {
   const date = new Date().toLocaleDateString('nl-BE', { day: 'numeric', month: 'long', year: 'numeric' });
+  const email = data.subscriberEmail ?? '{{email}}';
 
   const paragraphs = data.body
     .split(/\n\n+/)
@@ -105,7 +105,7 @@ function buildNewsletterHtml(data: {
               <tr>
                 <td>
                   <p style="margin:0 0 6px;font-size:11px;color:#94a3b8;">Je ontvangt deze e-mail omdat je ingeschreven bent voor de IntrICT nieuwsbrief.</p>
-                  <p style="margin:0;font-size:11px;color:#94a3b8;"><a href="${SITE_URL}/uitschrijven?email={{email}}" style="color:#64748b;text-decoration:underline;">Uitschrijven</a>&nbsp;&middot;&nbsp;<a href="${SITE_URL}" style="color:#64748b;text-decoration:underline;">intrict.com</a></p>
+                  <p style="margin:0;font-size:11px;color:#94a3b8;"><a href="${SITE_URL}/uitschrijven?email=${encodeURIComponent(email)}" style="color:#64748b;text-decoration:underline;">Uitschrijven</a>&nbsp;&middot;&nbsp;<a href="${SITE_URL}" style="color:#64748b;text-decoration:underline;">intrict.com</a></p>
                 </td>
                 <td align="right" style="vertical-align:top;">
                   <p style="margin:0;font-size:10px;color:#cbd5e1;font-weight:700;letter-spacing:0.5px;">INTRICT BV</p>
@@ -131,7 +131,7 @@ export async function GET() {
   const admin = createAdminClient();
   const { data, error: dbErr } = await admin
     .from('newsletters')
-    .select('id, subject, headline, status, sent_at, recipient_count, resend_broadcast_id, created_at')
+    .select('id, subject, headline, status, sent_at, recipient_count, created_at')
     .order('created_at', { ascending: false });
 
   if (dbErr) return NextResponse.json({ error: dbErr.message }, { status: 500 });
@@ -158,52 +158,51 @@ export async function POST(request: Request) {
   if (!body.subject?.trim()) return NextResponse.json({ error: 'Onderwerp is verplicht.' }, { status: 400 });
   if (!body.headline?.trim()) return NextResponse.json({ error: 'Koptekst is verplicht.' }, { status: 400 });
   if (!body.body?.trim()) return NextResponse.json({ error: 'Inhoud is verplicht.' }, { status: 400 });
-  if (!AUDIENCE_ID) return NextResponse.json({ error: 'RESEND_AUDIENCE_ID niet geconfigureerd.' }, { status: 500 });
 
-  const html = buildNewsletterHtml({
-    subject: body.subject,
-    preheader: body.preheader,
-    headline: body.headline,
-    body: body.body,
-    featureTitle: body.feature_title,
-    featureBody: body.feature_body,
-    ctaText: body.cta_text,
-    ctaUrl: body.cta_url,
-  });
-
-  // Count subscribers
-  let recipientCount = 0;
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const contactsRes = await (resend.contacts as any).list({ audienceId: AUDIENCE_ID });
-    const contacts = contactsRes?.data?.data ?? [];
-    recipientCount = contacts.filter((c: { unsubscribed: boolean }) => !c.unsubscribed).length;
-  } catch { /* non-critical */ }
-
-  // Create broadcast in Resend
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: broadcast, error: broadcastErr } = await (resend.broadcasts as any).create({
-    audienceId: AUDIENCE_ID,
-    from: 'IntrICT <hello@intrict.com>',
-    name: body.subject,
-    subject: body.subject,
-    previewText: body.preheader ?? '',
-    html,
-  });
-
-  if (broadcastErr || !broadcast?.id) {
-    return NextResponse.json({ error: broadcastErr?.message ?? 'Broadcast aanmaken mislukt.' }, { status: 500 });
-  }
-
-  // Send the broadcast
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: sendErr } = await (resend.broadcasts as any).send(broadcast.id);
-  if (sendErr) {
-    return NextResponse.json({ error: sendErr.message ?? 'Versturen mislukt.' }, { status: 500 });
-  }
-
-  // Save to DB
   const admin = createAdminClient();
+
+  // Haal actieve abonnees op
+  const { data: subscribers, error: subsErr } = await admin
+    .from('newsletter_subscribers')
+    .select('email')
+    .eq('is_active', true);
+
+  if (subsErr) return NextResponse.json({ error: subsErr.message }, { status: 500 });
+  if (!subscribers?.length) {
+    return NextResponse.json({ error: 'Geen actieve abonnees.' }, { status: 400 });
+  }
+
+  // Stuur naar elke abonnee individueel (eigen uitschrijflink)
+  let sentCount = 0;
+  const errors: string[] = [];
+
+  for (const { email } of subscribers) {
+    const html = buildNewsletterHtml({
+      subject: body.subject,
+      preheader: body.preheader,
+      headline: body.headline,
+      body: body.body,
+      featureTitle: body.feature_title,
+      featureBody: body.feature_body,
+      ctaText: body.cta_text,
+      ctaUrl: body.cta_url,
+      subscriberEmail: email,
+    });
+
+    try {
+      await sendMail({
+        from: 'jonas@intrict.com',
+        to: email,
+        subject: body.subject,
+        html,
+      });
+      sentCount++;
+    } catch (err) {
+      errors.push(`${email}: ${err instanceof Error ? err.message : 'Onbekende fout'}`);
+    }
+  }
+
+  // Sla op in DB
   const { data: newsletter, error: dbErr } = await admin
     .from('newsletters')
     .insert({
@@ -217,18 +216,16 @@ export async function POST(request: Request) {
       cta_url: body.cta_url ?? null,
       status: 'sent',
       sent_at: new Date().toISOString(),
-      recipient_count: recipientCount,
-      resend_broadcast_id: broadcast.id,
+      recipient_count: sentCount,
       created_by: userId,
     })
     .select()
     .single();
 
   if (dbErr) {
-    // Broadcast was sent — log but still return success
     console.error('DB insert failed after send:', dbErr.message);
-    return NextResponse.json({ ok: true, warning: 'Verzonden maar niet opgeslagen in DB.' });
+    return NextResponse.json({ ok: true, sent: sentCount, warning: 'Verzonden maar niet opgeslagen in DB.', errors });
   }
 
-  return NextResponse.json({ ok: true, newsletter });
+  return NextResponse.json({ ok: true, newsletter, sent: sentCount, errors });
 }

@@ -2,21 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { createClient } from '@/lib/supabase/server';
-
-interface EmailAttachment {
-  filename: string;
-  content: Buffer;
-  type?: string;
-}
-
-interface EmailData {
-  from: string;
-  to: string;
-  subject: string;
-  html: string;
-  replyTo: string;
-  attachments?: EmailAttachment[];
-}
+import { sendMail } from '@/lib/mailer';
 
 export async function POST(req: NextRequest) {
   try {
@@ -67,20 +53,17 @@ export async function POST(req: NextRequest) {
     const websiteUrl = formData.get('websiteUrl') as string;
     const websiteDisplay = formData.get('websiteDisplay') as string;
 
-    // Process attachments
-    const attachments: EmailAttachment[] = [];
+    // Process attachments — convert to base64 for Graph API
     const attachmentFiles = formData.getAll('attachments') as File[];
-
-    for (const file of attachmentFiles) {
-      if (file && file.size > 0) {
-        const buffer = Buffer.from(await file.arrayBuffer());
-        attachments.push({
-          filename: file.name,
-          content: buffer,
-          type: file.type || undefined,
-        });
-      }
-    }
+    const attachments = await Promise.all(
+      attachmentFiles
+        .filter((f) => f && f.size > 0)
+        .map(async (f) => ({
+          name: f.name,
+          contentBytes: Buffer.from(await f.arrayBuffer()).toString('base64'),
+          contentType: f.type || 'application/octet-stream',
+        }))
+    );
 
     if (!recipientEmail || !subject || !message) {
       return NextResponse.json(
@@ -88,18 +71,6 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-
-    // Check if Resend API key is available
-    if (!process.env.RESEND_API_KEY) {
-      return NextResponse.json(
-        { error: 'Email service not configured' },
-        { status: 500 }
-      );
-    }
-
-    // Import and initialize Resend
-    const { Resend } = await import('resend');
-    const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Read email template
     const templatePath = join(process.cwd(), 'src/templates/emailTemplate.html');
@@ -151,37 +122,17 @@ export async function POST(req: NextRequest) {
       .replace(/\{\{ADDITIONAL_CONTENT\}\}/g, additionalContentSection)
       .replace(/\{\{DISCLAIMER\}\}/g, disclaimerSection);
 
-    // Send email via Resend
-    const emailData: EmailData = {
-      from: 'info@intrict.com',
+    await sendMail({
+      from: 'jonas@intrict.com',
       to: recipientEmail,
-      subject: subject,
-      html: htmlContent,
       replyTo: user.email || 'noreply@intrict.com',
-    };
-
-    // Add attachments if any
-    if (attachments.length > 0) {
-      emailData.attachments = attachments.map(attachment => ({
-        filename: attachment.filename,
-        content: attachment.content,
-        type: attachment.type,
-      }));
-    }
-
-    const response = await resend.emails.send(emailData);
-
-    if (response.error) {
-      console.error('Resend error:', response.error);
-      return NextResponse.json(
-        { error: 'Failed to send email' },
-        { status: 500 }
-      );
-    }
+      subject,
+      html: htmlContent,
+      attachments: attachments.length > 0 ? attachments : undefined,
+    });
 
     return NextResponse.json({
       success: true,
-      messageId: response.data?.id,
       message: 'Email succesvol verstuurd',
     });
   } catch (error) {

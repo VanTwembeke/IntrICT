@@ -3,6 +3,8 @@
 import { createContext, useContext, useState } from 'react';
 import { Eye } from 'lucide-react';
 import DashboardSidebar from './DashboardSidebar';
+import ChatWidget from './ChatWidget';
+import { ChatProvider } from '@/contexts/ChatContext';
 import type { Profile } from '@/lib/types';
 
 // ─── View-mode context ────────────────────────────────────────────────────────
@@ -50,14 +52,17 @@ export default function DashboardShell({ profile, children }: Props) {
   const isAdmin = profile.role === 'admin';
 
   return (
-    <ViewModeContext.Provider value={{ viewAs, setViewAs }}>
-      <DashboardSidebar profile={profile} />
-      <main className="lg:pl-64">
-        {isAdmin && viewAs === 'user' && (
-          <UserPreviewBanner onExit={() => setViewAs('admin')} />
-        )}
-        {children}
-      </main>
-    </ViewModeContext.Provider>
+    <ChatProvider>
+      <ViewModeContext.Provider value={{ viewAs, setViewAs }}>
+        <DashboardSidebar profile={profile} />
+        <main className="lg:pl-64">
+          {isAdmin && viewAs === 'user' && (
+            <UserPreviewBanner onExit={() => setViewAs('admin')} />
+          )}
+          {children}
+        </main>
+        <ChatWidget profile={profile} />
+      </ViewModeContext.Provider>
+    </ChatProvider>
   );
 }

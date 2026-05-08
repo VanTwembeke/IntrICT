@@ -28,7 +28,7 @@ import {
   Palette,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import { useMessages } from '@/hooks/useMessages';
+import { useChatContext } from '@/contexts/ChatContext';
 import { usePendingRequestsCount } from '@/hooks/usePendingRequestsCount';
 import { usePendingAppointmentsCount } from '@/hooks/usePendingAppointmentsCount';
 import { useViewMode, type ViewMode } from './DashboardShell';
@@ -77,6 +77,7 @@ function NavLink({
   pending,
   pendingAppt,
   onClick,
+  onChatOpen,
 }: {
   item: NavItem;
   isActive: boolean;
@@ -84,16 +85,30 @@ function NavLink({
   pending: number;
   pendingAppt: number;
   onClick?: () => void;
+  onChatOpen?: () => void;
 }) {
   const badgeCount =
     item.badge === 'unread' ? unread :
     item.badge === 'pending' ? pending :
     item.badge === 'pending_appt' ? pendingAppt : 0;
 
+  // Berichten-item: klikken op de badge opent de chat widget
+  const handleClick = () => {
+    onClick?.();
+  };
+
+  const handleBadgeClick = (e: React.MouseEvent) => {
+    if (item.badge === 'unread' && onChatOpen && badgeCount > 0) {
+      e.preventDefault();
+      e.stopPropagation();
+      onChatOpen();
+    }
+  };
+
   return (
     <Link
       href={item.href}
-      onClick={onClick}
+      onClick={handleClick}
       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
         isActive
           ? 'bg-blue-600 text-white shadow-sm'
@@ -105,9 +120,12 @@ function NavLink({
       </span>
       <span className="flex-1">{item.label}</span>
       {badgeCount > 0 && (
-        <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold rounded-full ${
-          isActive ? 'bg-white/25 text-white' : 'bg-blue-500 text-white'
-        }`}>
+        <span
+          onClick={handleBadgeClick}
+          className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold rounded-full transition-transform hover:scale-110 ${
+            isActive ? 'bg-white/25 text-white' : 'bg-blue-500 text-white'
+          } ${item.badge === 'unread' ? 'cursor-pointer' : ''}`}
+        >
           {badgeCount > 9 ? '9+' : badgeCount}
         </span>
       )}
@@ -128,7 +146,7 @@ function SidebarContent({
   onLinkClick?: () => void;
 }) {
   const router = useRouter();
-  const { unreadCount } = useMessages();
+  const { unreadCount, openChat } = useChatContext();
   const { viewAs, setViewAs } = useViewMode();
   const isAdmin = profile.role === 'admin';
   const pendingCount = usePendingRequestsCount(isAdmin);
@@ -205,6 +223,7 @@ function SidebarContent({
                 pending={pendingCount}
                 pendingAppt={pendingApptCount}
                 onClick={onLinkClick}
+                onChatOpen={() => { onLinkClick?.(); openChat(); }}
               />
             ))}
           </div>

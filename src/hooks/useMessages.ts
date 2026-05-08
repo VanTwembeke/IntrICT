@@ -1,6 +1,11 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+/**
+ * useMessages — standalone hook gebruikt door MessagesPage (volledige berichtenpagina).
+ * Sidebar en ChatWidget gebruiken ChatContext ipv deze hook (gedeelde state, 1 fetch instantie).
+ */
+
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
 export interface Conversation {
@@ -23,13 +28,13 @@ export interface Conversation {
 export function useMessages() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const totalUnreadCount = conversations.reduce((sum, conv) => sum + conv.unread_count, 0);
 
-  // ── Initial fetch ──────────────────────────────────────────────────────────
   const fetchConversations = useCallback(async () => {
     try {
-      const response = await fetch('/api/messages');
+      const response = await fetch('/api/messages', { cache: 'no-store' });
       const data = await response.json();
       setConversations(data.conversations || []);
     } catch (error) {
@@ -43,27 +48,26 @@ export function useMessages() {
     fetchConversations();
   }, [fetchConversations]);
 
-  // ── Real-time subscription ─────────────────────────────────────────────────
+  // Realtime subscription with debounce — prevents N refetches on burst events
   useEffect(() => {
     const supabase = createClient();
 
     const channel = supabase
-      .channel('messages')
+      .channel('messages-page')
       .on(
         'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'messages'
-        },
+        { event: '*', schema: 'public', table: 'messages' },
         () => {
-          // Refresh conversations when messages change
-          fetchConversations();
+          if (debounceRef.current) clearTimeout(debounceRef.current);
+          debounceRef.current = setTimeout(() => {
+            fetchConversations();
+          }, 300);
         }
       )
       .subscribe();
 
     return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
       supabase.removeChannel(channel);
     };
   }, [fetchConversations]);
@@ -79,8 +83,7 @@ export function useMessages() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ conversationId }),
       });
-    } catch (error) {
-      console.error('Failed to mark as read:', error);
+    } catch {
       fetchConversations(); // herstel bij fout
     }
   }, [fetchConversations]);

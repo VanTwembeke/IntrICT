@@ -78,7 +78,9 @@ export default async function DashboardPage() {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   });
 
-  // ── Admin stats ──────────────────────────────────────────────────────────────
+  const now = new Date().toISOString();
+
+  // ── Admin stats — alle queries parallel ──────────────────────────────────────
   let userCount = 0;
   let pendingRequestCount = 0;
   let packageCount = 0;
@@ -90,49 +92,47 @@ export default async function DashboardPage() {
   let overdueInvoiceCount = 0;
 
   if (isAdmin) {
-    userCount = (await supabase.from('profiles').select('id', { count: 'exact', head: true })).count ?? 0;
-
-    try {
-      pendingRequestCount =
-        (await supabase.from('package_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending')).count ?? 0;
-      packageCount =
-        (await supabase.from('packages').select('id', { count: 'exact', head: true }).eq('active', true)).count ?? 0;
-
-      // Revenue: sum of accepted + pending package requests
-      const { data: revenueRows } = await supabase
-        .from('package_requests')
-        .select('package_price, status')
-        .in('status', ['accepted', 'pending']);
-      if (revenueRows) {
-        revenueAccepted = revenueRows.filter((r) => r.status === 'accepted').reduce((s, r) => s + (r.package_price ?? 0), 0);
-        revenuePending  = revenueRows.filter((r) => r.status === 'pending').reduce((s, r) => s + (r.package_price ?? 0), 0);
-      }
-    } catch { /* tables not yet created */ }
-
-    try {
-      pendingAppointmentCount =
-        (await supabase.from('appointments').select('id', { count: 'exact', head: true }).eq('status', 'pending')).count ?? 0;
-
-      const now = new Date().toISOString();
-      const { data: upcoming } = await supabase
-        .from('appointments')
+    const [
+      userCountRes,
+      pendingReqRes,
+      packageRes,
+      revenueRes,
+      pendingApptRes,
+      upcomingApptRes,
+      activeClientRes,
+      overdueRes,
+    ] = await Promise.allSettled([
+      supabase.from('profiles').select('id', { count: 'exact', head: true }),
+      supabase.from('package_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      supabase.from('packages').select('id', { count: 'exact', head: true }).eq('active', true),
+      supabase.from('package_requests').select('package_price, status').in('status', ['accepted', 'pending']),
+      supabase.from('appointments').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      supabase.from('appointments')
         .select('*, profile:profiles(full_name, email)')
         .gte('starts_at', now)
         .in('status', ['pending', 'confirmed'])
         .order('starts_at', { ascending: true })
-        .limit(5);
-      upcomingAppointments = (upcoming ?? []) as Appointment[];
-    } catch { /* appointments table not yet created */ }
+        .limit(5),
+      supabase.from('client_dossiers').select('id', { count: 'exact', head: true }).eq('status', 'klant'),
+      supabase.from('invoices').select('id', { count: 'exact', head: true }).eq('status', 'overdue'),
+    ]);
 
-    try {
-      activeClientCount =
-        (await supabase.from('client_dossiers').select('id', { count: 'exact', head: true }).eq('status', 'klant')).count ?? 0;
-      overdueInvoiceCount =
-        (await supabase.from('invoices').select('id', { count: 'exact', head: true }).eq('status', 'overdue')).count ?? 0;
-    } catch { /* tables not yet created */ }
+    if (userCountRes.status === 'fulfilled')   userCount            = userCountRes.value.count ?? 0;
+    if (pendingReqRes.status === 'fulfilled')  pendingRequestCount  = pendingReqRes.value.count ?? 0;
+    if (packageRes.status === 'fulfilled')     packageCount         = packageRes.value.count ?? 0;
+    if (pendingApptRes.status === 'fulfilled') pendingAppointmentCount = pendingApptRes.value.count ?? 0;
+    if (activeClientRes.status === 'fulfilled') activeClientCount   = activeClientRes.value.count ?? 0;
+    if (overdueRes.status === 'fulfilled')     overdueInvoiceCount  = overdueRes.value.count ?? 0;
+    if (upcomingApptRes.status === 'fulfilled') upcomingAppointments = (upcomingApptRes.value.data ?? []) as Appointment[];
+
+    if (revenueRes.status === 'fulfilled' && revenueRes.value.data) {
+      const rows = revenueRes.value.data;
+      revenueAccepted = rows.filter((r) => r.status === 'accepted').reduce((s, r) => s + (r.package_price ?? 0), 0);
+      revenuePending  = rows.filter((r) => r.status === 'pending').reduce((s, r) => s + (r.package_price ?? 0), 0);
+    }
   }
 
-  // ── User-specific data ───────────────────────────────────────────────────────
+  // ── User-specific data — parallel ────────────────────────────────────────────
   type OpenInvoice = Pick<Invoice, 'id' | 'invoice_number' | 'status' | 'total' | 'due_date'>;
   type UserAppt    = Pick<Appointment, 'id' | 'type_name' | 'starts_at' | 'status' | 'color'>;
   type UserRequest = Pick<PackageRequest, 'id' | 'package_name' | 'package_price' | 'status' | 'created_at'>;
@@ -145,107 +145,76 @@ export default async function DashboardPage() {
   let userActiveContractCount = 0;
 
   if (!isAdmin) {
-    try {
-      const { data: openInv } = await supabase
-        .from('invoices')
-        .select('id, invoice_number, status, total, due_date')
-        .eq('profile_id', user.id)
-        .in('status', ['sent', 'overdue'])
-        .order('due_date', { ascending: true });
-      userOpenInvoices = (openInv ?? []) as OpenInvoice[];
+    const [
+      openInvRes,
+      paidInvRes,
+      apptRes,
+      reqRes,
+      contractRes,
+    ] = await Promise.allSettled([
+      supabase.from('invoices').select('id, invoice_number, status, total, due_date')
+        .eq('profile_id', user.id).in('status', ['sent', 'overdue']).order('due_date', { ascending: true }),
+      supabase.from('invoices').select('total').eq('profile_id', user.id).eq('status', 'paid'),
+      supabase.from('appointments').select('id, type_name, starts_at, status, color')
+        .eq('user_id', user.id).gte('starts_at', now).in('status', ['pending', 'confirmed'])
+        .order('starts_at', { ascending: true }).limit(5),
+      supabase.from('package_requests').select('id, package_name, package_price, status, created_at')
+        .eq('user_id', user.id).order('created_at', { ascending: false }).limit(10),
+      supabase.from('contracts').select('id', { count: 'exact', head: true })
+        .eq('profile_id', user.id).eq('status', 'active'),
+    ]);
+
+    if (openInvRes.status === 'fulfilled') {
+      userOpenInvoices = (openInvRes.value.data ?? []) as OpenInvoice[];
       userOpenTotal = userOpenInvoices.reduce((s, i) => s + i.total, 0);
-
-      const { data: paidInv } = await supabase
-        .from('invoices')
-        .select('total')
-        .eq('profile_id', user.id)
-        .eq('status', 'paid');
-      userPaidTotal = (paidInv ?? []).reduce((s, r) => s + (r.total as number), 0);
-    } catch { /* invoices table not yet created */ }
-
-    try {
-      const now = new Date().toISOString();
-      const { data: appts } = await supabase
-        .from('appointments')
-        .select('id, type_name, starts_at, status, color')
-        .eq('user_id', user.id)
-        .gte('starts_at', now)
-        .in('status', ['pending', 'confirmed'])
-        .order('starts_at', { ascending: true })
-        .limit(5);
-      userUpcomingAppointments = (appts ?? []) as UserAppt[];
-    } catch { /* appointments table not yet created */ }
-
-    try {
-      const { data: reqs } = await supabase
-        .from('package_requests')
-        .select('id, package_name, package_price, status, created_at')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(10);
-      userRequests = (reqs ?? []) as UserRequest[];
-    } catch {}
-
-    try {
-      const { count } = await supabase
-        .from('contracts')
-        .select('id', { count: 'exact', head: true })
-        .eq('profile_id', user.id)
-        .eq('status', 'active');
-      userActiveContractCount = count ?? 0;
-    } catch {}
+    }
+    if (paidInvRes.status === 'fulfilled') {
+      userPaidTotal = (paidInvRes.value.data ?? []).reduce((s, r) => s + (r.total as number), 0);
+    }
+    if (apptRes.status === 'fulfilled')      userUpcomingAppointments = (apptRes.value.data ?? []) as UserAppt[];
+    if (reqRes.status === 'fulfilled')       userRequests             = (reqRes.value.data ?? []) as UserRequest[];
+    if (contractRes.status === 'fulfilled')  userActiveContractCount  = contractRes.value.count ?? 0;
   }
 
-  // ── Activity feed — admin only ────────────────────────────────────────────────
-  // Users have a dedicated "Mijn aanvragen" card instead of this feed.
+  // ── Activity feed — admin only, parallel ─────────────────────────────────────
   const activity: ActivityItem[] = [];
 
   if (isAdmin) {
-    try {
-      const { data: requests } = await supabase
-        .from('package_requests')
+    const [requestsRes, logsRes] = await Promise.allSettled([
+      supabase.from('package_requests')
         .select('id, package_name, package_price, status, created_at, profile:profiles(full_name, email)')
-        .order('created_at', { ascending: false })
-        .limit(5);
-
-      if (requests) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        for (const r of requests as any[]) {
-          activity.push({
-            id: r.id,
-            type: 'request',
-            title: `${r.profile?.full_name ?? r.profile?.email ?? 'Gebruiker'} — ${r.package_name}`,
-            subtitle: `€${r.package_price.toLocaleString('nl-BE')} · ${REQUEST_STATUS_LABELS[r.status] ?? r.status}`,
-            time: r.created_at,
-            status: r.status,
-          });
-        }
-      }
-    } catch { /* table not yet created */ }
-  }
-
-  // Activity logs (from client system)
-  if (isAdmin) {
-    try {
-      const { data: logs } = await supabase
-        .from('activity_logs')
+        .order('created_at', { ascending: false }).limit(5),
+      supabase.from('activity_logs')
         .select('*, profile:profiles(full_name, email)')
-        .order('created_at', { ascending: false })
-        .limit(8);
+        .order('created_at', { ascending: false }).limit(8),
+    ]);
 
-      if (logs) {
-        for (const log of logs as ActivityLog[]) {
-          activity.push({
-            id: `log-${log.id}`,
-            type: 'activity_log',
-            activityType: log.type,
-            title: log.title,
-            subtitle: log.profile?.full_name ?? log.profile?.email ?? '',
-            time: log.created_at,
-          });
-        }
+    if (requestsRes.status === 'fulfilled' && requestsRes.value.data) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const r of requestsRes.value.data as any[]) {
+        activity.push({
+          id: r.id,
+          type: 'request',
+          title: `${r.profile?.full_name ?? r.profile?.email ?? 'Gebruiker'} — ${r.package_name}`,
+          subtitle: `€${r.package_price.toLocaleString('nl-BE')} · ${REQUEST_STATUS_LABELS[r.status] ?? r.status}`,
+          time: r.created_at,
+          status: r.status,
+        });
       }
-    } catch { /* table not yet created */ }
+    }
+
+    if (logsRes.status === 'fulfilled' && logsRes.value.data) {
+      for (const log of logsRes.value.data as ActivityLog[]) {
+        activity.push({
+          id: `log-${log.id}`,
+          type: 'activity_log',
+          activityType: log.type,
+          title: log.title,
+          subtitle: log.profile?.full_name ?? log.profile?.email ?? '',
+          time: log.created_at,
+        });
+      }
+    }
   }
 
   // Sort by time and take most recent 8

@@ -67,5 +67,14 @@ export async function GET(request: NextRequest) {
     };
   }) || [];
 
-  return NextResponse.json({ conversations: processedConversations });
+  return NextResponse.json(
+    { conversations: processedConversations },
+    {
+      headers: {
+        // Private: only cached in the browser, not shared proxies
+        // stale-while-revalidate: serve stale for 30s while revalidating in background
+        'Cache-Control': 'private, max-age=0, stale-while-revalidate=30',
+      },
+    }
+  );
 }

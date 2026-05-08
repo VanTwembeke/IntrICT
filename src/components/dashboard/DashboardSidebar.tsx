@@ -15,7 +15,6 @@ import {
   X,
   Package,
   ChevronRight,
-  Send,
   ExternalLink,
   Eye,
   ShieldCheck,
@@ -58,8 +57,7 @@ const mainNavItems: NavItem[] = [
   { label: 'Mijn facturen',    href: '/dashboard/mijn-facturen',   icon: <Receipt size={18} />,         roles: ['user'],          exact: false },
   { label: 'Mijn contracten',  href: '/dashboard/mijn-contracten', icon: <FileSignature size={18} />,   roles: ['user'],          exact: false },
   { label: 'Gebruikers',      href: '/dashboard/users',      icon: <Users size={18} />,           roles: ['admin'] },
-  { label: 'E-mail verzenden',href: '/dashboard/email',          icon: <Send size={18} />,      roles: ['admin'] },
-  { label: 'Nieuwsbrief',    href: '/dashboard/nieuwsbrief',    icon: <Newspaper size={18} />, roles: ['admin'], exact: false },
+  { label: 'Abonnees',       href: '/dashboard/nieuwsbrief',    icon: <Newspaper size={18} />, roles: ['admin'], exact: false },
   { label: 'Brandgids',     href: '/dashboard/branding',       icon: <Palette size={18} />,   roles: ['admin'] },
 ];
 

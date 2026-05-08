@@ -43,7 +43,6 @@ export async function sendContactForm(
     await Promise.all([
       // Notificatie aan admin
       sendMail({
-        from: 'noreply@intrict.com',
         to: 'info@intrict.com',
         replyTo: email,
         subject: `Nieuw contactformulier: ${onderwerp}`,
@@ -88,7 +87,6 @@ export async function sendContactForm(
       }),
       // Automatisch antwoord aan bezoeker
       sendMail({
-        from: 'noreply@intrict.com',
         to: email,
         subject: 'We hebben je bericht ontvangen – IntrICT',
         html: `

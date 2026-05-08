@@ -108,7 +108,6 @@ export async function POST(request: Request) {
     await Promise.all([
       // Bevestiging aan de bezoeker
       sendMail({
-        from: 'noreply@intrict.com',
         to: guest_email.trim(),
         subject: `Afspraakbevestiging – ${apptType.name}`,
         html: `
@@ -128,7 +127,6 @@ export async function POST(request: Request) {
       }),
       // Notificatie aan admin
       sendMail({
-        from: 'noreply@intrict.com',
         to: 'info@intrict.com',
         subject: `Nieuwe afspraak via contactpagina – ${guest_name.trim()}`,
         html: `

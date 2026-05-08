@@ -24,8 +24,8 @@ export default function Process() {
         <div className="relative z-10 py-16 md:py-24">
           <div className="max-w-6xl px-6 mx-auto text-center">
             <motion.h2
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ y: 30 }}
+              whileInView={{ y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
               className="mb-4 text-3xl font-bold text-white sm:text-4xl md:text-6xl"
@@ -33,8 +33,8 @@ export default function Process() {
               {t.process.heading}
             </motion.h2>
             <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ y: 30 }}
+              whileInView={{ y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="max-w-2xl mx-auto text-base leading-relaxed md:text-xl text-slate-200"
@@ -50,8 +50,8 @@ export default function Process() {
           {steps.map((item, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ y: 30 }}
+              whileInView={{ y: 0 }}
               transition={{ duration: 0.8, delay: index * 0.2 }}
               className="space-y-6 text-center"
             >

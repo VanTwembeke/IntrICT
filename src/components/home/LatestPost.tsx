@@ -27,8 +27,8 @@ export default function LatestPost({ post }: LatestPostProps) {
       <div className="px-4 mx-auto max-w-5xl sm:px-6 lg:px-8">
         {/* Label */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 20 }}
+          whileInView={{ y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="flex items-center gap-3 mb-6"
@@ -41,8 +41,8 @@ export default function LatestPost({ post }: LatestPostProps) {
 
         {/* Card */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 30 }}
+          whileInView={{ y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >

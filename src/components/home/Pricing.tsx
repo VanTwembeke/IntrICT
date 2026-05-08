@@ -59,8 +59,8 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
 
         {/* ── Header ──────────────────────────────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 24 }}
+          whileInView={{ y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55 }}
           className="text-center mb-10"
@@ -77,13 +77,7 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
         </motion.div>
 
         {/* ── Trust badges ────────────────────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, delay: 0.15 }}
-          className="flex flex-wrap justify-center gap-2.5 mb-10"
-        >
+        <div className="flex flex-wrap justify-center gap-2.5 mb-10">
           {p.trust.map((badge) => (
             <span
               key={badge}
@@ -93,7 +87,7 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
               {badge}
             </span>
           ))}
-        </motion.div>
+        </div>
 
         {/* ── Tab toggle ──────────────────────────────────────────────────── */}
         <div className="flex justify-center mb-10">
@@ -128,8 +122,8 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
           {tab === 'monthly' && (
             <motion.div
               key="monthly"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ y: 12 }}
+              animate={{ y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.22 }}
             >
@@ -145,8 +139,8 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
                   return (
                     <motion.div
                       key={pkg.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      initial={{ y: 20 }}
+                      animate={{ y: 0 }}
                       transition={{ delay: i * 0.08 }}
                       className={`relative rounded-2xl flex flex-col ${
                         pkg.highlight
@@ -218,8 +212,8 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
           {tab === 'onetime' && (
             <motion.div
               key="onetime"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ y: 12 }}
+              animate={{ y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.22 }}
             >
@@ -235,8 +229,8 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
                   return (
                     <motion.div
                       key={pkg.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      initial={{ y: 20 }}
+                      animate={{ y: 0 }}
                       transition={{ delay: i * 0.08 }}
                       className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 flex flex-col hover:shadow-md transition-shadow duration-200"
                     >
@@ -283,8 +277,8 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
 
         {/* ── Bottom CTA ──────────────────────────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 20 }}
+          whileInView={{ y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="mt-14 bg-slate-900 rounded-2xl p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6"

@@ -12,9 +12,8 @@ interface LatestNewsProps {
 }
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 32 },
+  hidden: { y: 32 },
   visible: (i: number) => ({
-    opacity: 1,
     y: 0,
     transition: { duration: 0.55, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
   }),
@@ -47,8 +46,8 @@ export default function LatestNews({ postsNl, postsEn }: LatestNewsProps) {
       <div className="px-4 mx-auto max-w-7xl">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 24 }}
+          whileInView={{ y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
           className="mb-12 text-center"
@@ -157,8 +156,8 @@ export default function LatestNews({ postsNl, postsEn }: LatestNewsProps) {
 
         {/* CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 16 }}
+          whileInView={{ y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-10 text-center"

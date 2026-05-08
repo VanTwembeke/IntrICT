@@ -23,8 +23,8 @@ export default function Services() {
     <section id="services" className="py-20">
       <div className="px-4 mx-auto max-w-7xl">
         <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 30 }}
+          whileInView={{ y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
           className="mb-16 text-5xl font-bold text-center md:text-6xl text-slate-800"
@@ -36,8 +36,8 @@ export default function Services() {
           {services.map((service, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ y: 30 }}
+              whileInView={{ y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
               className="grid items-center gap-12 md:grid-cols-2"

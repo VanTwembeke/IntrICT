@@ -25,8 +25,8 @@ export default function Contact() {
         <div className="relative z-10 py-16 md:py-24">
           <div className="w-full max-w-4xl px-6 mx-auto text-center">
             <motion.h2
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ y: 30 }}
+              whileInView={{ y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
               className="mb-4 text-3xl font-bold text-white sm:text-4xl md:text-6xl"
@@ -34,8 +34,8 @@ export default function Contact() {
               {t.contactSection.heading}
             </motion.h2>
             <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ y: 30 }}
+              whileInView={{ y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="mx-auto mb-10 text-base leading-relaxed md:text-xl text-slate-200"
@@ -44,8 +44,8 @@ export default function Contact() {
             </motion.p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <motion.button
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ y: 30 }}
+                whileInView={{ y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.4 }}
                 whileHover={{ scale: 1.05 }}
@@ -59,8 +59,8 @@ export default function Contact() {
                 {t.contactSection.cta1}
               </motion.button>
               <motion.button
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ y: 30 }}
+                whileInView={{ y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.6 }}
                 whileHover={{ scale: 1.05 }}

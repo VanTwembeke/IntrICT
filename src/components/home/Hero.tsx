@@ -22,30 +22,30 @@ export default function Hero() {
       
       <div className="relative z-10 max-w-6xl px-4 mx-auto text-center">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ y: 30 }}
+          animate={{ y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
           className="max-w-4xl mx-auto"
         >
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 20 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
             className="mb-8 text-6xl font-bold leading-tight text-white md:text-8xl"
           >
             {t.hero.title}
           </motion.h1>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 20 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
             className="max-w-3xl mx-auto mb-12 text-xl leading-relaxed md:text-2xl text-slate-200"
           >
             {t.hero.subtitle}
           </motion.p>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 20 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
             className="flex flex-col justify-center gap-6 sm:flex-row"
           >

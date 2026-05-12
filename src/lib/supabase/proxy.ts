@@ -2,6 +2,16 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function updateSession(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+  const isAuthPage = path === '/login' || path === '/register';
+  const isDashboard = path.startsWith('/dashboard');
+
+  // Skip auth check for public routes — avoids an unnecessary Supabase round-trip
+  // on every request, which would block crawlers like GPTBot on 500s if it times out.
+  if (!isDashboard && !isAuthPage) {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -35,10 +45,6 @@ export async function updateSession(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const path = request.nextUrl.pathname;
-  const isAuthPage = path === '/login' || path === '/register';
-  const isDashboard = path.startsWith('/dashboard');
 
   if (isDashboard && !user) {
     const url = request.nextUrl.clone();

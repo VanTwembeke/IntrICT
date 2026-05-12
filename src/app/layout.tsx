@@ -384,8 +384,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       {/* End Google Tag Manager */}
       <body className={`${geistMono.variable} font-mono antialiased`}>
         {/* Google Tag Manager (noscript) */}
-        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K26RHWGJ"
-        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <noscript>
+  <iframe
+    src="https://www.googletagmanager.com/ns.html?id=GTM-K26RHWGJ"
+    height="0"
+    width="0"
+    style={{ display: "none", visibility: "hidden" }}
+  />
+</noscript>
         {/* End Google Tag Manager (noscript) */}
         <Providers>
         <script

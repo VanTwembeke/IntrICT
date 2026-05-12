@@ -9,6 +9,16 @@ import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
 import { ArrowRight, Code2, Hammer, Github } from 'lucide-react';
 
+// Organization schema reference
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "IntrICT", item: "https://www.intrict.com" },
+    { "@type": "ListItem", position: 2, name: "Portfolio", item: "https://www.intrict.com/portfolio" },
+  ],
+};
+
 const CASES = [
   {
     title: 'IntrICT.com — deze website',
@@ -30,10 +40,15 @@ export default function Portfolio() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <Header />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd).replace(/</g, '\\u003c') }}
+      />
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <Header />
 
-      <main>
+        <main>
         {/* Hero */}
         <section className="relative pt-24 pb-16 overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900" />
@@ -162,5 +177,6 @@ export default function Portfolio() {
       <Footer />
       <BackToTop />
     </div>
+    </>
   );
 }

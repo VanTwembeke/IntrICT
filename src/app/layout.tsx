@@ -138,8 +138,10 @@ const organizationJsonLd = {
   description: SITE_DESCRIPTION,
   address: {
     "@type": "PostalAddress",
+    streetAddress: "Nevele",
     addressLocality: "Gent",
     addressRegion: "Oost-Vlaanderen",
+    postalCode: "9850",
     addressCountry: "BE",
   },
   geo: {
@@ -156,21 +158,38 @@ const organizationJsonLd = {
     "Next.js Development",
     "UI/UX Design",
     "SEO Optimalisatie",
+    "GEO (Generative Engine Optimization)",
     "E-commerce Ontwikkeling",
     "Technische Ondersteuning",
     "Logo & Branding",
     "Digitale Strategie",
+    "GDPR Compliance",
+    "API Development",
+    "AI Training & Workshops",
   ],
   foundingDate: "2026",
-  contactPoint: {
-    "@type": "ContactPoint",
-    contactType: "customer service",
-    availableLanguage: ["Dutch", "English"],
-    email: "info@intrict.com",
-  },
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      availableLanguage: ["Dutch", "English"],
+      email: "info@intrict.com",
+      telephone: "+32470631475",
+      contactOption: "TollFree",
+    },
+    {
+      "@type": "ContactPoint",
+      contactType: "technical support",
+      availableLanguage: ["Dutch", "English"],
+      email: "info@intrict.com",
+      contactOption: "TollFree",
+    },
+  ],
   sameAs: [
     "https://www.linkedin.com/in/VanTwembeke",
     "https://github.com/VanTwembeke",
+    "https://www.instagram.com/intrict.9000",
+    "https://www.facebook.com/profile.php?id=61572120638573",
   ],
   priceRange: "€€",
   speakable: {
@@ -182,6 +201,11 @@ const organizationJsonLd = {
     dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
     opens: "09:00",
     closes: "18:00",
+  },
+  hasOfferCatalog: { "@id": `${SITE_URL}/#services` },
+  brand: {
+    "@type": "Brand",
+    name: "IntrICT",
   },
 };
 

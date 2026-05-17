@@ -9,6 +9,7 @@ import { blogPost as post8 } from './geo-seo-ai-overviews-optimaliseren';
 import { blogPost as post9 } from './wat-kost-een-website-belgie';
 import { blogPost as post10 } from './wordpress-shopify-maatwerk-vergelijking';
 import { blogPost as post11 } from './ai-webdesign-veiligheid-protocollen-checklist';
+import { blogPost as post12 } from './monkey-testing-website-automatisch-testen';
 
 export const blogPosts = [
   post1,
@@ -22,7 +23,8 @@ export const blogPosts = [
   post9,
   post10,
   post11,
+  post12,
 ];
 
 // Export individual posts for easier access
-export { post1, post2, post3, post4, post5, post6, post7, post8, post9, post10, post11 };
+export { post1, post2, post3, post4, post5, post6, post7, post8, post9, post10, post11, post12 };

@@ -45,6 +45,7 @@ import { blogPost as post8En } from './geo-explained-chatgpt-ai-overviews';
 import { blogPost as post9En } from './how-much-does-a-website-cost-in-belgium';
 import { blogPost as post10En } from './wordpress-shopify-or-custom-development';
 import { blogPost as post11En } from './ai-web-security-protocols-checklist';
+import { blogPost as post12En } from './monkey-testing-website-automated-testing';
 
 export const blogPostsEn: BlogPost[] = [
   post1En,
@@ -58,4 +59,5 @@ export const blogPostsEn: BlogPost[] = [
   post9En,
   post10En,
   post11En,
+  post12En,
 ];

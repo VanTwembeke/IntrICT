@@ -2,6 +2,7 @@
 
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendMail } from '@/lib/mailer';
+import { generateUnsubscribeToken } from '@/lib/newsletter-token';
 
 export type NewsletterState = {
   success: boolean;
@@ -83,7 +84,7 @@ export async function subscribeNewsletter(
           </a>
           <p style="margin-top: 32px; font-size: 12px; color: #94a3b8;">
             Uitschrijven?
-            <a href="${SITE_URL}/uitschrijven?email=${encodeURIComponent(trimmed)}" style="color: #64748b;">Klik hier</a>.
+            <a href="${SITE_URL}/uitschrijven?email=${encodeURIComponent(trimmed)}&token=${generateUnsubscribeToken(trimmed)}" style="color: #64748b;">Klik hier</a>.
           </p>
         </div>
       `,

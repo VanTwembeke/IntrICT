@@ -8,14 +8,17 @@ type State = 'idle' | 'loading' | 'done' | 'error';
 
 export default function UitschrijvenPage() {
   const [email, setEmail] = useState('');
+  const [token, setToken] = useState('');
   const [state, setState] = useState<State>('idle');
   const [error, setError] = useState('');
 
-  // Pre-fill e-mail vanuit ?email= URL-parameter
+  // Pre-fill e-mail en token vanuit URL-parameters
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const e = params.get('email');
+    const t = params.get('token');
     if (e) setEmail(decodeURIComponent(e));
+    if (t) setToken(t);
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -27,7 +30,7 @@ export default function UitschrijvenPage() {
       const res = await fetch('/api/newsletter/unsubscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: email.trim(), token }),
       });
 
       if (!res.ok) {

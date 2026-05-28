@@ -1,11 +1,17 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { verifyUnsubscribeToken } from '@/lib/newsletter-token';
 
 export async function POST(request: Request) {
-  const { email } = await request.json() as { email: string };
+  const { email, token } = await request.json() as { email: string; token?: string };
 
   if (!email || typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
     return NextResponse.json({ error: 'Ongeldig e-mailadres.' }, { status: 400 });
+  }
+
+  // Token vereist — beschermt tegen automatisch uitschrijven van willekeurige adressen
+  if (!token || !verifyUnsubscribeToken(email.trim(), token)) {
+    return NextResponse.json({ error: 'Ongeldige of verlopen uitschrijflink.' }, { status: 403 });
   }
 
   try {

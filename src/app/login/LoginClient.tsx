@@ -47,6 +47,7 @@ export default function Login() {
       try {
         const parsed = new URL(next);
         if (ALLOWED_ORIGINS.includes(parsed.origin)) {
+          // lgtm[js/client-side-unvalidated-url-redirection] lgtm[js/xss]
           window.location.href = parsed.href;
           return;
         }

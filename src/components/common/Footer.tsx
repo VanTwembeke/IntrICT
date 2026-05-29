@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useActionState } from 'react';
 import { subscribeNewsletter, type NewsletterState } from '@/app/actions/newsletter';
@@ -26,7 +26,9 @@ function pickRandom3() {
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const [randomPosts] = useState(pickRandom3);
+  const [randomPosts, setRandomPosts] = useState<ReturnType<typeof pickRandom3>>([]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setRandomPosts(pickRandom3()); }, []);
   const { t } = useLanguage();
 
   const footerLinks = {

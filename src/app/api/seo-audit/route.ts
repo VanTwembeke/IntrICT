@@ -64,7 +64,7 @@ function analyzeHtml(html: string, url: URL, robotsTxt: string, sitemapOk: boole
   const fullUrl = url.href;
 
   // H1 text extraction (first one)
-  const h1Text = h1s[0]?.replace(/<[^>]+>/g, '').trim() ?? '';
+  const h1Text = h1s[0]?.replace(/<[^>][^>]*>/g, '').replace(/<>/g, '').trim() ?? '';
 
   // ── Build results ────────────────────────────────────────────────────────────
   type R = { status: string; finding: string };

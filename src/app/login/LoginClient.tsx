@@ -47,7 +47,7 @@ export default function Login() {
       try {
         const parsed = new URL(next);
         if (ALLOWED_ORIGINS.includes(parsed.origin)) {
-          window.location.href = next;
+          window.location.href = parsed.href;
           return;
         }
       } catch { /* ongeldige URL — val door naar standaard redirect */ }

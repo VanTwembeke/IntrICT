@@ -296,7 +296,7 @@ function NotificationsPanel({
           ) : (
             <ul className="overflow-y-auto divide-y divide-slate-100 max-h-64">
               {conversations.slice(0, 5).map(conv => (
-                <li key={conv.id} onClick={() => go('/dashboard/messages')}
+                <li key={conv.id} onClick={() => { if (conv.unread_count > 0) onMarkAsRead(conv.id); go('/dashboard/messages'); }}
                   className="flex items-start gap-3 px-4 py-3 transition-colors cursor-pointer hover:bg-slate-50">
                   <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${conv.unread_count > 0 ? 'bg-blue-500' : 'bg-slate-200'}`} />
                   <div className="flex-1 min-w-0">

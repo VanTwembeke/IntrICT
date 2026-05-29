@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useActionState } from 'react';
+import Link from 'next/link';
 import { subscribeNewsletter, type NewsletterState } from '@/app/actions/newsletter';
 import { blogPosts } from '@/data/blog-posts';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -237,9 +238,9 @@ export default function Footer() {
               transition={{ duration: 0.6 }}
               className="col-span-2 lg:col-span-1"
             >
-              <a href="/" className="inline-block mb-4">
+              <Link href="/" className="inline-block mb-4">
                 <IntrICTLogo variant="dark" className="h-8 w-auto opacity-90 hover:opacity-100 transition-opacity" />
-              </a>
+              </Link>
               <p className="mb-5 text-sm leading-relaxed text-slate-500">
                 {t.footer.tagline}
               </p>

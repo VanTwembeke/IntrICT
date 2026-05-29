@@ -55,8 +55,13 @@ export async function updateSession(request: NextRequest) {
   if (isAuthPage && user) {
     // Als er een ?next= parameter is naar tools.intrict.com, respecteer die
     const next = request.nextUrl.searchParams.get('next');
-    if (next && next.startsWith('https://tools.intrict.com')) {
-      return NextResponse.redirect(next);
+    if (next) {
+      try {
+        const parsed = new URL(next);
+        if (parsed.origin === 'https://tools.intrict.com') {
+          return NextResponse.redirect(next);
+        }
+      } catch { /* ongeldige URL — val door naar standaard redirect */ }
     }
     const url = request.nextUrl.clone();
     url.pathname = '/dashboard';

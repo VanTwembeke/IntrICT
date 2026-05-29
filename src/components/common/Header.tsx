@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, X, Menu, ChevronDown, LogOut, Settings, LayoutDashboard,
   Package, Mail, Building2, Eye, ArrowRight, BookOpen, MessageSquare,
-  Zap, Globe, User as UserIcon, ClipboardList, Bell,
+  Zap, Globe, User as UserIcon, ClipboardList, Bell, Wrench,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
@@ -970,6 +970,15 @@ export default function Header() {
                                 )}
                               </Link>
                             ))}
+                          </div>
+
+                          <div className="border-t border-slate-100 py-1.5">
+                            <a href="https://tools.intrict.com"
+                              onClick={() => setShowUserMenu(false)}
+                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                              <Wrench size={15} className="text-slate-400 shrink-0" />
+                              <span className="flex-1">{lang === 'en' ? 'Tools' : 'Tools'}</span>
+                            </a>
                           </div>
 
                           <div className="border-t border-slate-100 py-1.5">

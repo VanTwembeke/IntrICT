@@ -175,6 +175,7 @@ export default function BlogPage() {
   );
 
   // Reset category filter when language changes (categories may differ)
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setActiveCategory('Alle'); }, [lang]);
 
   useEffect(() => {

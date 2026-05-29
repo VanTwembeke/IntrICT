@@ -42,10 +42,15 @@ export default function Login() {
     // SSO: lees ?next= direct uit window.location (useSearchParams vereist Suspense)
     const params = new URLSearchParams(window.location.search);
     const next = params.get('next');
-    const ALLOWED_SUBDOMAINS = ['https://tools.intrict.com', 'https://socman.intrict.com'];
-    if (next && ALLOWED_SUBDOMAINS.some((origin) => next.startsWith(origin))) {
-      window.location.href = next;
-      return;
+    const ALLOWED_ORIGINS = ['https://tools.intrict.com', 'https://socman.intrict.com'];
+    if (next) {
+      try {
+        const parsed = new URL(next);
+        if (ALLOWED_ORIGINS.includes(parsed.origin)) {
+          window.location.href = next;
+          return;
+        }
+      } catch { /* ongeldige URL — val door naar standaard redirect */ }
     }
 
     router.refresh();

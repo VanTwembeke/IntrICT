@@ -277,6 +277,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Ongeldige URL. Gebruik het formaat https://www.domein.be' }, { status: 400 });
   }
 
+  if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+    return NextResponse.json({ error: 'Alleen http(s) URLs zijn toegestaan.' }, { status: 400 });
+  }
+  const hostname = parsedUrl.hostname.toLowerCase();
+  const privatePattern = /^(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|169\.254\.|::1$|0\.0\.0\.0)/;
+  if (privatePattern.test(hostname)) {
+    return NextResponse.json({ error: 'Privé-netwerkadressen zijn niet toegestaan.' }, { status: 400 });
+  }
+
   // ── Fetch page + robots.txt + sitemap in parallel ────────────────────────────
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 12000);

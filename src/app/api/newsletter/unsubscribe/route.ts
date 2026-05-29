@@ -5,7 +5,7 @@ import { verifyUnsubscribeToken } from '@/lib/newsletter-token';
 export async function POST(request: Request) {
   const { email, token } = await request.json() as { email: string; token?: string };
 
-  if (!email || typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+  if (!email || typeof email !== 'string' || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
     return NextResponse.json({ error: 'Ongeldig e-mailadres.' }, { status: 400 });
   }
 

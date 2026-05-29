@@ -21,6 +21,7 @@ export default function BlogPostNotification({ post }: BlogPostNotificationProps
   useEffect(() => {
     const alreadyDismissed = sessionStorage.getItem(SESSION_KEY) === '1';
     if (alreadyDismissed) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDismissed(true);
       return;
     }

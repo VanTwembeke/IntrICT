@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   if (!guest_name?.trim() || guest_name.trim().length < 2) {
     return NextResponse.json({ error: 'Naam is verplicht (min. 2 tekens).' }, { status: 400 });
   }
-  if (!guest_email?.trim() || !/^[^@]+@[^@]+\.[^@]+$/.test(guest_email)) {
+  if (!guest_email?.trim() || guest_email.length > 254 || !/^[^@]+@[^@]+\.[^@]+$/.test(guest_email)) {
     return NextResponse.json({ error: 'Ongeldig e-mailadres.' }, { status: 400 });
   }
   if (!appointment_type_id || !starts_at) {

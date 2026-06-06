@@ -65,7 +65,7 @@ const T = {
     paymentNote: (days: number, dueDate: string | null) =>
       `Gelieve te betalen binnen ${days} dagen${dueDate ? ` (voor ${dueDate})` : ' na factuurdatum'}. Bij laattijdige betaling is van rechtswege en zonder ingebrekestelling een intrest van 10% per jaar verschuldigd.`,
     notesLabel:      'OPMERKINGEN',
-    termsLabel:      'Algemene voorwaarden:',
+    termsLabel:      'Voorwaarden:',
     vatPrefix:       'BTW:',
     kboPrefix:       'KBO:',
     buildRef: (n: string) => `Factuur ${n}`,

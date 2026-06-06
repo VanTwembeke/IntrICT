@@ -6,9 +6,11 @@ import NieuweFactuurClient from './NieuweFactuurClient';
 export default async function NieuweFactuurPage({
   searchParams,
 }: {
-  searchParams: Promise<{ client?: string; type?: string; van?: string }>;
+  searchParams: Promise<{ client?: string; dossier?: string; type?: string; van?: string }>;
 }) {
-  const { client: clientId, type, van: linkedId } = await searchParams;
+  const { client: clientId, dossier: dossierId, type, van: linkedId } = await searchParams;
+  // `client` is a profile_id; `dossier` is a dossier_id — both preselect in the form
+  const preselected = dossierId ?? clientId;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
@@ -42,7 +44,7 @@ export default async function NieuweFactuurPage({
       <NieuweFactuurClient
         dossiers={(dossiers ?? []) as ClientDossier[]}
         availablePackages={packages ?? []}
-        preselectedClientId={clientId}
+        preselectedClientId={preselected}
         isCreditNote={isCreditNote}
         linkedInvoice={(linkedResult.data ?? null) as Invoice | null}
       />

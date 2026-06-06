@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ArrowLeft, User, Building2, Mail, Phone, Package, FileText,
-  Clock, Plus, X, Save, CheckCircle, AlertCircle, Receipt,
+  ArrowLeft, Building2, Mail, Phone, Package, FileText,
+  Clock, Plus, X, Save, CheckCircle, AlertCircle, Receipt, Edit3,
 } from 'lucide-react';
 import type { ClientDossier, ActivityLog, Invoice, DossierStatus } from '@/lib/types';
 
@@ -50,23 +50,63 @@ export default function DossierClient({
   const [invoices] = useState(initialInvoices);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState('');
   const [notes, setNotes] = useState(dossier.notes ?? '');
   const [addPkg, setAddPkg] = useState(false);
   const [selectedPkg, setSelectedPkg] = useState('');
   const [isRecurring, setIsRecurring] = useState(false);
   const [pkgSaving, setPkgSaving] = useState(false);
+  const [pkgError, setPkgError] = useState('');
+  const [lastAddedPkg, setLastAddedPkg] = useState<{ name: string } | null>(null);
+
+  // Guest editable fields
+  const [editGuest, setEditGuest] = useState(false);
+  const [guestName,    setGuestName]    = useState(dossier.guest_name    ?? '');
+  const [guestEmail,   setGuestEmail]   = useState(dossier.guest_email   ?? '');
+  const [guestPhone,   setGuestPhone]   = useState(dossier.guest_phone   ?? '');
+  const [guestCompany, setGuestCompany] = useState(dossier.guest_company ?? '');
 
   const profile = dossier.profile;
+  const isGuest = !dossier.profile_id;
 
   const handleSave = async () => {
     setSaving(true);
-    const res = await fetch(`/api/dossiers/${dossier.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: dossier.status, notes }),
-    });
-    if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 2000); }
-    setSaving(false);
+    setSaveError('');
+    const body: Record<string, unknown> = { status: dossier.status, notes };
+    if (isGuest) {
+      body.guest_name    = guestName.trim()    || null;
+      body.guest_email   = guestEmail.trim()   || null;
+      body.guest_phone   = guestPhone.trim()   || null;
+      body.guest_company = guestCompany.trim() || null;
+    }
+    try {
+      const res = await fetch(`/api/dossiers/${dossier.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (res.ok) {
+        if (isGuest) {
+          setDossier((d) => ({
+            ...d,
+            guest_name:    guestName.trim()    || null,
+            guest_email:   guestEmail.trim()   || null,
+            guest_phone:   guestPhone.trim()   || null,
+            guest_company: guestCompany.trim() || null,
+          }));
+          setEditGuest(false);
+        }
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setSaveError(data.error ?? 'Opslaan mislukt. Probeer opnieuw.');
+      }
+    } catch {
+      setSaveError('Netwerkfout. Controleer je verbinding.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleStatusChange = (status: DossierStatus) => {
@@ -76,27 +116,47 @@ export default function DossierClient({
   const handleAddPackage = async () => {
     if (!selectedPkg) return;
     setPkgSaving(true);
-    const res = await fetch(`/api/dossiers/${dossier.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'add_package', package_id: selectedPkg, is_recurring: isRecurring }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setDossier((d) => ({ ...d, packages: [...(d.packages ?? []), data] }));
-      setAddPkg(false);
-      setSelectedPkg('');
+    setPkgError('');
+    try {
+      const res = await fetch(`/api/dossiers/${dossier.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'add_package', package_id: selectedPkg, is_recurring: isRecurring }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setDossier((d) => ({ ...d, packages: [...(d.packages ?? []), data] }));
+        setLastAddedPkg({ name: data.package?.name ?? 'Pakket' });
+        setAddPkg(false);
+        setSelectedPkg('');
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setPkgError(data.error ?? 'Toevoegen mislukt.');
+      }
+    } catch {
+      setPkgError('Netwerkfout. Probeer opnieuw.');
+    } finally {
+      setPkgSaving(false);
     }
-    setPkgSaving(false);
   };
 
   const handleRemovePackage = async (dpId: string) => {
-    await fetch(`/api/dossiers/${dossier.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'remove_package', package_id: dpId }),
-    });
-    setDossier((d) => ({ ...d, packages: (d.packages ?? []).filter((p) => p.id !== dpId) }));
+    setPkgError('');
+    try {
+      const res = await fetch(`/api/dossiers/${dossier.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'remove_package', package_id: dpId }),
+      });
+      if (res.ok) {
+        setDossier((d) => ({ ...d, packages: (d.packages ?? []).filter((p) => p.id !== dpId) }));
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setPkgError(data.error ?? 'Verwijderen mislukt.');
+      }
+    } catch {
+      setPkgError('Netwerkfout. Probeer opnieuw.');
+    }
   };
 
   const totalInvoiced = invoices.filter((i) => i.status !== 'cancelled').reduce((s, i) => s + i.total, 0);
@@ -112,25 +172,36 @@ export default function DossierClient({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">
-              {profile?.full_name ?? profile?.email ?? 'Klant'}
+              {profile?.full_name ?? dossier.guest_name ?? profile?.email ?? dossier.guest_email ?? 'Klant'}
             </h1>
-            <p className="text-sm text-slate-500">{profile?.email}</p>
+            <p className="text-sm text-slate-500">
+              {profile?.email ?? dossier.guest_email ?? (isGuest ? 'Gast · geen account' : '')}
+            </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Link
-              href={`/dashboard/facturen/nieuw?client=${dossier.profile_id}`}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-colors bg-blue-600 rounded-xl hover:bg-blue-700"
-            >
-              <Plus size={14} /> Nieuwe factuur
-            </Link>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-colors bg-slate-900 rounded-xl hover:bg-slate-800 disabled:opacity-60"
-            >
-              {saved ? <CheckCircle size={14} /> : <Save size={14} />}
-              {saved ? 'Opgeslagen' : saving ? 'Bezig…' : 'Opslaan'}
-            </button>
+          <div className="flex flex-col items-end gap-2">
+            <div className="flex items-center gap-2">
+              <Link
+                href={dossier.profile_id
+                  ? `/dashboard/facturen/nieuw?client=${dossier.profile_id}`
+                  : `/dashboard/facturen/nieuw?dossier=${dossier.id}`}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-colors bg-blue-600 rounded-xl hover:bg-blue-700"
+              >
+                <Plus size={14} /> Nieuwe factuur
+              </Link>
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-colors bg-slate-900 rounded-xl hover:bg-slate-800 disabled:opacity-60"
+              >
+                {saved ? <CheckCircle size={14} /> : <Save size={14} />}
+                {saved ? 'Opgeslagen' : saving ? 'Bezig…' : 'Opslaan'}
+              </button>
+            </div>
+            {saveError && (
+              <p className="text-xs text-red-500 flex items-center gap-1">
+                <AlertCircle size={12} /> {saveError}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -142,28 +213,99 @@ export default function DossierClient({
           <div className="p-5 bg-white border shadow-sm border-slate-200 rounded-2xl">
             <div className="flex items-center gap-3 pb-4 mb-4 border-b border-slate-100">
               <div className="flex items-center justify-center w-12 h-12 text-lg font-bold text-white rounded-2xl bg-blue-600">
-                {(profile?.full_name ?? profile?.email ?? '?').slice(0, 2).toUpperCase()}
+                {(profile?.full_name ?? dossier.guest_name ?? profile?.email ?? dossier.guest_email ?? '?').slice(0, 2).toUpperCase()}
               </div>
-              <div>
-                <p className="font-bold text-slate-900">{profile?.full_name ?? '—'}</p>
-                {profile?.customer_number && <p className="text-xs text-slate-400">#{profile.customer_number}</p>}
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-slate-900 truncate">
+                  {profile?.full_name ?? dossier.guest_name ?? '—'}
+                </p>
+                {profile?.customer_number
+                  ? <p className="text-xs text-slate-400">#{profile.customer_number}</p>
+                  : isGuest && <p className="text-xs text-violet-500 font-semibold">Gast · geen account</p>
+                }
               </div>
-            </div>
-            <div className="space-y-2.5 text-sm">
-              <div className="flex items-center gap-2 text-slate-600">
-                <Mail size={13} className="text-slate-400 shrink-0" />{profile?.email}
-              </div>
-              {profile?.phone && (
-                <div className="flex items-center gap-2 text-slate-600">
-                  <Phone size={13} className="text-slate-400 shrink-0" />{profile.phone}
-                </div>
+              {isGuest && (
+                <button
+                  onClick={() => setEditGuest((v) => !v)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                  title="Gegevens bewerken"
+                >
+                  <Edit3 size={14} />
+                </button>
               )}
-              {profile?.company && (
-                <div className="flex items-center gap-2 text-slate-600">
-                  <Building2 size={13} className="text-slate-400 shrink-0" />{profile.company}
-                </div>
-              )}
             </div>
+
+            {/* Guest: read view */}
+            {isGuest && !editGuest && (
+              <div className="space-y-2.5 text-sm">
+                {dossier.guest_email ? (
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <Mail size={13} className="text-slate-400 shrink-0" />{dossier.guest_email}
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate-400 italic">Geen e-mail ingevuld</p>
+                )}
+                {dossier.guest_phone && (
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <Phone size={13} className="text-slate-400 shrink-0" />{dossier.guest_phone}
+                  </div>
+                )}
+                {dossier.guest_company && (
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <Building2 size={13} className="text-slate-400 shrink-0" />{dossier.guest_company}
+                  </div>
+                )}
+                <button
+                  onClick={() => setEditGuest(true)}
+                  className="mt-1 text-xs text-blue-600 hover:underline"
+                >
+                  Gegevens aanvullen →
+                </button>
+              </div>
+            )}
+
+            {/* Guest: edit form */}
+            {isGuest && editGuest && (
+              <div className="space-y-2.5 text-sm">
+                {[
+                  { label: 'Naam',     value: guestName,    set: setGuestName,    type: 'text',  placeholder: 'Jan Jansen' },
+                  { label: 'E-mail',   value: guestEmail,   set: setGuestEmail,   type: 'email', placeholder: 'jan@bedrijf.be' },
+                  { label: 'Telefoon', value: guestPhone,   set: setGuestPhone,   type: 'tel',   placeholder: '+32 …' },
+                  { label: 'Bedrijf',  value: guestCompany, set: setGuestCompany, type: 'text',  placeholder: 'Bedrijfsnaam' },
+                ].map(({ label, value, set, type, placeholder }) => (
+                  <div key={label}>
+                    <label className="block text-[10px] font-bold uppercase tracking-wide text-slate-400 mb-1">{label}</label>
+                    <input
+                      type={type}
+                      value={value}
+                      onChange={(e) => set(e.target.value)}
+                      placeholder={placeholder}
+                      className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 text-slate-800 placeholder:text-slate-300"
+                    />
+                  </div>
+                ))}
+                <p className="text-[10px] text-slate-400">Klik op &ldquo;Opslaan&rdquo; hierboven om te bewaren.</p>
+              </div>
+            )}
+
+            {/* Profile user: read view */}
+            {!isGuest && (
+              <div className="space-y-2.5 text-sm">
+                <div className="flex items-center gap-2 text-slate-600">
+                  <Mail size={13} className="text-slate-400 shrink-0" />{profile?.email}
+                </div>
+                {profile?.phone && (
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <Phone size={13} className="text-slate-400 shrink-0" />{profile.phone}
+                  </div>
+                )}
+                {profile?.company && (
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <Building2 size={13} className="text-slate-400 shrink-0" />{profile.company}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Status */}
@@ -234,6 +376,36 @@ export default function DossierClient({
               </button>
             </div>
 
+            {/* Factuur-prompt na pakket toevoegen */}
+            <AnimatePresence>
+              {lastAddedPkg && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  className="mb-4 flex items-center justify-between gap-3 px-3 py-2.5 bg-green-50 border border-green-200 rounded-xl text-sm"
+                >
+                  <div className="flex items-center gap-2 text-green-700">
+                    <CheckCircle size={14} />
+                    <span><strong>{lastAddedPkg.name}</strong> toegevoegd.</span>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Link
+                      href={dossier.profile_id
+                        ? `/dashboard/facturen/nieuw?client=${dossier.profile_id}`
+                        : `/dashboard/facturen/nieuw?dossier=${dossier.id}`}
+                      className="text-xs font-semibold text-green-700 hover:underline"
+                    >
+                      Factuur aanmaken →
+                    </Link>
+                    <button onClick={() => setLastAddedPkg(null)} className="text-green-400 hover:text-green-600">
+                      <X size={13} />
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <AnimatePresence>
               {addPkg && (
                 <motion.div
@@ -262,15 +434,26 @@ export default function DossierClient({
                         className="flex-1 px-3 py-2 text-xs font-semibold text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-60">
                         {pkgSaving ? 'Bezig…' : 'Toevoegen'}
                       </button>
-                      <button onClick={() => setAddPkg(false)}
+                      <button onClick={() => { setAddPkg(false); setPkgError(''); }}
                         className="px-3 py-2 text-xs font-semibold transition-colors border rounded-lg border-slate-200 text-slate-600 hover:bg-slate-50">
                         Annuleren
                       </button>
                     </div>
+                    {pkgError && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <AlertCircle size={11} /> {pkgError}
+                      </p>
+                    )}
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {pkgError && !addPkg && (
+              <p className="mb-3 text-xs text-red-500 flex items-center gap-1">
+                <AlertCircle size={11} /> {pkgError}
+              </p>
+            )}
 
             {(dossier.packages?.length ?? 0) === 0 ? (
               <p className="py-4 text-sm text-center text-slate-400">Geen pakketten gekoppeld.</p>
@@ -300,8 +483,12 @@ export default function DossierClient({
           <div className="p-5 bg-white border shadow-sm border-slate-200 rounded-2xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xs font-bold tracking-widest uppercase text-slate-400">Facturen</h3>
-              <Link href={`/dashboard/facturen/nieuw?client=${dossier.profile_id}`}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 transition-colors hover:text-blue-700">
+              <Link
+                href={dossier.profile_id
+                  ? `/dashboard/facturen/nieuw?client=${dossier.profile_id}`
+                  : `/dashboard/facturen/nieuw?dossier=${dossier.id}`}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 transition-colors hover:text-blue-700"
+              >
                 <Plus size={12} /> Nieuwe factuur
               </Link>
             </div>

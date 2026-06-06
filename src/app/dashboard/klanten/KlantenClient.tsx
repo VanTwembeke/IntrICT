@@ -408,21 +408,12 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
                             <option key={s.key} value={s.key}>{s.label}</option>
                           ))}
                         </select>
-                        {d.profile_id ? (
-                          <Link
-                            href={`/dashboard/klanten/${d.id}`}
-                            className="flex items-center gap-1 text-[11px] font-semibold text-blue-600 hover:text-blue-700 transition-colors opacity-0 group-hover:opacity-100"
-                          >
-                            Dossier <ArrowRight size={11} />
-                          </Link>
-                        ) : displayEmail(d) ? (
-                          <a
-                            href={`mailto:${displayEmail(d)}`}
-                            className="flex items-center gap-1 text-[11px] font-semibold text-blue-600 hover:text-blue-700 transition-colors opacity-0 group-hover:opacity-100"
-                          >
-                            Contact <ArrowRight size={11} />
-                          </a>
-                        ) : null}
+                        <Link
+                          href={`/dashboard/klanten/${d.id}`}
+                          className="flex items-center gap-1 text-[11px] font-semibold text-blue-600 hover:text-blue-700 transition-colors opacity-0 group-hover:opacity-100"
+                        >
+                          Dossier <ArrowRight size={11} />
+                        </Link>
                       </div>
                     </motion.div>
                   ))}
@@ -499,19 +490,12 @@ export default function KlantenClient({ initialDossiers }: { initialDossiers: Cl
                       >
                         <Trash2 size={13} />
                       </button>
-                      {d.profile_id ? (
-                        <Link
-                          href={`/dashboard/klanten/${d.id}`}
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 transition-colors hover:text-blue-700"
-                        >
-                          Dossier <ArrowRight size={12} />
-                        </Link>
-                      ) : displayEmail(d) ? (
-                        <a href={`mailto:${displayEmail(d)}`}
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 transition-colors hover:text-blue-700">
-                          Contact <ArrowRight size={12} />
-                        </a>
-                      ) : null}
+                      <Link
+                        href={`/dashboard/klanten/${d.id}`}
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 transition-colors hover:text-blue-700"
+                      >
+                        Dossier <ArrowRight size={12} />
+                      </Link>
                     </div>
                   </td>
                 </tr>

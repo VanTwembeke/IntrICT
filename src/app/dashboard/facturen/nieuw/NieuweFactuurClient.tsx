@@ -29,7 +29,8 @@ interface AvailablePackage {
 }
 
 interface GuestClientData {
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
   company: string;
   vat_number: string;
@@ -52,7 +53,7 @@ function fmt(n: number) {
 }
 
 function emptyGuest(): GuestClientData {
-  return { name: '', email: '', company: '', vat_number: '', address: '', postal_code: '', city: '', phone: '' };
+  return { first_name: '', last_name: '', email: '', company: '', vat_number: '', address: '', postal_code: '', city: '', phone: '' };
 }
 
 function addDays(dateStr: string, days: number): string {
@@ -97,7 +98,8 @@ export default function NieuweFactuurClient({
       return;
     }
     if (preselectedClientId) {
-      const match = dossiers.find((d) => d.id === preselectedClientId);
+      // preselectedClientId can be a dossier_id OR a profile_id
+      const match = dossiers.find((d) => d.id === preselectedClientId || d.profile_id === preselectedClientId);
       if (match) { setDossierId(match.id); setClientMode('existing'); }
     }
   }, [preselectedClientId, linkedInvoice, dossiers]);
@@ -160,7 +162,7 @@ export default function NieuweFactuurClient({
     if (clientMode === 'existing' && !dossierId) {
       setError('Selecteer een bestaande klant.'); return;
     }
-    if (clientMode === 'new' && !guest.name.trim() && !guest.email.trim()) {
+    if (clientMode === 'new' && !guest.first_name.trim() && !guest.last_name.trim() && !guest.email.trim()) {
       setError('Vul minstens de naam of het e-mailadres van de klant in.'); return;
     }
     if (items.every((it) => !it.description.trim())) {
@@ -200,7 +202,7 @@ export default function NieuweFactuurClient({
         payload.dossier_id = dossierId;
         payload.profile_id = selectedDossier?.profile_id ?? null;
       } else {
-        payload.guest_name        = guest.name.trim()        || null;
+        payload.guest_name        = `${guest.first_name} ${guest.last_name}`.trim() || null;
         payload.guest_email       = guest.email.trim()       || null;
         payload.guest_company     = guest.company.trim()     || null;
         payload.guest_vat_number  = guest.vat_number.trim()  || null;
@@ -339,7 +341,7 @@ export default function NieuweFactuurClient({
                       {(selectedDossier.profile?.company ?? selectedDossier.guest_company) && (
                         <p className="font-semibold">{selectedDossier.profile?.company ?? selectedDossier.guest_company}</p>
                       )}
-                      <p>{selectedDossier.profile?.full_name ?? selectedDossier.guest_name}</p>
+                      <p>{selectedDossier.profile?.full_name ?? selectedDossier.guest_name ?? '—'}</p>
                       <p className="text-slate-400">{selectedDossier.profile?.email ?? selectedDossier.guest_email}</p>
                       {selectedDossier.profile?.vat_number && (
                         <p className="text-slate-400">BTW: {selectedDossier.profile.vat_number}</p>
@@ -368,8 +370,15 @@ export default function NieuweFactuurClient({
                   </div>
 
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-500 mb-1.5">Voornaam <span className="text-red-400">*</span></label>
+                      <input type="text" value={guest.first_name} onChange={(e) => setGuestField('first_name', e.target.value)} placeholder="Jan" className={inputClass} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-500 mb-1.5">Naam <span className="text-red-400">*</span></label>
+                      <input type="text" value={guest.last_name} onChange={(e) => setGuestField('last_name', e.target.value)} placeholder="Janssen" className={inputClass} />
+                    </div>
                     {([
-                      { field: 'name'        as const, label: 'Naam',         required: true,  placeholder: 'Jan Janssen',        type: 'text'  },
                       { field: 'email'       as const, label: 'E-mailadres',  required: false, placeholder: 'jan@bedrijf.be',     type: 'email' },
                       { field: 'company'     as const, label: 'Bedrijfsnaam', required: false, placeholder: 'Bedrijf BV',         type: 'text'  },
                       { field: 'vat_number'  as const, label: 'BTW-nummer',   required: false, placeholder: 'BE 0000.000.000',    type: 'text'  },

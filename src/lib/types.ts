@@ -117,6 +117,10 @@ export interface ClientDossier {
   guest_email: string | null;
   guest_phone: string | null;
   guest_company: string | null;
+  guest_vat_number: string | null;
+  guest_address: string | null;
+  guest_postal_code: string | null;
+  guest_city: string | null;
   source: 'manual' | 'package_request' | null;
   created_at: string;
   updated_at: string;

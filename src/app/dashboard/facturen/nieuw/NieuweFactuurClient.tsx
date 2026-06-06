@@ -7,7 +7,7 @@ import {
   ArrowLeft, Plus, Trash2, RefreshCw, Send, FileText, Save,
   Users, UserPlus, ChevronDown, ChevronUp, Package,
 } from 'lucide-react';
-import type { ClientDossier } from '@/lib/types';
+import type { ClientDossier, Invoice } from '@/lib/types';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -67,10 +67,14 @@ export default function NieuweFactuurClient({
   dossiers,
   availablePackages,
   preselectedClientId,
+  isCreditNote = false,
+  linkedInvoice = null,
 }: {
   dossiers: ClientDossier[];
   availablePackages: AvailablePackage[];
   preselectedClientId?: string;
+  isCreditNote?: boolean;
+  linkedInvoice?: Invoice | null;
 }) {
   const router = useRouter();
   const [saving, setSaving] = useState<SaveAction | null>(null);
@@ -78,17 +82,25 @@ export default function NieuweFactuurClient({
 
   // ── Client mode ───────────────────────────────────────────────────────────
   const [clientMode, setClientMode] = useState<'existing' | 'new'>('existing');
-  const [dossierId, setDossierId] = useState('');
+  const [dossierId, setDossierId] = useState(() => {
+    if (linkedInvoice?.dossier_id) return linkedInvoice.dossier_id;
+    return '';
+  });
   const [guest, setGuest] = useState<GuestClientData>(emptyGuest());
 
   const selectedDossier = dossiers.find((d) => d.id === dossierId) ?? null;
 
   useEffect(() => {
+    if (linkedInvoice?.dossier_id) {
+      setDossierId(linkedInvoice.dossier_id);
+      setClientMode('existing');
+      return;
+    }
     if (preselectedClientId) {
       const match = dossiers.find((d) => d.id === preselectedClientId);
       if (match) { setDossierId(match.id); setClientMode('existing'); }
     }
-  }, [preselectedClientId, dossiers]);
+  }, [preselectedClientId, linkedInvoice, dossiers]);
 
   const setGuestField = (field: keyof GuestClientData, value: string) =>
     setGuest((prev) => ({ ...prev, [field]: value }));
@@ -109,7 +121,20 @@ export default function NieuweFactuurClient({
   }, [issueDate]);
 
   // ── Line items ────────────────────────────────────────────────────────────
-  const [items, setItems] = useState<LineItem[]>([newItem()]);
+  const [items, setItems] = useState<LineItem[]>(() => {
+    if (linkedInvoice?.items?.length) {
+      return linkedInvoice.items.map((it) => ({
+        id: crypto.randomUUID(),
+        description: it.description,
+        notes: it.notes ?? '',
+        quantity: it.quantity,
+        unit_price: -(it.unit_price),  // negate for credit note
+        package_id: it.package_id ?? undefined,
+        showNotes: !!it.notes,
+      }));
+    }
+    return [newItem()];
+  });
 
   const updateItem = (id: string, field: keyof LineItem, value: string | number | boolean) =>
     setItems((prev) => prev.map((it) => it.id === id ? { ...it, [field]: value } : it));
@@ -148,6 +173,8 @@ export default function NieuweFactuurClient({
       const send_email = action === 'create_send';
 
       const payload: Record<string, unknown> = {
+        type:               isCreditNote ? 'credit_note' : 'invoice',
+        linked_invoice_id:  linkedInvoice?.id ?? null,
         status,
         send_email,
         issue_date:         issueDate,
@@ -216,14 +243,43 @@ export default function NieuweFactuurClient({
           <ArrowLeft size={18} />
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Nieuwe factuur</h1>
-          <p className="text-sm text-slate-500">Maak een factuur aan voor een bestaande of nieuwe klant</p>
+          <h1 className="text-2xl font-bold text-slate-900">
+            {isCreditNote ? 'Nieuwe creditnota' : 'Nieuwe factuur'}
+          </h1>
+          <p className="text-sm text-slate-500">
+            {isCreditNote
+              ? linkedInvoice
+                ? `Creditnota voor factuur ${linkedInvoice.invoice_number}`
+                : 'Creditnota aanmaken'
+              : 'Maak een factuur aan voor een bestaande of nieuwe klant'}
+          </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Main form */}
         <div className="space-y-5 lg:col-span-2">
+          {isCreditNote && linkedInvoice && (
+            <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+              <div className="shrink-0 w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+                <FileText size={15} className="text-amber-600" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-amber-900">Creditnota voor {linkedInvoice.invoice_number}</p>
+                <p className="text-xs text-amber-700 mt-0.5">
+                  Bedragen zijn automatisch negatief gemaakt. Pas aan indien nodig.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {isCreditNote && !linkedInvoice && (
+            <div className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-500">
+              <FileText size={13} className="text-slate-400 shrink-0" />
+              Creditnota — gebruik negatieve bedragen per lijn.
+            </div>
+          )}
+
           {error && (
             <div className="p-3 text-sm text-red-700 border border-red-200 bg-red-50 rounded-xl">{error}</div>
           )}
@@ -420,46 +476,50 @@ export default function NieuweFactuurClient({
               </div>
             </div>
 
-            <div className="flex items-center gap-3 pt-1 flex-wrap">
-              <button
-                type="button"
-                onClick={() => setIsRecurring((v) => !v)}
-                className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors duration-200 ${
-                  isRecurring ? 'bg-purple-600' : 'bg-slate-200'
-                }`}
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 mt-0.5 ${
-                  isRecurring ? 'translate-x-4.5' : 'translate-x-0.5'
-                }`} />
-              </button>
-              <span className="flex items-center gap-1.5 text-sm text-slate-700">
-                <RefreshCw size={14} className="text-purple-500" />
-                Terugkerende factuur
-              </span>
-              <AnimatePresence>
-                {isRecurring && (
-                  <motion.div
-                    initial={{ opacity: 0, width: 0 }} animate={{ opacity: 1, width: 'auto' }}
-                    exit={{ opacity: 0, width: 0 }}
-                    className="flex items-center gap-2 overflow-hidden"
+            {!isCreditNote && (
+              <>
+                <div className="flex items-center gap-3 pt-1 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => setIsRecurring((v) => !v)}
+                    className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors duration-200 ${
+                      isRecurring ? 'bg-purple-600' : 'bg-slate-200'
+                    }`}
                   >
-                    <select
-                      value={recurringInterval}
-                      onChange={(e) => setRecurringInterval(e.target.value as 'monthly' | 'quarterly' | 'yearly')}
-                      className="px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-300 bg-white text-slate-700"
-                    >
-                      <option value="monthly">Maandelijks</option>
-                      <option value="quarterly">Per kwartaal</option>
-                      <option value="yearly">Jaarlijks</option>
-                    </select>
-                  </motion.div>
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 mt-0.5 ${
+                      isRecurring ? 'translate-x-4.5' : 'translate-x-0.5'
+                    }`} />
+                  </button>
+                  <span className="flex items-center gap-1.5 text-sm text-slate-700">
+                    <RefreshCw size={14} className="text-purple-500" />
+                    Terugkerende factuur
+                  </span>
+                  <AnimatePresence>
+                    {isRecurring && (
+                      <motion.div
+                        initial={{ opacity: 0, width: 0 }} animate={{ opacity: 1, width: 'auto' }}
+                        exit={{ opacity: 0, width: 0 }}
+                        className="flex items-center gap-2 overflow-hidden"
+                      >
+                        <select
+                          value={recurringInterval}
+                          onChange={(e) => setRecurringInterval(e.target.value as 'monthly' | 'quarterly' | 'yearly')}
+                          className="px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-300 bg-white text-slate-700"
+                        >
+                          <option value="monthly">Maandelijks</option>
+                          <option value="quarterly">Per kwartaal</option>
+                          <option value="yearly">Jaarlijks</option>
+                        </select>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+                {isRecurring && (
+                  <p className="text-xs text-purple-600 bg-purple-50 border border-purple-100 rounded-lg px-3 py-2">
+                    De eerste factuur wordt direct aangemaakt. Volgende facturen worden automatisch gegenereerd op basis van het gekozen interval.
+                  </p>
                 )}
-              </AnimatePresence>
-            </div>
-            {isRecurring && (
-              <p className="text-xs text-purple-600 bg-purple-50 border border-purple-100 rounded-lg px-3 py-2">
-                De eerste factuur wordt direct aangemaakt. Volgende facturen worden automatisch gegenereerd op basis van het gekozen interval.
-              </p>
+              </>
             )}
           </div>
 
@@ -621,7 +681,9 @@ export default function NieuweFactuurClient({
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors text-sm disabled:opacity-50"
               >
                 <Send size={14} />
-                {saving === 'create_send' ? 'Verzenden…' : 'Aanmaken & verzenden'}
+                {saving === 'create_send'
+                  ? 'Verzenden…'
+                  : isCreditNote ? 'Creditnota & verzenden' : 'Aanmaken & verzenden'}
               </button>
 
               {/* Aanmaken (zonder e-mail) */}
@@ -631,7 +693,9 @@ export default function NieuweFactuurClient({
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-800 text-white font-semibold rounded-xl hover:bg-slate-900 transition-colors text-sm disabled:opacity-50"
               >
                 <FileText size={14} />
-                {saving === 'create' ? 'Aanmaken…' : 'Aanmaken'}
+                {saving === 'create'
+                  ? 'Aanmaken…'
+                  : isCreditNote ? 'Creditnota aanmaken' : 'Aanmaken'}
               </button>
 
               {/* Concept */}
@@ -648,8 +712,8 @@ export default function NieuweFactuurClient({
             {/* Legenda */}
             <div className="space-y-1 pt-1 text-xs text-slate-400">
               <p><span className="font-semibold text-slate-600">Concept</span> — opgeslagen, nog niet definitief</p>
-              <p><span className="font-semibold text-slate-600">Aanmaken</span> — definitieve factuur, klant ontvangt geen e-mail</p>
-              <p><span className="font-semibold text-slate-600">Aanmaken &amp; verzenden</span> — definitief + PDF per e-mail naar klant</p>
+              <p><span className="font-semibold text-slate-600">{isCreditNote ? 'Creditnota aanmaken' : 'Aanmaken'}</span> — definitief, klant ontvangt geen e-mail</p>
+              <p><span className="font-semibold text-slate-600">{isCreditNote ? 'Creditnota & verzenden' : 'Aanmaken & verzenden'}</span> — definitief + PDF per e-mail</p>
             </div>
           </div>
         </div>

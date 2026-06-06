@@ -165,9 +165,13 @@ export interface ActivityLog {
   profile?: { full_name: string | null; email: string } | null;
 }
 
+export type InvoiceType = 'invoice' | 'credit_note';
+
 export interface Invoice {
   id: string;
   invoice_number: string;
+  type: InvoiceType;
+  linked_invoice_id: string | null;
   dossier_id: string | null;
   /** Null when the invoice was created for a guest client (no Supabase account). */
   profile_id: string | null;

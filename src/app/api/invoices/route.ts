@@ -9,10 +9,10 @@ import { sendMail } from '@/lib/mailer';
 import { InvoicePDF } from '@/lib/invoice-pdf';
 import type { Invoice } from '@/lib/types';
 
-function generateInvoiceNumber(): string {
+function generateInvoiceNumber(type: 'invoice' | 'credit_note' = 'invoice'): string {
   const year = new Date().getFullYear();
   const rand = Math.floor(Math.random() * 9000) + 1000;
-  return `INV-${year}-${rand}`;
+  return type === 'credit_note' ? `CN-${year}-${rand}` : `INV-${year}-${rand}`;
 }
 
 function nextRecurringDate(base: string, interval: 'monthly' | 'quarterly' | 'yearly'): string {
@@ -81,6 +81,8 @@ export async function POST(request: Request) {
     status = 'draft',
     issue_date,
     send_email = false,
+    type = 'invoice',
+    linked_invoice_id = null,
   } = body;
 
   const isGuestInvoice = !profile_id;
@@ -198,12 +200,12 @@ export async function POST(request: Request) {
     : null;
 
   // ── Generate unique invoice number ────────────────────────────────────────
-  let invoice_number = generateInvoiceNumber();
+  let invoice_number = generateInvoiceNumber(type);
   for (let attempts = 0; attempts < 5; attempts++) {
     const { data: existing } = await supabase
       .from('invoices').select('id').eq('invoice_number', invoice_number).maybeSingle();
     if (!existing) break;
-    invoice_number = generateInvoiceNumber();
+    invoice_number = generateInvoiceNumber(type);
   }
 
   // ── Insert invoice ────────────────────────────────────────────────────────
@@ -211,6 +213,8 @@ export async function POST(request: Request) {
     .from('invoices')
     .insert({
       invoice_number,
+      type,
+      linked_invoice_id: linked_invoice_id ?? null,
       profile_id:   resolvedProfileId,
       dossier_id:   resolvedDossierId,
       status,
@@ -298,7 +302,7 @@ export async function POST(request: Request) {
 
           await sendMail({
             to: clientEmail,
-            subject: `Factuur ${invoice_number} van IntrICT`,
+            subject: type === 'credit_note' ? `Creditnota ${invoice_number} van IntrICT` : `Factuur ${invoice_number} van IntrICT`,
             replyTo: 'info@intrict.com',
             html: `
 <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#0f172a">
@@ -308,7 +312,7 @@ export async function POST(request: Request) {
   </div>
   <div style="background:#fff;padding:32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px">
     <p style="margin:0 0 16px;font-size:15px">Beste ${clientName},</p>
-    <p style="margin:0 0 16px;color:#475569">In bijlage vindt u factuur <strong>${invoice_number}</strong> ten bedrage van <strong>&euro; ${total.toFixed(2).replace('.', ',')}</strong>.</p>
+    <p style="margin:0 0 16px;color:#475569">In bijlage vindt u ${type === 'credit_note' ? 'creditnota' : 'factuur'} <strong>${invoice_number}</strong> ten bedrage van <strong>&euro; ${Math.abs(total).toFixed(2).replace('.', ',')}</strong>.</p>
     ${dueDateStr ? `<p style="margin:0 0 24px;color:#475569">Gelieve te betalen v&oacute;or <strong>${dueDateStr}</strong>.</p>` : ''}
     <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0">
     <p style="margin:0;font-size:12px;color:#94a3b8">Met vriendelijke groeten,<br><strong style="color:#1d4ed8">IntrICT</strong> &middot; info@intrict.com</p>

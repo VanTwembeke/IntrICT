@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   ArrowLeft, CheckCircle, Clock, AlertTriangle, XCircle, FileText,
-  RefreshCw, Download, Trash2, ChevronDown,
+  RefreshCw, Download, Trash2, ChevronDown, ReceiptText,
 } from 'lucide-react';
 import type { Invoice, InvoiceStatus } from '@/lib/types';
 import { COMPANY } from '@/lib/company';
@@ -180,6 +180,16 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
           </button>
         </div>
 
+        {invoice.type !== 'credit_note' && (
+          <Link
+            href={`/dashboard/facturen/nieuw?type=credit_note&van=${invoice.id}`}
+            className="inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl hover:bg-amber-100 transition-colors"
+          >
+            <ReceiptText size={15} />
+            Creditnota
+          </Link>
+        )}
+
         <button
           onClick={handleDownloadPDF}
           disabled={downloading}
@@ -198,6 +208,28 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
           <Trash2 size={18} />
         </button>
       </div>
+
+      {/* Credit note banner */}
+      {invoice.type === 'credit_note' && (
+        <div className="flex items-center justify-between p-4 bg-amber-50 border border-amber-200 rounded-2xl">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+              <ReceiptText size={15} className="text-amber-600" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-amber-900">Creditnota</p>
+              {invoice.linked_invoice_id && (
+                <p className="text-xs text-amber-700">
+                  Verwijst naar{' '}
+                  <Link href={`/dashboard/facturen/${invoice.linked_invoice_id}`} className="underline hover:text-amber-900">
+                    originele factuur
+                  </Link>
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Invoice preview card */}
       <div className="overflow-hidden bg-white border shadow-sm rounded-2xl border-slate-200">
@@ -219,7 +251,9 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
 
             {/* Invoice meta */}
             <div className="text-right">
-              <p className="mb-1 text-3xl font-black text-slate-900">FACTUUR</p>
+              <p className="mb-1 text-3xl font-black text-slate-900">
+                {invoice.type === 'credit_note' ? 'CREDITNOTA' : 'FACTUUR'}
+              </p>
               <p className="text-sm font-bold text-blue-600">{invoice.invoice_number}</p>
               <span className={`inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full text-xs font-bold ${cfg.badge}`}>
                 {cfg.icon}{cfg.label}

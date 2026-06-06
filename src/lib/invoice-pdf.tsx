@@ -38,6 +38,8 @@ const T = {
   nl: {
     tagline:         'IT-diensten & weboplossingen',
     invoiceTitle:    'FACTUUR',
+    creditNoteTitle: 'CREDITNOTA',
+    creditNoteRef:   'Verwijst naar factuur:',
     clientLabel:     'KLANT',
     invoiceDetails:  'FACTUURGEGEVENS',
     issueDateLabel:  'Factuurdatum',
@@ -77,6 +79,8 @@ const T = {
   en: {
     tagline:         'IT services & web solutions',
     invoiceTitle:    'INVOICE',
+    creditNoteTitle: 'CREDIT NOTE',
+    creditNoteRef:   'Refers to invoice:',
     clientLabel:     'CLIENT',
     invoiceDetails:  'INVOICE DETAILS',
     issueDateLabel:  'Issue date',
@@ -504,9 +508,10 @@ const LOGO_PATH = path.join(process.cwd(), 'public', 'brand', 'icon_light_v2.png
 // ─── PDF Document ─────────────────────────────────────────────────────────────
 
 export function InvoicePDF({ invoice }: { invoice: Invoice }) {
-  const lang   = invoice.language ?? 'nl';
-  const t      = T[lang];
-  const locale = t.dateLocale;
+  const lang        = invoice.language ?? 'nl';
+  const t           = T[lang];
+  const locale      = t.dateLocale;
+  const isCreditNote = invoice.type === 'credit_note';
 
   const items    = invoice.items ?? [];
   const subtotal = invoice.subtotal ?? 0;
@@ -558,8 +563,13 @@ export function InvoicePDF({ invoice }: { invoice: Invoice }) {
             </View>
 
             <View style={s.headerRight}>
-              <Text style={s.invoiceTitle}>{t.invoiceTitle}</Text>
+              <Text style={s.invoiceTitle}>{isCreditNote ? t.creditNoteTitle : t.invoiceTitle}</Text>
               <Text style={s.invoiceNumber}>{invoice.invoice_number}</Text>
+              {isCreditNote && invoice.linked_invoice_id && (
+                <Text style={{ fontSize: 7, color: '#92400e', marginTop: 3, fontWeight: 400 }}>
+                  {t.creditNoteRef} {(invoice as Invoice & { linked_invoice_number?: string }).linked_invoice_number ?? ''}
+                </Text>
+              )}
               <View style={[s.statusBadge, { backgroundColor: sc.bg }]}>
                 <Text style={[s.statusText, { color: sc.fg }]}>{statusLabel}</Text>
               </View>

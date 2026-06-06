@@ -5,17 +5,18 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
   Receipt, Plus, Search, ArrowRight, RefreshCw,
-  CheckCircle, Clock, AlertTriangle, XCircle, FileText,
+  CheckCircle, Clock, AlertTriangle, XCircle, FileText, ReceiptText,
 } from 'lucide-react';
-import type { Invoice, InvoiceStatus } from '@/lib/types';
+import type { Invoice, InvoiceStatus, InvoiceType } from '@/lib/types';
 
-const TABS: { key: InvoiceStatus | 'all'; label: string }[] = [
-  { key: 'all',       label: 'Alle' },
-  { key: 'draft',     label: 'Concept' },
-  { key: 'sent',      label: 'Verzonden' },
-  { key: 'paid',      label: 'Betaald' },
-  { key: 'overdue',   label: 'Vervallen' },
-  { key: 'cancelled', label: 'Geannuleerd' },
+const TABS: { key: InvoiceStatus | InvoiceType | 'all'; label: string }[] = [
+  { key: 'all',         label: 'Alle' },
+  { key: 'draft',       label: 'Concept' },
+  { key: 'sent',        label: 'Verzonden' },
+  { key: 'paid',        label: 'Betaald' },
+  { key: 'overdue',     label: 'Vervallen' },
+  { key: 'cancelled',   label: 'Geannuleerd' },
+  { key: 'credit_note', label: 'Creditnota\'s' },
 ];
 
 const STATUS_CONFIG: Record<InvoiceStatus, { label: string; badge: string; icon: React.ReactNode }> = {
@@ -36,10 +37,11 @@ function fmtDate(iso: string) {
 
 export default function FacturenClient({ initialInvoices }: { initialInvoices: Invoice[] }) {
   const [invoices] = useState(initialInvoices);
-  const [tab, setTab] = useState<InvoiceStatus | 'all'>('all');
+  const [tab, setTab] = useState<InvoiceStatus | InvoiceType | 'all'>('all');
   const [search, setSearch] = useState('');
 
   const filtered = invoices.filter((inv) => {
+    if (tab === 'credit_note') return inv.type === 'credit_note';
     if (tab !== 'all' && inv.status !== tab) return false;
     const q = search.toLowerCase();
     return !q ||
@@ -101,7 +103,11 @@ export default function FacturenClient({ initialInvoices }: { initialInvoices: I
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-1 bg-slate-100 rounded-xl p-1 overflow-x-auto">
           {TABS.map((t) => {
-            const count = t.key === 'all' ? invoices.length : invoices.filter((i) => i.status === t.key).length;
+            const count = t.key === 'all'
+              ? invoices.length
+              : t.key === 'credit_note'
+              ? invoices.filter((i) => i.type === 'credit_note').length
+              : invoices.filter((i) => i.status === t.key).length;
             return (
               <button
                 key={t.key}
@@ -146,6 +152,7 @@ export default function FacturenClient({ initialInvoices }: { initialInvoices: I
             {filtered.map((inv) => {
               const cfg = STATUS_CONFIG[inv.status];
               const isOverdue = inv.status === 'overdue';
+              const isCN = inv.type === 'credit_note';
               return (
                 <motion.tr
                   key={inv.id}
@@ -156,15 +163,19 @@ export default function FacturenClient({ initialInvoices }: { initialInvoices: I
                 >
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-2">
+                      {isCN && <ReceiptText size={13} className="text-amber-500 shrink-0" />}
                       <p className="font-semibold text-slate-900">{inv.invoice_number}</p>
                       {inv.is_recurring && (
                         <RefreshCw size={11} className="text-purple-400" aria-label="Terugkerend" />
                       )}
                     </div>
-                    {inv.due_date && (
+                    {inv.due_date && !isCN && (
                       <p className={`text-xs mt-0.5 ${isOverdue ? 'text-red-500 font-medium' : 'text-slate-400'}`}>
                         Vervaldatum: {fmtDate(inv.due_date)}
                       </p>
+                    )}
+                    {isCN && (
+                      <p className="text-xs mt-0.5 text-amber-600 font-medium">Creditnota</p>
                     )}
                   </td>
                   <td className="px-5 py-3.5 hidden md:table-cell">
@@ -180,7 +191,9 @@ export default function FacturenClient({ initialInvoices }: { initialInvoices: I
                     {fmtDate(inv.created_at)}
                   </td>
                   <td className="px-5 py-3.5 text-right">
-                    <p className="font-bold text-slate-900">{fmt(inv.total ?? 0)}</p>
+                    <p className={`font-bold ${isCN ? 'text-red-600' : 'text-slate-900'}`}>
+                      {isCN ? `-${fmt(Math.abs(inv.total ?? 0))}` : fmt(inv.total ?? 0)}
+                    </p>
                     {(inv.vat_rate ?? 0) > 0 && (
                       <p className="text-xs text-slate-400">{inv.vat_rate}% BTW</p>
                     )}

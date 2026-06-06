@@ -5,16 +5,16 @@
 export const COMPANY = {
   name:       'IntrICT',
   legal_form: 'Eenmanszaak',                      // BV / NV / eenmanszaak …
-  address:    'Adres',                         // straat + nr
+  address:    'Langemunt 29',                         // straat + nr
   postal:     '9850',
   city:       'Nevele',
   country:    'België',
-  vat:        'BE 0000.000.000',                 // BTW-nummer
-  kbo:        '0000.000.000',                    // KBO/BCE ondernemingsnummer
-  iban:       'BE00 0000 0000 0000',
+  vat:        'BE 0800.856.942',                 // BTW-nummer
+  kbo:        '0800.856.942',                    // KBO/BCE ondernemingsnummer
+  iban:       'BE36650770408581',
   bic:        'GEBABEBB',
   email:      'info@intrict.com',
-  phone:      '+32 000 00 00 00',
+  phone:      '+32 470 63 14 75',
   website:    'https://intrict.com',
   terms_url:  'https://intrict.com/algemene-voorwaarden',   // update when live
   payment_days: 30,                              // standaard betaaltermijn

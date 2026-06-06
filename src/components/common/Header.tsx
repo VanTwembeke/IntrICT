@@ -69,7 +69,7 @@ const SEARCH_BLOGS = blogPosts.map((post) => ({
 
 // ─── Command palette ──────────────────────────────────────────────────────────
 
-function CommandPalette({ isLoggedIn, onClose, isMac, lang }: { isLoggedIn: boolean; onClose: () => void; isMac: boolean; lang: Lang }) {
+function CommandPalette({ isLoggedIn, onClose, isMac }: { isLoggedIn: boolean; onClose: () => void; isMac: boolean; lang: Lang }) {
   const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [cursor, setCursor] = useState(0);
@@ -316,7 +316,7 @@ function NotificationsPanel({
                     <button
                       title="Markeer als gelezen"
                       onClick={(e) => { e.stopPropagation(); onMarkAsRead(conv.id); }}
-                      className="min-w-[1.125rem] h-[1.125rem] px-1 flex items-center justify-center bg-blue-500 hover:bg-slate-300 text-white text-[10px] font-bold rounded-full shrink-0 transition-colors"
+                      className="min-w-4.5 h-4.5 px-1 flex items-center justify-center bg-blue-500 hover:bg-slate-300 text-white text-[10px] font-bold rounded-full shrink-0 transition-colors"
                     >
                       {conv.unread_count}
                     </button>
@@ -442,7 +442,7 @@ function MobileDrawer({
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-5 border-b border-slate-100 shrink-0">
               <Link href="/" onClick={onClose} className="shrink-0">
-                <IntrICTLogo variant="light" className="h-8 w-auto" />
+                <IntrICTLogo variant="light" className="w-auto h-8" />
               </Link>
               <button onClick={onClose} className="p-2 transition-all rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100">
                 <X size={20} />
@@ -769,7 +769,7 @@ export default function Header() {
       {/* Skip navigation — visible on focus for keyboard users */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:px-4 focus:py-2 focus:bg-white focus:text-slate-900 focus:font-semibold focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-200 focus:px-4 focus:py-2 focus:bg-white focus:text-slate-900 focus:font-semibold focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         Ga naar hoofdinhoud
       </a>

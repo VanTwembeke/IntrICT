@@ -8,6 +8,7 @@ import {
   RefreshCw, Download, Trash2, ChevronDown,
 } from 'lucide-react';
 import type { Invoice, InvoiceStatus } from '@/lib/types';
+import { COMPANY } from '@/lib/company';
 
 const STATUS_CONFIG: Record<InvoiceStatus, { label: string; badge: string; icon: React.ReactNode }> = {
   draft:     { label: 'Concept',     badge: 'bg-slate-100 text-slate-600',  icon: <FileText size={14} /> },
@@ -211,7 +212,7 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
               <p className="mb-1 text-2xl font-black tracking-wide text-blue-600">IntrICT</p>
               <p className="text-xs text-slate-400">IT-diensten &amp; weboplossingen</p>
               <div className="mt-3 space-y-0.5 text-xs text-slate-500">
-                <p>BTW: BE 0000.000.000</p>
+                <p>BTW: {COMPANY.vat}</p>
                 <p>info@intrict.com</p>
               </div>
             </div>
@@ -324,15 +325,15 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
             <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
               <div className="flex gap-2">
                 <span className="w-24 text-slate-400 shrink-0">Begunstigde</span>
-                <span className="font-semibold text-slate-700">IntrICT BV</span>
+                <span className="font-semibold text-slate-700">{COMPANY.name} {COMPANY.legal_form}</span>
               </div>
               <div className="flex gap-2">
                 <span className="w-24 text-slate-400 shrink-0">IBAN</span>
-                <span className="font-semibold text-slate-700">BE00 0000 0000 0000</span>
+                <span className="font-semibold text-slate-700">{COMPANY.iban}</span>
               </div>
               <div className="flex gap-2">
                 <span className="w-24 text-slate-400 shrink-0">BIC</span>
-                <span className="font-semibold text-slate-700">GEBABEBB</span>
+                <span className="font-semibold text-slate-700">{COMPANY.bic}</span>
               </div>
               <div className="flex gap-2">
                 <span className="w-24 text-slate-400 shrink-0">Mededeling</span>
@@ -355,7 +356,7 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
 
           {/* Legal footer */}
           <div className="flex flex-col gap-1 pt-4 text-xs border-t border-slate-100 text-slate-400 sm:flex-row sm:justify-between">
-            <span>IntrICT BV · BTW BE 0000.000.000 · KBO 0000.000.000</span>
+            <span>{COMPANY.name} · {COMPANY.legal_form} · BTW {COMPANY.vat} · KBO {COMPANY.kbo}</span>
             <a
               href="https://intrict.com/algemene-voorwaarden"
               target="_blank"

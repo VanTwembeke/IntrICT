@@ -289,7 +289,10 @@ export default function FactuurDetail({ invoice: initial }: { invoice: Invoice }
               <tbody>
                 {(invoice.items ?? []).map((item, i) => (
                   <tr key={item.id} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-                    <td className="px-4 py-3 text-slate-800">{item.description}</td>
+                    <td className="px-4 py-3 text-slate-800">
+                      <p>{item.description}</p>
+                      {item.notes && <p className="text-xs text-slate-400 mt-0.5">{item.notes}</p>}
+                    </td>
                     <td className="px-4 py-3 text-center text-slate-500">{item.quantity}</td>
                     <td className="px-4 py-3 text-right text-slate-500">{fmt(item.unit_price)}</td>
                     <td className="px-4 py-3 font-semibold text-right text-slate-800">

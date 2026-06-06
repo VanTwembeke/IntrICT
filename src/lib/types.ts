@@ -205,6 +205,7 @@ export interface InvoiceItem {
   id: string;
   invoice_id: string;
   description: string;
+  notes: string | null;
   quantity: number;
   unit_price: number;
   total: number;

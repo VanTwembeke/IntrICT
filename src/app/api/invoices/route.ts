@@ -1,6 +1,13 @@
+export const runtime = 'nodejs';
+
 import { NextResponse } from 'next/server';
+import React from 'react';
+import { renderToBuffer } from '@react-pdf/renderer';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { sendMail } from '@/lib/mailer';
+import { InvoicePDF } from '@/lib/invoice-pdf';
+import type { Invoice } from '@/lib/types';
 
 function generateInvoiceNumber(): string {
   const year = new Date().getFullYear();
@@ -8,7 +15,6 @@ function generateInvoiceNumber(): string {
   return `INV-${year}-${rand}`;
 }
 
-/** Calculate the next recurrence date given a base date and interval. */
 function nextRecurringDate(base: string, interval: 'monthly' | 'quarterly' | 'yearly'): string {
   const d = new Date(base);
   if (interval === 'monthly')   d.setMonth(d.getMonth() + 1);
@@ -55,10 +61,8 @@ export async function POST(request: Request) {
 
   const body = await request.json();
   const {
-    // Existing client fields
     profile_id,
     dossier_id,
-    // Guest client fields (used when no existing client is selected)
     guest_name,
     guest_email,
     guest_company,
@@ -66,7 +70,7 @@ export async function POST(request: Request) {
     guest_address,
     guest_postal_code,
     guest_city,
-    // Invoice fields
+    guest_phone,
     due_date,
     notes,
     vat_rate = 21,
@@ -76,9 +80,9 @@ export async function POST(request: Request) {
     items = [],
     status = 'draft',
     issue_date,
+    send_email = false,
   } = body;
 
-  // Either an existing profile or guest data is required
   const isGuestInvoice = !profile_id;
   if (isGuestInvoice && !guest_email && !guest_name) {
     return NextResponse.json({ error: 'Klantgegevens zijn verplicht (naam of e-mail).' }, { status: 400 });
@@ -86,16 +90,12 @@ export async function POST(request: Request) {
   if (!items.length) return NextResponse.json({ error: 'Minstens één factuurlijn is verplicht.' }, { status: 400 });
 
   // ── Deduplication & dossier resolution ───────────────────────────────────
-  // For guest invoices, find or create a client dossier.
-  // Priority: email match (guest) → email match (profile) → VAT match → new dossier
   let resolvedDossierId: string | null = dossier_id ?? null;
   let resolvedProfileId: string | null = profile_id ?? null;
 
   if (isGuestInvoice && !resolvedDossierId) {
-    // Use the admin client so we can read across RLS boundaries
     const admin = createAdminClient();
 
-    // 1. Check for existing guest dossier by email
     if (guest_email) {
       const { data: existingGuestDossier } = await admin
         .from('client_dossiers')
@@ -109,7 +109,6 @@ export async function POST(request: Request) {
       }
     }
 
-    // 2. Check for a profile-linked dossier by email
     if (!resolvedDossierId && guest_email) {
       const { data: matchedProfile } = await admin
         .from('profiles')
@@ -133,7 +132,6 @@ export async function POST(request: Request) {
       }
     }
 
-    // 3. Check by VAT number through profiles table
     if (!resolvedDossierId && guest_vat_number) {
       const { data: vatProfile } = await admin
         .from('profiles')
@@ -157,17 +155,21 @@ export async function POST(request: Request) {
       }
     }
 
-    // 4. No match found — create a new guest dossier
     if (!resolvedDossierId) {
       const { data: newDossier, error: dossierErr } = await admin
         .from('client_dossiers')
         .insert({
-          profile_id: null,
-          status: 'klant',
-          source: 'manual',
-          guest_name:    guest_name?.trim()    ?? null,
-          guest_email:   guest_email?.trim()   ?? null,
-          guest_company: guest_company?.trim() ?? null,
+          profile_id:        null,
+          status:            'klant',
+          source:            'manual',
+          guest_name:        guest_name?.trim()        ?? null,
+          guest_email:       guest_email?.trim()       ?? null,
+          guest_company:     guest_company?.trim()     ?? null,
+          guest_vat_number:  guest_vat_number?.trim()  ?? null,
+          guest_address:     guest_address?.trim()     ?? null,
+          guest_postal_code: guest_postal_code?.trim() ?? null,
+          guest_city:        guest_city?.trim()        ?? null,
+          guest_phone:       guest_phone?.trim()       ?? null,
         })
         .select('id')
         .single();
@@ -190,7 +192,6 @@ export async function POST(request: Request) {
 
   const effectiveIssueDate = issue_date ?? new Date().toISOString().slice(0, 10);
 
-  // ── Recurring scheduling ──────────────────────────────────────────────────
   const recurring_start_date = is_recurring ? effectiveIssueDate : null;
   const recurring_next_date  = (is_recurring && recurring_interval)
     ? nextRecurringDate(effectiveIssueDate, recurring_interval)
@@ -225,7 +226,6 @@ export async function POST(request: Request) {
       recurring_interval,
       recurring_start_date,
       recurring_next_date,
-      // Guest client data (null when a real profile is used)
       guest_name:        guest_name?.trim()        ?? null,
       guest_email:       guest_email?.trim()       ?? null,
       guest_company:     guest_company?.trim()     ?? null,
@@ -242,12 +242,14 @@ export async function POST(request: Request) {
   // ── Insert line items ─────────────────────────────────────────────────────
   const itemRows = items.map((i: {
     description: string;
+    notes?: string;
     quantity: number;
     unit_price: number;
     package_id?: string;
   }) => ({
     invoice_id:  invoice.id,
     description: i.description,
+    notes:       i.notes?.trim() || null,
     quantity:    i.quantity,
     unit_price:  i.unit_price,
     total:       Math.round(i.quantity * i.unit_price * 100) / 100,
@@ -262,14 +264,64 @@ export async function POST(request: Request) {
     profile_id: resolvedProfileId,
     dossier_id: resolvedDossierId,
     type: 'invoice_created',
-    title: `Factuur ${invoice_number} aangemaakt — \u20ac${total.toFixed(2)}`,
+    title: `Factuur ${invoice_number} aangemaakt — €${total.toFixed(2)}`,
     metadata: {
       invoice_id: invoice.id,
       invoice_number,
       total,
       is_guest: isGuestInvoice,
+      sent_by_email: send_email,
     },
   });
+
+  // ── Send invoice by e-mail if requested ───────────────────────────────────
+  if (send_email) {
+    const clientEmail = resolvedProfileId
+      ? (await supabase.from('profiles').select('email').eq('id', resolvedProfileId).single()).data?.email
+      : guest_email?.trim();
+
+    if (clientEmail) {
+      try {
+        const { data: fullInvoice } = await supabase
+          .from('invoices')
+          .select(`*, profile:profiles(full_name, email, company, vat_number, address, postal_code, city, phone), items:invoice_items(*)`)
+          .eq('id', invoice.id)
+          .single();
+
+        if (fullInvoice) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const pdfBuffer = await renderToBuffer(React.createElement(InvoicePDF, { invoice: fullInvoice as Invoice }) as any);
+          const clientName = fullInvoice.profile?.full_name ?? fullInvoice.guest_name ?? clientEmail;
+          const dueDateStr = fullInvoice.due_date
+            ? new Date(fullInvoice.due_date).toLocaleDateString('nl-BE', { day: 'numeric', month: 'long', year: 'numeric' })
+            : null;
+
+          await sendMail({
+            to: clientEmail,
+            subject: `Factuur ${invoice_number} van IntrICT`,
+            replyTo: 'info@intrict.com',
+            html: `
+<div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#0f172a">
+  <div style="background:#1d4ed8;padding:24px 32px;border-radius:8px 8px 0 0">
+    <h1 style="margin:0;color:#fff;font-size:22px;letter-spacing:1px">IntrICT</h1>
+    <p style="margin:4px 0 0;color:#bfdbfe;font-size:13px">IT-diensten &amp; weboplossingen</p>
+  </div>
+  <div style="background:#fff;padding:32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px">
+    <p style="margin:0 0 16px;font-size:15px">Beste ${clientName},</p>
+    <p style="margin:0 0 16px;color:#475569">In bijlage vindt u factuur <strong>${invoice_number}</strong> ten bedrage van <strong>&euro; ${total.toFixed(2).replace('.', ',')}</strong>.</p>
+    ${dueDateStr ? `<p style="margin:0 0 24px;color:#475569">Gelieve te betalen v&oacute;or <strong>${dueDateStr}</strong>.</p>` : ''}
+    <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0">
+    <p style="margin:0;font-size:12px;color:#94a3b8">Met vriendelijke groeten,<br><strong style="color:#1d4ed8">IntrICT</strong> &middot; info@intrict.com</p>
+  </div>
+</div>`,
+            attachments: [{ name: `factuur-${invoice_number}.pdf`, content: Buffer.from(pdfBuffer) }],
+          });
+        }
+      } catch {
+        // E-mail mislukking is niet fataal — factuur is al aangemaakt
+      }
+    }
+  }
 
   return NextResponse.json(invoice, { status: 201 });
 }

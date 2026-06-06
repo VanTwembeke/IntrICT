@@ -330,7 +330,9 @@ const s = StyleSheet.create({
     backgroundColor:   BG,
   },
 
-  cellDesc:  { flex: 5, fontSize: 8.5, color: DARK, fontWeight: 400 },
+  cellDesc:  { flex: 5, fontWeight: 400 },
+  cellDescText:  { fontSize: 8.5, color: DARK },
+  cellDescNotes: { fontSize: 7.5, color: MID, marginTop: 1.5 },
   cellQty:   { flex: 1, fontSize: 8.5, color: MID,  textAlign: 'center', fontWeight: 400 },
   cellPrice: { flex: 2, fontSize: 8.5, color: MID,  textAlign: 'right',  fontWeight: 400 },
   cellTotal: { flex: 2, fontSize: 8.5, color: DARK, textAlign: 'right',  fontWeight: 600 },
@@ -622,7 +624,10 @@ export function InvoicePDF({ invoice }: { invoice: Invoice }) {
 
             {items.map((item, i) => (
               <View key={item.id} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt} wrap={false}>
-                <Text style={s.cellDesc}>{item.description}</Text>
+                <View style={s.cellDesc}>
+                  <Text style={s.cellDescText}>{item.description}</Text>
+                  {item.notes && <Text style={s.cellDescNotes}>{item.notes}</Text>}
+                </View>
                 <Text style={s.cellQty}>{item.quantity}</Text>
                 <Text style={s.cellPrice}>{fmtEur(item.unit_price, locale)}</Text>
                 <Text style={s.cellTotal}>{fmtEur(item.total ?? item.quantity * item.unit_price, locale)}</Text>

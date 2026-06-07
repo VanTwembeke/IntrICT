@@ -86,7 +86,7 @@ export async function POST(request: Request) {
   } = body;
 
   const isGuestInvoice = !profile_id;
-  if (isGuestInvoice && !guest_email && !guest_name) {
+  if (isGuestInvoice && !dossier_id && !guest_email && !guest_name) {
     return NextResponse.json({ error: 'Klantgegevens zijn verplicht (naam of e-mail).' }, { status: 400 });
   }
   if (!items.length) return NextResponse.json({ error: 'Minstens één factuurlijn is verplicht.' }, { status: 400 });

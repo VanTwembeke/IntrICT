@@ -16,8 +16,9 @@ const geistMono = Geist_Mono({
 const SITE_URL = "https://www.intrict.com";
 const SITE_NAME = "IntrICT";
 const SITE_DESCRIPTION =
-  "IntrICT — web developer in Gent. Moderne websites, Next.js apps, UI/UX design " +
-  "en SEO-optimalisatie voor bedrijven in België en Nederland.";
+  "IntrICT is een onafhankelijk Belgisch technologiebedrijf opgericht door Jonas Van Twembeke. " +
+  "IntrICT bouwt moderne websites, Next.js webapplicaties, automatisering, AI-integraties " +
+  "en digitale strategie voor KMO's in België en Nederland.";
 const OG_IMAGE = `${SITE_URL}/og-image.jpg`; // place a 1200×630 image here
 
 export const viewport: Viewport = {
@@ -124,9 +125,10 @@ export const metadata: Metadata = {
 
 const organizationJsonLd = {
   "@context": "https://schema.org",
-  "@type": ["LocalBusiness", "ProfessionalService"],
+  "@type": ["Organization", "LocalBusiness", "ProfessionalService"],
   "@id": `${SITE_URL}/#organization`,
   name: SITE_NAME,
+  legalName: "IntrICT",
   alternateName: "IntrICT Web Development",
   url: SITE_URL,
   logo: {
@@ -137,6 +139,36 @@ const organizationJsonLd = {
   },
   image: `${SITE_URL}/brand/badge_light_v2.png`,
   description: SITE_DESCRIPTION,
+  disambiguatingDescription:
+    "IntrICT is een onafhankelijk Belgisch technologiebedrijf van Jonas Van Twembeke en is niet gelieerd aan Intric.ai.",
+  slogan: "Moderne websites die werken",
+  founder: { "@id": `${SITE_URL}/#founder` },
+  foundingDate: "2026",
+  foundingLocation: {
+    "@type": "Place",
+    name: "Gent, België",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Gent",
+      addressRegion: "Oost-Vlaanderen",
+      addressCountry: "BE",
+    },
+  },
+  knowsAbout: [
+    "Web development",
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Web applications",
+    "Workflow automation",
+    "AI integrations",
+    "SaaS development",
+    "Generative Engine Optimization",
+    "Search Engine Optimization",
+    "Digital strategy",
+    "UI/UX design",
+    "GDPR compliance",
+  ],
   address: {
     "@type": "PostalAddress",
     streetAddress: "Nevele",
@@ -167,8 +199,11 @@ const organizationJsonLd = {
     "GDPR Compliance",
     "API Development",
     "AI Training & Workshops",
+    "AI Development",
+    "AI Integraties",
+    "Workflow Automatisering",
+    "SaaS Productontwikkeling",
   ],
-  foundingDate: "2026",
   contactPoint: [
     {
       "@type": "ContactPoint",
@@ -219,6 +254,7 @@ const personJsonLd = {
   image: `${SITE_URL}/images/Profiel.png`,
   jobTitle: 'Web Developer & Digital Strategist',
   worksFor: { '@id': `${SITE_URL}/#organization` },
+  affiliation: { '@id': `${SITE_URL}/#organization` },
   sameAs: [
     'https://www.linkedin.com/in/VanTwembeke',
     'https://github.com/VanTwembeke',
@@ -231,6 +267,10 @@ const personJsonLd = {
     'SEO Optimization',
     'Digital Strategy',
     'Web Development',
+    'AI Integrations',
+    'Automation',
+    'SaaS Development',
+    'Generative Engine Optimization',
   ],
   knowsLanguage: ['Dutch', 'English'],
   address: {
@@ -357,6 +397,11 @@ const websiteJsonLd = {
   description: SITE_DESCRIPTION,
   publisher: { "@id": `${SITE_URL}/#organization` },
   inLanguage: "nl-BE",
+  about: { "@id": `${SITE_URL}/#organization` },
+  mentions: [
+    { "@id": `${SITE_URL}/#founder` },
+    { "@id": `${SITE_URL}/#services` },
+  ],
   potentialAction: {
     "@type": "SearchAction",
     target: `${SITE_URL}/?q={search_term_string}`,

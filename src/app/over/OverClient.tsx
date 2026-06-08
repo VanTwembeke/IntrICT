@@ -163,6 +163,28 @@ export default function Over() {
           </div>
         </section>
 
+        {/* Entity Section */}
+        <section className="py-16 bg-white">
+          <div className="px-4 mx-auto max-w-5xl sm:px-6 lg:px-8">
+            <div className="p-8 border border-blue-100 bg-linear-to-r from-blue-50 to-indigo-50 rounded-2xl">
+              <p className="mb-3 text-sm font-semibold tracking-wide uppercase text-blue-700">
+                Over IntrICT
+              </p>
+              <h2 className="mb-4 text-3xl font-bold text-slate-900">
+                IntrICT is een onafhankelijk Belgisch technologiebedrijf opgericht door Jonas Van Twembeke.
+              </h2>
+              <p className="mb-4 leading-relaxed text-slate-700">
+                IntrICT werd opgericht in 2026 in Gent en helpt KMO&apos;s in België en Nederland met moderne websites,
+                Next.js webapplicaties, automatisering, AI-integraties en digitale strategie. De ambitie is om vanuit
+                sterke webtechnologie door te groeien naar AI-development en eigen SaaS-producten.
+              </p>
+              <p className="text-sm leading-relaxed text-slate-600">
+                IntrICT is niet gelieerd aan Intric.ai of aan andere bedrijven met een gelijkaardige naam.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Skills Section */}
         <section className="py-20 bg-linear-to-br from-slate-50 to-blue-50">
           <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">

@@ -1,8 +1,14 @@
 import type { MetadataRoute } from 'next';
 import { blogPosts } from '@/data/blog-posts';
+import { blogPostsEn } from '@/data/blog-posts/en';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl = 'https://www.intrict.com';
+  const allBlogPosts = [...blogPosts, ...blogPostsEn];
+  const latestBlogUpdate = allBlogPosts.reduce((latest, post) => {
+    const updatedAt = new Date(post.updatedAt);
+    return updatedAt > latest ? updatedAt : latest;
+  }, new Date('2026-04-23'));
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
@@ -37,7 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${siteUrl}/blog`,
-      lastModified: new Date('2026-04-23'),
+      lastModified: latestBlogUpdate,
       changeFrequency: 'weekly',
       priority: 0.8,
     },
@@ -73,11 +79,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const blogRoutes: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+  const blogRoutes: MetadataRoute.Sitemap = allBlogPosts.map((post) => ({
     url: `${siteUrl}/blog/${post.slug}`,
     lastModified: new Date(post.updatedAt),
     changeFrequency: 'monthly',
     priority: 0.7,
+    ...(post.translationSlug
+      ? {
+          alternates: {
+            languages: {
+              [post.lang === 'en' ? 'en' : 'nl-BE']: `${siteUrl}/blog/${post.slug}`,
+              [post.lang === 'en' ? 'nl-BE' : 'en']: `${siteUrl}/blog/${post.translationSlug}`,
+            },
+          },
+        }
+      : {}),
   }));
 
   return [...staticRoutes, ...blogRoutes];

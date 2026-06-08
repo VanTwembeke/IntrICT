@@ -4,12 +4,14 @@ import OverClient from './OverClient';
 const SITE_URL = 'https://www.intrict.com';
 
 export const metadata: Metadata = {
-  title: 'Over Jonas Van Twembeke — Web Developer Gent',
+  title: 'Over IntrICT en Jonas Van Twembeke — Belgisch technologiebedrijf',
   description:
-    'Leer Jonas Van Twembeke kennen: freelance web developer en digitaal strateeg gevestigd in Gent. Gespecialiseerd in Next.js, React, TypeScript, UI/UX design en SEO voor Belgische bedrijven.',
+    'IntrICT is een onafhankelijk Belgisch technologiebedrijf opgericht door Jonas Van Twembeke in 2026. Gespecialiseerd in moderne websites, webapplicaties, automatisering, AI-integraties en digitale strategie voor KMO’s.',
   keywords: [
     'Jonas Van Twembeke',
     'web developer Gent',
+    'Belgisch technologiebedrijf',
+    'IntrICT founder',
     'freelance developer België',
     'Next.js developer',
     'React developer Oost-Vlaanderen',
@@ -25,15 +27,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'profile',
     url: `${SITE_URL}/over`,
-    title: 'Over Jonas Van Twembeke — Web Developer Gent',
+    title: 'Over IntrICT en Jonas Van Twembeke — Belgisch technologiebedrijf',
     description:
-      'Freelance web developer en digitaal strateeg in Gent. Bouwt snelle, toegankelijke Next.js-websites voor Belgische en Nederlandse bedrijven.',
+      'IntrICT is een onafhankelijk Belgisch technologiebedrijf opgericht door Jonas Van Twembeke. Focus op websites, webapplicaties, automatisering, AI-integraties en digitale strategie.',
     images: [{ url: `${SITE_URL}/images/Profiel.png`, width: 800, height: 800, alt: 'Jonas Van Twembeke — Web Developer' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Over Jonas Van Twembeke — Web Developer Gent',
-    description: 'Freelance web developer en digitaal strateeg in Gent. Gespecialiseerd in Next.js, React en SEO.',
+    title: 'Over IntrICT en Jonas Van Twembeke — Belgisch technologiebedrijf',
+    description: 'IntrICT is een onafhankelijk Belgisch technologiebedrijf opgericht door Jonas Van Twembeke in Gent.',
     images: [`${SITE_URL}/images/Profiel.png`],
   },
 };
@@ -44,6 +46,7 @@ const personPageJsonLd = {
   '@id': `${SITE_URL}/over`,
   url: `${SITE_URL}/over`,
   name: 'Over Jonas Van Twembeke',
+  about: { '@id': `${SITE_URL}/#organization` },
   mainEntity: {
     '@type': 'Person',
     '@id': `${SITE_URL}/#founder`,
@@ -52,9 +55,10 @@ const personPageJsonLd = {
     image: `${SITE_URL}/images/Profiel.png`,
     jobTitle: 'Web Developer & Digital Strategist',
     description:
-      'Freelance web developer en digitaal strateeg in Gent. Gespecialiseerd in Next.js, React, TypeScript, UI/UX en SEO.',
+      'Oprichter van IntrICT, een onafhankelijk Belgisch technologiebedrijf voor moderne websites, webapplicaties, automatisering, AI-integraties en digitale strategie.',
     worksFor: { '@type': 'Organization', '@id': `${SITE_URL}/#organization` },
-    knowsAbout: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'UI/UX Design', 'SEO', 'Web Development', 'Digital Strategy'],
+    affiliation: { '@type': 'Organization', '@id': `${SITE_URL}/#organization` },
+    knowsAbout: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'UI/UX Design', 'SEO', 'GEO', 'Web Development', 'Digital Strategy', 'Automation', 'AI Integrations', 'SaaS Development'],
     knowsLanguage: ['Dutch', 'English'],
     sameAs: [
       'https://www.linkedin.com/in/VanTwembeke',

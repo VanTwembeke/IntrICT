@@ -43,8 +43,9 @@ for (const p of all) {
 }
 for (const slug of ['inp-core-web-vitals', 'inp-core-web-vitals-explained']) {
   const p = all.find(q => q.slug === slug);
-  assert.ok(p.content.includes('https://web.dev/articles/inp'));
-  assert.ok(p.content.includes('https://developers.google.com/search/docs/appearance/core-web-vitals'));
+  const sourceUrls = (p.content.match(/https:\/\/[^\s]+/g) ?? []).map(value => new URL(value));
+  assert.ok(sourceUrls.some(url => url.href === 'https://web.dev/articles/inp'));
+  assert.ok(sourceUrls.some(url => url.href === 'https://developers.google.com/search/docs/appearance/core-web-vitals'));
   assert.ok(!p.content.includes('Status:') && !p.content.includes('Publication checklist:'));
 }
 console.log(`Content checks passed: ${nl.length} NL, ${en.length} EN; unique IDs/slugs and reciprocal translations.`);

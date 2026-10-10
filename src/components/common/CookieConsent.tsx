@@ -51,11 +51,22 @@ export default function CookieConsent() {
   const { t } = useLanguage();
   const [isVisible, setIsVisible] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [prefs, setPrefs] = useState<Prefs>({
-    essential: true,
-    analytics: false,
-    functional: false,
-    marketing: false,
+  const [prefs, setPrefs] = useState<Prefs>(() => {
+    const defaults = { essential: true, analytics: false, functional: false, marketing: false };
+    if (typeof window === 'undefined') return defaults;
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored) as Prefs & { timestamp?: string };
+        return {
+          essential: true,
+          analytics: parsed.analytics ?? false,
+          functional: parsed.functional ?? false,
+          marketing: parsed.marketing ?? false,
+        };
+      }
+    } catch { /* malformed — ignore */ }
+    return defaults;
   });
 
   useEffect(() => {
@@ -63,16 +74,6 @@ export default function CookieConsent() {
     if (!stored) {
       const timer = setTimeout(() => setIsVisible(true), 1500);
       return () => clearTimeout(timer);
-    } else {
-      try {
-        const parsed = JSON.parse(stored) as Prefs & { timestamp?: string };
-        setPrefs({
-          essential: true,
-          analytics: parsed.analytics ?? false,
-          functional: parsed.functional ?? false,
-          marketing: parsed.marketing ?? false,
-        });
-      } catch { /* malformed — ignore */ }
     }
   }, []);
 

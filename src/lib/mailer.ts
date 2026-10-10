@@ -1,8 +1,6 @@
 import 'server-only';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export interface MailAttachment {
   name: string;
   content: Buffer | string;
@@ -20,6 +18,8 @@ export interface SendMailOptions {
 const DEFAULT_FROM = 'IntrICT <noreply@intrict.com>';
 
 export async function sendMail(opts: SendMailOptions): Promise<void> {
+  // Build-time route imports must not require runtime mail credentials.
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const { error } = await resend.emails.send({
     from: opts.from ?? DEFAULT_FROM,
     to: Array.isArray(opts.to) ? opts.to : [opts.to],

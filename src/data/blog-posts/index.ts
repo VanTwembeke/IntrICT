@@ -10,6 +10,7 @@ import { blogPost as post9 } from './wat-kost-een-website-belgie';
 import { blogPost as post10 } from './wordpress-shopify-maatwerk-vergelijking';
 import { blogPost as post11 } from './ai-webdesign-veiligheid-protocollen-checklist';
 import { blogPost as post12 } from './monkey-testing-website-automatisch-testen';
+import { blogPost as post13 } from './inp-core-web-vitals';
 
 export const blogPosts = [
   post1,
@@ -24,6 +25,7 @@ export const blogPosts = [
   post10,
   post11,
   post12,
+  post13,
 ];
 
 // Export individual posts for easier access

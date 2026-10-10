@@ -46,6 +46,7 @@ import { blogPost as post9En } from './how-much-does-a-website-cost-in-belgium';
 import { blogPost as post10En } from './wordpress-shopify-or-custom-development';
 import { blogPost as post11En } from './ai-web-security-protocols-checklist';
 import { blogPost as post12En } from './monkey-testing-website-automated-testing';
+import { blogPost as post13En } from './inp-core-web-vitals-explained';
 
 export const blogPostsEn: BlogPost[] = [
   post1En,
@@ -60,4 +61,5 @@ export const blogPostsEn: BlogPost[] = [
   post10En,
   post11En,
   post12En,
+  post13En,
 ];

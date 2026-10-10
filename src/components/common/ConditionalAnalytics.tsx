@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
@@ -36,8 +36,23 @@ function pushGTMConsent(prefs: Prefs) {
   }
 }
 
+const subscribeToHydration = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
+
 export default function ConditionalAnalytics() {
-  const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
+  // Keep server and hydration output empty; read browser preferences only afterwards.
+  const hydrated = useSyncExternalStore(subscribeToHydration, getClientSnapshot, getServerSnapshot);
+  return hydrated ? <ConsentedAnalytics /> : null;
+}
+
+function ConsentedAnalytics() {
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(() => {
+    try {
+      const stored = localStorage.getItem('cookie-consent');
+      return stored ? (JSON.parse(stored) as Prefs).analytics ?? false : false;
+    } catch { return false; }
+  });
 
   useEffect(() => {
     // Lees opgeslagen voorkeur bij mount
@@ -51,7 +66,6 @@ export default function ConditionalAnalytics() {
           marketing: parsed.marketing ?? false,
         };
         pushGTMConsent(prefs);
-        setAnalyticsEnabled(prefs.analytics);
       }
     } catch { /* malformed — ignore */ }
 

@@ -1,7 +1,7 @@
 import { BlogPost } from '@/lib/blog-api';
 
 export const blogPost: BlogPost = {
-  id: '7',
+  id: '7-en',
   title: 'Local designer vs large agency: why small-scale + AI is the winning combination',
   excerpt: 'Discover why a local web designer with AI integration helps you faster, more concretely, and more personally than an anonymous large agency — and how that directly impacts your project.',
   content: `# Local designer vs large agency: why small-scale + AI is the winning combination

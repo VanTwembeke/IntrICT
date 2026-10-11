@@ -5,16 +5,18 @@ export async function GET() {
   try {
     const supabase = await createClient();
     const {
-      data: { user },
+      data: { user }, error: authError,
     } = await supabase.auth.getUser();
+    if (authError && ![400, 401, 403].includes(authError.status ?? 0)) throw authError;
 
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single();
+    if (profileError) throw profileError;
 
     const isAdmin = profile?.role === 'admin';
 
@@ -32,7 +34,7 @@ export async function GET() {
 
     return NextResponse.json(data ?? []);
   } catch {
-    return NextResponse.json([]);
+    return NextResponse.json({ error: 'Aanvragen konden niet worden geladen.' }, { status: 500 });
   }
 }
 

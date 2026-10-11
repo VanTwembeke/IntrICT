@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
   Check, ArrowRight, Clock, Zap, Star,
@@ -45,16 +45,18 @@ interface PricingProps {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function Pricing({ monthlyPackages, oneTimePackages }: PricingProps) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const p = t.pricing;
   const [tab, setTab] = useState<'monthly' | 'onetime'>('monthly');
+  const selectedTab = tab === 'monthly' && monthlyPackages.length === 0 ? 'onetime'
+    : tab === 'onetime' && oneTimePackages.length === 0 ? 'monthly' : tab;
   const [activePkg, setActivePkg] = useState<PackageInfo | null>(null);
 
   if (monthlyPackages.length === 0 && oneTimePackages.length === 0) return null;
 
   return (
     <>
-    <section id="pricing" className="py-20 bg-white">
+    <section id="pricing" lang={lang === 'en' ? 'en' : 'nl-BE'} aria-labelledby="pricing-heading" className="[font-family:Arial,Helvetica,sans-serif] scroll-mt-24 py-20 bg-white">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
 
         {/* ── Header ──────────────────────────────────────────────────────── */}
@@ -68,7 +70,7 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
           <span className="inline-block mb-4 px-4 py-1.5 bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-widest rounded-full">
             {p.badge}
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
+          <h2 id="pricing-heading" className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
             {p.heading}
           </h2>
           <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
@@ -93,9 +95,13 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
         <div className="flex justify-center mb-10">
           <div className="inline-flex items-center bg-slate-100 rounded-full p-1 gap-1">
             <button
+              type="button"
+              aria-pressed={selectedTab === 'monthly'}
+              aria-controls="pricing-offers"
+              disabled={monthlyPackages.length === 0}
               onClick={() => setTab('monthly')}
               className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-                tab === 'monthly'
+                selectedTab === 'monthly'
                   ? 'bg-white text-slate-900 shadow-sm'
                   : 'text-slate-500 hover:text-slate-700'
               }`}
@@ -103,9 +109,13 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
               {p.tabMonthly}
             </button>
             <button
+              type="button"
+              aria-pressed={selectedTab === 'onetime'}
+              aria-controls="pricing-offers"
+              disabled={oneTimePackages.length === 0}
               onClick={() => setTab('onetime')}
               className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-                tab === 'onetime'
+                selectedTab === 'onetime'
                   ? 'bg-white text-slate-900 shadow-sm'
                   : 'text-slate-500 hover:text-slate-700'
               }`}
@@ -116,10 +126,11 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
         </div>
 
         {/* ── Package grids ───────────────────────────────────────────────── */}
-        <AnimatePresence mode="wait">
+        <div id="pricing-offers">
+          <p className="mb-6 text-center text-sm text-slate-600">{p.vatNote}</p>
 
           {/* Monthly */}
-          {tab === 'monthly' && (
+          {selectedTab === 'monthly' && (
             <motion.div
               key="monthly"
               initial={{ y: 12 }}
@@ -190,6 +201,7 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
                         </ul>
 
                         <button
+                          aria-label={`${p.cta} ${pkg.name}`}
                           onClick={() => setActivePkg({ name: pkg.name, price: pkg.price, billing_interval: 'monthly' })}
                           className={`w-full flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl text-sm font-semibold transition-all duration-200 ${
                             pkg.highlight
@@ -209,7 +221,7 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
           )}
 
           {/* One-time */}
-          {tab === 'onetime' && (
+          {selectedTab === 'onetime' && (
             <motion.div
               key="onetime"
               initial={{ y: 12 }}
@@ -261,6 +273,7 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
                       </ul>
 
                       <button
+                        aria-label={`${p.cta} ${pkg.name}`}
                         onClick={() => setActivePkg({ name: pkg.name, price: pkg.price, billing_interval: 'one_time' })}
                         className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold bg-slate-900 text-white hover:bg-slate-700 transition-colors duration-200"
                       >
@@ -273,7 +286,7 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
               </div>
             </motion.div>
           )}
-        </AnimatePresence>
+        </div>
 
         {/* ── Bottom CTA ──────────────────────────────────────────────────── */}
         <motion.div
@@ -295,7 +308,7 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
               {p.contactCta}
               <ArrowRight size={14} />
             </Link>
-            <p className="text-xs text-slate-500">{p.vatNote}</p>
+
           </div>
         </motion.div>
 

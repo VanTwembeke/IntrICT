@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Shield, User, X, Save, Mail, Calendar, Edit2, ChevronRight,
@@ -328,6 +328,61 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
   const [resetLoading, setResetLoading] = useState<string | null>(null);
   const [resetLink, setResetLink] = useState<{ email: string; link: string } | null>(null);
   const [toast, setToast]         = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const [roleFilter, setRoleFilter] = useState<'all' | UserRole>('all');
+  const [deleteUser, setDeleteUser] = useState<Profile | null>(null);
+  const [confirmationId, setConfirmationId] = useState('');
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const deleteDialog = useRef<HTMLDialogElement>(null);
+  const deleteTrigger = useRef<HTMLButtonElement | null>(null);
+  const [accessUser, setAccessUser] = useState<Profile | null>(null);
+  const [accessConfirmation, setAccessConfirmation] = useState('');
+  const [accessError, setAccessError] = useState<string | null>(null);
+  const [accessBusy, setAccessBusy] = useState(false);
+  const [accessChecks, setAccessChecks] = useState<Record<string, { status: string; banned_until: string | null }>>({});
+  const accessDialog = useRef<HTMLDialogElement>(null);
+  const accessTrigger = useRef<HTMLButtonElement | null>(null);
+
+  function closeAccess() {
+    if (accessBusy) return;
+    accessDialog.current?.close();
+    setAccessUser(null);
+    accessTrigger.current?.focus();
+  }
+
+  async function checkAccess(user: Profile, revoke = false) {
+    if (accessBusy || (revoke && accessConfirmation !== user.id)) return;
+    setAccessBusy(true);
+    setAccessError(null);
+    setActionError(null);
+    try {
+      const res = await fetch(`/api/admin/users/${user.id}/access`, revoke ? {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirmationId: accessConfirmation }),
+      } : { method: 'GET', cache: 'no-store' });
+      const data = await res.json();
+      const disabled = data.status === 'disabled_not_deleted'
+        && typeof data.banned_until === 'string' && Date.parse(data.banned_until) > Date.now();
+      const active = data.status === 'not_disabled' && data.banned_until === null;
+      if (!res.ok || data.id !== user.id || (!disabled && (revoke || !active))) {
+        throw new Error('Toegangsstatus niet bevestigd. Controleer opnieuw; er is niets verwijderd.');
+      }
+      setAccessChecks(prev => ({ ...prev, [user.id]: { status: data.status, banned_until: data.banned_until } }));
+      if (revoke) {
+        accessDialog.current?.close();
+        setAccessUser(null);
+        accessTrigger.current?.focus();
+      }
+    } catch {
+      // Never display arbitrary upstream error strings or assume a failed write did nothing.
+      const message = 'Toegangsstatus niet bevestigd. Controleer opnieuw; er is niets verwijderd.';
+      if (revoke) setAccessError(message); else setActionError(message);
+    } finally {
+      setAccessBusy(false);
+    }
+  }
 
   // Edit form state
   const [editForm, setEditForm] = useState<EditFormState>({
@@ -360,6 +415,7 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
       role:                u.role as UserRole,
     });
     setEditSuccess(false);
+    setActionError(null);
   };
 
   const closeEdit = () => { setEditUser(null); setEditSuccess(false); };
@@ -367,8 +423,10 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
   const handleSaveEdit = async () => {
     if (!editUser) return;
     setEditSaving(true);
+    setActionError(null);
+    try {
     const supabase = createClient();
-    await supabase.from('profiles').update({
+    const { data, error } = await supabase.from('profiles').update({
       full_name:           editForm.full_name || null,
       phone:               editForm.phone || null,
       company:             editForm.company || null,
@@ -381,24 +439,35 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
       public_username:     editForm.public_username || null,
       customer_number:     editForm.customer_number ? Number(editForm.customer_number) : null,
       role:                editForm.role,
-    }).eq('id', editUser.id);
+    }).eq('id', editUser.id).select('*').single<Profile>();
+    if (error || !data) throw new Error(error?.message ?? 'Geen profiel opgeslagen.');
 
     setUsers(prev => prev.map(u =>
       u.id === editUser.id
-        ? { ...u, full_name: editForm.full_name || null, phone: editForm.phone || null, company: editForm.company || null, vat_number: editForm.vat_number || null, address: editForm.address || null, postal_code: editForm.postal_code || null, city: editForm.city || null, country: editForm.country || null, profile_picture_url: editForm.profile_picture_url || null, public_username: editForm.public_username || null, customer_number: editForm.customer_number ? Number(editForm.customer_number) : null, role: editForm.role }
+        ? data
         : u
     ));
-    setEditSaving(false);
     setEditSuccess(true);
-    setTimeout(() => closeEdit(), 1500);
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : 'Opslaan mislukt.');
+    } finally {
+      setEditSaving(false);
+    }
   };
 
   const updateRole = async (userId: string, role: UserRole) => {
     setSaving(userId);
-    const supabase = createClient();
-    await supabase.from('profiles').update({ role }).eq('id', userId);
-    setUsers(prev => prev.map(u => u.id === userId ? { ...u, role } : u));
-    setSaving(null);
+    setActionError(null);
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase.from('profiles').update({ role }).eq('id', userId).select('*').single<Profile>();
+      if (error || !data) throw new Error(error?.message ?? 'Geen profiel opgeslagen.');
+      setUsers(prev => prev.map(u => u.id === userId ? data : u));
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : 'Rol wijzigen mislukt.');
+    } finally {
+      setSaving(null);
+    }
   };
 
   const handleResetPassword = async (userId: string, email: string) => {
@@ -419,6 +488,41 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
       showToast(`Resetlink verstuurd naar ${email}`);
     }
   };
+
+  const visibleUsers = users.filter(u =>
+    (roleFilter === 'all' || u.role === roleFilter) &&
+    [u.full_name, u.email, u.company, u.customer_number?.toString(), u.id].some(value =>
+      value?.toLowerCase().includes(query.trim().toLowerCase()))
+  );
+
+  function closeDelete() {
+    if (deleting) return;
+    deleteDialog.current?.close();
+    setDeleteUser(null);
+    deleteTrigger.current?.focus();
+  }
+
+  async function handleDelete() {
+    if (!deleteUser || confirmationId !== deleteUser.id || deleting) return;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      const res = await fetch(`/api/admin/users/${deleteUser.id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirmationId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Verwijdering mislukt. Er is niets gewijzigd.');
+      // There is deliberately no hidden-delete or optimistic row removal.
+      // This release cannot return success until retention has been reviewed.
+      throw new Error('Onverwacht antwoord. Verwijdering is niet bevestigd; herlaad de pagina voor controle.');
+    } catch (error) {
+      setDeleteError(error instanceof Error ? error.message : 'Verwijdering kon niet worden bevestigd.');
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   const adminCount = users.filter(u => u.role === 'admin').length;
   const userCount  = users.filter(u => u.role !== 'admin').length;
@@ -443,6 +547,53 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
           Nieuwe gebruiker
         </button>
       </div>
+
+      {actionError && <p role="alert" className="mb-4 p-3 bg-red-50 text-red-700 rounded-xl">{actionError}</p>}
+
+      <dialog ref={accessDialog} aria-labelledby="access-user-title"
+        onCancel={e => { e.preventDefault(); closeAccess(); }}
+        className="fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-lg rounded-2xl p-6 backdrop:bg-black/50">
+        {accessUser && <>
+          <h2 id="access-user-title" className="text-lg font-bold mb-3">Toegang intrekken</h2>
+          <p className="mb-2">{accessUser.full_name ?? 'Naam onbekend'} · {accessUser.email}</p>
+          <p className="mb-3 text-sm">Dit blokkeert aanmelden en sessievernieuwing via Supabase Auth voor circa 100 jaar. Er wordt niets verwijderd: klantprofiel, dossiers, facturen en contracten blijven zichtbaar en behouden. Reeds uitgegeven toegangstokens kunnen geldig blijven tot hun vervaldatum; dit is geen onmiddellijke beëindiging van alle bestaande sessies.</p>
+          <p className="mb-3 break-all font-mono text-sm">{accessUser.id}</p>
+          <label htmlFor="access-confirmation" className="block mb-2 text-sm font-semibold">Toegangsbevestiging-ID</label>
+          <input id="access-confirmation" autoComplete="off" value={accessConfirmation} disabled={accessBusy}
+            onChange={e => setAccessConfirmation(e.target.value)} className={inputClass} />
+          {accessError && <p role="alert" className="mt-3 text-red-700">{accessError}</p>}
+          <div className="flex gap-3 mt-4">
+            <button onClick={closeAccess} disabled={accessBusy} className="px-4 py-2 border rounded-xl">Annuleren</button>
+            <button onClick={() => checkAccess(accessUser, true)} disabled={accessBusy || accessConfirmation !== accessUser.id}
+              className="px-4 py-2 bg-amber-700 text-white rounded-xl disabled:opacity-50">
+              {accessBusy ? 'Controleren...' : 'Intrekking bevestigen'}
+            </button>
+          </div>
+        </>}
+      </dialog>
+
+      <dialog ref={deleteDialog} aria-labelledby="delete-user-title"
+        onCancel={e => { e.preventDefault(); closeDelete(); }}
+        className="fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-lg rounded-2xl p-6 backdrop:bg-black/50">
+        {deleteUser && <>
+          <h2 id="delete-user-title" className="text-lg font-bold mb-3">Gebruiker verwijderen</h2>
+          <p className="mb-2">{deleteUser.full_name ?? 'Naam onbekend'} · {deleteUser.email}</p>
+          <p className="mb-3 text-sm text-amber-800">Verwijdering is momenteel geblokkeerd totdat de database-relaties en triggers zijn gecontroleerd. Dossiers, facturen en contracten mogen niet verloren gaan. Deze controle wijzigt niets en verbergt de gebruiker niet.</p>
+          <p className="mb-3 text-sm">Een eventuele toekomstige Auth-soft-delete is onomkeerbaar; het klantprofiel en de historiek worden niet gewist.</p>
+          <p className="mb-3 break-all font-mono text-sm">{deleteUser.id}</p>
+          <label htmlFor="delete-confirmation" className="block mb-2 text-sm font-semibold">Bevestigings-ID</label>
+          <input id="delete-confirmation" autoComplete="off" value={confirmationId} disabled={deleting}
+            onChange={e => setConfirmationId(e.target.value)} className={inputClass} />
+          {deleteError && <p role="alert" className="mt-3 text-red-700">{deleteError}</p>}
+          <div className="flex gap-3 mt-4">
+            <button onClick={closeDelete} disabled={deleting} className="px-4 py-2 border rounded-xl">Annuleren</button>
+            <button onClick={handleDelete} disabled={deleting || confirmationId !== deleteUser.id}
+              className="px-4 py-2 bg-red-700 text-white rounded-xl disabled:opacity-50">
+              {deleting ? 'Controleren...' : 'Verwijdering bevestigen'}
+            </button>
+          </div>
+        </>}
+      </dialog>
 
       {/* ── Edit modal ────────────────────────────────────────────────────── */}
       <AnimatePresence>
@@ -600,6 +751,15 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
         ))}
       </div>
 
+      <div className="flex gap-3 mb-4 flex-wrap">
+        <input aria-label="Zoek gebruikers" type="search" placeholder="Zoek op naam, e-mail, bedrijf, klantnummer of ID"
+          value={query} onChange={e => setQuery(e.target.value)} className={`${inputClass} flex-1 min-w-64`} />
+        <select aria-label="Filter op rol" value={roleFilter} onChange={e => setRoleFilter(e.target.value as 'all' | UserRole)}
+          className="border-2 border-slate-200 rounded-xl px-4 py-2">
+          <option value="all">Alle rollen</option><option value="user">Gebruikers</option><option value="admin">Admins</option>
+        </select>
+      </div>
+
       {/* ── Table ───────────────────────────────────────────────────────── */}
       <div className="overflow-hidden bg-white border shadow-sm rounded-2xl border-slate-100">
         <div className="overflow-x-auto">
@@ -612,7 +772,8 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {users.map((u, i) => (
+              {visibleUsers.length === 0 && <tr><td colSpan={4} className="p-6 text-slate-500">Geen gebruikers gevonden.</td></tr>}
+              {visibleUsers.map((u, i) => (
                 <motion.tr key={u.id}
                   initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
                   className="transition-colors hover:bg-slate-50/70 group">
@@ -659,6 +820,36 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
                         className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
                         <Edit2 size={12} />Bewerken
                       </button>
+
+                      {u.id !== currentUserId && u.role === 'user' && (
+                        <button onClick={e => {
+                          deleteTrigger.current = e.currentTarget;
+                          setDeleteUser(u); setConfirmationId(''); setDeleteError(null);
+                          deleteDialog.current?.showModal();
+                        }} className="px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 rounded-lg hover:bg-red-100">
+                          Verwijderen
+                        </button>
+                      )}
+
+                      {u.id !== currentUserId && u.role === 'user' && <>
+                        <button disabled={accessBusy || (accessChecks[u.id]?.status === 'disabled_not_deleted')}
+                          onClick={e => {
+                            accessTrigger.current = e.currentTarget;
+                            setAccessUser(u); setAccessConfirmation(''); setAccessError(null);
+                            accessDialog.current?.showModal();
+                          }} className="px-3 py-1.5 text-xs font-semibold text-amber-800 bg-amber-50 rounded-lg disabled:opacity-50">
+                          Toegang intrekken
+                        </button>
+                        <button disabled={accessBusy} onClick={() => checkAccess(u)}
+                          className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 rounded-lg disabled:opacity-50">
+                          Toegangsstatus controleren
+                        </button>
+                        <span className="text-xs text-slate-600" aria-live="polite">
+                          {accessChecks[u.id]?.status === 'disabled_not_deleted'
+                            ? `Toegang ingetrokken tot ${accessChecks[u.id].banned_until} · Niet verwijderd`
+                            : accessChecks[u.id]?.status === 'not_disabled' ? 'Geen actieve Auth-blokkade' : 'Toegangsstatus niet gecontroleerd'}
+                        </span>
+                      </>}
 
                       {/* Reset password */}
                       <button

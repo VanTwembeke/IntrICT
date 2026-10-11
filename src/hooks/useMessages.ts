@@ -32,16 +32,12 @@ export function useMessages() {
 
   const totalUnreadCount = conversations.reduce((sum, conv) => sum + conv.unread_count, 0);
 
-  const fetchConversations = useCallback(async () => {
-    try {
-      const response = await fetch('/api/messages', { cache: 'no-store' });
-      const data = await response.json();
-      setConversations(data.conversations || []);
-    } catch (error) {
-      console.error('Failed to fetch conversations:', error);
-    } finally {
-      setLoading(false);
-    }
+  const fetchConversations = useCallback(() => {
+    return fetch('/api/messages', { cache: 'no-store' })
+      .then(response => response.json())
+      .then(data => setConversations(data.conversations || []))
+      .catch(error => console.error('Failed to fetch conversations:', error))
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {

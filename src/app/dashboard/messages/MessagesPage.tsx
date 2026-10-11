@@ -115,20 +115,28 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
   const [newConversationMessage, setNewConversationMessage] = useState('');
   const [newConversationFiles, setNewConversationFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(initialConversations.length === 0);
+  const [loadError, setLoadError] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
   const [sending, setSending] = useState(false);
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
 
   const isAdmin = profile.role === 'admin';
 
   const fetchConversations = useCallback(async () => {
+    setRefreshing(true);
     try {
       const response = await fetch('/api/messages');
+      if (!response.ok) throw new Error('Conversation source unavailable');
       const data = await response.json();
-      setConversations(data.conversations || []);
+      if (!Array.isArray(data?.conversations)) throw new Error('Invalid conversation response');
+      setConversations(data.conversations);
+      setLoadError('');
     } catch (error) {
       console.error('Failed to fetch conversations:', error);
+      setLoadError('Gesprekken konden niet worden geladen. Probeer opnieuw.');
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   }, []);
 
@@ -534,8 +542,17 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                 )}
 
                 {/* conversation list */}
+                {loadError && (
+                  <div role="alert" className="p-4 text-sm text-red-700 bg-red-50">
+                    <p>{loadError}</p>
+                    <button type="button" onClick={fetchConversations} disabled={refreshing}
+                      className="mt-2 font-semibold underline disabled:opacity-50">
+                      {refreshing ? 'Opnieuw laden...' : 'Opnieuw proberen'}
+                    </button>
+                  </div>
+                )}
                 <div className="flex-1 overflow-y-auto">
-                  {conversations.length === 0 ? (
+                  {conversations.length === 0 ? (!loadError && (
                     <div className="p-8 text-center">
                       <MessageSquare className="w-16 h-16 mx-auto mb-4 text-slate-300" />
                       <p className="mb-2 text-slate-500">Geen gesprekken gevonden</p>
@@ -543,7 +560,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                         Start een nieuw gesprek om te beginnen
                       </p>
                     </div>
-                  ) : (
+                  )) : (
                     conversations.map((conversation) => (
                       <motion.button
                         key={conversation.id}

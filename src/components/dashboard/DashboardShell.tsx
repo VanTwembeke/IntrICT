@@ -3,6 +3,7 @@
 import { createContext, useContext, useState } from 'react';
 import { Eye } from 'lucide-react';
 import DashboardSidebar from './DashboardSidebar';
+import DashboardBreadcrumbs from './DashboardBreadcrumbs';
 import ChatWidget from './ChatWidget';
 import { ChatProvider } from '@/contexts/ChatContext';
 import type { Profile } from '@/lib/types';
@@ -54,8 +55,10 @@ export default function DashboardShell({ profile, children }: Props) {
   return (
     <ChatProvider>
       <ViewModeContext.Provider value={{ viewAs, setViewAs }}>
+        <a href="#portal-content" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-blue-700 focus:px-4 focus:py-3 focus:text-white">Ga naar inhoud</a>
         <DashboardSidebar profile={profile} />
-        <main className="lg:pl-64">
+        <main id="portal-content" tabIndex={-1} className="min-w-0 lg:pl-64 [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-blue-600 [&_button:focus-visible]:outline-2 [&_button:focus-visible]:outline-blue-600">
+          <DashboardBreadcrumbs />
           {isAdmin && viewAs === 'user' && (
             <UserPreviewBanner onExit={() => setViewAs('admin')} />
           )}

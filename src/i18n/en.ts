@@ -70,8 +70,8 @@ const en: Translations = {
   },
 
   hero: {
-    title:    'Modern websites that work',
-    subtitle: "From concept to live website. I help you with modern web development, logos and digital strategy",
+    title:    'A clear website. A recognizable brand.',
+    subtitle: "I help independent professionals and small businesses with web development, branding and digital strategy. So visitors understand what you offer and can easily get in touch.",
     startProject: 'Start your project',
     viewWork:     'View my work',
   },

@@ -1,25 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MailX, CheckCircle2, ArrowLeft } from 'lucide-react';
 
 type State = 'idle' | 'loading' | 'done' | 'error';
 
 export default function UitschrijvenPage() {
-  const [email, setEmail] = useState('');
-  const [token, setToken] = useState('');
+  return <Suspense fallback={null}><UitschrijvenForm /></Suspense>;
+}
+
+function UitschrijvenForm() {
+  const params = useSearchParams();
+  const [email, setEmail] = useState(() => {
+    const value = params.get('email');
+    return value ? decodeURIComponent(value) : '';
+  });
+  const [token] = useState(() => params.get('token') ?? '');
   const [state, setState] = useState<State>('idle');
   const [error, setError] = useState('');
-
-  // Pre-fill e-mail en token vanuit URL-parameters
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const e = params.get('email');
-    const t = params.get('token');
-    if (e) setEmail(decodeURIComponent(e));
-    if (t) setToken(t);
-  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

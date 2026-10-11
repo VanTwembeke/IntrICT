@@ -1,70 +1,28 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import Image from 'next/image';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Process() {
-  const { t } = useLanguage();
-  const steps = t.process.steps.map((s, i) => ({ step: String(i + 1), ...s }));
-
+  const { t, lang } = useLanguage();
+  const en = lang === 'en';
   return (
-    <section id="workflow" className="relative py-20">
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
-            alt="Web development proces - Stap voor stap ontwikkeling"
-            fill
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-linear-to-r from-slate-900/80 via-slate-800/60 to-slate-900/80"></div>
+    <section lang={lang === 'en' ? 'en' : 'nl-BE'} id="workflow" aria-labelledby="workflow-heading" className="[font-family:Arial,Helvetica,sans-serif] scroll-mt-24 border-y border-slate-200 bg-slate-50 px-6 py-16 sm:py-24">
+      <div className="mx-auto max-w-7xl">
+        <div className="max-w-2xl">
+          <p className="mb-3 text-sm font-semibold text-blue-700">{en ? 'From first conversation to launch' : 'Van eerste gesprek tot lancering'}</p>
+          <h2 id="workflow-heading" className="text-3xl font-bold tracking-tight text-slate-900 sm:text-5xl">{t.process.heading}</h2>
+          <p className="mt-4 text-lg leading-relaxed text-slate-600">{t.process.subtitle}</p>
         </div>
-        <div className="relative z-10 py-16 md:py-24">
-          <div className="max-w-6xl px-6 mx-auto text-center">
-            <motion.h2
-              initial={{ y: 30 }}
-              whileInView={{ y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="mb-4 text-3xl font-bold text-white sm:text-4xl md:text-6xl"
-            >
-              {t.process.heading}
-            </motion.h2>
-            <motion.p
-              initial={{ y: 30 }}
-              whileInView={{ y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="max-w-2xl mx-auto text-base leading-relaxed md:text-xl text-slate-200"
-            >
-              {t.process.subtitle}
-            </motion.p>
-          </div>
-        </div>
-      </div>
-      
-      <div className="max-w-6xl px-4 py-16 mx-auto">
-        <div className="grid gap-12 md:grid-cols-3">
-          {steps.map((item, index) => (
-            <motion.div
-              key={index}
-              initial={{ y: 30 }}
-              whileInView={{ y: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.2 }}
-              className="space-y-6 text-center"
-            >
-              <div className="flex items-center justify-center w-16 h-16 mx-auto text-2xl font-bold text-white rounded-full bg-slate-800">
-                {item.step}
-              </div>
-              <h3 className="text-2xl font-bold text-slate-800">{item.title}</h3>
-              <p className="leading-relaxed text-slate-600">
-                {item.desc}
-              </p>
-            </motion.div>
-          ))}
-        </div>
+        <ol className="mt-10 grid gap-6 md:grid-cols-3" role="list">
+          {t.process.steps.map((step, i) => <li key={step.title} className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+            <span aria-hidden="true" className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-lg font-bold text-blue-700">0{i + 1}</span>
+            <h3 className="text-xl font-bold text-slate-900">{step.title}</h3>
+            <p className="mt-3 leading-relaxed text-slate-600">{step.desc}</p>
+          </li>)}
+        </ol>
+        <Link href="/contact" className="mt-8 inline-flex min-h-12 items-center gap-2 rounded-xl bg-slate-900 px-6 py-3 font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-700">{en ? 'Arrange an introduction' : 'Plan een kennismaking'}<ArrowRight aria-hidden="true" size={18} /></Link>
       </div>
     </section>
   );

@@ -72,8 +72,8 @@ const nl = {
 
   // ── Hero ─────────────────────────────────────────────────────────────────────
   hero: {
-    title:    'Moderne websites die werken',
-    subtitle: "Van concept tot live website. Ik help je met moderne webontwikkeling, logo's en digitale strategie",
+    title:    'Een heldere website. Een herkenbaar merk.',
+    subtitle: "Ik help zelfstandigen en KMO’s met webontwikkeling, branding en digitale strategie. Zodat bezoekers begrijpen wat je doet en makkelijk contact opnemen.",
     startProject: 'Start je project',
     viewWork:     'Bekijk mijn werk',
   },

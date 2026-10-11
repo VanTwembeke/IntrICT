@@ -1,0 +1,23 @@
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
+import { afterEach, expect, test, vi } from 'vitest';
+import { ESLint } from 'eslint';
+import Page from '../src/app/uitschrijven/page';
+vi.mock('next/navigation', () => ({ useSearchParams: () => new URLSearchParams(window.location.search) }));
+afterEach(() => { cleanup(); vi.unstubAllGlobals(); window.history.replaceState({}, '', '/'); });
+test('unsubscribe prefills at first render and sends only edited email and exact private token', async () => {
+  window.history.replaceState({}, '', '/uitschrijven?email=fixture%40example.invalid&token=secret%2Bfixture');
+  const html = renderToStaticMarkup(React.createElement(Page));
+  expect(html).toContain('value="fixture@example.invalid"');
+  expect(html).not.toContain('secret+fixture');
+  const request = vi.fn().mockResolvedValue({ ok: true });
+  vi.stubGlobal('fetch', request);
+  const view = render(React.createElement(Page));
+  fireEvent.change(view.getByLabelText('E-mailadres'), { target: { value: 'edited@example.invalid' } });
+  fireEvent.submit(view.container.querySelector('form'));
+  await waitFor(() => expect(request).toHaveBeenCalledOnce());
+  expect(JSON.parse(request.mock.calls[0][1].body)).toEqual({ email: 'edited@example.invalid', token: 'secret+fixture' });
+  const results = await new ESLint().lintFiles(['src/app/uitschrijven/page.tsx']);
+  expect(results.flatMap(r => r.messages.filter(m => m.severity === 2))).toEqual([]);
+});

@@ -120,8 +120,6 @@ function CommandPalette({ isLoggedIn, onClose, isMac }: { isLoggedIn: boolean; o
     return acc;
   }, {});
 
-  useEffect(() => { setCursor(0); }, [query]);
-
   const navigate = useCallback((href: string) => {
     router.push(href);
     onClose();
@@ -159,7 +157,11 @@ function CommandPalette({ isLoggedIn, onClose, isMac }: { isLoggedIn: boolean; o
           <input
             ref={inputRef}
             value={query}
-            onChange={e => setQuery(e.target.value)}
+            onChange={e => {
+              const value = e.target.value;
+              setQuery(value);
+              if (value !== query) setCursor(0);
+            }}
             placeholder={t.header.searchPlaceholder}
             className="flex-1 text-sm bg-transparent outline-none text-slate-800 placeholder:text-slate-400"
           />

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Clock, Phone, Mail, Building2, CheckCircle, XCircle, MessageSquare,
+  Phone, Mail, Building2, CheckCircle, MessageSquare,
   ChevronDown, Euro, User, Filter, Trash2,
 } from 'lucide-react';
 import type { PackageRequest } from '@/lib/types';
@@ -34,6 +34,7 @@ function RequestCard({
   const [status, setStatus] = useState<Status>(req.status as Status);
   const [adminNotes, setAdminNotes] = useState(req.admin_notes ?? '');
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   const cfg = STATUS[status];
   const profile = req.profile;
@@ -43,9 +44,15 @@ function RequestCard({
 
   const handleSave = async () => {
     setSaving(true);
-    await onStatusChange(req.id, status, adminNotes);
-    setSaving(false);
-    setExpanded(false);
+    setSaveError('');
+    try {
+      await onStatusChange(req.id, status, adminNotes);
+      setExpanded(false);
+    } catch {
+      setSaveError('De aanvraag kon niet worden opgeslagen. Je wijzigingen zijn behouden; probeer opnieuw.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -56,8 +63,10 @@ function RequestCard({
       className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
     >
       {/* Header row */}
+      <div className="flex items-center">
       <button
         onClick={() => setExpanded((e) => !e)}
+        aria-expanded={expanded}
         className="w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-slate-50 transition-colors"
       >
         <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${cfg.dot}`} />
@@ -81,20 +90,23 @@ function RequestCard({
           </p>
         </div>
 
-        {status === 'rejected' && (
-          <button
-            onClick={(e) => { e.stopPropagation(); onDelete(req.id); }}
-            className="p-1.5 rounded-lg text-slate-300 hover:text-red-400 hover:bg-red-50 transition-colors shrink-0"
-            title="Verwijderen"
-          >
-            <Trash2 size={14} />
-          </button>
-        )}
+
         <ChevronDown
           size={16}
           className={`text-slate-400 shrink-0 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
         />
       </button>
+        {status === 'rejected' && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onDelete(req.id); }}
+            className="mr-4 p-2 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors shrink-0"
+            aria-label="Verwijderen"
+            title="Verwijderen"
+          >
+            <Trash2 size={14} />
+          </button>
+        )}
+      </div>
 
       {/* Expanded detail */}
       <AnimatePresence initial={false}>
@@ -190,10 +202,11 @@ function RequestCard({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+                  <label htmlFor={`request-notes-${req.id}`} className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
                     Interne notitie
                   </label>
                   <textarea
+                    id={`request-notes-${req.id}`}
                     value={adminNotes}
                     onChange={(e) => setAdminNotes(e.target.value)}
                     rows={2}
@@ -202,6 +215,7 @@ function RequestCard({
                   />
                 </div>
 
+                {saveError && <p role="alert" className="text-sm text-red-700">{saveError}</p>}
                 <div className="flex justify-end gap-3">
                   <button
                     onClick={() => setExpanded(false)}
@@ -243,18 +257,30 @@ const FILTERS: { id: Status | 'all'; label: string }[] = [
 
 interface Props {
   initialRequests: PackageRequest[];
+  loadError?: string;
 }
 
-export default function AanvragenClient({ initialRequests }: Props) {
+export default function AanvragenClient({ initialRequests, loadError }: Props) {
   const [requests, setRequests] = useState<PackageRequest[]>(initialRequests);
   const [filter, setFilter] = useState<Status | 'all'>('all');
+  const [search, setSearch] = useState('');
 
   const handleDelete = async (id: string) => {
     const res = await fetch(`/api/package-requests/${id}`, { method: 'DELETE' });
     if (res.ok) setRequests((prev) => prev.filter((r) => r.id !== id));
   };
 
-  const filtered = filter === 'all' ? requests : requests.filter((r) => r.status === filter);
+  const filtered = requests
+    .filter((r) => filter === 'all' || r.status === filter)
+    .filter((r) => [r.package_name, r.profile?.full_name, r.profile?.email, r.profile?.company, r.profile?.phone,
+      r.guest_name, r.guest_email, r.guest_company, r.guest_phone]
+      .some((value) => value?.toLocaleLowerCase('nl-BE').includes(search.trim().toLocaleLowerCase('nl-BE'))))
+    .sort((a, b) => {
+      if ((a.status === 'pending') !== (b.status === 'pending')) return a.status === 'pending' ? -1 : 1;
+      return a.status === 'pending'
+        ? Date.parse(a.created_at) - Date.parse(b.created_at)
+        : Date.parse(b.created_at) - Date.parse(a.created_at);
+    });
 
   const counts: Record<Status | 'all', number> = {
     all:       requests.length,
@@ -270,10 +296,9 @@ export default function AanvragenClient({ initialRequests }: Props) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status, admin_notes: adminNotes }),
     });
-    if (res.ok) {
-      const updated = await res.json();
-      setRequests((prev) => prev.map((r) => (r.id === id ? updated : r)));
-    }
+    if (!res.ok) throw new Error('Request save failed');
+    const updated = await res.json();
+    setRequests((prev) => prev.map((r) => (r.id === id ? updated : r)));
   };
 
   return (
@@ -284,12 +309,25 @@ export default function AanvragenClient({ initialRequests }: Props) {
           Administrator
         </p>
         <h1 className="text-3xl font-bold text-slate-900">Pakketaanvragen</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        {!loadError && <p className="text-sm text-slate-500 mt-1">
           {counts.pending} nieuw · {counts.all} totaal
-        </p>
+        </p>}
       </div>
 
+      {loadError ? (
+        <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <p>{loadError}</p>
+          <a href="/dashboard/aanvragen" className="mt-2 inline-block font-semibold underline">Opnieuw proberen</a>
+        </div>
+      ) : (
+      <>
       {/* Filter bar */}
+      <label className="block mb-4 text-sm font-medium text-slate-700">
+        Zoek aanvragen
+        <input type="search" value={search} onChange={(event) => setSearch(event.target.value)}
+          placeholder="Naam, e-mail, bedrijf of pakket"
+          className="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-4 py-3 focus-visible:outline-2 focus-visible:outline-blue-600" />
+      </label>
       <div className="flex flex-wrap gap-2 mb-6">
         <Filter size={15} className="text-slate-400 mt-2.5 shrink-0" />
         {FILTERS.map((f) => (
@@ -333,6 +371,8 @@ export default function AanvragenClient({ initialRequests }: Props) {
           ))}
         </AnimatePresence>
       </div>
+      </>
+      )}
     </>
   );
 }

@@ -99,34 +99,22 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   // Debounce ref for realtime events
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const fetchConversations = useCallback(async (force = false) => {
-    // Serve from cache if fresh enough (unless forced)
-    if (!force) {
-      const cached = getCached();
-      if (cached) {
-        setConversations(cached);
-        setConversationsLoading(false);
-        return;
-      }
-    }
-
-    try {
-      const response = await fetch('/api/messages', { cache: 'no-store' });
-      if (!response.ok) return;
-      const data = await response.json();
-      const list: Conversation[] = data.conversations ?? [];
-      setCache(list);
-      setConversations(list);
-    } catch (err) {
-      console.error('[ChatContext] fetchConversations failed:', err);
-    } finally {
-      setConversationsLoading(false);
-    }
+  const fetchConversations = useCallback(() => {
+    return fetch('/api/messages', { cache: 'no-store' })
+      .then(async response => {
+        if (!response.ok) return;
+        const data = await response.json();
+        const list: Conversation[] = data.conversations ?? [];
+        setCache(list);
+        setConversations(list);
+      })
+      .catch(err => console.error('[ChatContext] fetchConversations failed:', err))
+      .finally(() => setConversationsLoading(false));
   }, []);
 
-  // Initial fetch
+  // Fresh cache is already represented by the lazy state initializers.
   useEffect(() => {
-    fetchConversations();
+    if (getCached() === null) fetchConversations();
   }, [fetchConversations]);
 
   // Realtime subscription with debounce
@@ -143,7 +131,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           if (debounceRef.current) clearTimeout(debounceRef.current);
           debounceRef.current = setTimeout(() => {
             invalidateConversationsCache();
-            fetchConversations(true);
+            fetchConversations();
           }, 300);
         }
       )
@@ -180,7 +168,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       } catch {
         // Revert on error
         invalidateConversationsCache();
-        fetchConversations(true);
+        fetchConversations();
       }
     },
     [fetchConversations]
@@ -201,7 +189,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         conversations,
         conversationsLoading,
         unreadCount,
-        refetchConversations: () => fetchConversations(true),
+        refetchConversations: () => fetchConversations(),
         markAsRead,
         isOpen,
         openChat,

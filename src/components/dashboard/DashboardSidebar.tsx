@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   Mail,
@@ -30,7 +29,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useChatContext } from '@/contexts/ChatContext';
 import { usePendingRequestsCount } from '@/hooks/usePendingRequestsCount';
 import { usePendingAppointmentsCount } from '@/hooks/usePendingAppointmentsCount';
-import { useViewMode, type ViewMode } from './DashboardShell';
+import { useViewMode } from './DashboardShell';
 import IntrICTLogo from '@/components/common/IntrICTLogo';
 import type { Profile, UserRole } from '@/lib/types';
 
@@ -90,24 +89,15 @@ function NavLink({
     item.badge === 'pending' ? pending :
     item.badge === 'pending_appt' ? pendingAppt : 0;
 
-  // Berichten-item: klikken op de badge opent de chat widget
-  const handleClick = () => {
-    onClick?.();
-  };
-
-  const handleBadgeClick = (e: React.MouseEvent) => {
-    if (item.badge === 'unread' && onChatOpen && badgeCount > 0) {
-      e.preventDefault();
-      e.stopPropagation();
-      onChatOpen();
-    }
-  };
+  const chatAction = item.badge === 'unread' && onChatOpen && badgeCount > 0;
 
   return (
+    <div className="flex items-center gap-1">
     <Link
       href={item.href}
-      onClick={handleClick}
-      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
+      aria-current={isActive ? 'page' : undefined}
+      onClick={onClick}
+      className={`flex min-w-0 flex-1 items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group focus-visible:outline-2 focus-visible:outline-blue-600 ${
         isActive
           ? 'bg-blue-600 text-white shadow-sm'
           : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
@@ -117,18 +107,21 @@ function NavLink({
         {item.icon}
       </span>
       <span className="flex-1">{item.label}</span>
-      {badgeCount > 0 && (
-        <span
-          onClick={handleBadgeClick}
-          className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold rounded-full transition-transform hover:scale-110 ${
-            isActive ? 'bg-white/25 text-white' : 'bg-blue-500 text-white'
-          } ${item.badge === 'unread' ? 'cursor-pointer' : ''}`}
-        >
+      {badgeCount > 0 && !chatAction && (
+        <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold rounded-full ${
+          isActive ? 'bg-white/25 text-white' : 'bg-blue-600 text-white'
+        }`}>
           {badgeCount > 9 ? '9+' : badgeCount}
         </span>
       )}
       {isActive && <ChevronRight size={14} className="text-white/60" />}
     </Link>
+    {chatAction && <button type="button" onClick={onChatOpen}
+      aria-label={`Open chat: ${badgeCount} ongelezen berichten`}
+      className="flex h-10 min-w-10 items-center justify-center rounded-xl bg-blue-600 px-2 text-xs font-bold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+      {badgeCount > 9 ? '9+' : badgeCount}
+    </button>}
+    </div>
   );
 }
 
@@ -208,7 +201,7 @@ function SidebarContent({
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-4 py-4 overflow-y-auto space-y-5">
+      <nav aria-label="Portaalmenu" className="flex-1 px-4 py-4 overflow-y-auto space-y-5">
         <div>
           <p className="px-3 mb-2 text-xs font-semibold tracking-widest uppercase text-slate-400">Menu</p>
           <div className="space-y-0.5">
@@ -216,7 +209,7 @@ function SidebarContent({
               <NavLink
                 key={item.href}
                 item={item}
-                isActive={item.exact === false ? pathname.startsWith(item.href) : pathname === item.href}
+                isActive={pathname === item.href || (item.exact !== true && pathname.startsWith(`${item.href}/`))}
                 unread={unreadCount}
                 pending={pendingCount}
                 pendingAppt={pendingApptCount}
@@ -234,7 +227,7 @@ function SidebarContent({
               <NavLink
                 key={item.href}
                 item={item}
-                isActive={pathname === item.href}
+                isActive={pathname === item.href || pathname.startsWith(`${item.href}/`)}
                 unread={unreadCount}
                 pending={pendingCount}
                 pendingAppt={pendingApptCount}
@@ -284,6 +277,29 @@ function SidebarContent({
 export default function DashboardSidebar({ profile }: { profile: Profile }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const closeOnDesktop = (event: MediaQueryListEvent) => {
+      if (event.matches) setOpen(false);
+    };
+    desktop.addEventListener('change', closeOnDesktop);
+    return () => desktop.removeEventListener('change', closeOnDesktop);
+  }, []);
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!open || !dialog) return;
+    const previousOverflow = document.body.style.overflow;
+    const trigger = triggerRef.current;
+    dialog.showModal();
+    document.body.style.overflow = 'hidden';
+    return () => {
+      dialog.close();
+      document.body.style.overflow = previousOverflow;
+      trigger?.focus();
+    };
+  }, [open]);
 
   return (
     <>
@@ -295,6 +311,9 @@ export default function DashboardSidebar({ profile }: { profile: Profile }) {
       {/* Mobile: hamburger */}
       <div className="lg:hidden fixed top-4 left-4 z-40">
         <button
+          ref={triggerRef}
+          aria-expanded={open}
+          aria-controls="mobile-portal-menu"
           onClick={() => setOpen(true)}
           className="flex items-center justify-center w-10 h-10 bg-white border border-slate-200 rounded-xl shadow-sm text-slate-600 hover:text-slate-900 transition-colors"
           aria-label="Open menu"
@@ -303,43 +322,23 @@ export default function DashboardSidebar({ profile }: { profile: Profile }) {
         </button>
       </div>
 
-      {/* Mobile: drawer */}
-      <AnimatePresence>
-        {open && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
-              onClick={() => setOpen(false)}
-            />
-            <motion.aside
-              initial={{ x: -288, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -288, opacity: 0 }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="fixed top-0 left-0 z-50 w-72 h-full bg-white shadow-2xl lg:hidden"
-            >
-              <div className="absolute top-4 right-4 z-10">
-                <button
-                  onClick={() => setOpen(false)}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all"
-                  aria-label="Sluit menu"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-              <SidebarContent
-                profile={profile}
-                pathname={pathname}
-                onLinkClick={() => setOpen(false)}
-              />
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+      {/* Native modal supplies focus containment and background inertness. */}
+      <dialog
+        ref={dialogRef}
+        id="mobile-portal-menu"
+        aria-label="Portaalnavigatie"
+        onClose={(event) => { if (!event.currentTarget.open) setOpen(false); }}
+        onCancel={(event) => { event.preventDefault(); setOpen(false); }}
+        onClick={(event) => { if (event.target === event.currentTarget) setOpen(false); }}
+        className="fixed inset-y-0 left-0 m-0 h-dvh max-h-none w-72 max-w-[90vw] border-0 p-0 bg-white shadow-2xl backdrop:bg-black/40"
+      >
+        {open && <>
+          <button autoFocus onClick={() => setOpen(false)}
+            className="absolute top-3 right-3 z-10 p-2 rounded-lg text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-600"
+            aria-label="Sluit menu"><X size={18} /></button>
+          <SidebarContent profile={profile} pathname={pathname} onLinkClick={() => setOpen(false)} />
+        </>}
+      </dialog>
     </>
   );
 }

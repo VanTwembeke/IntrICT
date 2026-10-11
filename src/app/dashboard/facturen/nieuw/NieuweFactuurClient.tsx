@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -85,24 +85,14 @@ export default function NieuweFactuurClient({
   const [clientMode, setClientMode] = useState<'existing' | 'new'>('existing');
   const [dossierId, setDossierId] = useState(() => {
     if (linkedInvoice?.dossier_id) return linkedInvoice.dossier_id;
-    return '';
+    // The server supplies dossier/profile preselection for this new form.
+    return preselectedClientId
+      ? dossiers.find((d) => d.id === preselectedClientId || d.profile_id === preselectedClientId)?.id ?? ''
+      : '';
   });
   const [guest, setGuest] = useState<GuestClientData>(emptyGuest());
 
   const selectedDossier = dossiers.find((d) => d.id === dossierId) ?? null;
-
-  useEffect(() => {
-    if (linkedInvoice?.dossier_id) {
-      setDossierId(linkedInvoice.dossier_id);
-      setClientMode('existing');
-      return;
-    }
-    if (preselectedClientId) {
-      // preselectedClientId can be a dossier_id OR a profile_id
-      const match = dossiers.find((d) => d.id === preselectedClientId || d.profile_id === preselectedClientId);
-      if (match) { setDossierId(match.id); setClientMode('existing'); }
-    }
-  }, [preselectedClientId, linkedInvoice, dossiers]);
 
   const setGuestField = (field: keyof GuestClientData, value: string) =>
     setGuest((prev) => ({ ...prev, [field]: value }));
@@ -116,11 +106,6 @@ export default function NieuweFactuurClient({
   const [isRecurring, setIsRecurring] = useState(false);
   const [recurringInterval, setRecurringInterval] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
   const [language, setLanguage] = useState<'nl' | 'en'>('nl');
-
-  // Auto-update due date when issue date changes (always +30 calendar days)
-  useEffect(() => {
-    setDueDate(addDays(issueDate, 30));
-  }, [issueDate]);
 
   // ── Line items ────────────────────────────────────────────────────────────
   const [items, setItems] = useState<LineItem[]>(() => {
@@ -436,7 +421,11 @@ export default function NieuweFactuurClient({
                 <input
                   type="date"
                   value={issueDate}
-                  onChange={(e) => setIssueDate(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setIssueDate(value);
+                    if (value !== issueDate) setDueDate(value ? addDays(value, 30) : '');
+                  }}
                   className={inputClass}
                 />
               </div>

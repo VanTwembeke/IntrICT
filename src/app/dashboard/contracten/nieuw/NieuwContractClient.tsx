@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -100,12 +100,6 @@ export default function NieuwContractClient({ dossiers }: { dossiers: ClientDoss
   // ── Service type ──────────────────────────────────────────────────────────
   const [serviceType, setServiceType] = useState<ContractServiceType>('website');
   const [serviceDescription, setServiceDescription] = useState(SERVICE_OPTIONS[0].defaultDescription);
-
-  // Update default description when service type changes
-  useEffect(() => {
-    const opt = SERVICE_OPTIONS.find((o) => o.type === serviceType);
-    if (opt?.defaultDescription) setServiceDescription(opt.defaultDescription);
-  }, [serviceType]);
 
   // ── Contract fields ───────────────────────────────────────────────────────
   const [monthlyPrice, setMonthlyPrice]         = useState<number>(0);
@@ -361,7 +355,12 @@ export default function NieuwContractClient({ dossiers }: { dossiers: ClientDoss
                 <button
                   key={opt.type}
                   type="button"
-                  onClick={() => setServiceType(opt.type)}
+                  onClick={() => {
+                    setServiceType(opt.type);
+                    if (opt.type !== serviceType && opt.defaultDescription) {
+                      setServiceDescription(opt.defaultDescription);
+                    }
+                  }}
                   className={`flex flex-col items-center gap-2 p-3 rounded-xl border text-xs font-semibold transition-all ${
                     serviceType === opt.type
                       ? opt.color + ' shadow-sm ring-2 ring-current ring-opacity-30'

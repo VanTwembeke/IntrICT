@@ -19,19 +19,21 @@ export default async function AanvragenPage() {
   if (profile?.role !== 'admin') redirect('/dashboard');
 
   let requests: PackageRequest[] = [];
+  let loadError: string | undefined;
   try {
     const { data, error } = await supabase
       .from('package_requests')
       .select('*, profile:profiles(full_name, email, company, phone)')
       .order('created_at', { ascending: false });
-    if (!error && data) requests = data as PackageRequest[];
+    if (error || !Array.isArray(data)) throw new Error('Request source unavailable');
+    requests = data as PackageRequest[];
   } catch {
-    // table not yet created
+    loadError = 'Aanvragen konden niet worden geladen. Probeer opnieuw.';
   }
 
   return (
     <div className="p-6 lg:p-8">
-      <AanvragenClient initialRequests={requests} />
+      <AanvragenClient initialRequests={requests} loadError={loadError} />
     </div>
   );
 }

@@ -2,12 +2,15 @@
   "name": "website",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run && node scripts/test-blog-content.mjs"
+    "test": "vitest run && node scripts/test-blog-content.mjs && node --test tests/user-management-access.mjs tests/user-management-delete.mjs"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.4.0",
@@ -18,15 +21,15 @@
     "framer-motion": "^12.23.24",
     "lenis": "^1.3.11",
     "lucide-react": "^0.546.0",
-    "next": "^16.2.6",
+    "next": "^16.3.8",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "resend": "^6.12.3",
-    "sharp": "^0.34.4",
+    "sharp": "^0.35.5",
     "zod": "^4.3.6"
   },
   "overrides": {
-    "postcss": "^8.5.15",
+    "postcss": "^8.5.29",
     "ws": "^8.20.1"
   },
   "devDependencies": {
@@ -36,7 +39,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.0.0",
+    "eslint-config-next": "^16.3.8",
     "jsdom": "^30.1.2",
     "tailwindcss": "^4",
     "typescript": "^5",

@@ -47,6 +47,7 @@ import { blogPost as post10En } from './wordpress-shopify-or-custom-development'
 import { blogPost as post11En } from './ai-web-security-protocols-checklist';
 import { blogPost as post12En } from './monkey-testing-website-automated-testing';
 import { blogPost as post13En } from './inp-core-web-vitals-explained';
+import { blogPost as post14En } from './passkeys-sme-secure-sign-in';
 
 export const blogPostsEn: BlogPost[] = [
   post1En,
@@ -62,4 +63,5 @@ export const blogPostsEn: BlogPost[] = [
   post11En,
   post12En,
   post13En,
+  post14En,
 ];

@@ -11,6 +11,7 @@ import { blogPost as post10 } from './wordpress-shopify-maatwerk-vergelijking';
 import { blogPost as post11 } from './ai-webdesign-veiligheid-protocollen-checklist';
 import { blogPost as post12 } from './monkey-testing-website-automatisch-testen';
 import { blogPost as post13 } from './inp-core-web-vitals';
+import { blogPost as post14 } from './passkeys-kmo-veilig-inloggen';
 
 export const blogPosts = [
   post1,
@@ -26,6 +27,7 @@ export const blogPosts = [
   post11,
   post12,
   post13,
+  post14,
 ];
 
 // Export individual posts for easier access

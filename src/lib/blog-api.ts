@@ -27,6 +27,7 @@ export interface BlogPostMeta {
   excerpt: string;
   author: string;
   publishedAt: string;
+  updatedAt: string;
   category: string;
   tags: string[];
   image: string;
@@ -38,6 +39,18 @@ export interface BlogPostMeta {
 
 export { blogPostsNl, blogPostsEn };
 
+/** Metadata contains real editorial dates; never infer activity from today's clock. */
+export function getBlogActivityDate(post: Pick<BlogPostMeta, 'publishedAt' | 'updatedAt'>): string {
+  return post.updatedAt > post.publishedAt ? post.updatedAt : post.publishedAt;
+}
+
+/** Latest activity first; a newly published post wins ties with an older update. */
+export function sortBlogPostsByActivity<T extends Pick<BlogPostMeta, 'publishedAt' | 'updatedAt'>>(posts: readonly T[]): T[] {
+  return [...posts].sort((a, b) =>
+    getBlogActivityDate(b).localeCompare(getBlogActivityDate(a)) || b.publishedAt.localeCompare(a.publishedAt)
+  );
+}
+
 /** Returns the correct post array for the given language. Falls back to NL if no EN posts exist. */
 export function getBlogPostsForLang(lang?: string): BlogPost[] {
   if (lang === 'en' && blogPostsEn.length > 0) return blogPostsEn;
@@ -47,7 +60,7 @@ export function getBlogPostsForLang(lang?: string): BlogPost[] {
 // API functions
 export async function getAllBlogPosts(lang?: string): Promise<BlogPostMeta[]> {
   const posts = getBlogPostsForLang(lang);
-  return posts.map(({ content, ...meta }) => meta);
+  return sortBlogPostsByActivity(posts).map(({ content, ...meta }) => meta);
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
@@ -58,14 +71,14 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 
 export async function getBlogPostsByCategory(category: string, lang?: string): Promise<BlogPostMeta[]> {
   const posts = getBlogPostsForLang(lang);
-  return posts
+  return sortBlogPostsByActivity(posts)
     .filter((post) => post.category.toLowerCase() === category.toLowerCase())
     .map(({ content, ...meta }) => meta);
 }
 
 export async function getBlogPostsByTag(tag: string, lang?: string): Promise<BlogPostMeta[]> {
   const posts = getBlogPostsForLang(lang);
-  return posts
+  return sortBlogPostsByActivity(posts)
     .filter((post) => post.tags.some((t) => t.toLowerCase() === tag.toLowerCase()))
     .map(({ content, ...meta }) => meta);
 }
@@ -78,7 +91,7 @@ export async function getRelatedPosts(currentSlug: string, limit: number = 3): P
 
   // Find related posts in the same language
   const sourcePosts = getBlogPostsForLang(currentPost.lang ?? 'nl');
-  return sourcePosts
+  return sortBlogPostsByActivity(sourcePosts)
     .filter(
       (post) =>
         post.slug !== currentSlug &&

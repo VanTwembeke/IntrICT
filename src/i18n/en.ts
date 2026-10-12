@@ -150,6 +150,18 @@ const en: Translations = {
   },
 
   portfolio: {
+    workHeading: 'My work',
+    constructionBadge: 'Under construction',
+    workSubtitle: 'IntrICT is a young business. My first client projects will be added here once they go live. Below you can see what I have built so far.',
+    websiteTitle: 'IntrICT.com — this website',
+    websiteDescription: 'Full stack: Next.js 16, React 19, Tailwind CSS v4, Supabase, Vercel. Including a customer dashboard, invoice module, message centre, appointment system and a GEO/SEO-optimised public website.',
+    liveStatus: 'Live',
+    githubHeading: 'Open-source & personal projects',
+    githubSubtitle: 'View my code and side projects on GitHub',
+    githubProfile: 'GitHub profile',
+    firstClientHeading: 'Want to be the first client project?',
+    firstClientBody: 'I am taking on new projects. Get in touch for a free introductory conversation — with no obligation.',
+    scheduleChat: 'Schedule a free chat',
     heading:      'My Portfolio',
     subtitle:     'A selection of my recent web development projects. From modern websites to complex web applications.',
     viewProjects: 'View all projects',

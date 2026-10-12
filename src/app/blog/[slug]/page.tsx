@@ -124,7 +124,7 @@ export default async function BlogPostPage({ params }: Props) {
         '@id': `${SITE_URL}/blog/${post.slug}`,
         headline: post.title,
         description: post.excerpt,
-        image: post.image,
+        image: new URL(post.image, SITE_URL).href,
         datePublished: post.publishedAt,
         dateModified: post.updatedAt,
         author: {

@@ -15,7 +15,7 @@ export const blogPost: BlogPost = {
     "KMO",
     "ICT"
   ],
-  "image": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80",
+  "image": "/images/blog/passkeys-device-keypair.webp",
   "slug": "passkeys-kmo-veilig-inloggen",
   "readTime": 5,
   "lang": "nl",

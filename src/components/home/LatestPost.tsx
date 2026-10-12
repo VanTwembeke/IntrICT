@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { BlogPostMeta } from '@/lib/blog-api';
+import BlogDates from '@/components/common/BlogDates';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface LatestPostProps {
@@ -12,11 +13,6 @@ interface LatestPostProps {
 
 export default function LatestPost({ post }: LatestPostProps) {
   const { lang } = useLanguage();
-
-  const formattedDate = new Date(post.publishedAt).toLocaleDateString(
-    lang === 'en' ? 'en-GB' : 'nl-BE',
-    { year: 'numeric', month: 'long', day: 'numeric' }
-  );
 
   const heroImage = post.image.includes('unsplash.com')
     ? post.image.replace(/\?.*$/, '') + '?w=800&h=450&fit=crop&auto=format&q=80'
@@ -68,7 +64,7 @@ export default function LatestPost({ post }: LatestPostProps) {
               {/* Content */}
               <div className="flex flex-col justify-center flex-1 p-6 md:p-8">
                 <div className="flex items-center gap-3 mb-3 text-sm text-slate-400">
-                  <span>{formattedDate}</span>
+                  <BlogDates post={post} lang={lang} />
                   <span>·</span>
                   <span>{post.readTime} min</span>
                 </div>

@@ -10,6 +10,7 @@ import { sendContactForm, type ContactFormState } from '@/app/actions/contact';
 import InlineAppointmentPicker, { type AppointmentSelection } from './ContactCalendar';
 import { CalendarDays, CheckCircle, AlertCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { CONTACT_LIMITS as limits, CONTACT_PHONE } from '@/lib/contact-form';
 
 const initialState: ContactFormState = { success: false };
 
@@ -103,7 +104,7 @@ export default function Contact() {
 
   const contactInfo = [
     { icon: '📧', title: t.contactPage.info[0].title, value: 'info@intrict.com',  href: 'mailto:info@intrict.com' },
-    { icon: '📱', title: t.contactPage.info[1].title, value: '0470 63 14 75',     href: 'tel:+32470631475' },
+    { icon: '📱', title: t.contactPage.info[1].title, value: CONTACT_PHONE.text, href: CONTACT_PHONE.href },
     { icon: '📍', title: t.contactPage.info[2].title, value: t.contactPage.locationValue, href: '#' },
     { icon: '🕐', title: t.contactPage.info[3].title, value: availability, href: '#' },
   ];
@@ -246,11 +247,13 @@ export default function Contact() {
                       onSubmit={(e) => { if (isApptMode) e.preventDefault(); }}
                       className="space-y-6"
                     >
+                      <input type="hidden" name="locale" value={lang} />
                       {state.error && (
                         <motion.div
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="flex items-start gap-3 p-4 border border-red-200 rounded-xl bg-red-50"
+                          role="alert"
                         >
                           <span className="text-red-500 shrink-0">⚠️</span>
                           <p className="text-sm text-red-700">{state.error}</p>
@@ -267,6 +270,8 @@ export default function Contact() {
                             id="naam"
                             type="text"
                             name="naam"
+                            minLength={limits.naam.min}
+                            maxLength={limits.naam.max}
                             required
                             placeholder={t.contactPage.namePlaceholder}
                             value={nameVal}
@@ -282,6 +287,7 @@ export default function Contact() {
                             id="email"
                             type="email"
                             name="email"
+                            maxLength={limits.email.max}
                             required
                             placeholder={t.contactPage.emailPlaceholder}
                             value={emailVal}
@@ -301,6 +307,7 @@ export default function Contact() {
                             id="telefoon"
                             type="tel"
                             name="telefoon"
+                            maxLength={limits.telefoon.max}
                             placeholder="+32 9xx xx xx xx"
                             className="w-full px-4 py-3 transition-all duration-200 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400"
                           />
@@ -362,6 +369,8 @@ export default function Contact() {
                             <textarea
                               id="bericht"
                               name="bericht"
+                              minLength={limits.bericht.min}
+                              maxLength={limits.bericht.max}
                               required={!isApptMode}
                               rows={6}
                               placeholder={t.contactPage.messagePlaceholder}
@@ -501,7 +510,7 @@ export default function Contact() {
                   href="https://www.google.com/maps/search/Gent,+Belgium"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-1.5 ml-auto text-sm font-semibold text-white transition-all duration-200 bg-blue-500 rounded-lg hover:bg-blue-600"
+                  className="px-4 py-1.5 ml-auto text-sm font-semibold text-white transition-all duration-200 bg-blue-700 rounded-lg hover:bg-blue-800"
                 >
                   {t.contactPage.mapOpen}
                 </a>

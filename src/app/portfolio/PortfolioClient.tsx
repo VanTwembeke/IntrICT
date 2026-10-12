@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import Lenis from 'lenis';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -11,17 +12,16 @@ import { ArrowRight, Code2, Hammer, Github } from 'lucide-react';
 
 const CASES = [
   {
-    title: 'IntrICT.com — deze website',
-    description:
-      'Volledige stack: Next.js 16, React 19, Tailwind CSS v4, Supabase, Vercel. Inclusief klantendashboard, factuurmodule, berichtencentrum, afsprakensysteem en een GEO/SEO-geoptimaliseerde publieke website.',
+    id: 'intrict-website',
     tags: ['Next.js', 'Supabase', 'TypeScript', 'Tailwind CSS v4'],
     href: 'https://www.intrict.com',
-    linkLabel: 'Bekijk live',
     status: 'live' as const,
   },
 ];
 
 export default function Portfolio() {
+  const { t } = useLanguage();
+  const copy = t.portfolio;
   useEffect(() => {
     const lenis = new Lenis();
     const raf = (time: number) => { lenis.raf(time); requestAnimationFrame(raf); };
@@ -48,14 +48,13 @@ export default function Portfolio() {
             >
               <span className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 text-xs font-bold uppercase tracking-widest rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">
                 <Hammer size={12} />
-                In opbouw
+                {copy.constructionBadge}
               </span>
               <h1 className="mb-6 text-5xl font-bold text-white md:text-6xl leading-tight">
-                Mijn werk
+                {copy.workHeading}
               </h1>
               <p className="max-w-2xl mx-auto text-xl leading-relaxed text-slate-300">
-                IntrICT is een jonge onderneming. Mijn eerste klantenprojecten worden hier toegevoegd zodra ze live zijn.
-                Hieronder vind je wat ik tot nu toe heb gebouwd.
+                {copy.workSubtitle}
               </p>
             </motion.div>
           </div>
@@ -66,7 +65,7 @@ export default function Portfolio() {
           <div className="space-y-8">
             {CASES.map((c, i) => (
               <motion.div
-                key={c.title}
+                key={c.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -80,15 +79,15 @@ export default function Portfolio() {
                         <Code2 size={20} className="text-blue-600" />
                       </div>
                       <div>
-                        <h2 className="text-xl font-bold text-slate-900">{c.title}</h2>
+                        <h2 className="text-xl font-bold text-slate-900">{copy.websiteTitle}</h2>
                         <span className="inline-flex items-center gap-1 mt-0.5 px-2 py-0.5 text-[11px] font-bold rounded-full bg-green-100 text-green-700">
                           <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                          Live
+                          {copy.liveStatus}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <p className="text-slate-600 leading-relaxed mb-5">{c.description}</p>
+                  <p className="text-slate-600 leading-relaxed mb-5">{copy.websiteDescription}</p>
                   <div className="flex flex-wrap gap-2 mb-6">
                     {c.tags.map((tag) => (
                       <span key={tag} className="px-2.5 py-1 text-xs font-semibold bg-slate-100 text-slate-600 rounded-lg">
@@ -102,7 +101,7 @@ export default function Portfolio() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-700 transition-colors"
                   >
-                    {c.linkLabel}
+                    {copy.viewLive}
                     <ArrowRight size={14} />
                   </a>
                 </div>
@@ -123,8 +122,8 @@ export default function Portfolio() {
                 <Github size={20} className="text-slate-700" />
               </div>
               <div>
-                <p className="font-semibold text-slate-900">Open-source & persoonlijke projecten</p>
-                <p className="text-sm text-slate-500">Bekijk mijn code en side-projects op GitHub</p>
+                <p className="font-semibold text-slate-900">{copy.githubHeading}</p>
+                <p className="text-sm text-slate-500">{copy.githubSubtitle}</p>
               </div>
             </div>
             <a
@@ -133,7 +132,7 @@ export default function Portfolio() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-700 transition-colors shrink-0"
             >
-              GitHub profiel
+              {copy.githubProfile}
               <ArrowRight size={14} />
             </a>
           </motion.div>
@@ -143,16 +142,16 @@ export default function Portfolio() {
         <section className="py-16 px-4 mx-auto max-w-5xl sm:px-6 lg:px-8 pb-24">
           <div className="bg-slate-900 rounded-2xl p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
-              <h3 className="text-xl font-bold text-white mb-1">Wil je het eerste klantenproject worden?</h3>
+              <h3 className="text-xl font-bold text-white mb-1">{copy.firstClientHeading}</h3>
               <p className="text-slate-400 text-sm leading-relaxed max-w-md">
-                Ik neem nieuwe projecten aan. Neem contact op voor een gratis kennismakingsgesprek — zonder verplichtingen.
+                {copy.firstClientBody}
               </p>
             </div>
             <Link
               href="/contact"
               className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-400 transition-colors text-sm shrink-0"
             >
-              Gratis gesprek plannen
+              {copy.scheduleChat}
               <ArrowRight size={14} />
             </Link>
           </div>

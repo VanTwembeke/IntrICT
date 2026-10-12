@@ -9,10 +9,44 @@ import { motion } from 'framer-motion';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
+import BlogDates from '@/components/common/BlogDates';
 import { BlogPost, BlogPostMeta } from '@/lib/blog-api';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const SITE_URL = 'https://www.intrict.com';
+
+// Render inline markdown as React nodes, never injected HTML. Only navigable
+// public URL schemes are accepted; URL parsing also rejects obfuscated schemes.
+const safeInlineUrl = (href: string): boolean => {
+  try {
+    return ['https:', 'http:', 'mailto:', 'tel:'].includes(new URL(href, SITE_URL).protocol);
+  } catch {
+    return false;
+  }
+};
+
+const renderInline = (text: string): React.ReactNode[] => {
+  const pattern = /(`[^`]+`|\*\*.+?\*\*|\[[^\]]+\]\((?:[^\s()]|\([^\s()]*\))+\))/g;
+  const nodes: React.ReactNode[] = [];
+  let end = 0;
+  for (const match of text.matchAll(pattern)) {
+    nodes.push(text.slice(end, match.index));
+    const token = match[0];
+    if (token.startsWith('`')) {
+      nodes.push(<code key={match.index}>{token.slice(1, -1)}</code>);
+    } else if (token.startsWith('**')) {
+      nodes.push(<strong key={match.index}>{renderInline(token.slice(2, -2))}</strong>);
+    } else {
+      const link = /^\[([^\]]+)\]\((.*)\)$/.exec(token)!;
+      nodes.push(safeInlineUrl(link[2])
+        ? <a key={match.index} href={link[2]} className="text-blue-700 underline underline-offset-2 hover:text-blue-800">{renderInline(link[1])}</a>
+        : link[1]);
+    }
+    end = match.index! + token.length;
+  }
+  nodes.push(text.slice(end));
+  return nodes;
+};
 
 // ShareButtons Component
 const ShareButtons = ({ slug, title }: { slug: string; title: string }) => {
@@ -166,7 +200,12 @@ const CodeBlock = ({ code, language, copyLabel, copiedLabel }: { code: string; l
       </div>
 
       {/* Code Content */}
-      <div className="p-4 overflow-x-auto">
+      <div
+        tabIndex={0}
+        role="region"
+        aria-label={`Code (${language})`}
+        className="p-4 overflow-x-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-400"
+      >
         <pre className="font-mono text-sm leading-relaxed text-slate-100">
           <code>{code}</code>
         </pre>
@@ -228,14 +267,6 @@ export default function BlogPostClient({ initialPost, initialRelatedPosts }: Blo
     }
   }, [lang, blogPost, router]);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(lang === 'en' ? 'en-GB' : 'nl-BE', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
   const formattedContent = useMemo(() => {
     if (!blogPost) return null;
     const content = blogPost.content;
@@ -243,26 +274,30 @@ export default function BlogPostClient({ initialPost, initialRelatedPosts }: Blo
       const lines = content.split('\n');
       const elements: React.ReactElement[] = [];
       let i = 0;
+      const firstContentLine = lines.findIndex((line) => line.trim() !== '');
 
       while (i < lines.length) {
         const line = lines[i];
 
         if (line.startsWith('# ')) {
-          elements.push(
-            <h1 key={i} className="mt-8 mb-4 text-4xl font-bold text-slate-800">
-              {line.substring(2)}
-            </h1>
-          );
+          // The hero already owns the article title and the page's only H1.
+          if (i !== firstContentLine || line.substring(2).trim() !== blogPost.title.trim()) {
+            elements.push(
+              <h2 key={i} className="mt-8 mb-4 text-3xl font-bold text-slate-800">
+                {renderInline(line.substring(2))}
+              </h2>
+            );
+          }
         } else if (line.startsWith('## ')) {
           elements.push(
             <h2 key={i} className="mt-6 mb-3 text-3xl font-bold text-slate-800">
-              {line.substring(3)}
+              {renderInline(line.substring(3))}
             </h2>
           );
         } else if (line.startsWith('### ')) {
           elements.push(
             <h3 key={i} className="mt-4 mb-2 text-2xl font-bold text-slate-800">
-              {line.substring(4)}
+              {renderInline(line.substring(4))}
             </h3>
           );
         } else if (line.startsWith('```')) {
@@ -312,7 +347,7 @@ export default function BlogPostClient({ initialPost, initialRelatedPosts }: Blo
                   <tr>
                     {headers.map((h, j) => (
                       <th key={j} className="border border-slate-200 bg-slate-100 px-4 py-2 text-left font-semibold text-slate-800">
-                        {h}
+                        {renderInline(h)}
                       </th>
                     ))}
                   </tr>
@@ -322,7 +357,7 @@ export default function BlogPostClient({ initialPost, initialRelatedPosts }: Blo
                     <tr key={ri} className={ri % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                       {row.map((cell, ci) => (
                         <td key={ci} className="border border-slate-200 px-4 py-2 text-slate-700">
-                          {cell}
+                          {renderInline(cell)}
                         </td>
                       ))}
                     </tr>
@@ -331,12 +366,30 @@ export default function BlogPostClient({ initialPost, initialRelatedPosts }: Blo
               </table>
             </div>
           );
-        } else if (line.startsWith('- ')) {
-          elements.push(
-            <li key={i} className="mb-1 ml-4 leading-relaxed list-disc text-slate-700">
-              {line.substring(2)}
-            </li>
-          );
+        } else if (line.startsWith('> ')) {
+          const start = i;
+          const quotes: React.ReactElement[] = [];
+          while (i < lines.length && lines[i].startsWith('> ')) {
+            quotes.push(<p key={i}>{renderInline(lines[i].substring(2))}</p>);
+            i++;
+          }
+          elements.push(<blockquote key={start} className="my-4 border-l-4 border-blue-200 pl-4 text-slate-700">{quotes}</blockquote>);
+          i--;
+        } else if (/^(?:- |\d+\. )/.test(line)) {
+          const start = i;
+          const ordered = /^\d+\. /.test(line);
+          const listPattern = ordered ? /^\d+\. (.*)$/ : /^- (.*)$/;
+          const items: React.ReactElement[] = [];
+          while (i < lines.length) {
+            const item = listPattern.exec(lines[i]);
+            if (!item) break;
+            items.push(<li key={i} className="mb-1 leading-relaxed text-slate-700">{renderInline(item[1])}</li>);
+            i++;
+          }
+          elements.push(ordered
+            ? <ol key={start} start={parseInt(line, 10)} className="my-3 pl-6 list-decimal">{items}</ol>
+            : <ul key={start} className="my-3 pl-6 list-disc">{items}</ul>);
+          i--;
         } else if (line.trim() === '') {
           const prevElement = elements[elements.length - 1];
           if (prevElement && prevElement.type !== 'li') {
@@ -345,7 +398,7 @@ export default function BlogPostClient({ initialPost, initialRelatedPosts }: Blo
         } else if (line.trim()) {
           elements.push(
             <p key={i} className="mb-3 leading-relaxed text-slate-700">
-              {line}
+              {renderInline(line)}
             </p>
           );
         }
@@ -357,7 +410,7 @@ export default function BlogPostClient({ initialPost, initialRelatedPosts }: Blo
     };
     return formatContent(content);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [blogPost?.content, p.copy, p.copied]);
+  }, [blogPost?.content, blogPost?.title, p.copy, p.copied]);
 
   if (loading) {
     return (
@@ -413,7 +466,7 @@ export default function BlogPostClient({ initialPost, initialRelatedPosts }: Blo
               </div>
 
               <div className="mb-6">
-                <span className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-full">
+                <span className="px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-full">
                   {blogPost.category}
                 </span>
               </div>
@@ -437,7 +490,7 @@ export default function BlogPostClient({ initialPost, initialRelatedPosts }: Blo
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  {formatDate(blogPost.publishedAt)}
+                  <BlogDates post={blogPost} lang={lang} />
                 </div>
                 <div className="flex items-center">
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -492,7 +545,7 @@ export default function BlogPostClient({ initialPost, initialRelatedPosts }: Blo
               transition={{ duration: 0.8 }}
               className="p-6 bg-white shadow-lg rounded-2xl md:p-8"
             >
-              <div className="prose prose-lg max-w-none">
+              <div className="prose prose-lg max-w-none [overflow-wrap:anywhere]">
                 <div className="space-y-2">
                   {formattedContent}
                 </div>
@@ -539,7 +592,7 @@ export default function BlogPostClient({ initialPost, initialRelatedPosts }: Blo
                         href="https://www.linkedin.com/in/VanTwembeke"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
+                        className="text-blue-700 underline underline-offset-2 hover:text-blue-800"
                       >
                         LinkedIn
                       </a>
@@ -592,7 +645,7 @@ export default function BlogPostClient({ initialPost, initialRelatedPosts }: Blo
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                       <div className="absolute top-4 left-4">
-                        <span className="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-full">
+                        <span className="px-3 py-1 text-sm font-medium text-white bg-blue-700 rounded-full">
                           {post.category}
                         </span>
                       </div>

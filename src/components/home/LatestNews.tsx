@@ -3,7 +3,8 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { BlogPostMeta } from '@/lib/blog-api';
+import { BlogPostMeta, sortBlogPostsByActivity } from '@/lib/blog-api';
+import BlogDates from '@/components/common/BlogDates';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface LatestNewsProps {
@@ -19,17 +20,9 @@ const cardVariants = {
   }),
 };
 
-function formatDate(dateStr: string, lang: string) {
-  return new Date(dateStr).toLocaleDateString(lang === 'en' ? 'en-GB' : 'nl-BE', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-}
-
 export default function LatestNews({ postsNl, postsEn }: LatestNewsProps) {
   const { lang } = useLanguage();
-  const posts = lang === 'en' ? postsEn : postsNl;
+  const posts = sortBlogPostsByActivity(lang === 'en' ? postsEn : postsNl);
 
   const featured = posts[0];
   const secondary = posts.slice(1, 4);
@@ -95,7 +88,7 @@ export default function LatestNews({ postsNl, postsEn }: LatestNewsProps) {
               </div>
               <div className="flex flex-col flex-1 p-6">
                 <p className="mb-2 text-xs font-medium text-slate-400">
-                  {formatDate(featured.publishedAt, lang)}&nbsp;·&nbsp;{featured.readTime}&nbsp;min
+                  <BlogDates post={featured} lang={lang} />&nbsp;·&nbsp;{featured.readTime}&nbsp;min
                 </p>
                 <h3 className="mb-3 text-xl font-bold leading-snug text-slate-800 group-hover:text-blue-600 transition-colors duration-200 line-clamp-2">
                   {featured.title}
@@ -140,6 +133,7 @@ export default function LatestNews({ postsNl, postsEn }: LatestNewsProps) {
                   <div className="flex flex-col justify-center min-w-0">
                     <span className="mb-1 text-[10px] font-semibold tracking-wider uppercase text-blue-500">
                       {post.category}&nbsp;·&nbsp;{post.readTime}&nbsp;min
+                      <span className="block normal-case tracking-normal text-slate-400"><BlogDates post={post} lang={lang} short /></span>
                     </span>
                     <h3 className="mb-1.5 text-sm font-bold leading-snug text-slate-800 group-hover:text-blue-600 transition-colors duration-200 line-clamp-2">
                       {post.title}

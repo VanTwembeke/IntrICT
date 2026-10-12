@@ -158,6 +158,18 @@ const nl = {
 
   // ── Portfolio page ───────────────────────────────────────────────────────────
   portfolio: {
+    workHeading: 'Mijn werk',
+    constructionBadge: 'In opbouw',
+    workSubtitle: 'IntrICT is een jonge onderneming. Mijn eerste klantenprojecten worden hier toegevoegd zodra ze live zijn. Hieronder vind je wat ik tot nu toe heb gebouwd.',
+    websiteTitle: 'IntrICT.com — deze website',
+    websiteDescription: 'Volledige stack: Next.js 16, React 19, Tailwind CSS v4, Supabase, Vercel. Inclusief klantendashboard, factuurmodule, berichtencentrum, afsprakensysteem en een GEO/SEO-geoptimaliseerde publieke website.',
+    liveStatus: 'Live',
+    githubHeading: 'Open-source & persoonlijke projecten',
+    githubSubtitle: 'Bekijk mijn code en side-projects op GitHub',
+    githubProfile: 'GitHub profiel',
+    firstClientHeading: 'Wil je het eerste klantenproject worden?',
+    firstClientBody: 'Ik neem nieuwe projecten aan. Neem contact op voor een gratis kennismakingsgesprek — zonder verplichtingen.',
+    scheduleChat: 'Gratis gesprek plannen',
     heading:      'Mijn Portfolio',
     subtitle:     'Een selectie van mijn recente web development projecten. Van moderne websites tot complexe webapplicaties.',
     viewProjects: 'Bekijk alle projecten',

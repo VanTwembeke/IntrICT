@@ -13,7 +13,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: siteUrl,
-      lastModified: new Date('2026-04-23'),
+      // The homepage's latest-articles section changes when real blog content changes.
+      lastModified: latestBlogUpdate,
       changeFrequency: 'weekly',
       priority: 1.0,
     },

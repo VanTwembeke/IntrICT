@@ -10,6 +10,7 @@ import BlogPostNotification from '@/components/home/BlogPostNotification';
 import LatestNews from '@/components/home/LatestNews';
 import BackToTop from '@/components/common/BackToTop';
 import HomeEffects from './HomeEffects';
+import { sortBlogPostsByActivity } from '@/lib/blog-api';
 import { blogPosts } from '@/data/blog-posts';
 import { blogPostsEn } from '@/data/blog-posts/en';
 import { createClient } from '@/lib/supabase/server';
@@ -79,12 +80,12 @@ export default async function Home() {
     oneTimePackages = all.filter((p) => p.billing_interval === 'one_time');
   } catch { /* packages not accessible — section hidden */ }
 
-  const sortedNl = [...blogPosts]
-    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
-  const sortedEn = [...blogPostsEn]
-    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+  const sortedNl = sortBlogPostsByActivity(blogPosts);
+  const sortedEn = sortBlogPostsByActivity(blogPostsEn);
 
-  const latestPost = sortedNl[0];
+  // The notification explicitly says "New article", so it follows publication,
+  // not the activity order used by LatestNews (which also includes real edits).
+  const latestPost = [...blogPosts].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))[0];
   const { content: _content, ...latestPostMeta } = latestPost;
   const newsPostsNl = sortedNl.slice(0, 4).map(({ content: _c, ...meta }) => meta);
   const newsPostsEn = sortedEn.slice(0, 4).map(({ content: _c, ...meta }) => meta);

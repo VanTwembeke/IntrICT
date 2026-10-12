@@ -26,6 +26,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     } catch { /* */ }
   }, []);
 
+  // Follow the selected UI language after hydration; keep the server's NL default
+  // and the existing stored-preference/article-redirect behavior unchanged.
+  useEffect(() => {
+    document.documentElement.lang = lang === 'en' ? 'en' : 'nl-BE';
+  }, [lang]);
+
   const setLang = (l: Lang) => {
     setLangState(l);
     try { localStorage.setItem('lang', l); } catch { /* */ }

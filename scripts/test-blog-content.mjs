@@ -4,6 +4,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import ts from 'typescript';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 const base = fileURLToPath(new URL('../src/data/blog-posts', import.meta.url));
 const cache = new Map();
 function load(file) {
@@ -48,4 +49,21 @@ for (const slug of ['inp-core-web-vitals', 'inp-core-web-vitals-explained']) {
   assert.ok(sourceUrls.some(url => url.href === 'https://developers.google.com/search/docs/appearance/core-web-vitals'));
   assert.ok(!p.content.includes('Status:') && !p.content.includes('Publication checklist:'));
 }
-console.log(`Content checks passed: ${nl.length} NL, ${en.length} EN; unique IDs/slugs and reciprocal translations.`);
+const imageOwners = new Map();
+for (const p of all) {
+  const owner = [p.slug, p.translationSlug].sort().join('|');
+  const url = new URL(p.image, 'https://www.intrict.com');
+  const identities = [`${url.origin}${url.pathname}`];
+  if (p.image.startsWith('/')) {
+    assert.match(p.image, /^\/images\/blog\/[a-z0-9-]+\.(?:webp|png|jpe?g|avif)$/);
+    const asset = fileURLToPath(new URL(`../public${p.image}`, import.meta.url));
+    assert.ok(fs.existsSync(asset), `${p.slug}: missing local illustration`);
+    identities.push(createHash('sha256').update(fs.readFileSync(asset)).digest('hex'));
+  }
+  for (const identity of identities) {
+    assert.ok(!imageOwners.has(identity) || imageOwners.get(identity) === owner,
+      `${p.slug}: image reused by another article (${imageOwners.get(identity)})`);
+    imageOwners.set(identity, owner);
+  }
+}
+console.log(`Content checks passed: ${nl.length} NL, ${en.length} EN; unique IDs/slugs/images and reciprocal translations.`);

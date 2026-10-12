@@ -9,13 +9,10 @@ import { Clock, Calendar, Tag, ArrowRight } from 'lucide-react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackToTop from '@/components/common/BackToTop';
-import { getBlogPostsForLang } from '@/lib/blog-api';
+import { getBlogPostsForLang, sortBlogPostsByActivity } from '@/lib/blog-api';
+import BlogDates from '@/components/common/BlogDates';
 import type { BlogPostMeta } from '@/lib/blog-api';
 import { useLanguage } from '@/contexts/LanguageContext';
-
-function fmtDate(iso: string, lang: string) {
-  return new Date(iso).toLocaleDateString(lang === 'en' ? 'en-GB' : 'nl-BE', { day: 'numeric', month: 'short', year: 'numeric' });
-}
 
 // ─── Featured post (first / newest) ──────────────────────────────────────────
 
@@ -51,11 +48,11 @@ function FeaturedPost({ post, lang, categoryMap, newestLabel, readLabel }: { pos
               <span className="px-2.5 py-1 text-xs font-semibold bg-slate-100 text-slate-600 rounded-full">
                 {categoryMap[post.category] ?? post.category}
               </span>
-              <span className="flex items-center gap-1 text-xs text-slate-400">
+              <span className="flex items-center gap-1 text-xs text-slate-600">
                 <Calendar size={11} />
-                {fmtDate(post.publishedAt, lang)}
+                <BlogDates post={post} lang={lang} short />
               </span>
-              <span className="flex items-center gap-1 text-xs text-slate-400">
+              <span className="flex items-center gap-1 text-xs text-slate-600">
                 <Clock size={11} />
                 {post.readTime} min
               </span>
@@ -118,11 +115,11 @@ function ListPost({ post, index, lang, categoryMap, readMoreLabel }: { post: Blo
               <span className="px-2 py-0.5 text-xs font-semibold bg-slate-100 text-slate-600 rounded-full">
                 {categoryMap[post.category] ?? post.category}
               </span>
-              <span className="flex items-center gap-1 text-xs text-slate-400">
+              <span className="flex items-center gap-1 text-xs text-slate-600">
                 <Calendar size={10} />
-                {fmtDate(post.publishedAt, lang)}
+                <BlogDates post={post} lang={lang} short />
               </span>
-              <span className="flex items-center gap-1 text-xs text-slate-400">
+              <span className="flex items-center gap-1 text-xs text-slate-600">
                 <Clock size={10} />
                 {post.readTime} min
               </span>
@@ -140,7 +137,7 @@ function ListPost({ post, index, lang, categoryMap, readMoreLabel }: { post: Blo
           <div className="flex items-center justify-between mt-3">
             <div className="flex flex-wrap gap-1 hidden sm:flex">
               {post.tags.slice(0, 3).map((tag) => (
-                <span key={tag} className="px-1.5 py-0.5 text-xs text-slate-400 bg-slate-50 border border-slate-200 rounded">
+                <span key={tag} className="px-1.5 py-0.5 text-xs text-slate-600 bg-slate-50 border border-slate-200 rounded">
                   #{tag}
                 </span>
               ))}
@@ -164,8 +161,7 @@ export default function BlogPage() {
   // Re-compute when language changes so the list switches to the correct posts
   const SORTED_POSTS = useMemo<BlogPostMeta[]>(() => {
     const posts = getBlogPostsForLang(lang);
-    return [...posts]
-      .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+    return sortBlogPostsByActivity(posts)
       .map(({ content: _c, ...meta }) => meta as BlogPostMeta);
   }, [lang]);
 

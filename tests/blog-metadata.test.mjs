@@ -71,7 +71,7 @@ test('schema and OpenGraph expose actual edit dates and preserve original public
   expect(metadata.openGraph.publishedTime).toBe('2026-03-27');
   expect(metadata.openGraph.modifiedTime).toBe('2026-10-12');
   const html = renderToStaticMarkup(await ArticlePage({ params }));
-  const scripts = [...html.matchAll(/<script[^>]*>(.*?)<\/script>/g)].map(m => JSON.parse(m[1]));
+  const scripts = [...new DOMParser().parseFromString(html, 'text/html').querySelectorAll('script[type="application/ld+json"]')].map(node => JSON.parse(node.textContent));
   const article = scripts.find(s => s['@type'] === 'BlogPosting');
   expect(article.datePublished).toBe('2026-03-27');
   expect(article.dateModified).toBe('2026-10-12');
@@ -90,7 +90,7 @@ test('local editorial artwork has an absolute public URL in article structured d
   useFixtures();
   blogPostsNl[0].image = '/images/blog/inp-response-timeline.webp';
   const html = renderToStaticMarkup(await ArticlePage({ params: Promise.resolve({ slug: blogPostsNl[0].slug }) }));
-  const scripts = [...html.matchAll(/<script[^>]*>(.*?)<\/script>/g)].map(m => JSON.parse(m[1]));
+  const scripts = [...new DOMParser().parseFromString(html, 'text/html').querySelectorAll('script[type="application/ld+json"]')].map(node => JSON.parse(node.textContent));
   expect(scripts.find(s => s['@type'] === 'BlogPosting').image).toBe('https://www.intrict.com/images/blog/inp-response-timeline.webp');
 });
 

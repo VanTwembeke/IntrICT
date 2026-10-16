@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     return updatedAt > latest ? updatedAt : latest;
   }, new Date('2026-04-23'));
 
+  // Omit lastModified for static pages without a verified content-modification date.
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: siteUrl,
@@ -20,25 +21,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${siteUrl}/over`,
-      lastModified: new Date('2026-04-15'),
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${siteUrl}/portfolio`,
-      lastModified: new Date('2026-04-15'),
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
       url: `${siteUrl}/oplossingen`,
-      lastModified: new Date('2026-04-15'),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${siteUrl}/visie`,
-      lastModified: new Date('2026-04-15'),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
@@ -50,31 +47,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${siteUrl}/contact`,
-      lastModified: new Date('2026-04-15'),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${siteUrl}/privacy`,
-      lastModified: new Date('2026-03-27'),
       changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
       url: `${siteUrl}/voorwaarden`,
-      lastModified: new Date('2026-03-27'),
       changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
       url: `${siteUrl}/cookies`,
-      lastModified: new Date('2026-03-27'),
       changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
       url: `${siteUrl}/gdpr`,
-      lastModified: new Date('2026-03-27'),
       changeFrequency: 'yearly',
       priority: 0.3,
     },

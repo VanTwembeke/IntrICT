@@ -103,7 +103,7 @@ export default function Over() {
         </section>
 
         {/* Story Section */}
-        <section className="py-20 bg-white">
+        <section className="py-20 overflow-x-clip bg-white">
           <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 50 }}

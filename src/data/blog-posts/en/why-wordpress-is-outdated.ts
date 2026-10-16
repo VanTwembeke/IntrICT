@@ -171,8 +171,9 @@ For modern web projects, it is often wiser to choose a stack that is built with 
 
 Those who build for tomorrow look beyond WordPress.`,
   author: 'Jonas',
-  publishedAt: '2026-04-11',
-  updatedAt: '2026-04-11',
+  publishedAt: '2026-08-10',
+  originalPublishedAt: '2026-04-11',
+  updatedAt: '2026-10-16',
   category: 'Web Development',
   tags: ['WordPress', 'Performance', 'Web Development', 'Frontend', 'CMS'],
   image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80',

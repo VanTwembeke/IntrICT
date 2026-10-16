@@ -34,6 +34,11 @@ for (const p of all) {
     assert.ok(p[key].trim(), `${p.slug}: empty ${key}`);
   }
   assert.match(p.publishedAt, /^\d{4}-\d{2}-\d{2}$/);
+  assert.match(p.updatedAt, /^\d{4}-\d{2}-\d{2}$/);
+  if (p.originalPublishedAt !== undefined) {
+    assert.match(p.originalPublishedAt, /^\d{4}-\d{2}-\d{2}$/);
+    assert.ok(!Number.isNaN(Date.parse(p.originalPublishedAt)), `${p.slug}: invalid factual publication date`);
+  }
   assert.ok(p.updatedAt >= p.publishedAt, `${p.slug}: update before publication`);
   assert.ok(Array.isArray(p.tags) && p.tags.length > 0);
   assert.ok(Number.isInteger(p.readTime) && p.readTime > 0);
@@ -41,6 +46,9 @@ for (const p of all) {
   assert.ok(counterpart, `${p.slug}: missing translation`);
   assert.equal(counterpart.translationSlug, p.slug);
   assert.notEqual(counterpart.lang, p.lang);
+  assert.equal(counterpart.publishedAt, p.publishedAt, `${p.slug}: translation schedule mismatch`);
+  assert.equal(counterpart.originalPublishedAt, p.originalPublishedAt, `${p.slug}: translation history mismatch`);
+  assert.equal(counterpart.updatedAt, p.updatedAt, `${p.slug}: translation revision mismatch`);
 }
 for (const slug of ['inp-core-web-vitals', 'inp-core-web-vitals-explained']) {
   const p = all.find(q => q.slug === slug);

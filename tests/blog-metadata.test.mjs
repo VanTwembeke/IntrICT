@@ -77,11 +77,45 @@ test('schema and OpenGraph expose actual edit dates and preserve original public
   expect(article.dateModified).toBe('2026-10-12');
 });
 
+test('redistributed schema and OpenGraph use factual publication while disclosing the editorial schedule', async () => {
+  const post = savedNl.find(p => p.slug === 'website-ontwikkeling');
+  const params = Promise.resolve({ slug: post.slug });
+  const metadata = await generateMetadata({ params });
+  expect(metadata.openGraph.publishedTime).toBe('2026-03-27');
+  expect(metadata.openGraph.modifiedTime).toBe('2026-10-16');
+  expect(metadata.other['original-publication-date']).toBe('2026-03-27');
+  expect(metadata.other['publication-date-basis']).toBe('editorial-schedule');
+  const html = renderToStaticMarkup(await ArticlePage({ params }));
+  const scripts = [...new DOMParser().parseFromString(html, 'text/html').querySelectorAll('script[type="application/ld+json"]')].map(node => JSON.parse(node.textContent));
+  const article = scripts.find(s => s['@type'] === 'BlogPosting');
+  expect(article.datePublished).toBe('2026-03-27');
+  expect(article.dateModified).toBe('2026-10-16');
+  expect(article.description).toContain('Publicatiedatum (redactioneel): 2026-07-06');
+  expect(article.description).toContain('Oorspronkelijk gepubliceerd op: 2026-03-27');
+});
+
+for (const locale of ['nl', 'en']) test(`${locale}: standard publication metadata uses factual dates for every article, including unmigrated posts`, async () => {
+  const posts = locale === 'en' ? savedEn : savedNl;
+  expect(posts.some(post => post.originalPublishedAt !== undefined)).toBe(true);
+  expect(posts.some(post => post.originalPublishedAt === undefined)).toBe(true);
+  for (const post of posts) {
+    const params = Promise.resolve({ slug: post.slug });
+    const metadata = await generateMetadata({ params });
+    expect(metadata.openGraph.publishedTime, post.slug).toBe(post.originalPublishedAt ?? post.publishedAt);
+    expect(metadata.openGraph.modifiedTime, post.slug).toBe(post.updatedAt);
+    const html = renderToStaticMarkup(await ArticlePage({ params }));
+    const scripts = [...new DOMParser().parseFromString(html, 'text/html').querySelectorAll('script[type="application/ld+json"]')].map(node => JSON.parse(node.textContent));
+    const article = scripts.find(s => s['@type'] === 'BlogPosting');
+    expect(article.datePublished, post.slug).toBe(post.originalPublishedAt ?? post.publishedAt);
+    expect(article.dateModified, post.slug).toBe(post.updatedAt);
+  }
+});
+
 test('inventory publication dates and reciprocal slugs are preserved for every original post', () => {
   for (const snapshot of history) {
     const post = [...blogPostsNl, ...blogPostsEn].find(p => p.slug === snapshot.slug);
     expect(post, snapshot.slug).toBeTruthy();
-    expect(post.publishedAt, snapshot.slug).toBe(snapshot.publishedAt);
+    expect(post.originalPublishedAt ?? post.publishedAt, snapshot.slug).toBe(snapshot.publishedAt);
     expect(post.translationSlug, snapshot.slug).toBe(snapshot.translationSlug);
   }
 });

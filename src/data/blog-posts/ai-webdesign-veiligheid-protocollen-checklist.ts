@@ -220,8 +220,9 @@ NIS2 verplicht organisaties in scope om hun beveiliging regelmatig te testen. Vo
 Er zijn meerdere gratis opties: npm audit (dependencies), securityheaders.com (HTTP headers), Mozilla Observatory (combinatie van headers en configuratie), OWASP ZAP Community Edition (dynamische API-scan) en Semgrep CE (statische codeanalyse). Een combinatie van deze vier geeft je al een solide basisoverzicht van je veiligheidsstatus.
 `,
   author: 'Jonas',
-  publishedAt: '2026-05-17',
-  updatedAt: '2026-05-17',
+  publishedAt: '2026-09-14',
+  originalPublishedAt: '2026-05-17',
+  updatedAt: '2026-10-16',
   category: 'Security',
   tags: ['Security', 'AI', 'Web Development', 'NIS2', 'GDPR', 'API'],
   image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80',

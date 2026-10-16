@@ -147,8 +147,9 @@ Logo & branding are essential components of every successful business. A well-th
 
 By investing in strategy, design, and consistency, you create a brand that sticks with your target audience and distinguishes itself in a competitive market.`,
   author: 'Jonas',
-  publishedAt: '2026-03-27',
-  updatedAt: '2026-03-27',
+  publishedAt: '2026-07-20',
+  originalPublishedAt: '2026-03-27',
+  updatedAt: '2026-10-16',
   category: 'Branding',
   tags: ['Branding', 'Logo Design', 'Identity', 'Design', 'Marketing'],
   image: 'https://images.unsplash.com/photo-1523726491678-bf852e717f6a?auto=format&fit=crop&w=1200&q=80',

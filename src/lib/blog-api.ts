@@ -8,7 +8,10 @@ export interface BlogPost {
   excerpt: string;
   content: string;
   author: string;
+  /** Editorial schedule date when originalPublishedAt is present. */
   publishedAt: string;
+  /** Factual first publication retained after an explicitly authorized schedule revision. */
+  originalPublishedAt?: string;
   updatedAt: string;
   category: string;
   tags: string[];
@@ -26,7 +29,10 @@ export interface BlogPostMeta {
   title: string;
   excerpt: string;
   author: string;
+  /** Editorial schedule date when originalPublishedAt is present. */
   publishedAt: string;
+  /** Factual first publication retained after an explicitly authorized schedule revision. */
+  originalPublishedAt?: string;
   updatedAt: string;
   category: string;
   tags: string[];

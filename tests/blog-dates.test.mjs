@@ -80,6 +80,24 @@ test('calendar-date rendering explicitly uses UTC instead of shifting a day for 
   expect(format).toHaveBeenCalledWith('nl-BE', expect.objectContaining({ timeZone: 'UTC' }));
 });
 
+for (const locale of ['nl', 'en']) test(`${locale}: redistributed dates disclose the editorial schedule and factual original on detail and cards`, () => {
+  lang = locale;
+  const post = { ...original, lang: locale, publishedAt: '2026-07-06', originalPublishedAt: '2026-03-27' };
+  for (const element of [
+    React.createElement(BlogPostClient, { initialPost: post, initialRelatedPosts: [] }),
+    React.createElement(LatestPost, { post }),
+    React.createElement(LatestNews, { postsNl: [post], postsEn: [post] }),
+  ]) {
+    const view = render(element);
+    const times = [...view.container.querySelectorAll('time')];
+    expect(times.map(t => t.dateTime)).toEqual(['2026-07-06', '2026-03-27', '2026-10-12']);
+    expect(times[0].parentElement.textContent).toContain(locale === 'nl' ? 'Publicatiedatum (redactioneel)' : 'Editorial publication date');
+    expect(times[1].parentElement.textContent).toContain(locale === 'nl' ? 'Oorspronkelijk gepubliceerd op' : 'Originally published on');
+    expect(times[2].parentElement.textContent).toContain(locale === 'nl' ? 'Metadata bijgewerkt op' : 'Metadata updated on');
+    view.unmount();
+  }
+});
+
 for (const locale of ['nl', 'en']) test(`${locale}: actual update is visible without replacing the original publication`, () => {
   lang = locale;
   const { container } = render(React.createElement(BlogPostClient, { initialPost: { ...original, lang: locale }, initialRelatedPosts: [] }));

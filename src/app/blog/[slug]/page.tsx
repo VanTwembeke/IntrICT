@@ -45,6 +45,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: post.excerpt,
     authors: [{ name: post.author }],
     keywords: post.tags,
+    ...(post.originalPublishedAt ? { other: {
+      'original-publication-date': post.originalPublishedAt,
+      'publication-date-basis': 'editorial-schedule',
+    } } : {}),
     alternates: {
       canonical: url,
       ...(Object.keys(languageAlternates).length > 0 ? { languages: languageAlternates } : {}),
@@ -54,7 +58,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url,
       title: post.title,
       description: post.excerpt,
-      publishedTime: post.publishedAt,
+      publishedTime: post.originalPublishedAt ?? post.publishedAt,
       modifiedTime: post.updatedAt,
       authors: [post.author],
       section: post.category,
@@ -123,9 +127,11 @@ export default async function BlogPostPage({ params }: Props) {
         '@type': 'BlogPosting',
         '@id': `${SITE_URL}/blog/${post.slug}`,
         headline: post.title,
-        description: post.excerpt,
+        description: post.originalPublishedAt
+          ? `${post.excerpt} ${post.lang === 'en' ? 'Editorial publication date' : 'Publicatiedatum (redactioneel)'}: ${post.publishedAt}. ${post.lang === 'en' ? 'Originally published on' : 'Oorspronkelijk gepubliceerd op'}: ${post.originalPublishedAt}.`
+          : post.excerpt,
         image: new URL(post.image, SITE_URL).href,
-        datePublished: post.publishedAt,
+        datePublished: post.originalPublishedAt ?? post.publishedAt,
         dateModified: post.updatedAt,
         author: {
           '@type': 'Person',

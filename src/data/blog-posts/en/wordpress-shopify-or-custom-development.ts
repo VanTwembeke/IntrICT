@@ -183,8 +183,9 @@ WordPress remains the strongest choice for B2B sites, blogs and lead generation.
 
 Unsure about the right choice for your project? At IntrICT we do a platform-agnostic analysis based on your three-year goals — without a sales pitch. Get in touch for a no-obligation conversation.`,
   author: 'Jonas',
-  publishedAt: '2026-04-23',
-  updatedAt: '2026-04-23',
+  publishedAt: '2026-09-07',
+  originalPublishedAt: '2026-04-23',
+  updatedAt: '2026-10-16',
   category: 'Web Development',
   tags: ['WordPress', 'Shopify', 'Webflow', 'Custom Development', 'Platform comparison'],
   image: 'https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=1200&q=80',

@@ -151,8 +151,9 @@ A strong digital strategy brings all elements of your online presence together i
 
 Companies that invest in a well-thought-out digital strategy have a clear advantage in an increasingly competitive digital market.`,
   author: 'Jonas',
-  publishedAt: '2026-03-27',
-  updatedAt: '2026-03-27',
+  publishedAt: '2026-07-13',
+  originalPublishedAt: '2026-03-27',
+  updatedAt: '2026-10-16',
   category: 'Digital Strategy',
   tags: ['Strategy', 'SEO', 'Analytics', 'UX', 'Marketing'],
   image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',

@@ -178,8 +178,9 @@ Moderne responsive websites zijn een combinatie van design, techniek en performa
 
 Of het nu gaat om een eenvoudige landing page of een complexe webapplicatie, de kern blijft hetzelfde: een optimale ervaring voor elke gebruiker, ongeacht het device.`,
   author: 'Jonas',
-  publishedAt: '2026-03-27',
-  updatedAt: '2026-03-27',
+  publishedAt: '2026-07-06',
+  originalPublishedAt: '2026-03-27',
+  updatedAt: '2026-10-16',
   category: 'Web Development',
   tags: ['Responsive Design', 'Performance', 'CSS', 'UX', 'Frontend'],
   image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80',

@@ -151,8 +151,9 @@ Een sterke digitale strategie brengt alle elementen van je online aanwezigheid s
 
 Bedrijven die investeren in een doordachte digitale strategie hebben een duidelijk voordeel in een steeds competitievere digitale markt.`,
   author: 'Jonas',
-  publishedAt: '2026-03-27',
-  updatedAt: '2026-03-27',
+  publishedAt: '2026-07-13',
+  originalPublishedAt: '2026-03-27',
+  updatedAt: '2026-10-16',
   category: 'Digital Strategy',
   tags: ['Strategie', 'SEO', 'Analytics', 'UX', 'Marketing'],
   image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',

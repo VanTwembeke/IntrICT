@@ -155,8 +155,9 @@ Statistisch gezien bijna zeker: 92% van de top 100 meest bezochte websites heeft
 Nee. Monkey testing is sterk in het vinden van JavaScript-crashes en onverwacht gedrag bij rare input. Een professionele audit kijkt ook naar SEO-structuur, conversie-optimalisatie, laadtijden op mobiele netwerken, beveiliging en toegankelijkheid op een diepte die een geautomatiseerde tool niet kan beoordelen. De twee vullen elkaar aan.
 `,
   author: 'Jonas',
-  publishedAt: '2026-05-17',
-  updatedAt: '2026-05-17',
+  publishedAt: '2026-09-21',
+  originalPublishedAt: '2026-05-17',
+  updatedAt: '2026-10-16',
   category: 'Web Development',
   tags: ['Web Development', 'Testing', 'Kwaliteit', 'Automatisering', 'Tools'],
   image: 'https://images.unsplash.com/photo-1531989417401-0f85f7e673f8?auto=format&fit=crop&w=1200&q=80',

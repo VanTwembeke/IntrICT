@@ -188,8 +188,9 @@ De fundamenten zijn eenvoudig: schrijf alsof je vragen beantwoordt, maak je cont
 
 Wil je weten waar jouw bedrijf vandaag staat in AI-zoekmachines? IntrICT voert GEO-audits uit voor Belgische KMO’s, met concrete acties op basis van waar je merk wel — of juist niet — opduikt in ChatGPT, Perplexity en Google AI Overviews. Neem contact op voor een gratis kennismakingsgesprek, en ontdek hoe we samen bouwen aan jouw zichtbaarheid in het AI-tijdperk.`,
   author: 'Jonas',
-  publishedAt: '2026-04-20',
-  updatedAt: '2026-04-20',
+  publishedAt: '2026-08-24',
+  originalPublishedAt: '2026-04-20',
+  updatedAt: '2026-10-16',
   category: 'Digital Strategy',
   tags: ['GEO', 'SEO', 'AI Overviews', 'ChatGPT', 'Generative Engine Optimization'],
   image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80',

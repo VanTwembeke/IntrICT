@@ -178,8 +178,9 @@ Modern responsive websites are a combination of design, technology, and performa
 
 Whether it's a simple landing page or a complex web application, the core remains the same: an optimal experience for every user, regardless of the device.`,
   author: 'Jonas',
-  publishedAt: '2026-03-27',
-  updatedAt: '2026-03-27',
+  publishedAt: '2026-07-06',
+  originalPublishedAt: '2026-03-27',
+  updatedAt: '2026-10-16',
   category: 'Web Development',
   tags: ['Responsive Design', 'Performance', 'CSS', 'UX', 'Frontend'],
   image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80',

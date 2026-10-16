@@ -155,8 +155,9 @@ We bouwen websites die klanten opleveren — niet alleen websites die er mooi ui
 
 Wil je weten wat jouw specifiek project kost? Neem contact op voor een vrijblijvend gesprek. We analyseren je noden, geven je een richtprijs en leggen stap voor stap uit wat je krijgt voor je investering.`,
   author: 'Jonas',
-  publishedAt: '2026-04-21',
-  updatedAt: '2026-04-21',
+  publishedAt: '2026-08-31',
+  originalPublishedAt: '2026-04-21',
+  updatedAt: '2026-10-16',
   category: 'Digital Strategy',
   tags: ['Website Kosten', 'KMO', 'Webdesign', 'België', 'Prijzen'],
   image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',

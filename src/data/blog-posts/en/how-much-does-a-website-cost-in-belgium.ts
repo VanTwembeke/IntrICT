@@ -155,8 +155,9 @@ We build websites that generate customers — not just websites that look good. 
 
 Want to know what your specific project costs? Get in touch for a no-obligation conversation. We analyse your needs, give you a ballpark price, and explain step by step what you get for your investment.`,
   author: 'Jonas',
-  publishedAt: '2026-04-21',
-  updatedAt: '2026-04-21',
+  publishedAt: '2026-08-31',
+  originalPublishedAt: '2026-04-21',
+  updatedAt: '2026-10-16',
   category: 'Digital Strategy',
   tags: ['Website Costs', 'SME', 'Web Design', 'Belgium', 'Pricing'],
   image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',

@@ -116,8 +116,9 @@ In 2026, the local AI-driven designer is no longer the small player competing wi
 
 Those who build smart, choose local.`,
   author: 'Jonas',
-  publishedAt: '2026-04-16',
-  updatedAt: '2026-04-16',
+  publishedAt: '2026-08-17',
+  originalPublishedAt: '2026-04-16',
+  updatedAt: '2026-10-16',
   category: 'Digital Strategy',
   tags: ['Webdesign', 'AI', 'Local', 'Freelancer', 'Strategy'],
   image: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1200&q=80',

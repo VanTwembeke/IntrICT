@@ -158,8 +158,9 @@ Door te investeren in hosting, beveiliging, monitoring en performance optimalisa
 
 Een goed onderhouden digitale infrastructuur voorkomt problemen en zorgt ervoor dat je je kunt focussen op wat echt belangrijk is: het bouwen en laten groeien van je product of bedrijf.`,
   author: 'Jonas',
-  publishedAt: '2026-03-27',
-  updatedAt: '2026-03-27',
+  publishedAt: '2026-07-27',
+  originalPublishedAt: '2026-03-27',
+  updatedAt: '2026-10-16',
   category: 'Technical Support',
   tags: ['Hosting', 'Security', 'Performance', 'DevOps', 'Infrastructuur'],
   image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80',

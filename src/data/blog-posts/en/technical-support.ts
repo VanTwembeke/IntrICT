@@ -158,8 +158,9 @@ By investing in hosting, security, monitoring, and performance optimization, you
 
 A well-maintained digital infrastructure prevents problems and ensures that you can focus on what really matters: building and growing your product or business.`,
   author: 'Jonas',
-  publishedAt: '2026-03-27',
-  updatedAt: '2026-03-27',
+  publishedAt: '2026-07-27',
+  originalPublishedAt: '2026-03-27',
+  updatedAt: '2026-10-16',
   category: 'Technical Support',
   tags: ['Hosting', 'Security', 'Performance', 'DevOps', 'Infrastructure'],
   image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80',

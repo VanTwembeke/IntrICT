@@ -182,8 +182,9 @@ Whether it concerns automation, data analysis, or new digital products: the core
 
 Those who invest in AI today are building the foundations of tomorrow.`,
   author: 'Jonas',
-  publishedAt: '2026-03-27',
-  updatedAt: '2026-03-27',
+  publishedAt: '2026-08-03',
+  originalPublishedAt: '2026-03-27',
+  updatedAt: '2026-10-16',
   category: 'Web Development',
   tags: ['Responsive Design', 'Performance', 'CSS', 'UX', 'Frontend'],
   image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80',

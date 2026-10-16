@@ -220,8 +220,9 @@ NIS2 requires in-scope organisations to regularly test their security. For SMEs 
 Several free options are available: npm audit (dependencies), securityheaders.com (HTTP headers), Mozilla Observatory (combination of headers and configuration), OWASP ZAP Community Edition (dynamic API scan), and Semgrep CE (static code analysis). A combination of these four already gives you a solid baseline overview of your security posture.
 `,
   author: 'Jonas',
-  publishedAt: '2026-05-17',
-  updatedAt: '2026-05-17',
+  publishedAt: '2026-09-14',
+  originalPublishedAt: '2026-05-17',
+  updatedAt: '2026-10-16',
   category: 'Security',
   tags: ['Security', 'AI', 'Web Development', 'NIS2', 'GDPR', 'API'],
   image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80',

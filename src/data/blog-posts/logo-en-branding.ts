@@ -147,8 +147,9 @@ Logo & branding zijn essentiële onderdelen van elk succesvol bedrijf. Een goed 
 
 Door te investeren in strategie, design en consistentie creëer je een merk dat blijft hangen bij je doelgroep en zich onderscheidt in een competitieve markt.`,
   author: 'Jonas',
-  publishedAt: '2026-03-27',
-  updatedAt: '2026-03-27',
+  publishedAt: '2026-07-20',
+  originalPublishedAt: '2026-03-27',
+  updatedAt: '2026-10-16',
   category: 'Branding',
   tags: ['Branding', 'Logo Design', 'Identiteit', 'Design', 'Marketing'],
   image: 'https://images.unsplash.com/photo-1523726491678-bf852e717f6a?auto=format&fit=crop&w=1200&q=80',

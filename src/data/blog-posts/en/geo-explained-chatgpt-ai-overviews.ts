@@ -188,8 +188,9 @@ The fundamentals are simple: write as if you are answering questions, make your 
 
 Want to know where your business stands today in AI search engines? IntrICT performs GEO audits for Belgian SMEs, with concrete actions based on where your brand does — or does not — appear in ChatGPT, Perplexity, and Google AI Overviews. Get in touch for a free introductory conversation, and discover how we build your visibility in the AI era together.`,
   author: 'Jonas',
-  publishedAt: '2026-04-20',
-  updatedAt: '2026-04-20',
+  publishedAt: '2026-08-24',
+  originalPublishedAt: '2026-04-20',
+  updatedAt: '2026-10-16',
   category: 'Digital Strategy',
   tags: ['GEO', 'SEO', 'AI Overviews', 'ChatGPT', 'Generative Engine Optimization'],
   image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80',

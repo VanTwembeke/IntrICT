@@ -12,6 +12,7 @@ import { blogPost as post11 } from './ai-webdesign-veiligheid-protocollen-checkl
 import { blogPost as post12 } from './monkey-testing-website-automatisch-testen';
 import { blogPost as post13 } from './inp-core-web-vitals';
 import { blogPost as post14 } from './passkeys-kmo-veilig-inloggen';
+import { blogPost as post15 } from './contactformulier-kmo-veilig-toegankelijk';
 
 export const blogPosts = [
   post1,
@@ -28,6 +29,7 @@ export const blogPosts = [
   post12,
   post13,
   post14,
+  post15,
 ];
 
 // Export individual posts for easier access

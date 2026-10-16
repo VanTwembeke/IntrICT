@@ -195,8 +195,9 @@ WordPress blijft de sterkste keuze voor B2B-sites, blogs en leadgeneratie. Shopi
 
 Twijfel je over de juiste keuze voor jouw project? Bij IntrICT doen we een platformagnostische analyse op basis van jouw drie-jaar-doelen — zonder verkooppraatje. Neem contact op voor een vrijblijvend gesprek.`,
   author: 'Jonas',
-  publishedAt: '2026-04-23',
-  updatedAt: '2026-04-23',
+  publishedAt: '2026-09-07',
+  originalPublishedAt: '2026-04-23',
+  updatedAt: '2026-10-16',
   category: 'Web Development',
   tags: ['WordPress', 'Shopify', 'Webflow', 'Maatwerk', 'Platform vergelijking'],
   image: 'https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=1200&q=80',

@@ -155,8 +155,9 @@ Statistically, almost certainly: 92% of the top 100 most visited websites have a
 No. Monkey testing excels at finding JavaScript crashes and unexpected behavior with unusual input. A professional audit also covers SEO structure, conversion optimization, load times on mobile networks, security, and accessibility at a depth that no automated tool can assess. The two complement each other.
 `,
   author: 'Jonas',
-  publishedAt: '2026-05-17',
-  updatedAt: '2026-05-17',
+  publishedAt: '2026-09-21',
+  originalPublishedAt: '2026-05-17',
+  updatedAt: '2026-10-16',
   category: 'Web Development',
   tags: ['Web Development', 'Testing', 'Quality', 'Automation', 'Tools'],
   image: 'https://images.unsplash.com/photo-1531989417401-0f85f7e673f8?auto=format&fit=crop&w=1200&q=80',

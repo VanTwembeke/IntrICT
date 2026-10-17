@@ -48,3 +48,17 @@ test('Maps CTA uses AA contrast in normal and hover states', () => {
   expect(ratio([20, 71, 230])).toBeGreaterThanOrEqual(4.5);
   expect(ratio([25, 60, 184])).toBeGreaterThanOrEqual(4.5);
 });
+
+for (const locale of ['nl', 'en']) test(`${locale}: form section contains horizontal entrance motion without masking the page`, () => {
+  lang = locale;
+  const t = locale === 'en' ? en : nl;
+  render(React.createElement(Contact));
+  const section = document.querySelector('form').closest('section');
+  expect(section.classList.contains('overflow-x-clip')).toBe(true);
+  expect(section.className).not.toMatch(/overflow-(?:hidden|y-hidden)/);
+  expect(screen.getByRole('heading', { name: t.contactPage.whatCanIDo, level: 3 }).closest('section')).toBe(section);
+  expect(section.querySelector('[style*="translateX(50px)"]')).not.toBeNull();
+  for (let parent = section.parentElement; parent; parent = parent.parentElement) {
+    expect(parent.className).not.toMatch(/overflow-(?:hidden|clip|x-hidden|x-clip)/);
+  }
+});

@@ -175,8 +175,8 @@ export default function Contact() {
           </div>
         </section>
 
-        {/* Form + Side Info */}
-        <section className="py-20 bg-linear-to-br from-slate-50 to-blue-50">
+        {/* Form + Side Info: contain horizontal entrance motion locally, preserving vertical overflow. */}
+        <section className="py-20 overflow-x-clip bg-linear-to-br from-slate-50 to-blue-50">
           <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div className="grid items-start grid-cols-1 gap-12 lg:grid-cols-5">
 

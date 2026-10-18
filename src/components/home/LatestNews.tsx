@@ -82,12 +82,12 @@ export default function LatestNews({ postsNl, postsEn }: LatestNewsProps) {
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-slate-900/60 via-transparent to-transparent" />
-                <span className="absolute top-4 left-4 px-2.5 py-1 text-xs font-semibold text-white bg-blue-500 rounded-full">
+                <span className="absolute top-4 left-4 px-2.5 py-1 text-xs font-semibold text-white bg-blue-700 rounded-full">
                   {featured.category}
                 </span>
               </div>
               <div className="flex flex-col flex-1 p-6">
-                <p className="mb-2 text-xs font-medium text-slate-400">
+                <p className="mb-2 text-xs font-medium text-slate-600">
                   <BlogDates post={featured} lang={lang} />&nbsp;·&nbsp;{featured.readTime}&nbsp;min
                 </p>
                 <h3 className="mb-3 text-xl font-bold leading-snug text-slate-800 group-hover:text-blue-600 transition-colors duration-200 line-clamp-2">
@@ -131,14 +131,14 @@ export default function LatestNews({ postsNl, postsEn }: LatestNewsProps) {
                     />
                   </div>
                   <div className="flex flex-col justify-center min-w-0">
-                    <span className="mb-1 text-[10px] font-semibold tracking-wider uppercase text-blue-500">
+                    <span className="mb-1 text-[10px] font-semibold tracking-wider uppercase text-blue-700">
                       {post.category}&nbsp;·&nbsp;{post.readTime}&nbsp;min
-                      <span className="block normal-case tracking-normal text-slate-400"><BlogDates post={post} lang={lang} short /></span>
+                      <span className="block normal-case tracking-normal text-slate-600"><BlogDates post={post} lang={lang} short /></span>
                     </span>
                     <h3 className="mb-1.5 text-sm font-bold leading-snug text-slate-800 group-hover:text-blue-600 transition-colors duration-200 line-clamp-2">
                       {post.title}
                     </h3>
-                    <p className="text-xs leading-relaxed text-slate-400 line-clamp-2">
+                    <p className="text-xs leading-relaxed text-slate-600 line-clamp-2">
                       {post.excerpt}
                     </p>
                   </div>

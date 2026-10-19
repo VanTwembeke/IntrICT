@@ -840,7 +840,7 @@ export default function Header() {
               >
                 <Search size={16} />
                 <kbd className={`text-[10px] px-1.5 py-0.5 rounded border font-bold ${
-                  isScrolled ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-white/10 border-white/20 text-white/60'
+                  isScrolled ? 'bg-slate-100 border-slate-200 text-slate-600' : 'bg-white/10 border-white/20 text-white/60'
                 }`}>{isMac ? '⌘K' : 'Ctrl+K'}</kbd>
               </motion.button>
 

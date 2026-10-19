@@ -1,0 +1,26 @@
+import React from 'react';
+import { render, cleanup, fireEvent, waitFor } from '@testing-library/react';
+import { afterEach, expect, test, vi } from 'vitest';
+import Header from '../src/components/common/Header';
+import nl from '../src/i18n/nl';
+import en from '../src/i18n/en';
+let lang = 'nl';
+vi.mock('@/contexts/LanguageContext', () => ({ useLanguage: () => ({ lang, t: lang === 'nl' ? nl : en, setLang: vi.fn() }) }));
+vi.mock('next/navigation', () => ({ usePathname: () => '/', useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }) }));
+vi.mock('@/lib/supabase/client', () => ({ createClient: () => ({ auth: { getSession: () => new Promise(() => {}), onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } }) } }) }));
+vi.mock('@/hooks/useMessages', () => ({ useMessages: () => ({ conversations: [], unreadCount: 0, loading: false, markAsRead: vi.fn() }) }));
+afterEach(() => { cleanup(); Object.defineProperty(window, 'scrollY', { configurable: true, value: 0 }); });
+for (const locale of ['nl', 'en']) test(`${locale}: scrolled header shortcut uses readable text and preserves search`, async () => {
+  lang = locale;
+  const { container } = render(React.createElement(Header));
+  const kbd = container.querySelector('header kbd');
+  expect(kbd.textContent).toMatch(/Ctrl\+K|⌘K/);
+  Object.defineProperty(window, 'scrollY', { configurable: true, value: 600 });
+  fireEvent.scroll(window);
+  expect(kbd.classList.contains('text-slate-600')).toBe(true);
+  expect(kbd.classList.contains('bg-slate-100')).toBe(true);
+  fireEvent.click(kbd.closest('button'));
+  expect(container.querySelector('input').placeholder).toBe((locale === 'nl' ? nl : en).header.searchPlaceholder);
+  fireEvent.keyDown(window, { key: 'Escape' });
+  await waitFor(() => expect(container.querySelector('input')).toBeNull());
+});

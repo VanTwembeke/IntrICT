@@ -72,7 +72,7 @@ test('W43 popover pair adds one truthful weekly publication without rewriting th
     expect(post.translationSlug).toBe(slugs[1 - index]);
     expect(post.publishedAt).toBe('2026-10-19');
     expect(post.originalPublishedAt).toBeUndefined();
-    expect(post.updatedAt).toBeUndefined();
+    expect(post.updatedAt).toBe(post.publishedAt);
     expect(post.image).toBe('/images/blog/native-popover.webp');
   }
   expect(all.filter(p => p.publishedAt === '2026-10-19').map(p => p.slug).sort()).toEqual([...slugs].sort());

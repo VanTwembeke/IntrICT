@@ -50,6 +50,8 @@ import { blogPost as post13En } from './inp-core-web-vitals-explained';
 import { blogPost as post14En } from './passkeys-sme-secure-sign-in';
 import { blogPost as post15En } from './contact-forms-sme-safe-accessible';
 
+import { blogPost as post16En } from './native-popovers-sme-website';
+
 export const blogPostsEn: BlogPost[] = [
   post1En,
   post2En,
@@ -66,4 +68,5 @@ export const blogPostsEn: BlogPost[] = [
   post13En,
   post14En,
   post15En,
+  post16En,
 ];

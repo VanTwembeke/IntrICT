@@ -14,6 +14,8 @@ import { blogPost as post13 } from './inp-core-web-vitals';
 import { blogPost as post14 } from './passkeys-kmo-veilig-inloggen';
 import { blogPost as post15 } from './contactformulier-kmo-veilig-toegankelijk';
 
+import { blogPost as post16 } from './native-popover-kmo-website';
+
 export const blogPosts = [
   post1,
   post2,
@@ -30,6 +32,7 @@ export const blogPosts = [
   post13,
   post14,
   post15,
+  post16,
 ];
 
 // Export individual posts for easier access

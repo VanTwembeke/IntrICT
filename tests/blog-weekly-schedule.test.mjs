@@ -6,8 +6,9 @@ const today = '2026-10-16'; // Fixed migration/release date, not a rolling resch
 const contactSlugs = ['contactformulier-kmo-veilig-toegankelijk', 'contact-forms-sme-safe-accessible'];
 
 test('the new contact-form pair is registered with a truthful first release date, not backdated to Monday', () => {
-  expect(blogPostsNl).toHaveLength(15);
-  expect(blogPostsEn).toHaveLength(15);
+  const migrationSlugs = new Set([...history.map(p => p.slug), ...contactSlugs]);
+  expect(blogPostsNl.filter(p => migrationSlugs.has(p.slug))).toHaveLength(15);
+  expect(blogPostsEn.filter(p => migrationSlugs.has(p.slug))).toHaveLength(15);
   for (const slug of contactSlugs) {
     const post = [...blogPostsNl, ...blogPostsEn].find(p => p.slug === slug);
     expect(post, slug).toBeTruthy();
@@ -32,7 +33,7 @@ test('authorized redistribution is one logical article each Monday, stable oldes
     expect(post.publishedAt <= today).toBe(true);
   }
   expect(new Set(blogPostsNl.filter(p => archiveSlugs.has(p.slug)).map(p => p.publishedAt)).size).toBe(14);
-  for (const post of [...blogPostsNl, ...blogPostsEn].filter(p => !archiveSlugs.has(p.slug))) {
+  for (const post of [...blogPostsNl, ...blogPostsEn].filter(p => contactSlugs.includes(p.slug))) {
     expect(post.originalPublishedAt).toBeUndefined();
     expect(post.publishedAt).toBe(today);
     expect(post.updatedAt).toBe(today);
@@ -56,4 +57,24 @@ test('all factual original dates and translation dates survive the editorial rev
     expect(metadata.map(p => p.slug)).toEqual(expected.map(p => p.slug));
     for (const post of metadata) expect(post.originalPublishedAt).toBe(expected.find(p => p.slug === post.slug).originalPublishedAt);
   }
+});
+
+
+test('W43 popover pair adds one truthful weekly publication without rewriting the migration', () => {
+  const slugs = ['native-popover-kmo-website', 'native-popovers-sme-website'];
+  const all = [...blogPostsNl, ...blogPostsEn];
+  expect(blogPostsNl).toHaveLength(16);
+  expect(blogPostsEn).toHaveLength(16);
+  expect(new Set(all.map(p => p.id)).size).toBe(32);
+  const pair = slugs.map(slug => all.find(p => p.slug === slug));
+  for (const [index, post] of pair.entries()) {
+    expect(post).toBeTruthy();
+    expect(post.translationSlug).toBe(slugs[1 - index]);
+    expect(post.publishedAt).toBe('2026-10-19');
+    expect(post.originalPublishedAt).toBeUndefined();
+    expect(post.updatedAt).toBeUndefined();
+    expect(post.image).toBe('/images/blog/native-popover.webp');
+  }
+  expect(all.filter(p => p.publishedAt === '2026-10-19').map(p => p.slug).sort()).toEqual([...slugs].sort());
+  expect(all.filter(p => !slugs.includes(p.slug)).some(p => p.image === pair[0].image)).toBe(false);
 });

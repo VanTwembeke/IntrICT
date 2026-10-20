@@ -153,7 +153,7 @@ function CommandPalette({ isLoggedIn, onClose, isMac }: { isLoggedIn: boolean; o
       >
         {/* Input */}
         <div className="flex items-center gap-3 px-4 py-3.5 border-b border-slate-100">
-          <Search size={17} className="text-slate-400 shrink-0" />
+          <Search size={17} className="text-slate-600 shrink-0" />
           <input
             ref={inputRef}
             value={query}
@@ -163,9 +163,9 @@ function CommandPalette({ isLoggedIn, onClose, isMac }: { isLoggedIn: boolean; o
               if (value !== query) setCursor(0);
             }}
             placeholder={t.header.searchPlaceholder}
-            className="flex-1 text-sm bg-transparent outline-none text-slate-800 placeholder:text-slate-400"
+            className="flex-1 text-sm bg-transparent outline-none text-slate-800 placeholder:text-slate-600"
           />
-          <kbd className="px-1.5 py-0.5 text-[10px] font-bold text-slate-400 bg-slate-100 rounded border border-slate-200 shrink-0">ESC</kbd>
+          <kbd className="px-1.5 py-0.5 text-[10px] font-bold text-slate-600 bg-slate-100 rounded border border-slate-200 shrink-0">ESC</kbd>
         </div>
 
         {/* Results */}
@@ -173,12 +173,12 @@ function CommandPalette({ isLoggedIn, onClose, isMac }: { isLoggedIn: boolean; o
           {filtered.length === 0 ? (
             <div className="py-12 text-center">
               <Search size={24} className="mx-auto mb-2 text-slate-200" />
-              <p className="text-sm text-slate-400">{t.header.noResults} &ldquo;{query}&rdquo;</p>
+              <p className="text-sm text-slate-600">{t.header.noResults} &ldquo;{query}&rdquo;</p>
             </div>
           ) : (
             Object.entries(groups).map(([cat, items]) => (
               <div key={cat} className="mb-2">
-                <p className="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">{cat}</p>
+                <p className="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-600">{cat}</p>
                 {items.map(item => {
                   const idx = filtered.indexOf(item);
                   const active = cursor === idx;
@@ -195,7 +195,7 @@ function CommandPalette({ isLoggedIn, onClose, isMac }: { isLoggedIn: boolean; o
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm font-semibold truncate ${active ? 'text-blue-700' : 'text-slate-800'}`}>{item.label}</p>
-                        <p className="text-xs truncate text-slate-400">{item.desc}</p>
+                        <p className="text-xs truncate text-slate-600">{item.desc}</p>
                       </div>
                       {active && <ArrowRight size={13} className="text-blue-400 shrink-0" />}
                     </button>
@@ -207,7 +207,7 @@ function CommandPalette({ isLoggedIn, onClose, isMac }: { isLoggedIn: boolean; o
         </div>
 
         {/* Footer */}
-        <div className="flex items-center gap-4 px-4 py-2.5 border-t border-slate-100 bg-slate-50/50 text-[11px] text-slate-400">
+        <div className="flex items-center gap-4 px-4 py-2.5 border-t border-slate-100 bg-slate-50/50 text-[11px] text-slate-600">
           <span className="flex items-center gap-1">
             <kbd className="px-1 py-0.5 bg-white border border-slate-200 rounded text-[9px] font-bold">↑</kbd>
             <kbd className="px-1 py-0.5 bg-white border border-slate-200 rounded text-[9px] font-bold">↓</kbd>

@@ -24,3 +24,21 @@ for (const locale of ['nl', 'en']) test(`${locale}: scrolled header shortcut use
   fireEvent.keyDown(window, { key: 'Escape' });
   await waitFor(() => expect(container.querySelector('input')).toBeNull());
 });
+
+for (const locale of ['nl', 'en']) test(`${locale}: search palette secondary text stays readable across states`, async () => {
+  lang = locale;
+  const { container } = render(React.createElement(Header));
+  fireEvent.keyDown(window, { key: 'k', ctrlKey: true });
+  const input = container.querySelector('input');
+  expect(input.placeholder).toBe((locale === 'nl' ? nl : en).header.searchPlaceholder);
+  expect(input.classList.contains('placeholder:text-slate-600')).toBe(true);
+  const panel = input.parentElement.parentElement;
+  expect([...panel.querySelectorAll('p, kbd')].filter(e => e.classList.contains('text-slate-600')).length).toBeGreaterThan(3);
+  expect(panel.querySelector('.text-slate-400')).toBeNull();
+  expect(panel.querySelector('[class*="text-[11px]"]').classList.contains('text-slate-600')).toBe(true);
+  fireEvent.change(input, { target: { value: 'zzzzzzzzzzzzzzzz' } });
+  expect(panel.textContent).toContain((locale === 'nl' ? nl : en).header.noResults);
+  expect(panel.querySelector('p').classList.contains('text-slate-600')).toBe(true);
+  fireEvent.keyDown(window, { key: 'Escape' });
+  await waitFor(() => expect(container.querySelector('input')).toBeNull());
+});

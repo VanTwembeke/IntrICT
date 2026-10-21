@@ -359,7 +359,7 @@ export default function Footer() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="flex flex-col items-center justify-between gap-3 py-5 border-t border-slate-800 sm:flex-row"
         >
-          <p className="text-xs text-slate-600">
+          <p className="text-xs text-slate-400">
             {t.footer.copyright(currentYear)}
           </p>
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
@@ -367,7 +367,7 @@ export default function Footer() {
               <a
                 key={link.name}
                 href={link.href}
-                className="text-xs transition-colors duration-200 text-slate-600 hover:text-slate-400"
+                className="text-xs transition-colors duration-200 text-slate-400 hover:text-white"
               >
                 {link.name}
               </a>

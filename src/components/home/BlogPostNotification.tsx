@@ -71,7 +71,7 @@ export default function BlogPostNotification({ post }: BlogPostNotificationProps
               <div className="absolute inset-0 bg-linear-to-t from-slate-900/70 to-transparent" />
 
               {/* Category badge */}
-              <span className="absolute bottom-3 left-3 px-2.5 py-0.5 text-xs font-semibold text-white bg-blue-500 rounded-full">
+              <span className="absolute bottom-3 left-3 px-2.5 py-0.5 text-xs font-semibold text-white bg-blue-700 rounded-full">
                 {post.category}
               </span>
 
@@ -89,7 +89,7 @@ export default function BlogPostNotification({ post }: BlogPostNotificationProps
 
             {/* Content */}
             <div className="p-4">
-              <p className="mb-1.5 text-xs font-semibold tracking-widest uppercase text-blue-500">
+              <p className="mb-1.5 text-xs font-semibold tracking-widest uppercase text-blue-700">
                 {lang === 'en' ? 'New article' : 'Nieuw artikel'}&nbsp;·&nbsp;{post.readTime}&nbsp;min
               </p>
               <h3 className="mb-2 text-sm font-bold leading-snug text-slate-800 line-clamp-2">

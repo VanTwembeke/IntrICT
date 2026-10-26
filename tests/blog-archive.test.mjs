@@ -1,0 +1,41 @@
+import React from 'react';
+import { render, screen, cleanup, fireEvent } from '@testing-library/react';
+import { afterEach, expect, test, vi } from 'vitest';
+import nl from '../src/i18n/nl';
+import en from '../src/i18n/en';
+import BlogClient from '../src/app/blog/BlogClient';
+import BlogDates from '../src/components/common/BlogDates';
+import * as api from '../src/lib/blog-api';
+let lang='nl';
+vi.mock('@/contexts/LanguageContext',()=>({useLanguage:()=>({lang,t:lang==='en'?en:nl})}));
+vi.mock('@/components/common/Header',()=>({default:()=>null}));
+vi.mock('@/components/common/Footer',()=>({default:()=>null}));
+vi.mock('@/components/common/BackToTop',()=>({default:()=>null}));
+vi.mock('next/image',()=>({default:({fill,priority,...props})=>{void fill;void priority;return React.createElement('img',props)}}));
+vi.mock('lenis',()=>({default:class{raf(){}destroy(){}}}));
+vi.stubGlobal('IntersectionObserver',class{observe(){}unobserve(){}disconnect(){}});
+vi.stubGlobal('requestAnimationFrame',()=>0);
+const post={id:'one',slug:'one',title:'Veilige formulieren',excerpt:'Toegankelijk contact',category:'Web',tags:['Privacy'],publishedAt:'2026-07-06',originalPublishedAt:'2026-03-27',updatedAt:'2026-10-16',readTime:3,image:'/images/one.webp',content:''};
+afterEach(()=>{cleanup();vi.restoreAllMocks();lang='nl'});
+for(const locale of ['nl','en']) test(`${locale}: exactly one unlabeled editorial date, factual metadata untouched`,()=>{
+ const view=render(React.createElement(BlogDates,{post,lang:locale}));
+ expect([...view.container.querySelectorAll('time')].map(t=>t.dateTime)).toEqual(['2026-07-06']);
+ expect(view.container.textContent).not.toMatch(/Originally|Oorspronkelijk|Updated|bijgewerkt|redactioneel|Editorial|Published|Gepubliceerd/i);
+ expect(post.originalPublishedAt).toBe('2026-03-27');expect(post.updatedAt).toBe('2026-10-16');
+});
+test('archive search matches tags, combines category, offers a working empty-state reset',()=>{
+ vi.spyOn(api,'getBlogPostsForLang').mockReturnValue([post,{...post,id:'two',slug:'two',title:'AI praktijk',category:'AI',tags:['Machine learning'],publishedAt:'2026-07-13'}]);
+ render(React.createElement(BlogClient));
+ fireEvent.change(screen.getByRole('searchbox',{name:'Zoek artikelen'}),{target:{value:' privacy '}});
+ expect(screen.getByRole('heading',{name:post.title})).toBeTruthy();
+ expect(screen.queryByRole('heading',{name:'AI praktijk'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:/^AI/}));
+ expect(screen.getByText('Geen artikelen gevonden')).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'Wis filters'}));
+ expect(screen.getAllByRole('article')).toHaveLength(2);
+ expect(screen.getByRole('button',{name:/Alle artikels/}).getAttribute('aria-pressed')).toBe('true');
+});
+test('visible editorial dates determine stable newest-first order, never a metadata maintenance date',()=>{
+ const newer={...post,id:'two',slug:'two',publishedAt:'2026-07-13',updatedAt:'2026-07-13'};
+ expect(api.sortBlogPostsByActivity([post,newer]).map(p=>p.slug)).toEqual(['two','one']);
+});

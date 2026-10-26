@@ -103,7 +103,7 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
               className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
                 selectedTab === 'monthly'
                   ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-700'
+                  : 'text-slate-600 hover:text-slate-700'
               }`}
             >
               {p.tabMonthly}
@@ -117,7 +117,7 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
               className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
                 selectedTab === 'onetime'
                   ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-700'
+                  : 'text-slate-600 hover:text-slate-700'
               }`}
             >
               {p.tabOneTime}
@@ -182,7 +182,7 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
 
                         <div className={`flex items-baseline gap-1 mb-3 ${pkg.highlight ? 'text-white' : 'text-slate-900'}`}>
                           <span className="text-4xl font-bold">€{pkg.price.toLocaleString('nl-BE')}</span>
-                          <span className={`text-sm ${pkg.highlight ? 'text-blue-200' : 'text-slate-400'}`}>
+                          <span className={`text-sm ${pkg.highlight ? 'text-blue-200' : 'text-slate-600'}`}>
                             {p.perMonth}
                           </span>
                         </div>
@@ -256,7 +256,7 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
                         <span className="text-3xl font-bold text-slate-900">
                           €{pkg.price.toLocaleString('nl-BE')}
                         </span>
-                        <span className="text-sm text-slate-400">{p.oneTime}</span>
+                        <span className="text-sm text-slate-600">{p.oneTime}</span>
                       </div>
 
                       <p className="text-sm text-slate-500 leading-relaxed mb-5 flex-1">
@@ -303,7 +303,7 @@ export default function Pricing({ monthlyPackages, oneTimePackages }: PricingPro
           <div className="flex flex-col items-start md:items-end gap-3 shrink-0">
             <Link
               href="#contact"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-400 transition-colors text-sm whitespace-nowrap"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-700 text-white font-semibold rounded-xl hover:bg-blue-800 transition-colors text-sm whitespace-nowrap"
             >
               {p.contactCta}
               <ArrowRight size={14} />

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#0d1829"/><stop offset="1" stop-color="#183348"/></linearGradient><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#64d4d0"/><stop offset="1" stop-color="#c7e7d7"/></linearGradient></defs>
+<rect width="1200" height="630" fill="url(#bg)"/>
+<circle cx="1140" cy="45" r="210" fill="#244859" opacity=".35"/>
+<text x="64" y="68" fill="#7ce8d0" font-family="sans-serif" font-size="17" letter-spacing="4">INTRICT / WEB PERFORMANCE</text>
+<text x="64" y="126" fill="#f4f8fc" font-family="sans-serif" font-size="42" font-weight="700">The right image. At the right time.</text>
+<text x="64" y="163" fill="#b8cddd" font-family="sans-serif" font-size="21">Load the first view. Let the gallery wait.</text>
+<!-- Original stylised business website with workshop landscape -->
+<rect x="64" y="205" width="458" height="363" rx="18" fill="#eef5f6"/>
+<path d="M82 205h422a18 18 0 0 1 18 18v28H64v-28a18 18 0 0 1 18-18" fill="#c4d9df"/>
+<circle cx="88" cy="228" r="5" fill="#486c80"/><circle cx="106" cy="228" r="5" fill="#486c80"/><circle cx="124" cy="228" r="5" fill="#486c80"/>
+<text x="420" y="233" font-family="sans-serif" font-size="12" fill="#294e62">WORKSHOP</text>
+<rect x="88" y="273" width="410" height="166" rx="8" fill="url(#sky)"/>
+<circle cx="447" cy="307" r="18" fill="#fff0a6"/>
+<path d="M110 367l98-68 98 68v60H110z" fill="#285269"/>
+<path d="M100 367l108-77 108 77" fill="none" stroke="#16384b" stroke-width="9"/>
+<rect x="132" y="372" width="45" height="55" fill="#e1ab71"/><rect x="212" y="363" width="62" height="39" fill="#8ad9d1"/>
+<path d="M324 422l42-61 42 61zM378 422l40-91 40 91z" fill="#347d73"/>
+<rect x="88" y="457" width="196" height="9" rx="4" fill="#416376"/>
+<rect x="88" y="477" width="320" height="6" rx="3" fill="#9db6c1"/>
+<path d="M88 506h410" stroke="#698b9c" stroke-dasharray="7 7"/>
+<text x="88" y="543" font-family="sans-serif" font-size="18" fill="#466b7b">Gallery below the first view</text>
+<!-- Resource lane explicitly separates early photo from deferred gallery -->
+<text x="593" y="233" fill="#a7c3d5" font-family="sans-serif" font-size="14" letter-spacing="3">LOADING ORDER</text>
+<path d="M522 342h50v-46h26" fill="none" stroke="#73e7cf" stroke-width="3"/>
+<path d="M588 290l10 6-10 6" fill="none" stroke="#73e7cf" stroke-width="3"/>
+<rect x="600" y="258" width="530" height="109" rx="15" fill="#234d53" stroke="#73e7cf" stroke-width="2"/>
+<circle cx="641" cy="299" r="20" fill="#73e7cf"/><text x="635" y="306" font-family="sans-serif" font-size="21" font-weight="700" fill="#123139">1</text>
+<text x="682" y="298" fill="#f3fffc" font-family="sans-serif" font-size="25" font-weight="700">MAIN IMAGE</text>
+<text x="682" y="333" fill="#bce9df" font-family="monospace" font-size="17">eager · priority hint if justified</text>
+<path d="M641 379v41" stroke="#829caf" stroke-width="2" stroke-dasharray="5 6"/>
+<rect x="600" y="427" width="530" height="118" rx="15" fill="#172c40" stroke="#6a899f" stroke-width="2" stroke-dasharray="8 6"/>
+<g fill="#2c4a61" stroke="#819eb2"><rect x="622" y="450" width="54" height="41" rx="5"/><rect x="685" y="450" width="54" height="41" rx="5"/><rect x="748" y="450" width="54" height="41" rx="5"/></g>
+<path d="M628 482l12-14 9 8 12-18 9 24M691 482l13-19 11 12 12-8 6 15M754 482l13-12 11 6 12-17 6 23" fill="none" stroke="#819eb2" stroke-width="2"/>
+<text x="836" y="477" font-family="sans-serif" font-size="22" fill="#c4d6e3">LAZY GALLERY</text>
+<text x="623" y="523" font-family="monospace" font-size="17" fill="#9fb8cb">Reserve space with width + height</text>
+</svg>

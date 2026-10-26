@@ -63,9 +63,10 @@ test('all factual original dates and translation dates survive the editorial rev
 test('W43 popover pair adds one truthful weekly publication without rewriting the migration', () => {
   const slugs = ['native-popover-kmo-website', 'native-popovers-sme-website'];
   const all = [...blogPostsNl, ...blogPostsEn];
-  expect(blogPostsNl).toHaveLength(16);
-  expect(blogPostsEn).toHaveLength(16);
-  expect(new Set(all.map(p => p.id)).size).toBe(32);
+  const historicalSlugs = new Set([...history.map(p => p.slug), ...contactSlugs, ...slugs]);
+  expect(blogPostsNl.filter(p => historicalSlugs.has(p.slug))).toHaveLength(16);
+  expect(blogPostsEn.filter(p => historicalSlugs.has(p.slug))).toHaveLength(16);
+  expect(new Set(all.map(p => p.id)).size).toBe(all.length);
   const pair = slugs.map(slug => all.find(p => p.slug === slug));
   for (const [index, post] of pair.entries()) {
     expect(post).toBeTruthy();
@@ -76,5 +77,24 @@ test('W43 popover pair adds one truthful weekly publication without rewriting th
     expect(post.image).toBe('/images/blog/native-popover.webp');
   }
   expect(all.filter(p => p.publishedAt === '2026-10-19').map(p => p.slug).sort()).toEqual([...slugs].sort());
+  expect(all.filter(p => !slugs.includes(p.slug)).some(p => p.image === pair[0].image)).toBe(false);
+});
+
+
+test('W44 image-loading pair is the exact reciprocal weekly pair with unique artwork', () => {
+  const slugs = ['afbeeldingen-kmo-website-laadvolgorde', 'sme-website-image-loading-order'];
+  const all = [...blogPostsNl, ...blogPostsEn];
+  const pair = slugs.map(slug => all.find(p => p.slug === slug));
+  expect(blogPostsNl.filter(p => slugs.includes(p.slug)).map(p => p.slug)).toEqual([slugs[0]]);
+  expect(blogPostsEn.filter(p => slugs.includes(p.slug)).map(p => p.slug)).toEqual([slugs[1]]);
+  for (const [index, post] of pair.entries()) {
+    expect(post).toBeTruthy();
+    expect(post.translationSlug).toBe(slugs[1 - index]);
+    expect(post.publishedAt).toBe('2026-10-26');
+    expect(post.updatedAt).toBe(post.publishedAt);
+    expect(post.originalPublishedAt).toBeUndefined();
+    expect(post.image).toBe('/images/blog/image-loading-order.webp');
+  }
+  expect(all.filter(p => p.publishedAt >= '2026-10-26' && p.publishedAt <= '2026-11-01').map(p => p.slug).sort()).toEqual([...slugs].sort());
   expect(all.filter(p => !slugs.includes(p.slug)).some(p => p.image === pair[0].image)).toBe(false);
 });

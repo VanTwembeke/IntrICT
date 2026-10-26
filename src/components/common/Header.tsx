@@ -763,7 +763,8 @@ export default function Header() {
   ];
 
   const avatarLabel = userName?.[0]?.toUpperCase() ?? user?.email?.[0]?.toUpperCase() ?? '?';
-  const navText = isScrolled ? 'text-slate-600 hover:text-slate-900' : 'text-slate-200 hover:text-white';
+  const hasLightBackground = isScrolled || pathname === '/blog';
+  const navText = hasLightBackground ? 'text-slate-600 hover:text-slate-900' : 'text-slate-200 hover:text-white';
   const totalNotifs = unreadCount + (visibleRequests.length > 0 ? 1 : 0);
 
   return (
@@ -781,7 +782,7 @@ export default function Header() {
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled
+          hasLightBackground
             ? 'bg-white/92 backdrop-blur-md border-b border-slate-200 shadow-sm'
             : 'bg-black/20 backdrop-blur-sm'
         }`}
@@ -791,7 +792,7 @@ export default function Header() {
 
             {/* Logo */}
             <motion.a href="/" whileHover={{ scale: 1.04 }} className="shrink-0">
-              <IntrICTLogo variant={isScrolled ? 'light' : 'dark'} />
+              <IntrICTLogo variant={hasLightBackground ? 'light' : 'dark'} />
             </motion.a>
 
             {/* Desktop nav */}
@@ -803,7 +804,7 @@ export default function Header() {
                     <Link key={group.href} href={group.href}
                       className={`px-3.5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
                         active
-                          ? isScrolled ? 'bg-slate-100 text-slate-900' : 'bg-white/15 text-white'
+                          ? hasLightBackground ? 'bg-slate-100 text-slate-900' : 'bg-white/15 text-white'
                           : navText
                       }`}>
                       {group.label}
@@ -814,9 +815,9 @@ export default function Header() {
                   <div key={group.label} className="relative group">
                     <button className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
                       active
-                        ? isScrolled ? 'bg-slate-100 text-slate-900' : 'bg-white/15 text-white'
+                        ? hasLightBackground ? 'bg-slate-100 text-slate-900' : 'bg-white/15 text-white'
                         : navText
-                    } group-hover:${isScrolled ? 'bg-slate-100' : 'bg-white/10'}`}>
+                    } group-hover:${hasLightBackground ? 'bg-slate-100' : 'bg-white/10'}`}>
                       {group.label}
                       <ChevronDown size={13} className="transition-transform duration-200 group-hover:rotate-180" />
                     </button>
@@ -834,26 +835,26 @@ export default function Header() {
                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => setShowSearch(true)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition-all duration-200 ${
-                  isScrolled ? 'text-slate-500 hover:bg-slate-100' : 'text-slate-200 hover:bg-white/10'
+                  hasLightBackground ? 'text-slate-600 hover:bg-slate-100' : 'text-slate-200 hover:bg-white/10'
                 }`}
                 aria-label={`${t.header.search} (${isMac ? '⌘K' : 'Ctrl+K'})`}
               >
                 <Search size={16} />
                 <kbd className={`text-[10px] px-1.5 py-0.5 rounded border font-bold ${
-                  isScrolled ? 'bg-slate-100 border-slate-200 text-slate-600' : 'bg-white/10 border-white/20 text-white/60'
+                  hasLightBackground ? 'bg-slate-100 border-slate-200 text-slate-600' : 'bg-white/10 border-white/20 text-white/60'
                 }`}>{isMac ? '⌘K' : 'Ctrl+K'}</kbd>
               </motion.button>
 
               {/* Language switcher */}
-              <div className={`flex items-center gap-0.5 p-0.5 rounded-lg ${isScrolled ? 'bg-slate-100' : 'bg-white/10'}`}>
+              <div className={`flex items-center gap-0.5 p-0.5 rounded-lg ${hasLightBackground ? 'bg-slate-100' : 'bg-white/10'}`}>
                 {(['nl', 'en'] as Lang[]).map((l) => (
                   <button
                     key={l}
                     onClick={() => setLang(l)}
                     className={`px-2.5 py-1 text-[11px] font-bold rounded-md uppercase tracking-widest transition-all ${
                       lang === l
-                        ? isScrolled ? 'bg-white text-slate-900 shadow-sm' : 'bg-white/20 text-white'
-                        : isScrolled ? 'text-slate-500 hover:text-slate-700' : 'text-slate-300 hover:text-white'
+                        ? hasLightBackground ? 'bg-white text-slate-900 shadow-sm' : 'bg-white/20 text-white'
+                        : hasLightBackground ? 'text-slate-600 hover:text-slate-700' : 'text-slate-300 hover:text-white'
                     }`}
                   >
                     {l}
@@ -869,7 +870,7 @@ export default function Header() {
                       whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}
                       onClick={() => { setShowNotifications(!showNotifications); setShowUserMenu(false); }}
                       className={`relative p-2 rounded-xl transition-all duration-200 ${
-                        isScrolled ? 'text-slate-500 hover:bg-slate-100' : 'text-slate-200 hover:bg-white/10'
+                        hasLightBackground ? 'text-slate-600 hover:bg-slate-100' : 'text-slate-200 hover:bg-white/10'
                       }`}
                       aria-label={t.header.notifications}
                     >
@@ -903,7 +904,7 @@ export default function Header() {
                       whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.95 }}
                       onClick={() => { setShowUserMenu(!showUserMenu); setShowNotifications(false); }}
                       className={`flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full text-sm font-semibold transition-all duration-300 ${
-                        isScrolled
+                        hasLightBackground
                           ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                           : 'bg-white/15 text-white hover:bg-white/25 backdrop-blur-sm'
                       }`}
@@ -1003,7 +1004,7 @@ export default function Header() {
                   <motion.button onClick={() => router.push('/login')}
                     whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                     className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
-                      isScrolled ? 'text-slate-600 hover:bg-slate-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+                      hasLightBackground ? 'text-slate-600 hover:bg-slate-100' : 'text-white/80 hover:text-white hover:bg-white/10'
                     }`}>
                     {t.header.login}
                   </motion.button>
@@ -1022,7 +1023,7 @@ export default function Header() {
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsMobileOpen(true)}
               className={`md:hidden p-2 rounded-xl transition-colors ${
-                isScrolled ? 'text-slate-700 hover:bg-slate-100' : 'text-white hover:bg-white/10'
+                hasLightBackground ? 'text-slate-700 hover:bg-slate-100' : 'text-white hover:bg-white/10'
               }`}
               aria-label={t.header.menuOpen}
             >

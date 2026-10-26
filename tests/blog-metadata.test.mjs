@@ -31,23 +31,23 @@ function findElement(node, type) {
   return null;
 }
 
-for (const lang of ['nl', 'en']) test(`${lang}: all metadata APIs return real recent activity first`, async () => {
+for (const lang of ['nl', 'en']) test(`${lang}: all metadata APIs return visible editorial order while retaining factual metadata`, async () => {
   useFixtures();
-  const expected = ['actual-update', 'newer-publication', 'current-article'].map(s => lang === 'en' ? s + '-en' : s);
+  const expected = ['newer-publication', 'actual-update', 'current-article'].map(s => lang === 'en' ? s + '-en' : s);
   for (const result of [await getAllBlogPosts(lang), await getBlogPostsByCategory('fixture', lang), await getBlogPostsByTag('fixture', lang)]) {
     expect(result.map(p => p.slug)).toEqual(expected);
-    expect(result[0].publishedAt).toBe('2026-03-27');
-    expect(result[0].updatedAt).toBe('2026-10-12');
+    expect(result[1].publishedAt).toBe('2026-03-27');
+    expect(result[1].updatedAt).toBe('2026-10-12');
     expect(result[0]).not.toHaveProperty('content');
   }
   expect((await getRelatedPosts(lang === 'en' ? 'current-article-en' : 'current-article')).map(p => p.slug)).toEqual(expected.slice(0, 2));
 });
 
-test('homepage chooses both language top-four selections by actual activity before slicing', async () => {
+test('homepage chooses both language top-four selections by visible editorial date before slicing', async () => {
   useFixtures();
   const node = findElement(await Home(), LatestNews);
-  expect(node.props.postsNl.map(p => p.slug)).toEqual(['actual-update', 'newer-publication', 'current-article']);
-  expect(node.props.postsEn.map(p => p.slug)).toEqual(['actual-update-en', 'newer-publication-en', 'current-article-en']);
+  expect(node.props.postsNl.map(p => p.slug)).toEqual(['newer-publication', 'actual-update', 'current-article']);
+  expect(node.props.postsEn.map(p => p.slug)).toEqual(['newer-publication-en', 'actual-update-en', 'current-article-en']);
 });
 
 test('the new-article notification does not call an updated old article a new publication', async () => {
@@ -77,7 +77,7 @@ test('schema and OpenGraph expose actual edit dates and preserve original public
   expect(article.dateModified).toBe('2026-10-12');
 });
 
-test('redistributed schema and OpenGraph use factual publication while disclosing the editorial schedule', async () => {
+test('redistributed schema preserves factual publication without a migration notice', async () => {
   const post = savedNl.find(p => p.slug === 'website-ontwikkeling');
   const params = Promise.resolve({ slug: post.slug });
   const metadata = await generateMetadata({ params });
@@ -90,8 +90,7 @@ test('redistributed schema and OpenGraph use factual publication while disclosin
   const article = scripts.find(s => s['@type'] === 'BlogPosting');
   expect(article.datePublished).toBe('2026-03-27');
   expect(article.dateModified).toBe('2026-10-16');
-  expect(article.description).toContain('Publicatiedatum (redactioneel): 2026-07-06');
-  expect(article.description).toContain('Oorspronkelijk gepubliceerd op: 2026-03-27');
+  expect(article.description).toBe(post.excerpt);
 });
 
 for (const locale of ['nl', 'en']) test(`${locale}: standard publication metadata uses factual dates for every article, including unmigrated posts`, async () => {
@@ -108,6 +107,7 @@ for (const locale of ['nl', 'en']) test(`${locale}: standard publication metadat
     const article = scripts.find(s => s['@type'] === 'BlogPosting');
     expect(article.datePublished, post.slug).toBe(post.originalPublishedAt ?? post.publishedAt);
     expect(article.dateModified, post.slug).toBe(post.updatedAt);
+    expect(article.description, post.slug).toBe(post.excerpt);
   }
 });
 

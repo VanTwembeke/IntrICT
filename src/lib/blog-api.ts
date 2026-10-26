@@ -45,16 +45,14 @@ export interface BlogPostMeta {
 
 export { blogPostsNl, blogPostsEn };
 
-/** Metadata contains real editorial dates; never infer activity from today's clock. */
+/** Factual activity for nonvisual consumers; never stamp dates from the current clock. */
 export function getBlogActivityDate(post: Pick<BlogPostMeta, 'publishedAt' | 'updatedAt'>): string {
   return post.updatedAt > post.publishedAt ? post.updatedAt : post.publishedAt;
 }
 
-/** Latest activity first; a newly published post wins ties with an older update. */
+/** Newest visible editorial date first; retain this public API for existing consumers. */
 export function sortBlogPostsByActivity<T extends Pick<BlogPostMeta, 'publishedAt' | 'updatedAt'>>(posts: readonly T[]): T[] {
-  return [...posts].sort((a, b) =>
-    getBlogActivityDate(b).localeCompare(getBlogActivityDate(a)) || b.publishedAt.localeCompare(a.publishedAt)
-  );
+  return [...posts].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 }
 
 /** Returns the correct post array for the given language. Falls back to NL if no EN posts exist. */

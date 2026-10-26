@@ -68,14 +68,15 @@ for (const href of ['javascript:alert(1)', 'JaVaScRiPt:alert(1)', 'data:text/htm
   });
 }
 
-test('blog index small metadata and tags use readable contrast on light cards', () => {
+test('blog archive metadata and excerpts retain readable brand contrast', () => {
   const { container } = render(React.createElement(BlogClient));
-  const metadata = container.querySelectorAll('article span.flex.text-xs');
+  const metadata = [...container.querySelectorAll('article p')].filter(p => p.querySelector('time'));
   expect(metadata.length).toBeGreaterThan(0);
-  for (const span of metadata) expect(span.className).not.toContain('text-slate-400');
-  const tags = container.querySelectorAll('article span.bg-slate-50');
-  expect(tags.length).toBeGreaterThan(0);
-  for (const tag of tags) expect(tag.className).not.toContain('text-slate-400');
+  for (const node of metadata) {
+    expect(node.className).toContain('text-slate-600');
+    expect(node.className).not.toContain('text-slate-400');
+  }
+  for (const heading of container.querySelectorAll('article h2')) expect(heading.className).toContain('text-slate-900');
 });
 
 afterEach(cleanup);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Users, Check, Trash2 } from 'lucide-react';
 
 interface Subscriber {
@@ -27,20 +27,22 @@ export default function AbonneesClient() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const [loadError, setLoadError] = useState(false);
-  const load = useCallback(async () => {
-    try {
-      const response = await fetch('/api/admin/newsletter/subscribers', { cache: 'no-store' });
-      if (!response.ok) throw new Error('Source unavailable');
-      const data = await response.json();
-      if (!Array.isArray(data) || !data.every(isSubscriber) || new Set(data.map((row) => row.id)).size !== data.length) throw new Error('Invalid source');
-      setSubscribers(data);
-    } catch {
-      setLoadError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-  useEffect(() => { void load(); }, [load]);
+  const [requestVersion, setRequestVersion] = useState(0);
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+    fetch('/api/admin/newsletter/subscribers', { cache: 'no-store', signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error('Source unavailable');
+        const data = await response.json();
+        if (!Array.isArray(data) || !data.every(isSubscriber) || new Set(data.map((row) => row.id)).size !== data.length) throw new Error('Invalid source');
+        return data;
+      })
+      .then((data) => { if (active) setSubscribers(data); })
+      .catch(() => { if (active) setLoadError(true); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; controller.abort(); };
+  }, [requestVersion]);
 
   const [actionError, setActionError] = useState('');
   const [notice, setNotice] = useState('');
@@ -124,7 +126,7 @@ export default function AbonneesClient() {
       <p role="status" className="mb-4 text-sm text-slate-700">{notice}</p>
       {loadError && <div role="alert" className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
         <p>Abonnees konden niet worden geladen.</p>
-        <button type="button" onClick={() => { setLoading(true); setLoadError(false); void load(); }} className="mt-2 font-semibold underline">Opnieuw proberen</button>
+        <button type="button" onClick={() => { setLoading(true); setLoadError(false); setRequestVersion((version) => version + 1); }} className="mt-2 font-semibold underline">Opnieuw proberen</button>
       </div>}
       {loading && (
         <div className="flex items-center gap-2 p-8 bg-white border border-slate-200 rounded-2xl justify-center text-sm text-slate-400">

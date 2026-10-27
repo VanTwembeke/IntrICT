@@ -28,8 +28,6 @@ export default function AbonneesClient() {
 
   const [loadError, setLoadError] = useState(false);
   const load = useCallback(async () => {
-    setLoading(true);
-    setLoadError(false);
     try {
       const response = await fetch('/api/admin/newsletter/subscribers', { cache: 'no-store' });
       if (!response.ok) throw new Error('Source unavailable');
@@ -126,7 +124,7 @@ export default function AbonneesClient() {
       <p role="status" className="mb-4 text-sm text-slate-700">{notice}</p>
       {loadError && <div role="alert" className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
         <p>Abonnees konden niet worden geladen.</p>
-        <button type="button" onClick={() => void load()} className="mt-2 font-semibold underline">Opnieuw proberen</button>
+        <button type="button" onClick={() => { setLoading(true); setLoadError(false); void load(); }} className="mt-2 font-semibold underline">Opnieuw proberen</button>
       </div>}
       {loading && (
         <div className="flex items-center gap-2 p-8 bg-white border border-slate-200 rounded-2xl justify-center text-sm text-slate-400">

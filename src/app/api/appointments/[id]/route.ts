@@ -26,32 +26,38 @@ export async function PUT(
 ) {
   const { id } = await params;
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+  const { data: profile, error: profileError } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+  if (profileError) return NextResponse.json({ error: 'Service unavailable' }, { status: 503 });
   const isAdmin = profile?.role === 'admin';
 
-  const body: {
-    status?: string;
-    admin_notes?: string;
-    meeting_link?: string;
-    location?: string;
-    starts_at?: string;
-    notes?: string;
-    cancellation_reason?: string;
-  } = await request.json();
+  let body: Record<string, unknown>;
+  try {
+    const parsed: unknown = await request.json();
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    }
+    body = parsed as Record<string, unknown>;
+  } catch {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+  }
 
   // Non-admins can only cancel their own pending appointment
   if (!isAdmin) {
-    if (body.status !== 'cancelled') {
+    if (Object.keys(body).some(key => key !== 'status' && key !== 'cancellation_reason') || body.status !== 'cancelled') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
-    const { data: existing } = await supabase
+    if (body.cancellation_reason !== undefined && (typeof body.cancellation_reason !== 'string' || body.cancellation_reason.length > 2000)) {
+      return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    }
+    const { data: existing, error: existingError } = await supabase
       .from('appointments')
       .select('user_id, status')
       .eq('id', id)
       .single();
+    if (existingError) return NextResponse.json({ error: 'Service unavailable' }, { status: 503 });
     if (!existing || existing.user_id !== user.id || existing.status !== 'pending') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
@@ -66,7 +72,7 @@ export async function PUT(
       .eq('id', id)
       .single();
     if (existing) {
-      const startsAt = new Date(body.starts_at);
+      const startsAt = new Date(body.starts_at as string);
       ends_at = new Date(startsAt.getTime() + existing.duration_minutes * 60_000).toISOString();
     }
   }
@@ -80,15 +86,13 @@ export async function PUT(
   if (body.starts_at            !== undefined) update.starts_at            = body.starts_at;
   if (body.cancellation_reason  !== undefined) update.cancellation_reason  = body.cancellation_reason;
   if (ends_at                   !== undefined) update.ends_at              = ends_at;
-  update.updated_at = new Date().toISOString();
+  if (isAdmin) update.updated_at = new Date().toISOString();
 
-  const { data, error } = await supabase
-    .from('appointments')
-    .update(update)
-    .eq('id', id)
-    .select('*, profile:profiles(full_name, email)')
-    .single();
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  let mutation = supabase.from('appointments').update(update).eq('id', id);
+  // Repeat ownership/state conditions at write time, not just in the preflight.
+  if (!isAdmin) mutation = mutation.eq('user_id', user.id).eq('status', 'pending');
+  const { data, error } = await mutation.select('*, profile:profiles(full_name, email)').single();
+  if (error || !data) return NextResponse.json({ error: 'Service unavailable' }, { status: 503 });
 
   // Annuleringsmail naar klant wanneer admin annuleert met reden
   if (isAdmin && body.status === 'cancelled' && body.cancellation_reason) {

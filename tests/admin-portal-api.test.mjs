@@ -5,7 +5,7 @@ import { GET as requestsGET } from '../src/app/api/package-requests/route';
 import { GET as messagesGET } from '../src/app/api/messages/route';
 function client(result, user = { id: 'test-user' }) {
   const query = { select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis(), order: vi.fn().mockReturnThis(), range: vi.fn().mockReturnThis(), single: vi.fn().mockResolvedValue({ data: { role: 'admin' } }), then(resolve) { return Promise.resolve(result).then(resolve); } };
-  createClient.mockResolvedValue({ auth: { getUser: vi.fn().mockResolvedValue({ data: { user } }) }, from: vi.fn().mockReturnValue(query) });
+  createClient.mockResolvedValue({ auth: { getUser: vi.fn().mockResolvedValue({ data: { user } }) }, rpc: vi.fn().mockResolvedValue({data:[{id:'test-user',full_name:'Current',email:'current@example.invalid'},{id:'other',full_name:'Other',email:'other@example.invalid'}],error:null}), from: vi.fn().mockReturnValue(query) });
   return query;
 }
 beforeEach(() => vi.clearAllMocks());

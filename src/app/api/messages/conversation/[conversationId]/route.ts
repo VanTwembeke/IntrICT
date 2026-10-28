@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getConversationPeers, hydrateMessageProfiles } from '@/lib/message-profiles';
 
 export async function GET(
   req: NextRequest,
@@ -37,8 +38,7 @@ export async function GET(
         created_at,
         created_by,
         conversation_participants(
-          profile_id,
-          profiles(full_name, email)
+          profile_id
         )
       `)
       .eq('id', conversationId)
@@ -58,20 +58,12 @@ export async function GET(
         read_at,
         parent_message_id,
         sender_id,
-        profiles!messages_sender_id_fkey(full_name, email),
         message_attachments(
           id,
           file_name,
           file_url,
           file_size,
           mime_type
-        ),
-        messages!parent_message_id(
-          id,
-          content,
-          sender_id,
-          created_at,
-          profiles!messages_sender_id_fkey(full_name, email)
         )
       `)
       .eq('conversation_id', conversationId)
@@ -82,6 +74,22 @@ export async function GET(
       return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
     }
 
+    const parentIds = [...new Set((messages || []).map(message => message.parent_message_id).filter(Boolean))];
+    const parents = parentIds.length ? await supabase.from('messages')
+      .select('id, content, sender_id, created_at')
+      .eq('conversation_id', conversationId).in('id', parentIds) : { data: [], error: null };
+    if (parents.error) return NextResponse.json({ error: 'Service unavailable' }, { status: 503 });
+    const parentById = new Map((parents.data || []).map(parent => [parent.id, parent]));
+    const peers = await getConversationPeers(supabase, conversationId);
+    const hydratedMessages = await hydrateMessageProfiles(supabase, conversationId, (messages || []).map(message => ({
+      ...message, parent_message: parentById.get(message.parent_message_id) ?? null,
+    })));
+    const byId = new Map(peers.map(peer => [peer.id, peer]));
+    const participants = conversation.conversation_participants.map(participant => ({
+      ...participant,
+      profiles: byId.get(participant.profile_id) ?? { full_name: 'Voormalige deelnemer', email: '' },
+    }));
+
     // Mark messages as read
     const { error: readError } = await supabase.rpc('mark_messages_read', {
       conversation_uuid: conversationId,
@@ -91,8 +99,8 @@ export async function GET(
     if (readError) return NextResponse.json({ error: 'Service unavailable' }, { status: 503 });
 
     return NextResponse.json({
-      conversation,
-      messages: messages || []
+      conversation: { ...conversation, conversation_participants: participants },
+      messages: hydratedMessages
     });
   } catch {
     return NextResponse.json({ error: 'Service unavailable' }, { status: 503 });

@@ -8,10 +8,11 @@ import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import { createClient } from '@/lib/supabase/client';
 import type { Profile } from '@/lib/types';
+type PublicProfile = Pick<Profile, 'public_username' | 'full_name' | 'profile_picture_url' | 'company' | 'city' | 'review_score' | 'review_text' | 'show_public_email' | 'show_public_company' | 'show_public_location' | 'show_public_review'> & { email: string | null };
 
 export default function UserProfilePage() {
   const params = useParams();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<PublicProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
@@ -26,15 +27,15 @@ export default function UserProfilePage() {
       const supabase = createClient();
       const username = String(params.username).toLowerCase();
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .ilike('public_username', username)
+        .from('public_profiles')
+        .select('public_username, full_name, profile_picture_url, email, company, city, review_score, review_text, show_public_email, show_public_company, show_public_location, show_public_review')
+        .eq('public_username', username)
         .single();
 
       if (error || !data) {
         setNotFound(true);
       } else {
-        setProfile(data as Profile);
+        setProfile(data as PublicProfile);
       }
 
       setLoading(false);
@@ -78,7 +79,7 @@ export default function UserProfilePage() {
     );
   }
 
-  const initials = (profile.full_name ?? profile.email)[0].toUpperCase();
+  const initials = (profile.full_name || profile.public_username || 'Gebruiker')[0].toUpperCase();
   const reviewScore = profile.review_score ?? 0;
 
   return (
@@ -101,7 +102,7 @@ export default function UserProfilePage() {
                   {profile.profile_picture_url ? (
                     <img
                       src={profile.profile_picture_url}
-                      alt={profile.full_name ?? profile.email}
+                      alt={profile.full_name || profile.public_username || 'Gebruiker'}
                       className="object-cover w-full h-full"
                     />
                   ) : (
@@ -113,9 +114,9 @@ export default function UserProfilePage() {
                   <div>
                     <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">Publiek profiel</p>
                     <h1 className="mt-3 text-4xl font-bold tracking-tight text-slate-900">
-                      {profile.full_name ?? profile.email}
+                      {profile.full_name || profile.public_username || 'Gebruiker'}
                     </h1>
-                    <p className="mt-2 text-sm text-slate-500">{profile.company ?? 'Geen bedrijfsnaam opgegeven'}</p>
+                    {profile.show_public_company && profile.company && <p className="mt-2 text-sm text-slate-500">{profile.company}</p>}
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-2">

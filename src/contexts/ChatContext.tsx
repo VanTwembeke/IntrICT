@@ -160,11 +160,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         );
       }
       try {
-        await fetch('/api/messages/conversation/mark-read', {
+        const response = await fetch('/api/messages/conversation/mark-read', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ conversationId }),
         });
+        if (!response.ok) throw new Error('Mark read unavailable');
       } catch {
         // Revert on error
         invalidateConversationsCache();

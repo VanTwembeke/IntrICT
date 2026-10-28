@@ -1,5 +1,6 @@
 'use server';
 
+import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendMail } from '@/lib/mailer';
 import { generateUnsubscribeToken } from '@/lib/newsletter-token';
@@ -13,12 +14,22 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://intrict.com';
 
 export async function updateNewsletterSubscription(email: string, subscribe: boolean): Promise<NewsletterState> {
   try {
+    if (typeof email !== 'string' || typeof subscribe !== 'boolean') {
+      return { success: false, error: 'Kon nieuwsbrief voorkeur niet opslaan.' };
+    }
+    // The submitted address is a compatibility check, never the authority.
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const verifiedEmail = user?.email?.trim().toLowerCase();
+    if (authError || !user?.email_confirmed_at || !verifiedEmail || email.trim().toLowerCase() !== verifiedEmail) {
+      return { success: false, error: 'Kon nieuwsbrief voorkeur niet opslaan.' };
+    }
     const admin = createAdminClient();
     const { error } = await admin
       .from('newsletter_subscribers')
       .upsert(
         {
-          email: email.trim().toLowerCase(),
+          email: verifiedEmail,
           is_active: subscribe,
           ...(subscribe
             ? { subscribed_at: new Date().toISOString(), unsubscribed_at: null }

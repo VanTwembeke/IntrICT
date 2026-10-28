@@ -20,6 +20,10 @@ test('search query resets keyboard selection before Enter and exposes no dashboa
   fireEvent.keyDown(window, { key: 'k', ctrlKey: true });
   fireEvent.change(view.container.querySelector('input'), { target: { value: 'Dashboard' } });
   expect(view.container.querySelector('a[href="/dashboard"]')).toBeNull();
+});
+
+// ESLint cold startup is independent from the UI interaction deadline.
+test('header search remains free of ESLint errors', async () => {
   const results = await new ESLint().lintFiles(['src/components/common/Header.tsx']);
   expect(results.flatMap(r => r.messages.filter(m => m.severity === 2))).toEqual([]);
-});
+}, 15000);

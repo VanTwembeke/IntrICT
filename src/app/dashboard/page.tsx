@@ -3,12 +3,13 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import {
   Users, User, Mail, Package, ArrowRight, Calendar,
-  Sparkles, ClipboardList, Clock, CheckCircle,
+  ClipboardList, Clock, CheckCircle,
   MessageSquare, TrendingUp, CalendarCheck, Receipt, FolderOpen,
   RefreshCw, AlertCircle, FileSignature,
 } from 'lucide-react';
 import type { Profile, Appointment, ActivityLog, Invoice, PackageRequest } from '@/lib/types';
 import AdminOnly from '@/components/dashboard/AdminOnly';
+import DashboardStart from '@/components/dashboard/DashboardStart';
 
 // ─── Activity feed item ───────────────────────────────────────────────────────
 
@@ -34,12 +35,12 @@ function ActivityIcon({ type, status, activityType }: { type: string; status?: s
     if (activityType === 'status_change') return <RefreshCw size={15} className="text-amber-500" />;
     if (activityType === 'appointment_created') return <CalendarCheck size={15} className="text-green-500" />;
     if (activityType === 'package_request') return <Package size={15} className="text-indigo-500" />;
-    return <AlertCircle size={15} className="text-slate-400" />;
+    return <AlertCircle size={15} className="text-slate-500" />;
   }
   if (type === 'request') {
     if (status === 'accepted') return <CheckCircle size={15} className="text-green-500" />;
     if (status === 'rejected') return (
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" className="text-slate-400">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" className="text-slate-500">
         <path d="M3 3l9 9M12 3l-9 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
       </svg>
     );
@@ -72,6 +73,7 @@ export default async function DashboardPage() {
     .maybeSingle<Profile>();
   if (error || !profile) redirect('/login');
 
+  let hasDataError = false;
   const isAdmin = profile.role === 'admin';
 
   const dateString = new Date().toLocaleDateString('nl-BE', {
@@ -116,6 +118,8 @@ export default async function DashboardPage() {
       supabase.from('client_dossiers').select('id', { count: 'exact', head: true }).eq('status', 'klant'),
       supabase.from('invoices').select('id', { count: 'exact', head: true }).eq('status', 'overdue'),
     ]);
+
+    hasDataError ||= [userCountRes, pendingReqRes, packageRes, revenueRes, pendingApptRes, upcomingApptRes, activeClientRes, overdueRes].some(result => result.status === 'rejected' || !!result.value.error);
 
     if (userCountRes.status === 'fulfilled')   userCount            = userCountRes.value.count ?? 0;
     if (pendingReqRes.status === 'fulfilled')  pendingRequestCount  = pendingReqRes.value.count ?? 0;
@@ -164,6 +168,8 @@ export default async function DashboardPage() {
         .eq('profile_id', user.id).eq('status', 'active'),
     ]);
 
+    hasDataError ||= [openInvRes, paidInvRes, apptRes, reqRes, contractRes].some(result => result.status === 'rejected' || !!result.value.error);
+
     if (openInvRes.status === 'fulfilled') {
       userOpenInvoices = (openInvRes.value.data ?? []) as OpenInvoice[];
       userOpenTotal = userOpenInvoices.reduce((s, i) => s + i.total, 0);
@@ -188,6 +194,8 @@ export default async function DashboardPage() {
         .select('*, profile:profiles(full_name, email)')
         .order('created_at', { ascending: false }).limit(8),
     ]);
+
+    hasDataError ||= [requestsRes, logsRes].some(result => result.status === 'rejected' || !!result.value.error);
 
     if (requestsRes.status === 'fulfilled' && requestsRes.value.data) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -230,27 +238,42 @@ export default async function DashboardPage() {
     return d.toLocaleDateString('nl-BE', { day: 'numeric', month: 'short' });
   };
 
+  if (hasDataError) return (
+    <div className="dashboard-home p-4 sm:p-6 lg:p-8">
+      <h1 className="mb-6 text-2xl font-bold text-slate-950">Mijn overzicht</h1>
+      <div role="alert" className="mb-6 rounded-2xl border border-amber-300 bg-amber-50 p-6 text-amber-950">
+        <h2 className="font-bold">Overzicht tijdelijk niet beschikbaar</h2>
+        <p className="mt-2 text-sm leading-relaxed">Niet alle gegevens konden worden geladen. We tonen daarom geen onvolledige totalen. Je kunt je documenten en gesprekken nog rechtstreeks openen.</p>
+        <a href="/dashboard" className="mt-4 inline-flex min-h-11 items-center rounded-lg bg-slate-900 px-4 text-sm font-semibold text-white hover:bg-slate-800">Overzicht opnieuw laden</a>
+      </div>
+      <DashboardStart isAdmin={isAdmin} />
+    </div>
+  );
+
   return (
-    <div className="p-6 lg:p-8">
+    <div className="dashboard-home p-4 sm:p-6 lg:p-8">
       {/* Page header */}
       <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-8">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-1">
             {isAdmin ? 'Administrator' : 'Gebruiker'}
           </p>
-          <h1 className="text-3xl font-bold text-slate-900">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
             Welkom terug,{' '}
             <span className="text-blue-600">
               {profile.full_name?.split(' ')[0] ?? 'gebruiker'}
             </span>
           </h1>
         </div>
-        <div className="flex items-center gap-2 text-slate-400 text-sm">
+        <div className="flex items-center gap-2 text-slate-500 text-sm">
           <Calendar size={15} />
           <span className="capitalize">{dateString}</span>
         </div>
       </div>
 
+      <DashboardStart isAdmin={isAdmin} />
+
+      <h2 className="mb-3 text-sm font-semibold text-slate-600">{isAdmin ? 'Bedrijfsoverzicht' : 'Jouw overzicht'}</h2>
       {/* User stats grid */}
       {!isAdmin && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
@@ -264,9 +287,9 @@ export default async function DashboardPage() {
               <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-2xl font-bold text-slate-900">
-              {userOpenTotal > 0 ? `€${userOpenTotal.toLocaleString('nl-BE')}` : '—'}
+              €{userOpenTotal.toLocaleString('nl-BE')}
             </p>
-            <p className="text-xs font-medium text-slate-400 mt-0.5">Openstaand</p>
+            <p className="text-xs font-medium text-slate-500 mt-0.5">Openstaand</p>
           </Link>
 
           {/* Paid total → mijn-facturen */}
@@ -276,9 +299,9 @@ export default async function DashboardPage() {
               <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-2xl font-bold text-slate-900">
-              {userPaidTotal > 0 ? `€${userPaidTotal.toLocaleString('nl-BE')}` : '—'}
+              €{userPaidTotal.toLocaleString('nl-BE')}
             </p>
-            <p className="text-xs font-medium text-slate-400 mt-0.5">Betaald totaal</p>
+            <p className="text-xs font-medium text-slate-500 mt-0.5">Betaald totaal</p>
           </Link>
 
           {/* Upcoming appointments — informational, no calendar link */}
@@ -287,7 +310,7 @@ export default async function DashboardPage() {
               <div className="p-2 bg-blue-50 rounded-xl"><CalendarCheck size={18} className="text-blue-600" /></div>
             </div>
             <p className="text-2xl font-bold text-slate-900">{userUpcomingAppointments.length}</p>
-            <p className="text-xs font-medium text-slate-400 mt-0.5">Komende afspraken</p>
+            <p className="text-xs font-medium text-slate-500 mt-0.5">Komende afspraken</p>
           </div>
 
           {/* Active contracts → mijn-contracten */}
@@ -297,7 +320,7 @@ export default async function DashboardPage() {
               <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-2xl font-bold text-slate-900">{userActiveContractCount}</p>
-            <p className="text-xs font-medium text-slate-400 mt-0.5">Actieve contracten</p>
+            <p className="text-xs font-medium text-slate-500 mt-0.5">Actieve contracten</p>
           </Link>
         </div>
       )}
@@ -319,13 +342,13 @@ export default async function DashboardPage() {
               const isOverdue = inv.status === 'overdue';
               const dueDate = new Date(inv.due_date).toLocaleDateString('nl-BE', { day: 'numeric', month: 'short', year: 'numeric' });
               return (
-                <div key={inv.id} className="flex items-center gap-4 px-6 py-3.5">
+                <div key={inv.id} className="flex flex-wrap items-center gap-3 px-4 py-3.5 sm:px-6">
                   <div className={`p-1.5 rounded-lg shrink-0 ${isOverdue ? 'bg-red-50' : 'bg-orange-50'}`}>
                     <Receipt size={14} className={isOverdue ? 'text-red-500' : 'text-orange-500'} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-slate-800 truncate">{inv.invoice_number}</p>
-                    <p className="text-xs text-slate-400">Vervaldatum: {dueDate}</p>
+                    <p className="text-xs text-slate-500">Vervaldatum: {dueDate}</p>
                   </div>
                   <div className="text-right shrink-0">
                     <p className="text-sm font-bold text-slate-800">€{inv.total.toLocaleString('nl-BE')}</p>
@@ -344,17 +367,24 @@ export default async function DashboardPage() {
         </div>
       )}
 
+      {!isAdmin && userOpenInvoices.length === 0 && (
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-5 py-4">
+          <div><p className="text-sm font-semibold text-slate-900">Geen openstaande facturen</p><p className="mt-1 text-sm text-slate-600">Je verzonden en betaalde facturen blijven beschikbaar.</p></div>
+          <Link href="/dashboard/mijn-facturen" className="inline-flex min-h-11 items-center text-sm font-semibold text-blue-700 hover:underline">Alle facturen bekijken <ArrowRight size={16} aria-hidden="true" /></Link>
+        </div>
+      )}
+
       {/* Admin stats grid */}
       {isAdmin && (
       <AdminOnly>
-        <div className="grid grid-cols-2 lg:grid-cols-7 gap-4 mb-6">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
           <Link href="/dashboard/users" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
             <div className="flex items-center justify-between mb-3">
               <div className="p-2 bg-blue-50 rounded-xl"><Users size={18} className="text-blue-600" /></div>
               <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-2xl font-bold text-slate-900">{userCount}</p>
-            <p className="text-xs font-medium text-slate-400 mt-0.5">Gebruikers</p>
+            <p className="text-xs font-medium text-slate-500 mt-0.5">Gebruikers</p>
           </Link>
 
           <Link href="/dashboard/aanvragen" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 relative">
@@ -368,7 +398,7 @@ export default async function DashboardPage() {
               <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-2xl font-bold text-slate-900">{pendingRequestCount}</p>
-            <p className="text-xs font-medium text-slate-400 mt-0.5">Nieuwe aanvragen</p>
+            <p className="text-xs font-medium text-slate-500 mt-0.5">Nieuwe aanvragen</p>
           </Link>
 
           <Link href="/dashboard/pakketten" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
@@ -377,7 +407,7 @@ export default async function DashboardPage() {
               <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-2xl font-bold text-slate-900">{packageCount}</p>
-            <p className="text-xs font-medium text-slate-400 mt-0.5">Actieve pakketten</p>
+            <p className="text-xs font-medium text-slate-500 mt-0.5">Actieve pakketten</p>
           </Link>
 
           <Link href="/dashboard/kalender" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 relative">
@@ -391,7 +421,7 @@ export default async function DashboardPage() {
               <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-2xl font-bold text-slate-900">{pendingAppointmentCount}</p>
-            <p className="text-xs font-medium text-slate-400 mt-0.5">Openstaande afspraken</p>
+            <p className="text-xs font-medium text-slate-500 mt-0.5">Openstaande afspraken</p>
           </Link>
 
           <Link href="/dashboard/messages" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
@@ -400,7 +430,7 @@ export default async function DashboardPage() {
               <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-2xl font-bold text-slate-900">Berichten</p>
-            <p className="text-xs font-medium text-slate-400 mt-0.5">Gesprekken</p>
+            <p className="text-xs font-medium text-slate-500 mt-0.5">Gesprekken</p>
           </Link>
 
           <Link href="/dashboard/klanten" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
@@ -409,7 +439,7 @@ export default async function DashboardPage() {
               <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-2xl font-bold text-slate-900">{activeClientCount}</p>
-            <p className="text-xs font-medium text-slate-400 mt-0.5">Actieve klanten</p>
+            <p className="text-xs font-medium text-slate-500 mt-0.5">Actieve klanten</p>
           </Link>
 
           <Link href="/dashboard/facturen" className="group bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 relative">
@@ -423,7 +453,7 @@ export default async function DashboardPage() {
               <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-2xl font-bold text-slate-900">{overdueInvoiceCount > 0 ? overdueInvoiceCount : 'Facturen'}</p>
-            <p className="text-xs font-medium text-slate-400 mt-0.5">{overdueInvoiceCount > 0 ? 'Vervallen' : 'Facturatie'}</p>
+            <p className="text-xs font-medium text-slate-500 mt-0.5">{overdueInvoiceCount > 0 ? 'Vervallen' : 'Facturatie'}</p>
           </Link>
         </div>
 
@@ -438,13 +468,13 @@ export default async function DashboardPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-emerald-50 rounded-xl p-4">
                 <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wide mb-1">Geaccepteerd</p>
-                <p className="text-2xl font-bold text-emerald-700">
+                <p className="text-xl sm:text-2xl font-bold break-words text-emerald-700">
                   €{revenueAccepted.toLocaleString('nl-BE')}
                 </p>
               </div>
               <div className="bg-amber-50 rounded-xl p-4">
                 <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">In behandeling</p>
-                <p className="text-2xl font-bold text-amber-700">
+                <p className="text-xl sm:text-2xl font-bold break-words text-amber-700">
                   €{revenuePending.toLocaleString('nl-BE')}
                 </p>
               </div>
@@ -471,7 +501,7 @@ export default async function DashboardPage() {
             {upcomingAppointments.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-10 text-center px-6">
                 <CalendarCheck size={24} className="text-slate-200 mb-2" />
-                <p className="text-sm text-slate-400">Geen aankomende afspraken</p>
+                <p className="text-sm text-slate-500">Geen aankomende afspraken</p>
               </div>
             ) : (
               <div className="divide-y divide-slate-100">
@@ -489,11 +519,11 @@ export default async function DashboardPage() {
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-slate-800 truncate">{name}</p>
-                        <p className="text-xs text-slate-400">{appt.type_name}</p>
+                        <p className="text-xs text-slate-500">{appt.type_name}</p>
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-xs font-semibold text-slate-600">{timeLabel}</p>
-                        <p className="text-xs text-slate-400">{dayLabel}</p>
+                        <p className="text-xs text-slate-500">{dayLabel}</p>
                       </div>
                       {isPending && (
                         <span className="shrink-0 px-1.5 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-700 rounded-md">
@@ -514,25 +544,10 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
         {/* Packages teaser */}
         <div className="lg:col-span-1 flex flex-col gap-5">
-          <div className="bg-linear-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white relative overflow-hidden flex-1">
-            <div className="absolute -right-8 -top-8 w-36 h-36 rounded-full bg-white/10 blur-2xl pointer-events-none" />
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-3">
-                <Sparkles size={14} className="text-blue-200" />
-                <span className="text-xs font-semibold text-blue-200 uppercase tracking-widest">Pakketten</span>
-              </div>
-              <h2 className="text-xl font-bold mb-2">Onze diensten</h2>
-              <p className="text-blue-100 text-sm mb-5 leading-relaxed">
-                Van brochuresite tot webshop — bekijk onze pakketten en vraag een offerte aan.
-              </p>
-              <Link
-                href="/dashboard/pakketten"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white text-blue-700 font-semibold rounded-xl hover:bg-blue-50 transition-colors text-sm"
-              >
-                <Package size={15} />
-                Bekijk pakketten
-              </Link>
-            </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-5">
+            <h2 className="font-bold text-slate-900">{isAdmin ? 'Diensten beheren' : 'Een nieuwe vraag?'}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600">{isAdmin ? 'Bekijk het bestaande aanbod en de bijbehorende aanvragen.' : 'Bekijk het aanbod of bespreek je volgende stap met IntrICT.'}</p>
+            <Link href="/dashboard/pakketten" className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-blue-700 hover:underline">Bekijk pakketten <ArrowRight size={16} aria-hidden="true" /></Link>
           </div>
 
           <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
@@ -551,6 +566,15 @@ export default async function DashboardPage() {
             </Link>
           </div>
 
+          {!isAdmin && userUpcomingAppointments.length === 0 && (
+            <section className="rounded-2xl border border-slate-200 bg-white p-5">
+              <h2 className="font-bold text-slate-900">Komende afspraken</h2>
+              <p className="mt-3 text-sm font-semibold text-slate-700">Nog geen afspraken gepland</p>
+              <p className="mt-1 text-sm leading-relaxed text-slate-600">Een vraag over je planning? Neem contact op via je berichten.</p>
+              <Link href="/dashboard/messages" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-blue-700 hover:underline">Open mijn berichten <ArrowRight size={16} aria-hidden="true" /></Link>
+            </section>
+          )}
+
           {/* Upcoming appointments for regular users — no calendar link */}
           {!isAdmin && userUpcomingAppointments.length > 0 && (
             <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
@@ -567,7 +591,7 @@ export default async function DashboardPage() {
                       <div className="w-1 h-8 rounded-full shrink-0 mt-0.5" style={{ backgroundColor: appt.color ?? '#3b82f6' }} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-slate-700 truncate">{appt.type_name}</p>
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-slate-500">
                           {d.toLocaleDateString('nl-BE', { weekday: 'long', day: 'numeric', month: 'short' })}
                           {' '}om{' '}
                           {d.toLocaleTimeString('nl-BE', { hour: '2-digit', minute: '2-digit' })}
@@ -601,20 +625,20 @@ export default async function DashboardPage() {
               {recentActivity.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center px-6">
                   <Clock size={28} className="text-slate-200 mb-3" />
-                  <p className="text-sm text-slate-400 font-medium">Nog geen activiteit</p>
+                  <p className="text-sm text-slate-500 font-medium">Nog geen activiteit</p>
                 </div>
               ) : (
                 <div className="divide-y divide-slate-100">
                   {recentActivity.map((item) => (
-                    <div key={item.id} className="flex items-center gap-4 px-6 py-3.5">
+                    <div key={item.id} className="flex flex-wrap items-center gap-3 px-4 py-3.5 sm:px-6">
                       <div className="p-2 bg-slate-50 rounded-xl shrink-0">
                         <ActivityIcon type={item.type} status={item.status} activityType={item.activityType} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-slate-800 truncate">{item.title}</p>
-                        <p className="text-xs text-slate-400 mt-0.5">{item.subtitle}</p>
+                        <p className="text-xs text-slate-500 mt-0.5">{item.subtitle}</p>
                       </div>
-                      <span className="text-xs text-slate-400 shrink-0">{formatTime(item.time)}</span>
+                      <span className="text-xs text-slate-500 shrink-0">{formatTime(item.time)}</span>
                     </div>
                   ))}
                 </div>
@@ -630,10 +654,11 @@ export default async function DashboardPage() {
               {userRequests.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center px-6">
                   <ClipboardList size={28} className="text-slate-200 mb-3" />
-                  <p className="text-sm text-slate-400 font-medium">Geen aanvragen gevonden.</p>
-                  <p className="text-xs text-slate-300 mt-1">
-                    Vraag een pakket aan via &apos;Pakketten&apos; in het menu.
+                  <p className="text-sm text-slate-500 font-medium">Nog geen aanvragen</p>
+                  <p className="text-xs text-slate-600 mt-1">
+                    Je aanvragen verschijnen hier zodra je een pakket aanvraagt.
                   </p>
+                  <Link href="/dashboard/pakketten" className="mt-4 inline-flex min-h-11 items-center rounded-lg bg-blue-700 px-4 text-sm font-semibold text-white hover:bg-blue-800">Ontdek de pakketten</Link>
                 </div>
               ) : (
                 <div className="divide-y divide-slate-100">
@@ -651,13 +676,13 @@ export default async function DashboardPage() {
                       rejected:  'Niet weerhouden',
                     };
                     return (
-                      <div key={req.id} className="flex items-center gap-4 px-6 py-3.5">
+                      <div key={req.id} className="flex flex-wrap items-center gap-3 px-4 py-3.5 sm:px-6">
                         <div className="p-2 bg-slate-50 rounded-xl shrink-0">
                           <Package size={15} className="text-indigo-500" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-semibold text-slate-800 truncate">{req.package_name}</p>
-                          <p className="text-xs text-slate-400 mt-0.5">
+                          <p className="text-xs text-slate-500 mt-0.5">
                             €{(req.package_price ?? 0).toLocaleString('nl-BE')} · {formatTime(req.created_at)}
                           </p>
                         </div>

@@ -45,24 +45,30 @@ interface NavItem {
 }
 
 const mainNavItems: NavItem[] = [
-  { label: 'Dashboard',       href: '/dashboard',            icon: <LayoutDashboard size={18} />, roles: ['admin', 'user'], exact: true },
-  { label: 'Berichten',       href: '/dashboard/messages',   icon: <Mail size={18} />,            roles: ['admin', 'user'], badge: 'unread' },
-  { label: 'Pakketten',       href: '/dashboard/pakketten',  icon: <Package size={18} />,         roles: ['admin', 'user'] },
+  { label: 'Dashboard',       href: '/dashboard',            icon: <LayoutDashboard size={18} />, roles: ['admin', 'user', 'klant'], exact: true },
+  { label: 'Berichten',       href: '/dashboard/messages',   icon: <Mail size={18} />,            roles: ['admin', 'user', 'klant'], badge: 'unread' },
+  { label: 'Pakketten',       href: '/dashboard/pakketten',  icon: <Package size={18} />,         roles: ['admin', 'user', 'klant'] },
   { label: 'Kalender',         href: '/dashboard/kalender',        icon: <CalendarDays size={18} />,    roles: ['admin'],         exact: false, badge: 'pending_appt' },
   { label: 'Aanvragen',        href: '/dashboard/aanvragen',       icon: <ClipboardList size={18} />,   roles: ['admin'],         badge: 'pending' },
   { label: 'Klanten',          href: '/dashboard/klanten',         icon: <FolderOpen size={18} />,      roles: ['admin'],         exact: false },
   { label: 'Facturen',         href: '/dashboard/facturen',        icon: <Receipt size={18} />,         roles: ['admin'],         exact: false },
   { label: 'Contracten',       href: '/dashboard/contracten',      icon: <FileSignature size={18} />,   roles: ['admin'],         exact: false },
-  { label: 'Mijn facturen',    href: '/dashboard/mijn-facturen',   icon: <Receipt size={18} />,         roles: ['user'],          exact: false },
-  { label: 'Mijn contracten',  href: '/dashboard/mijn-contracten', icon: <FileSignature size={18} />,   roles: ['user'],          exact: false },
+  { label: 'Mijn facturen',    href: '/dashboard/mijn-facturen',   icon: <Receipt size={18} />,         roles: ['user', 'klant'],          exact: false },
+  { label: 'Mijn contracten',  href: '/dashboard/mijn-contracten', icon: <FileSignature size={18} />,   roles: ['user', 'klant'],          exact: false },
   { label: 'Gebruikers',      href: '/dashboard/users',      icon: <Users size={18} />,           roles: ['admin'] },
   { label: 'Abonnees',       href: '/dashboard/nieuwsbrief',    icon: <Newspaper size={18} />, roles: ['admin'], exact: false },
   { label: 'Brandgids',     href: '/dashboard/branding',       icon: <Palette size={18} />,   roles: ['admin'] },
 ];
 
+const navGroup = (href: string) => {
+  if (['/dashboard/facturen', '/dashboard/contracten', '/dashboard/mijn-facturen', '/dashboard/mijn-contracten'].includes(href)) return 'Financiën';
+  if (['/dashboard/users', '/dashboard/nieuwsbrief', '/dashboard/branding'].includes(href)) return 'Beheer';
+  return 'Werkruimte';
+};
+
 const accountNavItems: NavItem[] = [
-  { label: 'Mijn profiel',  href: '/dashboard/profile',  icon: <User size={18} />,     roles: ['admin', 'user'] },
-  { label: 'Instellingen',  href: '/dashboard/settings', icon: <Settings size={18} />, roles: ['admin', 'user'] },
+  { label: 'Mijn profiel',  href: '/dashboard/profile',  icon: <User size={18} />,     roles: ['admin', 'user', 'klant'] },
+  { label: 'Instellingen',  href: '/dashboard/settings', icon: <Settings size={18} />, roles: ['admin', 'user', 'klant'] },
 ];
 
 // ─── NavLink ──────────────────────────────────────────────────────────────────
@@ -97,13 +103,13 @@ function NavLink({
       href={item.href}
       aria-current={isActive ? 'page' : undefined}
       onClick={onClick}
-      className={`flex min-w-0 flex-1 items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group focus-visible:outline-2 focus-visible:outline-blue-600 ${
+      className={`flex min-w-0 flex-1 items-center gap-3 min-h-11 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 group focus-visible:outline-2 focus-visible:outline-blue-600 ${
         isActive
           ? 'bg-blue-600 text-white shadow-sm'
           : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
       }`}
     >
-      <span className={isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-600 transition-colors'}>
+      <span className={isActive ? 'text-white' : 'text-slate-500 group-hover:text-slate-600 transition-colors'}>
         {item.icon}
       </span>
       <span className="flex-1">{item.label}</span>
@@ -118,7 +124,7 @@ function NavLink({
     </Link>
     {chatAction && <button type="button" onClick={onChatOpen}
       aria-label={`Open chat: ${badgeCount} ongelezen berichten`}
-      className="flex h-10 min-w-10 items-center justify-center rounded-xl bg-blue-600 px-2 text-xs font-bold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+      className="flex h-11 min-w-11 items-center justify-center rounded-xl bg-blue-600 px-2 text-xs font-bold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
       {badgeCount > 9 ? '9+' : badgeCount}
     </button>}
     </div>
@@ -160,10 +166,10 @@ function SidebarContent({
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Logo */}
-      <div className="px-6 py-5 border-b border-slate-100 shrink-0">
-        <div className="flex items-center gap-3 mb-2">
-          <Link href="/dashboard" onClick={onLinkClick}>
-            <IntrICTLogo variant="light" className="h-7 w-auto" />
+      <div className="px-5 py-4 border-b border-slate-100 shrink-0">
+        <div className="flex items-center gap-2">
+          <Link href="/dashboard" onClick={onLinkClick} aria-label="IntrICT overzicht" className="flex min-h-11 items-center">
+            <IntrICTLogo variant="light" className="h-6 w-auto" />
           </Link>
           <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
             viewAs === 'user' && isAdmin
@@ -178,7 +184,7 @@ function SidebarContent({
         <Link
           href="/"
           onClick={onLinkClick}
-          className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-500 transition-colors"
+          className="inline-flex min-h-11 items-center gap-1.5 text-xs text-slate-500 hover:text-blue-500 transition-colors"
         >
           <ExternalLink size={11} />
           Naar de website
@@ -186,8 +192,8 @@ function SidebarContent({
       </div>
 
       {/* User card */}
-      <div className="px-4 py-3 border-b border-slate-100 shrink-0">
-        <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-slate-50">
+      <div className="px-4 py-2 border-b border-slate-100 shrink-0">
+        <div className="flex items-center gap-3 min-h-11 px-3 py-2 rounded-lg bg-slate-50">
           <div className="flex items-center justify-center w-8 h-8 text-xs font-bold text-white rounded-full bg-blue-600 shrink-0">
             {initials}
           </div>
@@ -195,33 +201,28 @@ function SidebarContent({
             <p className="text-sm font-semibold text-slate-800 truncate">
               {profile.full_name ?? 'Gebruiker'}
             </p>
-            <p className="text-xs text-slate-400 truncate">{profile.email}</p>
+            <p className="text-xs text-slate-500 truncate">{profile.email}</p>
           </div>
         </div>
       </div>
 
       {/* Nav */}
-      <nav aria-label="Portaalmenu" className="flex-1 px-4 py-4 overflow-y-auto space-y-5">
-        <div>
-          <p className="px-3 mb-2 text-xs font-semibold tracking-widest uppercase text-slate-400">Menu</p>
-          <div className="space-y-0.5">
-            {filteredMain.map((item) => (
-              <NavLink
-                key={item.href}
-                item={item}
+      <nav aria-label="Portaalmenu" className="flex-1 px-3 py-3 overflow-y-auto space-y-4">
+        {['Werkruimte', 'Financiën', 'Beheer'].map(group => {
+          const items = filteredMain.filter(item => navGroup(item.href) === group);
+          return items.length > 0 && <div key={group}>
+            <p className="px-3 mb-1 text-[11px] font-semibold tracking-wider uppercase text-slate-500">{group}</p>
+            <div className="space-y-0.5">
+              {items.map(item => <NavLink key={item.href} item={item}
                 isActive={pathname === item.href || (item.exact !== true && pathname.startsWith(`${item.href}/`))}
-                unread={unreadCount}
-                pending={pendingCount}
-                pendingAppt={pendingApptCount}
-                onClick={onLinkClick}
-                onChatOpen={() => { onLinkClick?.(); openChat(); }}
-              />
-            ))}
-          </div>
-        </div>
+                unread={unreadCount} pending={pendingCount} pendingAppt={pendingApptCount}
+                onClick={onLinkClick} onChatOpen={() => { onLinkClick?.(); openChat(); }} />)}
+            </div>
+          </div>;
+        })}
 
         <div>
-          <p className="px-3 mb-2 text-xs font-semibold tracking-widest uppercase text-slate-400">Account</p>
+          <p className="px-3 mb-2 text-xs font-semibold tracking-widest uppercase text-slate-500">Account</p>
           <div className="space-y-0.5">
             {filteredAccount.map((item) => (
               <NavLink
@@ -240,13 +241,13 @@ function SidebarContent({
 
       {/* Admin: impersonation toggle */}
       {isAdmin && (
-        <div className="px-4 pb-3 shrink-0">
+        <div className="px-3 pb-2 shrink-0">
           <button
             onClick={() => {
               setViewAs(viewAs === 'admin' ? 'user' : 'admin');
               onLinkClick?.();
             }}
-            className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
+            className={`flex items-center gap-3 w-full min-h-11 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
               viewAs === 'user'
                 ? 'bg-amber-50 text-amber-700 border border-amber-200'
                 : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700'
@@ -259,10 +260,10 @@ function SidebarContent({
       )}
 
       {/* Logout */}
-      <div className="px-4 pb-6 pt-2 border-t border-slate-100 shrink-0">
+      <div className="px-3 pb-3 pt-2 border-t border-slate-100 shrink-0">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all duration-150"
+          className="flex items-center gap-3 w-full min-h-11 px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all duration-150"
         >
           <LogOut size={18} />
           Afmelden
@@ -315,7 +316,7 @@ export default function DashboardSidebar({ profile }: { profile: Profile }) {
           aria-expanded={open}
           aria-controls="mobile-portal-menu"
           onClick={() => setOpen(true)}
-          className="flex items-center justify-center w-10 h-10 bg-white border border-slate-200 rounded-xl shadow-sm text-slate-600 hover:text-slate-900 transition-colors"
+          className="flex items-center justify-center w-11 h-11 bg-white border border-slate-200 rounded-xl shadow-sm text-slate-600 hover:text-slate-900 transition-colors"
           aria-label="Open menu"
         >
           <Menu size={20} />
@@ -327,6 +328,25 @@ export default function DashboardSidebar({ profile }: { profile: Profile }) {
         ref={dialogRef}
         id="mobile-portal-menu"
         aria-label="Portaalnavigatie"
+        tabIndex={-1}
+        onKeyDown={(event) => {
+          if (event.key !== 'Tab') return;
+          const dialog = event.currentTarget;
+          const controls = Array.from(dialog.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+            .filter((control) => control.isConnected && control.getClientRects().length > 0 && !control.closest('[hidden], [inert], [aria-hidden="true"]') && getComputedStyle(control).visibility !== 'hidden');
+          const first = controls[0];
+          const last = controls[controls.length - 1];
+          if (!first || !last) {
+            event.preventDefault();
+            dialog.focus();
+            return;
+          }
+          const active = document.activeElement;
+          if (active === dialog || !dialog.contains(active) || (event.shiftKey && active === first) || (!event.shiftKey && active === last)) {
+            event.preventDefault();
+            (event.shiftKey ? last : first).focus();
+          }
+        }}
         onClose={(event) => { if (!event.currentTarget.open) setOpen(false); }}
         onCancel={(event) => { event.preventDefault(); setOpen(false); }}
         onClick={(event) => { if (event.target === event.currentTarget) setOpen(false); }}
@@ -334,7 +354,7 @@ export default function DashboardSidebar({ profile }: { profile: Profile }) {
       >
         {open && <>
           <button autoFocus onClick={() => setOpen(false)}
-            className="absolute top-3 right-3 z-10 p-2 rounded-lg text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-600"
+            className="absolute top-3 right-3 z-10 flex h-11 w-11 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-600"
             aria-label="Sluit menu"><X size={18} /></button>
           <SidebarContent profile={profile} pathname={pathname} onLinkClick={() => setOpen(false)} />
         </>}

@@ -1,6 +1,7 @@
 // app/(dashboard)/messages/page.tsx
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { hydrateMessageProfiles } from '@/lib/message-profiles';
 import type { Profile } from '@/lib/types';
 import MessagesPage from './MessagesPage';
 
@@ -18,26 +19,9 @@ export default async function MessagesServerPage() {
 
   if (!profile) redirect('/login');
 
-  let allProfiles: Array<{ id: string; full_name: string | null; email: string; role: string; company: string | null }> = [];
-
-  if (profile.role === 'admin') {
-    // Admins can message everyone
-    const { data } = await supabase
-      .from('profiles')
-      .select('id, full_name, email, role, company')
-      .neq('id', user.id)
-      .order('full_name', { ascending: true });
-    allProfiles = data || [];
-  } else {
-    // Regular users: admins + users in the same company
-    const { data } = await supabase
-      .from('profiles')
-      .select('id, full_name, email, role, company')
-      .neq('id', user.id)
-      .or(`role.eq.admin,company.eq.${profile.company}`)
-      .order('full_name', { ascending: true });
-    allProfiles = data || [];
-  }
+  const { data: recipients, error: recipientError } = await supabase.rpc('message_recipients');
+  if (recipientError) throw new Error('Ontvangers konden niet worden geladen.');
+  const allProfiles: Array<{ id: string; full_name: string | null; email: string; role: string; company: string | null }> = recipients ?? [];
 
   // Preload conversations on server side for faster initial load
   const { data: conversations, error } = await supabase
@@ -54,8 +38,7 @@ export default async function MessagesServerPage() {
         content,
         created_at,
         read_at,
-        sender_id,
-        profiles!messages_sender_id_fkey(full_name, email)
+        sender_id
       )
     `)
     .eq('conversation_participants.profile_id', user.id)
@@ -79,9 +62,10 @@ export default async function MessagesServerPage() {
     unread_count: number;
   }> = [];
 
-  if (!error && conversations) {
-    processedConversations = conversations.map(conv => {
-      const messages = conv.messages || [];
+  if (error) throw new Error('Gesprekken konden niet worden geladen.');
+  if (conversations) {
+    processedConversations = await Promise.all(conversations.map(async conv => {
+      const messages = await hydrateMessageProfiles(supabase, conv.id, conv.messages || []);
       const lastMessage = messages.sort((a, b) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       )[0];
@@ -99,11 +83,11 @@ export default async function MessagesServerPage() {
         last_message: lastMessage ? {
           content: lastMessage.content,
           created_at: lastMessage.created_at,
-          sender: lastMessage.profiles ? lastMessage.profiles[0] : null
+          sender: lastMessage.profiles
         } : null,
         unread_count: unreadCount
       };
-    });
+    }));
   }
 
   return (

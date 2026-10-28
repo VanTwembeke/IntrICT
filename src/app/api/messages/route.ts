@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { hydrateMessageProfiles } from '@/lib/message-profiles';
 
 export async function GET(request: NextRequest) {
   try {
@@ -37,8 +38,7 @@ export async function GET(request: NextRequest) {
           content,
           created_at,
           read_at,
-          sender_id,
-          profiles!messages_sender_id_fkey(full_name, email)
+          sender_id
         )
       `)
       .eq('conversation_participants.profile_id', user.id)
@@ -50,8 +50,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Process the data to get the last message and unread count for each conversation
-    const processedConversations = conversations?.map(conv => {
-      const messages = conv.messages || [];
+    const processedConversations = await Promise.all((conversations ?? []).map(async conv => {
+      const messages = await hydrateMessageProfiles(supabase, conv.id, conv.messages || []);
       const lastMessage = messages.sort((a, b) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       )[0];
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
         } : null,
         unread_count: unreadCount
       };
-    }) || [];
+    }));
 
     return NextResponse.json(
       { conversations: processedConversations },

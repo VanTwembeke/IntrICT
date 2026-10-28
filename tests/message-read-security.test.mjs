@@ -9,9 +9,9 @@ beforeEach(() => {
  vi.clearAllMocks();
  auth = { data: { user: { id: 'member' } }, error: null };
  participant = { data: { profile_id: 'member' }, error: null };
- rpc = vi.fn().mockResolvedValue({ data: null, error: null });
+ rpc = vi.fn().mockImplementation(async name => ({ data: name === 'conversation_peers' ? [] : null, error: null }));
  const chain = result => ({ select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis(), single: vi.fn(async () => result()), maybeSingle: vi.fn(async () => result()), order: vi.fn(async () => result()) });
- queries = { conversation_participants: chain(() => participant), conversations: chain(() => ({ data: { id }, error: null })), messages: chain(() => ({ data: [], error: null })) };
+ queries = { conversation_participants: chain(() => participant), conversations: chain(() => ({ data: { id, conversation_participants: [{profile_id:'member'}] }, error: null })), messages: chain(() => ({ data: [], error: null })) };
  createClient.mockResolvedValue({ auth: { getUser: vi.fn(async () => auth) }, rpc, from: vi.fn(table => queries[table]) });
 });
 const post = body => POST(new Request('https://example.test/api/messages/conversation/mark-read', { method: 'POST', body: JSON.stringify(body) }));

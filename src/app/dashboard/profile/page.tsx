@@ -111,13 +111,13 @@ export default function ProfilePage() {
     const supabase = createClient();
     const username = form.public_username.trim();
     if (username) {
-      const { data: existing } = await supabase
-        .from('profiles')
-        .select('id')
-        .ilike('public_username', username)
-        .single();
-
-      if (existing && existing.id !== profile.id) {
+      const { data: available, error: availabilityError } = await supabase.rpc('public_username_available', { candidate: username.toLowerCase() });
+      if (availabilityError) {
+        window.alert('Gebruikersnaam kon niet worden gecontroleerd. Probeer opnieuw.');
+        setSaving(false);
+        return;
+      }
+      if (!available) {
         window.alert('Deze gebruikersnaam is al in gebruik. Kies een andere gebruikersnaam.');
         setSaving(false);
         return;

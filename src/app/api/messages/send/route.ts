@@ -2,6 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
 export async function POST(req: NextRequest) {
+  // Cookies are shared with sibling subdomains; SameSite alone is not a CSRF boundary.
+  // Require the exact request origin before authentication or multipart consumption.
+  const origin = req.headers.get('origin');
+  const fetchSite = req.headers.get('sec-fetch-site');
+  if (origin !== new URL(req.url).origin || (fetchSite && fetchSite !== 'same-origin')) {
+    return NextResponse.json({ error: 'Invalid request origin' }, {
+      status: 403,
+      headers: { 'Cache-Control': 'private, no-store' },
+    });
+  }
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 

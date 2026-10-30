@@ -41,3 +41,17 @@ for(const widget of [false,true])for(const [name,status,body,retry,notice] of ca
  expect(input.value).toBe(retry?'do not duplicate customer text':'');
  expect(fetch.mock.calls.filter(([u])=>u==='/api/messages/send')).toHaveLength(1);
 });
+
+test('messages layout stacks below lg and allows the composer to shrink without clipping',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>({ok:true,json:async()=>({conversation:{...conversation,conversation_participants:[]},messages:[],conversations:[conversation]})})));
+ render(React.createElement(MessagesPage,{profile,allProfiles:[],initialConversations:[conversation]}));
+ fireEvent.click(screen.getByRole('button',{name:/Bestaand gesprek/}));
+ const input=await screen.findByPlaceholderText('Typ je bericht...');
+ const pane=input.parentElement.parentElement.parentElement;
+ expect(pane.classList.contains('min-w-0')).toBe(true);
+ expect(pane.parentElement.classList.contains('flex-col')).toBe(true);
+ expect(pane.parentElement.classList.contains('lg:flex-row')).toBe(true);
+ const sidebar=pane.previousElementSibling;
+ for(const cls of ['w-full','lg:w-80','shrink-0'])expect(sidebar.classList.contains(cls)).toBe(true);
+ expect(input.classList.contains('min-w-0')).toBe(true);
+});

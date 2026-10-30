@@ -341,10 +341,10 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
             transition={{ duration: 0.6 }}
             className="overflow-hidden bg-white shadow-xl rounded-2xl"
           >
-            <div className="flex" style={{ minHeight: '600px' }}>
+            <div className="flex flex-col lg:flex-row" style={{ minHeight: '600px' }}>
 
               {/* ── Sidebar ─────────────────────────────────────────────── */}
-              <div className="flex flex-col border-r w-80 border-slate-200 bg-slate-50">
+              <div className="flex w-full shrink-0 flex-col border-b lg:border-b-0 lg:border-r lg:w-80 border-slate-200 bg-slate-50">
                 <div className="p-6 bg-white border-b border-slate-200">
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-bold text-slate-800">Gesprekken</h2>
@@ -617,7 +617,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
               </div>
 
               {/* ── Main Message Area ────────────────────────────────────── */}
-              <div className="flex flex-col flex-1">
+              <div className="flex min-w-0 flex-col flex-1">
                 {selectedConversation && conversationDetail ? (
                   <>
                     {/* conversation header */}
@@ -783,7 +783,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                           value={newMessage}
                           onChange={(e) => setNewMessage(e.target.value)}
                           placeholder="Typ je bericht..."
-                          className="flex-1 p-4 transition-all duration-200 border resize-none border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
+                          className="min-w-0 flex-1 p-4 transition-all duration-200 border resize-none border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
                           rows={3}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {

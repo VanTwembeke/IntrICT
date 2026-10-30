@@ -21,6 +21,7 @@ import {
 import Link from 'next/link';
 import { useChatContext, invalidateConversationsCache } from '@/contexts/ChatContext';
 import type { Profile } from '@/lib/types';
+import { readMessageSendResult, UNKNOWN_SEND_NOTICE } from '@/lib/message-send-result';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -146,6 +147,7 @@ function ConversationView({
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
+  const [sendNotice, setSendNotice] = useState('');
   const [attachment, setAttachment] = useState<File | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -189,6 +191,7 @@ function ConversationView({
     setMessages((prev) => [...prev, optimistic]);
     setText('');
     setAttachment(null);
+    setSendNotice('');
     setSending(true);
 
     try {
@@ -203,17 +206,25 @@ function ConversationView({
         body: form,
       });
 
-      if (res.ok) {
+      const result = await readMessageSendResult(res);
+      setSendNotice(result.notice);
+      if (result.created) {
         invalidateConversationsCache();
         await fetchMessages();
         refetchConversations();
       } else {
         setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
-        setText(content);
+        if (result.retrySafe) {
+          setText(content);
+          setAttachment(attachment);
+        } else {
+          await fetchMessages();
+        }
       }
     } catch {
       setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
-      setText(content);
+      setSendNotice(UNKNOWN_SEND_NOTICE);
+      await fetchMessages();
     } finally {
       setSending(false);
     }
@@ -259,6 +270,7 @@ function ConversationView({
         <MessageList messages={messages} profileId={profile.id} />
       )}
 
+      {sendNotice && <p role="status" className="mx-3 rounded-lg bg-amber-50 p-2 text-xs text-amber-900">{sendNotice}</p>}
       {/* Input */}
       <div className="px-3 py-2 border-t border-slate-100 bg-white shrink-0">
         {attachment && (

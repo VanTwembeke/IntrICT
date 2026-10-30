@@ -13,6 +13,7 @@ import {
   Download,
 } from 'lucide-react';
 import type { Profile } from '@/lib/types';
+import { readMessageSendResult, UNKNOWN_SEND_NOTICE } from '@/lib/message-send-result';
 
 interface Conversation {
   id: string;
@@ -118,6 +119,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
   const [loadError, setLoadError] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [sending, setSending] = useState(false);
+  const [sendNotice, setSendNotice] = useState('');
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
 
   const isAdmin = profile.role === 'admin';
@@ -172,7 +174,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
   }, [selectedConversation, fetchConversation, fetchConversations]);
 
   const sendMessage = async () => {
-    if (!selectedConversation || (!newMessage.trim() && attachments.length === 0)) return;
+    if (sending || !selectedConversation || (!newMessage.trim() && attachments.length === 0)) return;
 
     const messageContent = newMessage.trim();
     const messageAttachments = [...attachments];
@@ -203,6 +205,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
     setNewMessage('');
     setAttachments([]);
     setReplyingTo(null);
+    setSendNotice('');
     setSending(true);
 
     try {
@@ -222,24 +225,30 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
         body: formData,
       });
 
-      if (response.ok) {
+      const result = await readMessageSendResult(response);
+      setSendNotice(result.notice);
+      if (result.created) {
         // Refresh data in background
         await fetchConversation(selectedConversation);
         await fetchConversations();
       } else {
         // Remove optimistic message on error
         setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
-        setNewMessage(messageContent);
-        setAttachments(messageAttachments);
-        if (replyingTo) setReplyingTo(replyingTo);
+        if (result.retrySafe) {
+          setNewMessage(messageContent);
+          setAttachments(messageAttachments);
+          if (replyingTo) setReplyingTo(replyingTo);
+        } else {
+          await fetchConversation(selectedConversation);
+        }
       }
     } catch (error) {
       console.error('Failed to send message:', error);
       // Remove optimistic message on error
       setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
-      setNewMessage(messageContent);
-      setAttachments(messageAttachments);
-      if (replyingTo) setReplyingTo(replyingTo);
+      setSendNotice(UNKNOWN_SEND_NOTICE);
+      // The server may have committed before the connection failed. Never replay.
+      await fetchConversation(selectedConversation);
     } finally {
       setSending(false);
     }
@@ -314,6 +323,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
 
   return (
     <div className="p-6 lg:p-8">
+      {sendNotice && <p role="status" className="mb-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{sendNotice}</p>}
 
       {/* Page header */}
       <div className="mb-6">

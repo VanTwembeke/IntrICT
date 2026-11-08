@@ -21,7 +21,7 @@
  * server-side credentials. Never hardcode a GitHub token in a public repo.
  */
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
 
@@ -32,7 +32,11 @@ type Visibility='public'|'games'|'members'|'private';
 type Source='github'|'local'|'unavailable';
 type FileInfo={path:string;sha:string;size:number;modified:string|null;visibility:Visibility;source:Source;absolute?:string};
 type RepoTree={files:FileInfo[];ref:string;loaded:number;root:string;source:Source;warning:string|null};
-type SSO={user:{id:string;email?:string;email_confirmed_at?:string|null;is_anonymous?:boolean}|null;cookies:Array<{name:string;value:string;options:Record<string,any>}>;client:any|null};
+type SSO={user:{id:string;email?:string;email_confirmed_at?:string|null;is_anonymous?:boolean}|null;cookies:Array<{name:string;value:string;options:CookieOptions}>;client:ReturnType<typeof createServerClient>|null};
+
+type GitHubTreeEntry={type:string;path:string;sha:string;size?:number};
+type GitHubTreeResponse={truncated?:boolean;tree?:GitHubTreeEntry[]};
+type GitHubBlobResponse={encoding?:string;content?:unknown};
 
 // NON-SECRET SETTINGS — EDITABLE DIRECTLY ON GITHUB.
 const REPO='VanTwembeke/IntrICT';
@@ -53,7 +57,7 @@ function githubHeaders():Record<string,string>{const h:Record<string,string>={'A
   // Optional existing secret: the route does not require changing Vercel configuration.
   const token=process.env.PERSONAL_GITHUB_TOKEN;
   if(token)h.Authorization='Bearer '+token;return h;}
-async function githubJson(url:string):Promise<any>{const r=await fetch(url,{headers:githubHeaders(),cache:'no-store',signal:AbortSignal.timeout(11000)});
+async function githubJson<T>(url:string):Promise<T>{const r=await fetch(url,{headers:githubHeaders(),cache:'no-store',signal:AbortSignal.timeout(11000)});
   if(!r.ok)throw Error(r.status===404?'Repository is private or not accessible to GitHub API':`GitHub API returned HTTP ${r.status}`);return r.json();}
 function pickRoot(paths:string[]){
   let best='';let top=0;
@@ -68,10 +72,10 @@ function pickRoot(paths:string[]){
 }
 async function fromGitHub():Promise<RepoTree>{
   const url=`https://api.github.com/repos/${REPO}/git/trees/${encodeURIComponent(BRANCH)}?recursive=1`;
-  const data=await githubJson(url);
+  const data=await githubJson<GitHubTreeResponse>(url);
   if(data.truncated)throw Error('GitHub tree is truncated; cannot safely enumerate the full directory');
-  const rows=(Array.isArray(data.tree)?data.tree:[]).filter((e:any)=>e.type==='blob'&&typeof e.path==='string'&&typeof e.sha==='string');
-  const root=pickRoot(rows.map((x:any)=>x.path));
+  const rows=(Array.isArray(data.tree)?data.tree:[]).filter((e)=>e.type==='blob'&&typeof e.path==='string'&&typeof e.sha==='string');
+  const root=pickRoot(rows.map((x)=>x.path));
   if(!root)throw Error('Repository accessible, but no supported files found inside /personal/ folders');
   const files:FileInfo[]=[];
   for(const e of rows){if(!e.path.startsWith(root+'/'))continue;const p=e.path.slice(root.length+1);
@@ -152,7 +156,7 @@ async function serveFile(req:NextRequest,p:string,sso:SSO){
   const listing=await tree();const item=listing.files.find(f=>f.path===p);if(!item)return err('File not found.',404);
   let buf:Buffer;
   if(item.source==='local'&&item.absolute)buf=await fs.readFile(item.absolute);
-  else {const blob=await githubJson(`https://api.github.com/repos/${REPO}/git/blobs/${item.sha}`);
+  else {const blob=await githubJson<GitHubBlobResponse>(`https://api.github.com/repos/${REPO}/git/blobs/${item.sha}`);
     if(blob.encoding!=='base64'||typeof blob.content!=='string')return err('Unsupported GitHub file format.',415);
     buf=Buffer.from(blob.content.replace(/\s/g,''),'base64');}
   if(buf.byteLength>MAX_BYTES)return err('File exceeds maximum supported size.',413);
@@ -179,9 +183,9 @@ export async function POST(req:NextRequest){const origin=req.headers.get('origin
   const action=req.nextUrl.searchParams.get('api');if(action!=='login'&&action!=='logout')return err('Not found.',404);
   const sso=await getSSO(req);if(!sso.client)return err('IntrICT SSO is not connected to this route. Existing site Supabase variables are required.',503);
   if(action==='logout'){await sso.client.auth.signOut();return secure(NextResponse.json({ok:true}),sso);}
-  let body:any;try{body=await req.json();}catch{return err('Invalid JSON.',400);}
-  const email=typeof body?.email==='string'?body.email.trim().slice(0,255):'';
-  const password=typeof body?.password==='string'?body.password:'';
+  let body:unknown;try{body=await req.json();}catch{return err('Invalid JSON.',400);}
+  const email=typeof body==='object'&&body!==null&&'email' in body&&typeof body.email==='string'?body.email.trim().slice(0,255):'';
+  const password=typeof body==='object'&&body!==null&&'password' in body&&typeof body.password==='string'?body.password:'';
   if(!email.includes('@')||!password||password.length>1024)return err('Provide a valid account email and password.');
   const {data,error}=await sso.client.auth.signInWithPassword({email,password});if(error||!data?.user)return err('Authentication failed.',401);
   return secure(NextResponse.json({ok:true}),sso);

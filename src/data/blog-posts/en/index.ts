@@ -54,6 +54,8 @@ import { blogPost as post16En } from './native-popovers-sme-website';
 
 import { blogPost as post17En } from './sme-website-image-loading-order';
 
+import { blogPost as post18En } from './reduced-motion-sme-website';
+
 export const blogPostsEn: BlogPost[] = [
   post1En,
   post2En,
@@ -72,4 +74,5 @@ export const blogPostsEn: BlogPost[] = [
   post15En,
   post16En,
   post17En,
+  post18En,
 ];

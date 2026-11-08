@@ -18,6 +18,8 @@ import { blogPost as post16 } from './native-popover-kmo-website';
 
 import { blogPost as post17 } from './afbeeldingen-kmo-website-laadvolgorde';
 
+import { blogPost as post18 } from './minder-beweging-kmo-website';
+
 export const blogPosts = [
   post1,
   post2,
@@ -36,6 +38,7 @@ export const blogPosts = [
   post15,
   post16,
   post17,
+  post18,
 ];
 
 // Export individual posts for easier access

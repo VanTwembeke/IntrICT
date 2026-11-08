@@ -17,7 +17,7 @@ export const blogPost: BlogPost = {
   ],
   "image": "/images/blog/reduced-motion-controls.webp",
   "slug": "minder-beweging-kmo-website",
-  "readTime": "5 min",
+  "readTime": 5,
   "lang": "nl",
   "translationSlug": "reduced-motion-sme-website"
 };

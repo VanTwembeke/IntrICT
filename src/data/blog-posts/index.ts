@@ -20,6 +20,8 @@ import { blogPost as post17 } from './afbeeldingen-kmo-website-laadvolgorde';
 
 import { blogPost as post18 } from './minder-beweging-kmo-website';
 
+import { blogPost as post19 } from './toetsenbordfocus-kmo-website';
+
 export const blogPosts = [
   post1,
   post2,
@@ -39,6 +41,7 @@ export const blogPosts = [
   post16,
   post17,
   post18,
+  post19,
 ];
 
 // Export individual posts for easier access

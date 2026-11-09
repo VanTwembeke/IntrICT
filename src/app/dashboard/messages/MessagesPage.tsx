@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, memo } from 'react';
+import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { motion } from 'framer-motion';
 import {
   MessageSquare,
@@ -115,6 +115,9 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
   const [newSubject, setNewSubject] = useState('');
   const [newConversationMessage, setNewConversationMessage] = useState('');
   const [newConversationFiles, setNewConversationFiles] = useState<File[]>([]);
+  const [newConversationNotice, setNewConversationNotice] = useState('');
+  const newStartFence = useRef<'idle' | 'pending' | 'uncertain'>('idle');
+  const [newStartState, setNewStartState] = useState<'idle' | 'pending' | 'uncertain'>('idle');
   const [loading, setLoading] = useState(initialConversations.length === 0);
   const [loadError, setLoadError] = useState('');
   const [refreshing, setRefreshing] = useState(false);
@@ -255,8 +258,17 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
   };
 
   const startNewConversation = async () => {
+    // Ref guards re-entry before React has committed the disabled button.
+    if (newStartFence.current !== 'idle') return;
     if (!newRecipient || !newConversationMessage.trim()) return;
-
+    newStartFence.current = 'pending';
+    setNewStartState('pending');
+    setNewConversationNotice('');
+    const markUncertain = () => {
+      newStartFence.current = 'uncertain';
+      setNewStartState('uncertain');
+      setNewConversationNotice('De start van dit gesprek kon niet worden bevestigd. Je concept blijft bewaard. Verstuur niet opnieuw: het eerste bericht kan al zijn aangekomen. Controleer de gesprekken of neem contact op voor bevestiging.');
+    };
     try {
       const response = await fetch('/api/messages/new', {
         method: 'POST',
@@ -268,29 +280,49 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
           message: newConversationMessage,
         }),
       });
-
-      if (response.ok) {
-        const data = await response.json();
-
-        // Send files as a follow-up message if any were attached
-        if (newConversationFiles.length > 0) {
-          const formData = new FormData();
-          formData.append('conversation_id', data.conversationId);
-          formData.append('content', '📎 Bijlage(n)');
-          newConversationFiles.forEach((file) => formData.append('files', file));
-          await fetch('/api/messages/send', { method: 'POST', credentials: 'include', body: formData });
-        }
-
-        setShowNewConversation(false);
-        setNewRecipient('');
-        setNewSubject('');
-        setNewConversationMessage('');
-        setNewConversationFiles([]);
-        setSelectedConversation(data.conversationId);
-        await fetchConversations();
+      // Current handler rejects validation/auth or rolls back the atomic RPC.
+      // All other outcomes are uncertain; absence of HTTP success is not no-commit proof.
+      if ([400, 401, 403].includes(response.status)) {
+        newStartFence.current = 'idle';
+        setNewStartState('idle');
+        setNewConversationNotice('Gesprek niet gestart. Controleer je invoer, ontvanger en aanmelding voordat je opnieuw probeert.');
+        return;
       }
+      if (!response.ok) { markUncertain(); return; }
+      const data = await response.json();
+      const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!data || typeof data !== 'object' || Array.isArray(data) ||
+          'error' in data || ('created' in data && data.created !== true) ||
+          ('outcome' in data && data.outcome !== 'created') ||
+          typeof data.conversationId !== 'string' || !uuid.test(data.conversationId) ||
+          !data.message || typeof data.message !== 'object' || Array.isArray(data.message) ||
+          typeof data.message.id !== 'string' || !uuid.test(data.message.id) ||
+          data.message.conversation_id !== data.conversationId ||
+          data.message.sender_id !== profile.id ||
+          data.message.content !== newConversationMessage) {
+        markUncertain(); return;
+      }
+      // Send files as a follow-up message if any were attached
+      if (newConversationFiles.length > 0) {
+        const formData = new FormData();
+        formData.append('conversation_id', data.conversationId);
+        formData.append('content', '📎 Bijlage(n)');
+        newConversationFiles.forEach((file) => formData.append('files', file));
+        await fetch('/api/messages/send', { method: 'POST', credentials: 'include', body: formData });
+      }
+
+      newStartFence.current = 'idle';
+      setNewStartState('idle');
+      setShowNewConversation(false);
+      setNewRecipient('');
+      setNewSubject('');
+      setNewConversationMessage('');
+      setNewConversationFiles([]);
+      setSelectedConversation(data.conversationId);
+      await fetchConversations();
     } catch (error) {
-      console.error('Failed to start conversation:', error);
+      console.error('Failed to confirm conversation:', error);
+      markUncertain();
     }
   };
 
@@ -382,6 +414,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                         </label>
                         <select
                           value={newRecipient}
+                          disabled={newStartState !== 'idle'}
                           onChange={(e) => setNewRecipient(e.target.value)}
                           className="w-full p-3 transition-all duration-200 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800"
                         >
@@ -444,6 +477,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                         <input
                           type="text"
                           value={newSubject}
+                          disabled={newStartState !== 'idle'}
                           onChange={(e) => setNewSubject(e.target.value)}
                           placeholder="Gespreksonderwerp"
                           className="w-full p-3 transition-all duration-200 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
@@ -457,6 +491,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                         </label>
                         <textarea
                           value={newConversationMessage}
+                          disabled={newStartState !== 'idle'}
                           onChange={(e) => setNewConversationMessage(e.target.value)}
                           placeholder="Typ je eerste bericht..."
                           className="w-full p-3 transition-all duration-200 border resize-none border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 placeholder:text-slate-400"
@@ -479,6 +514,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                             }
                             className="hidden"
                             id="new-conv-file-upload"
+                            disabled={newStartState !== 'idle'}
                           />
                           <label
                             htmlFor="new-conv-file-upload"
@@ -507,6 +543,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                                   {file.name}
                                 </span>
                                 <button
+                                  disabled={newStartState !== 'idle'}
                                   onClick={() =>
                                     setNewConversationFiles(
                                       newConversationFiles.filter((_, i) => i !== index)
@@ -522,10 +559,15 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                         )}
                       </div>
 
+                      {newConversationNotice && (
+                        <p role="status" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{newConversationNotice}</p>
+                      )}
                       <div className="flex gap-3">
                         <motion.button
                           onClick={() => {
                             setShowNewConversation(false);
+                            if (newStartFence.current !== 'idle') return;
+                            setNewConversationNotice('');
                             setNewRecipient('');
                             setNewSubject('');
                             setNewConversationMessage('');
@@ -539,7 +581,7 @@ export default memo(function MessagesPage({ profile, allProfiles, initialConvers
                         </motion.button>
                         <motion.button
                           onClick={startNewConversation}
-                          disabled={!newRecipient || !newConversationMessage.trim()}
+                          disabled={newStartState !== 'idle' || !newRecipient || !newConversationMessage.trim()}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           className="flex-1 px-4 py-2 font-semibold text-white transition-all duration-200 bg-blue-600 rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"

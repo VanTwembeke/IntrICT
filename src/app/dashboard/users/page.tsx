@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import UsersTable from './UsersTable';
+import UsersLoadError from './UsersLoadError';
 import type { Profile } from '@/lib/types';
 
 export default async function UsersPage() {
@@ -17,11 +18,22 @@ export default async function UsersPage() {
 
   if (profile?.role !== 'admin') redirect('/dashboard');
 
-  const { data: users } = await supabase
-    .from('profiles')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .returns<Profile[]>();
+  try {
+    const { data: users, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .returns<Profile[]>();
 
-  return <UsersTable users={users ?? []} currentUserId={user.id} />;
+    if (error || !Array.isArray(users) || !users.every((entry) =>
+      entry && typeof entry.id === 'string' && typeof entry.email === 'string' &&
+      typeof entry.created_at === 'string' && ['admin', 'user', 'klant'].includes(entry.role) &&
+      [entry.full_name, entry.company, entry.phone, entry.vat_number, entry.address,
+        entry.postal_code, entry.city, entry.country, entry.profile_picture_url,
+        entry.public_username].every(value => value == null || typeof value === 'string')
+    )) return <UsersLoadError />;
+    return <UsersTable users={users} currentUserId={user.id} />;
+  } catch {
+    return <UsersLoadError />;
+  }
 }

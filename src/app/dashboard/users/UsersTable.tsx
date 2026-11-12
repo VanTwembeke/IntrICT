@@ -613,7 +613,7 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
               <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center justify-center w-10 h-10 font-bold text-white rounded-full bg-blue-600">
-                    {(editUser.full_name ?? editUser.email)[0].toUpperCase()}
+                    {(editUser.full_name || editUser.email || '?')[0].toUpperCase()}
                   </div>
                   <div>
                     <h2 className="text-base font-bold text-slate-800">Gebruiker bewerken</h2>
@@ -781,7 +781,7 @@ export default function UsersTable({ users: initial, currentUserId }: Props) {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center justify-center text-sm font-bold text-white rounded-full w-9 h-9 bg-blue-600 shrink-0">
-                        {(u.full_name ?? u.email)[0].toUpperCase()}
+                        {(u.full_name || u.email || '?')[0].toUpperCase()}
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-slate-800 flex items-center gap-1.5">

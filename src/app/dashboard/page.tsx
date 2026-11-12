@@ -56,6 +56,13 @@ const REQUEST_STATUS_LABELS: Record<string, string> = {
   rejected:  'Afgewezen',
 };
 
+const REQUEST_NEXT_STEPS: Record<string, string> = {
+  pending: 'Je aanvraag is ontvangen. Heb je nog informatie of een vraag? Stuur ons een bericht.',
+  contacted: 'Bekijk de afspraken in je berichten. Is iets onduidelijk? Vraag ons om toelichting.',
+  accepted: 'Je aanvraag is geaccepteerd. Bespreek de praktische vervolgstappen via je berichten.',
+  rejected: 'Je aanvraag is niet weerhouden. Wil je een alternatief bespreken? Neem contact op via je berichten.',
+};
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function DashboardPage() {
@@ -178,7 +185,18 @@ export default async function DashboardPage() {
       userPaidTotal = (paidInvRes.value.data ?? []).reduce((s, r) => s + (r.total as number), 0);
     }
     if (apptRes.status === 'fulfilled')      userUpcomingAppointments = (apptRes.value.data ?? []) as UserAppt[];
-    if (reqRes.status === 'fulfilled')       userRequests             = (reqRes.value.data ?? []) as UserRequest[];
+    if (reqRes.status === 'fulfilled' && !reqRes.value.error && Array.isArray(reqRes.value.data) && reqRes.value.data.every((value: unknown) => {
+      if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+      const row = value as Record<string, unknown>;
+      return typeof row.id === 'string' && row.id.length > 0 &&
+        typeof row.package_name === 'string' && typeof row.status === 'string' &&
+        typeof row.created_at === 'string' && Number.isFinite(Date.parse(row.created_at)) &&
+        (row.package_price == null || (typeof row.package_price === 'number' && Number.isFinite(row.package_price)));
+    })) {
+      userRequests = reqRes.value.data as UserRequest[];
+    } else {
+      hasDataError = true;
+    }
     if (contractRes.status === 'fulfilled')  userActiveContractCount  = contractRes.value.count ?? 0;
   }
 
@@ -686,9 +704,13 @@ export default async function DashboardPage() {
                             €{(req.package_price ?? 0).toLocaleString('nl-BE')} · {formatTime(req.created_at)}
                           </p>
                         </div>
-                        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 ${STATUS_BADGES[req.status] ?? 'bg-slate-100 text-slate-500'}`}>
-                          {STATUS_LABELS[req.status] ?? req.status}
+                        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 ${Object.hasOwn(STATUS_BADGES, req.status) ? STATUS_BADGES[req.status] : 'bg-slate-100 text-slate-500'}`}>
+                          {Object.hasOwn(STATUS_LABELS, req.status) ? STATUS_LABELS[req.status] : req.status}
                         </span>
+                        <div className="w-full min-w-0 sm:pl-12">
+                          <p className="text-sm leading-relaxed text-slate-600">{Object.hasOwn(REQUEST_NEXT_STEPS, req.status) ? REQUEST_NEXT_STEPS[req.status] : 'De status van je aanvraag is gewijzigd. Vraag ons via je berichten om toelichting.'}</p>
+                          <Link href="/dashboard/messages" className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-blue-700 hover:underline">Bespreek je aanvraag</Link>
+                        </div>
                       </div>
                     );
                   })}

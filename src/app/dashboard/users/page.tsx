@@ -18,22 +18,25 @@ export default async function UsersPage() {
 
   if (profile?.role !== 'admin') redirect('/dashboard');
 
+  let users: Profile[] | null = null;
   try {
-    const { data: users, error } = await supabase
+    const result = await supabase
       .from('profiles')
       .select('*')
       .order('created_at', { ascending: false })
       .returns<Profile[]>();
+    if (!result.error) users = result.data;
+  } catch {
+    // A rejected provider request is unavailable, not a successful empty list.
+    users = null;
+  }
 
-    if (error || !Array.isArray(users) || !users.every((entry) =>
+  if (!Array.isArray(users) || !users.every((entry) =>
       entry && typeof entry.id === 'string' && typeof entry.email === 'string' &&
       typeof entry.created_at === 'string' && ['admin', 'user', 'klant'].includes(entry.role) &&
       [entry.full_name, entry.company, entry.phone, entry.vat_number, entry.address,
         entry.postal_code, entry.city, entry.country, entry.profile_picture_url,
         entry.public_username].every(value => value == null || typeof value === 'string')
-    )) return <UsersLoadError />;
-    return <UsersTable users={users} currentUserId={user.id} />;
-  } catch {
-    return <UsersLoadError />;
-  }
+  )) return <UsersLoadError />;
+  return <UsersTable users={users} currentUserId={user.id} />;
 }

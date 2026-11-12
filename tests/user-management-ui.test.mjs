@@ -125,3 +125,13 @@ test('role update failure preserves original role', async () => {
   await waitFor(() => expect(screen.getByRole('alert').textContent).toContain('Rol geweigerd'));
   expect(screen.getByRole('button', { name: 'Admin maken' })).toBeTruthy();
 });
+
+for (const email of ['client@example.test', '']) {
+ test('empty profile name remains renderable without mutation: ' + email, () => {
+  render(React.createElement(UsersTable, { users: [{ ...me, email, full_name: '' }], currentUserId: me.id }));
+  expect(screen.getByRole('table')).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'Bewerken' }));
+  expect(screen.getByRole('button', { name: 'Opslaan' })).toBeTruthy();
+  expect(fetch).not.toHaveBeenCalled();
+ });
+}

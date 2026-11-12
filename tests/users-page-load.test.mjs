@@ -50,3 +50,12 @@ test('guest is redirected before any profile read', async () => {
  db.getUser.mockResolvedValue({ data: { user: null } });
  await expect(UsersPage()).rejects.toThrow('REDIRECT:/login'); expect(db.from).not.toHaveBeenCalled();
 });
+
+for (const customer_number of [{ toString: null }, [], true, '123']) {
+ test('unsafe customer number is a recoverable source error: ' + JSON.stringify(customer_number), async () => {
+  db.list.mockResolvedValue({ data: [{ id: 'u', email: 'client@example.test', role: 'user', created_at: '2026-01-01', customer_number }], error: null });
+  render(await UsersPage());
+  expect(screen.getByRole('alert')).toBeTruthy();
+  expect(screen.queryByTestId('users')).toBeNull();
+ });
+}

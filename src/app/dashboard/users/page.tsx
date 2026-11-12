@@ -34,6 +34,7 @@ export default async function UsersPage() {
   if (!Array.isArray(users) || !users.every((entry) =>
       entry && typeof entry.id === 'string' && typeof entry.email === 'string' &&
       typeof entry.created_at === 'string' && ['admin', 'user', 'klant'].includes(entry.role) &&
+      (entry.customer_number == null || (typeof entry.customer_number === 'number' && Number.isFinite(entry.customer_number))) &&
       [entry.full_name, entry.company, entry.phone, entry.vat_number, entry.address,
         entry.postal_code, entry.city, entry.country, entry.profile_picture_url,
         entry.public_username].every(value => value == null || typeof value === 'string')

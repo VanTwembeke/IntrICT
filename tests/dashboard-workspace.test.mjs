@@ -63,7 +63,7 @@ test('a successfully empty account explains invoices and appointments without hi
  });
 
  test.each([
- ['contacted','Bekijk de afspraken in je berichten. Is iets onduidelijk? Vraag ons om toelichting.'],
+ ['contacted','We hebben contact met je opgenomen. Heb je een vraag over je aanvraag? Stuur ons een bericht.'],
  ['accepted','Je aanvraag is geaccepteerd. Bespreek de praktische vervolgstappen via je berichten.'],
  ['rejected','Je aanvraag is niet weerhouden. Wil je een alternatief bespreken? Neem contact op via je berichten.'],
  ['future-status','De status van je aanvraag is gewijzigd. Vraag ons via je berichten om toelichting.'],

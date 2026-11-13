@@ -58,7 +58,7 @@ const REQUEST_STATUS_LABELS: Record<string, string> = {
 
 const REQUEST_NEXT_STEPS: Record<string, string> = {
   pending: 'Je aanvraag is ontvangen. Heb je nog informatie of een vraag? Stuur ons een bericht.',
-  contacted: 'Bekijk de afspraken in je berichten. Is iets onduidelijk? Vraag ons om toelichting.',
+  contacted: 'We hebben contact met je opgenomen. Heb je een vraag over je aanvraag? Stuur ons een bericht.',
   accepted: 'Je aanvraag is geaccepteerd. Bespreek de praktische vervolgstappen via je berichten.',
   rejected: 'Je aanvraag is niet weerhouden. Wil je een alternatief bespreken? Neem contact op via je berichten.',
 };

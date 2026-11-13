@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Phone, Mail, Building2, CheckCircle, MessageSquare,
@@ -25,8 +25,10 @@ function RequestCard({
   req,
   onStatusChange,
   onDelete,
+  openedAt,
 }: {
   req: PackageRequest;
+  openedAt: number;
   onStatusChange: (id: string, status: Status, adminNotes: string) => Promise<void>;
   onDelete: (id: string) => void;
 }) {
@@ -34,23 +36,33 @@ function RequestCard({
   const [status, setStatus] = useState<Status>(req.status as Status);
   const [adminNotes, setAdminNotes] = useState(req.admin_notes ?? '');
   const [saving, setSaving] = useState(false);
+  const saveInFlight = useRef(false);
   const [saveError, setSaveError] = useState('');
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
-  const cfg = STATUS[status];
+  const cfg = STATUS[req.status];
   const profile = req.profile;
   const date = new Date(req.created_at).toLocaleDateString('nl-BE', {
     day: 'numeric', month: 'short', year: 'numeric',
   });
 
+  const ageDays = Math.max(0, Math.floor((openedAt - Date.parse(req.created_at)) / 86_400_000));
+  const age = !Number.isFinite(ageDays) ? 'Datum onbekend' : ageDays === 0 ? 'Minder dan een dag geleden' : ageDays === 1 ? '1 dag geleden' : `${ageDays} dagen geleden`;
+
   const handleSave = async () => {
+    if (saveInFlight.current) return;
+    saveInFlight.current = true;
     setSaving(true);
     setSaveError('');
+    setSaveSuccess(false);
     try {
       await onStatusChange(req.id, status, adminNotes);
+      setSaveSuccess(true);
       setExpanded(false);
     } catch {
-      setSaveError('De aanvraag kon niet worden opgeslagen. Je wijzigingen zijn behouden; probeer opnieuw.');
+      setSaveError('Opslaan niet bevestigd. Je wijzigingen zijn behouden; controleer de aanvraag voordat je opnieuw opslaat.');
     } finally {
+      saveInFlight.current = false;
       setSaving(false);
     }
   };
@@ -88,6 +100,7 @@ function RequestCard({
           <p className="text-sm text-slate-500 mt-0.5">
             {req.package_name} · €{req.package_price.toLocaleString('nl-BE')} · {date}
           </p>
+          <p className="mt-1 text-xs text-slate-600">{age}</p>
         </div>
 
 
@@ -96,7 +109,7 @@ function RequestCard({
           className={`text-slate-400 shrink-0 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
         />
       </button>
-        {status === 'rejected' && (
+        {req.status === 'rejected' && (
           <button
             onClick={(e) => { e.stopPropagation(); onDelete(req.id); }}
             className="mr-4 p-2 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors shrink-0"
@@ -107,6 +120,8 @@ function RequestCard({
           </button>
         )}
       </div>
+
+      {saveSuccess && <p role="status" className="px-5 pb-3 text-sm text-green-800">Opgeslagen. Status en interne notitie zijn bevestigd.</p>}
 
       {/* Expanded detail */}
       <AnimatePresence initial={false}>
@@ -188,7 +203,8 @@ function RequestCard({
                   {(Object.keys(STATUS) as Status[]).map((s) => (
                     <button
                       key={s}
-                      onClick={() => setStatus(s)}
+                      disabled={saving}
+                      onClick={() => { setStatus(s); setSaveSuccess(false); setSaveError(''); }}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
                         status === s
                           ? `${STATUS[s].color} border-current`
@@ -207,8 +223,9 @@ function RequestCard({
                   </label>
                   <textarea
                     id={`request-notes-${req.id}`}
+                    disabled={saving}
                     value={adminNotes}
-                    onChange={(e) => setAdminNotes(e.target.value)}
+                    onChange={(e) => { setAdminNotes(e.target.value); setSaveSuccess(false); setSaveError(''); }}
                     rows={2}
                     placeholder="Notities voor intern gebruik..."
                     className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 resize-none transition-all placeholder:text-slate-400"
@@ -264,6 +281,7 @@ export default function AanvragenClient({ initialRequests, loadError }: Props) {
   const [requests, setRequests] = useState<PackageRequest[]>(initialRequests);
   const [filter, setFilter] = useState<Status | 'all'>('all');
   const [search, setSearch] = useState('');
+  const [openedAt] = useState(() => Date.now());
 
   const handleDelete = async (id: string) => {
     const res = await fetch(`/api/package-requests/${id}`, { method: 'DELETE' });
@@ -297,8 +315,16 @@ export default function AanvragenClient({ initialRequests, loadError }: Props) {
       body: JSON.stringify({ status, admin_notes: adminNotes }),
     });
     if (!res.ok) throw new Error('Request save failed');
-    const updated = await res.json();
-    setRequests((prev) => prev.map((r) => (r.id === id ? updated : r)));
+    const updated: unknown = await res.json();
+    if (!updated || typeof updated !== 'object' || Array.isArray(updated)
+      || !('id' in updated) || updated.id !== id
+      || !('status' in updated) || updated.status !== status
+      || !('admin_notes' in updated) || updated.admin_notes !== adminNotes
+      || ('error' in updated && updated.error != null)) {
+      throw new Error('Request save not confirmed');
+    }
+    // Merge only the confirmed editable fields; keep joined customer/source data intact.
+    setRequests((prev) => prev.map((r) => (r.id === id ? { ...r, status, admin_notes: adminNotes } : r)));
   };
 
   return (
@@ -312,6 +338,7 @@ export default function AanvragenClient({ initialRequests, loadError }: Props) {
         {!loadError && <p className="text-sm text-slate-500 mt-1">
           {counts.pending} nieuw · {counts.all} totaal
         </p>}
+        {!loadError && <p className="mt-2 text-sm text-slate-600">Nieuwe aanvragen eerst, oudste bovenaan. Ouderdom berekend bij openen.</p>}
       </div>
 
       {loadError ? (
@@ -365,6 +392,7 @@ export default function AanvragenClient({ initialRequests, loadError }: Props) {
             <RequestCard
               key={req.id}
               req={req}
+              openedAt={openedAt}
               onStatusChange={handleStatusChange}
               onDelete={handleDelete}
             />
